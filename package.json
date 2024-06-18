@@ -2,9 +2,18 @@
   "name": "circle",
   "version": "1.0.0",
   "description": "circle independent crm for service agreements",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "start": "node index",
+    "dev": "nodemon index",
+    "seed": "node utils/seed"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^8.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.9"
   },
   "repository": {
     "type": "git",
