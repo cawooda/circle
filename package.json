@@ -1,0 +1,25 @@
+{
+  "name": "circle",
+  "version": "1.0.0",
+  "description": "circle independent crm for service agreements",
+  "main": "server.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cawooda/circle.git"
+  },
+  "keywords": [
+    "invoicing",
+    "crm",
+    "service",
+    "agreements"
+  ],
+  "author": "Andrew Cawood",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cawooda/circle/issues"
+  },
+  "homepage": "https://github.com/cawooda/circle#readme"
+}
