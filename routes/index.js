@@ -1,20 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const apiRoutes = require("./api");
 
-//methods within the controller handle CRUD requests. The methods are imported here
-const {
-  postData,
-  getData,
-  putData,
-  deleteData,
-} = require("../controllers/index");
+//middlwhere handling all api requets using apiRoutes
 
-//all calls to api arive here and are separated out into CRUD requests to be handled by the controller
-
-router
-  .post("/", postData)
-  .get("/", getData)
-  .put("/", putData)
-  .delete("/", deleteData);
+router.use("/api", apiRoutes);
 
 module.exports = router;
