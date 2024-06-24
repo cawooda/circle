@@ -48,4 +48,10 @@ createUser = async (req, res) => {
   }
 };
 
-module.exports = { getUsers, getSingleUser, createUser };
+modifyUser = async (req, res) => {
+  const body = req.body;
+};
+
+loginUser = async (req, res) => {};
+
+module.exports = { getUsers, getSingleUser, createUser, modifyUser, loginUser };

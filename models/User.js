@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 //import the Schema and model from mongoose.
 const { Schema, model } = require("mongoose");
+const { validateEmail } = require("../utils/helpers");
 
 //definde the user model schema
 const userSchema = new Schema(
@@ -9,8 +10,29 @@ const userSchema = new Schema(
     first: String,
     last: String,
     date_of_birth: Date,
-    email: String,
+    mobile: {
+      type: String,
+      minLength: 10,
+      maxLength: 10,
+    },
+    email: {
+      type: String,
+      toLowerCase: true,
+      validate: {
+        validator: validateEmail,
+        message: "email did not pass validation",
+      },
+    },
     password: String,
+    createdAt: {
+      type: Date,
+      immutable: true, //this prevents changes to the date once created
+      default: () => Date.now(), //runs a function to get the current date when populating
+    },
+    updatedAt: {
+      type: Date,
+      default: () => Date.now(),
+    },
   },
   //then come the
   {

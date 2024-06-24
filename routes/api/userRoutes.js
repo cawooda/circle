@@ -6,11 +6,14 @@ const {
   getUsers,
   getSingleUser,
   createUser,
+  modifyUser,
 } = require("../../controllers/userController");
 
-// get all users
+//all users
 router.route("/").post(createUser).get(getUsers);
-
-router.route("/:userId").get(getSingleUser);
+//single user
+router.route("/:userId").post(modifyUser).get(getSingleUser);
+//login user
+router.route("/login").post(loginUser);
 
 module.exports = router;
