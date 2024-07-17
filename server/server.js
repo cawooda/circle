@@ -1,6 +1,6 @@
 require("dotenv").config();
 const path = require("path");
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 const express = require("express");
 const app = express();
@@ -18,20 +18,20 @@ const server = new ApolloServer({
 //require the connection to Mongoose for MongoDb database
 const db = require("./config/connection");
 
-const APIRoutes = require("./controllers");
-
-app.use("api/", APIRoutes);
+const apiRoutes = require("./controllers/API");
 
 const startApolloServer = async () => {
   await server.start();
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
   app.use(
-    "graphql",
+    "/graphql",
     expressMiddleware(server, {
       context: authMiddleware,
     })
   );
+  app.use("/api", apiRoutes);
+
   if (process.env.NODE_ENV === "production") {
     app.use(express.startic(path.join(__dirname, "../client/dist")));
 
