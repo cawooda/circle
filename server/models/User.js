@@ -1,6 +1,9 @@
 const bcrypt = require("bcrypt");
 //import the Schema and model from mongoose.
 const { Schema, model } = require("mongoose");
+const { Admin } = require("../models/Admin");
+const { Business } = require("../models/Admin");
+const { Customer } = require("../models/Admin");
 const { validateEmail } = require("../utils/helpers");
 
 //definde the user model schema
@@ -42,6 +45,84 @@ const userSchema = new Schema(
     id: false,
   }
 );
+
+userSchema
+  .virtual("isAdmin")
+  .get(function () {
+    try {
+      const admin = Admin.findOne({ userId: this._id });
+      if (admin) {
+        return true;
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  })
+  .set(function () {
+    //toggles value of admin
+    try {
+      let admin = Admin.findOne({ userId: this._id });
+      if (!admin) {
+        let admin = Admin.create({ userId: this._id });
+      } else {
+        admin.deleteOne({ userId: this._id }).save();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+userSchema
+  .virtual("isCustomer")
+  .get(function () {
+    try {
+      const customer = Customer.findOne({ userId: this._id });
+      if (customer) {
+        return true;
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  })
+  .set(function () {
+    //toggles value of customer
+    try {
+      let customer = Customer.findOne({ userId: this._id });
+      if (!customer) {
+        let customer = Customer.create({ userId: this._id });
+      } else {
+        customer.deleteOne({ userId: this._id }).save();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+userSchema
+  .virtual("isBusiness")
+  .get(function () {
+    try {
+      const business = Business.findOne({ userId: this._id });
+      if (business) {
+        return true;
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  })
+  .set(function () {
+    //toggles value of business
+    try {
+      let business = Business.findOne({ userId: this._id });
+      if (!business) {
+        let business = Business.create({ userId: this._id });
+      } else {
+        business.deleteOne({ userId: this._id }).save();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  });
 
 userSchema
   .virtual("fullName")
