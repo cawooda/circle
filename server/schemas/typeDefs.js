@@ -9,6 +9,9 @@ const typeDefs = `
     createdAt: String
     updatedAt: String
     fullName: String
+    isAdmin: Boolean
+    isCustomer: Boolean
+    isProvider: Boolean
   }
 
 type Admin {
@@ -21,12 +24,13 @@ type Admin {
 type Query{
     getAllUsers:[User]
     getUserById(_id:ID!):User
-    getAdminByUserId(userId:ID!): Admin
+    getUserRoles(_id:ID!):User
 }
 
 type Mutation {
     createUser(first: String!, last: String!, date_of_birth: String, mobile: String, email: String!, password: String!): User
-    createAdmin(userId: ID!): Admin
+    toggleUserRole(userId:ID!,role:String) : User!
+    createAdmin(userId: ID!): Admin!
 }
 `;
 

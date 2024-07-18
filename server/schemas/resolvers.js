@@ -1,4 +1,5 @@
 const { User, Admin } = require("../models");
+const { roles } = require("../utils/roles");
 
 const resolvers = {
   Query: {
@@ -15,11 +16,30 @@ const resolvers = {
     getUserById: async (_parent, { id }) => {
       return await User.findById(id);
     },
-    getAdminByUserId: async (_parent, { userId }) => {
-      return await Admin.findOne({ user: userId }).populate("user");
+    getUserRoles: async (_parent, { id }) => {
+      const user = await User.findById(id);
     },
   },
-  Mutation: {},
+  Mutation: {
+    toggleUserRole: async (_parent, { userId, role }) => {
+      const user = await User.findById(userId);
+      try {
+        switch (role) {
+          case "ADMIN":
+            user.isAdmin = !user.isAdmin;
+            break;
+          case "CUSTOMER":
+            user.isCustomer = !user.isCustomer;
+            break;
+          case "PROVIDER":
+            user.isProvider = !user.isProvider;
+            break;
+          default:
+            break;
+        }
+      } catch (error) {}
+    },
+  },
 };
 
 module.exports = resolvers;
