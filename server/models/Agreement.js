@@ -21,6 +21,8 @@ const agreementSchema = new Schema(
       type: Date,
       default: () => this.Customer.planEndDate,
     },
+    //line item
+    //
     createdAt: {
       type: Date,
       immutable: true, //this prevents changes to the date once created

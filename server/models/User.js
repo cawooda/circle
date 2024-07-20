@@ -26,6 +26,11 @@ const userSchema = new Schema(
         message: "email did not pass validation",
       },
     },
+    role: {
+      type: Array,
+    },
+    //role array[ admin,"provider","customer" ]
+    //
     isAdmin: Boolean,
     isProvider: Boolean,
     isCustomer: Boolean,
