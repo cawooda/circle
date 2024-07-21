@@ -1,48 +1,38 @@
 //import the Schema and model from mongoose.
 const { Schema, model } = require("mongoose");
 
-//definde the user model schema
 const providerSchema = new Schema(
-  //first come the paths, like properties
   {
-    user: {
-      type: Schema.Types.ObjectId,
-      ref: "user",
+    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    abn: { type: String, required: true },
+    address: { type: String, required: true },
+    providerName: { type: String, required: true },
+    termsAndConditions: {
+      Heading: String,
+      subHeading1: String,
+      paragragh1: String,
+      subHeading2: String,
+      paragragh2: String,
+      subHeading3: String,
+      paragragh3: String,
+      subHeading4: String,
+      paragragh4: String,
+      subHeading5: String,
+      paragragh5: String,
+      subHeading6: String,
+      paragragh6: String,
     },
-    name: String,
-    address: {
-      number: String,
-      street: String,
-      city: String,
-      postCode: String,
-      country: String,
-    },
-    abn: String,
-    mobile_number: {
-      type: String,
-      minLength: 10,
-      maxLength: 10,
-    },
-    createdAt: {
-      type: Date,
-      immutable: true, //this prevents changes to the date once created
-      default: () => Date.now(), //runs a function to get the current date when populating
-    },
-    updatedAt: {
-      type: Date,
-      default: () => Date.now(),
-    },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
   },
-  //then come the
   {
     toJSON: {
       virtuals: true,
     },
-    id: false,
+    toObject: { virtuals: true },
   }
 );
 
-//initialise User Model. creates a collection called user based on the defined user schema
-const Provider = model("provider", providerSchema);
+const Provider = model("Provider", providerSchema);
 
 module.exports = Provider;
