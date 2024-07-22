@@ -6,7 +6,7 @@ import { NavLink } from "react-router-dom";
 
 const sideBarGridItemProps = {
   as: "aside",
-  colSpan: { base: 4, md: 2, xl: 1 },
+  colSpan: { base: 2, md: 3 },
   bg: "yellow.400",
   minHeight: { md: "10vh", lg: "100vh" },
   minWidth: { base: "100vw", md: "10vh" },

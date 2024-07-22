@@ -12,8 +12,8 @@ export default function RootLayout() {
   return (
     // repeats the grid column 6 * 1 fraction
     <Grid templateColumns="repeat(12,1fr)" bg="gray.50">
-      <SideBar />
-      <GridItem {...mainGridItemProps}>
+      <SideBar {...mainGridItemProps} />
+      <GridItem>
         <Navbar />
         <Outlet />
       </GridItem>

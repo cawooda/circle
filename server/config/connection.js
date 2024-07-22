@@ -1,6 +1,6 @@
 require("dotenv").config();
 const { connect, connection } = require("mongoose");
 
-connect(process.env.MONGO_CONNECTION_STRING);
+connect("mongodb://127.0.0.1:27017/circle_db");
 
 module.exports = connection;
