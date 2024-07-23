@@ -1,22 +1,15 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { Grid, GridItem } from "@chakra-ui/react";
-import SideBar from "../components/SideBar";
-
-const mainGridItemProps = {
-  as: "main",
-  colSpan: { base: 12, md: 10, xl: 5 },
-};
+import { Container, Grid, GridItem, Spacer } from "@chakra-ui/react";
 
 export default function RootLayout() {
   return (
-    // repeats the grid column 6 * 1 fraction
-    <Grid templateColumns="repeat(12,1fr)" bg="gray.50">
-      <SideBar {...mainGridItemProps} />
-      <GridItem>
+    <>
+      <Container width="100%">
         <Navbar />
+        <Spacer />
         <Outlet />
-      </GridItem>
-    </Grid>
+      </Container>
+    </>
   );
 }

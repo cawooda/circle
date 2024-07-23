@@ -1,18 +1,15 @@
 const typeDefs = `
   type User {
     _id: ID!
+    token:String!
     first: String!
     last: String!
-    date_of_birth: String
     mobile: String
     email: String
-    createdAt: String
-    updatedAt: String
+    date_of_birth: String
     fullName: String
-    isAdmin: Boolean
-    isCustomer: Boolean
-    isProvider: Boolean
   }
+
 
 type Admin {
     _id: ID!
@@ -23,12 +20,14 @@ type Admin {
 
 type Query{
     getAllUsers:[User]
+    getUserByToken(token:String!):User
     getUserById(_id:ID!):User
     getUserRoles(_id:ID!):User
 }
 
 type Mutation {
-    createUser(first: String!, last: String!, date_of_birth: String, mobile: String, email: String!, password: String!): User
+    addUser(first: String!, last: String!, mobile: String, email: String!, password: String!): User
+    loginUser(mobile:String, email:String!, password:String!):User
     toggleUserRole(userId:ID!,role:String) : User!
     createAdmin(userId: ID!): Admin!
 }

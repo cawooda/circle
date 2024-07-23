@@ -1,3 +1,11 @@
+import { Outlet } from "react-router-dom";
+import ProviderSubMenu from "../components/ProviderSubMenu";
+
 export default function Provider() {
-  return <div>Provider</div>;
+  return (
+    <>
+      <ProviderSubMenu />
+      <Outlet />
+    </>
+  );
 }

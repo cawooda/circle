@@ -1,4 +1,5 @@
 require("dotenv").config();
+const secret = process.env.SECRET_KEY;
 const { User } = require("../models/");
 const { GraphQLError } = require("graphql");
 const jwt = require("jsonwebtoken");
@@ -13,29 +14,24 @@ module.exports = {
 
   //token based authentication scheme.
   authMiddleware: async function ({ req, res, next }) {
-    // allows token to be sent via  req.query or headers
+    if (req.body.operationName == "addUser") return res;
     let token = req.body.token || req.query.token || req.headers.authorization;
-
     if (req.headers.authorization) {
       token = token.split(" ").pop().trim();
     }
-
     if (!token) {
       //   res.end("not token");
     }
 
     // verify token and get user data out of it
     try {
-      const { authenticatedPerson } = await jwt.verify(
-        token,
-        process.env.SECRET_KEY,
-        {
-          maxAge: process.env.TOKEN_EXPIRES_IN,
-        }
-      );
+      const { authenticatedPerson } = await jwt.verify(token, secret, {
+        maxAge: process.env.TOKEN_EXPIRES_IN,
+      });
+
       registeredUser = await User.findById(authenticatedPerson._id);
-      if (!registeredUser) throw new error("no user found");
-      if (registeredUser._id == registeredUser._id)
+      if (!registeredUser) throw new Error("no user found");
+      if (registeredUser._id == authenticatedPerson._id)
         req.user = authenticatedPerson;
       return res;
     } catch (error) {

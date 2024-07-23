@@ -2,9 +2,7 @@ require("dotenv").config();
 const bcrypt = require("bcrypt");
 //import the Schema and model from mongoose.
 const { Schema, model } = require("mongoose");
-const Admin = require("../models/Admin");
-const { Provider } = require("../models/Provider");
-const { Customer } = require("../models/Customer");
+
 const validator = require("validator"); //this package provides a range of validator checks including email.
 const jwt = require("jsonwebtoken");
 const SALT_WORK_FACTOR = 10;
@@ -22,12 +20,14 @@ const userSchema = new Schema(
     },
     email: {
       type: String,
+      unique: true,
       toLowerCase: true,
       validate: {
         validator: validator.isEmail,
         message: "email did not pass validation",
       },
     },
+    token: String,
     roles: [
       { type: String, enum: ["Customer", "Provider", "Admin", "SuperAdmin"] },
     ],
@@ -61,7 +61,6 @@ userSchema
     const splitName = value.split(" ");
     const first = splitName[0];
     const last = splitName[1];
-    // I thinmk this next line sets the values for furst and last name in the document
     this.set({ first, last });
   });
 
@@ -81,6 +80,7 @@ userSchema.pre("save", async function (next) {
       const saltRounds = SALT_WORK_FACTOR;
       const salt = await bcrypt.genSalt(saltRounds);
       this.password = await bcrypt.hash(this.password, salt);
+      this.generateAuthToken();
     } catch (error) {
       console.error(error);
     }
@@ -88,23 +88,31 @@ userSchema.pre("save", async function (next) {
   }
 });
 
+userSchema.methods.isCorrectPassword = async function (password) {
+  if (await bcrypt.compare(password, this.password)) {
+    this.generateAuthToken();
+  }
+
+  return bcrypt.compare(password, this.password);
+};
+
 // Method to generate JWT token
 userSchema.methods.generateAuthToken = function () {
-  const user = this;
-  const token = jwt.sign(
-    { _id: user._id, roles: user.roles },
-    process.env.SECRET_KEY,
-    {
-      expiresIn: process.env.TOKEN_EXPIRES_IN,
-    }
-  );
+  //structure the object for signing
+  const authenticatedPerson = this.toObject();
+  const user = { authenticatedPerson };
+  //sign the token
+  const token = jwt.sign(user, process.env.SECRET_KEY, {
+    expiresIn: process.env.TOKEN_EXPIRES_IN,
+  });
+  this.token = token;
   return token;
 };
 
 // Sanitize inputs
 userSchema.pre("save", function (next) {
   const user = this;
-  user.username = validator.escape(user.username);
+
   if (user.email) {
     user.email = validator.normalizeEmail(user.email);
   }
