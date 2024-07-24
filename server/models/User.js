@@ -5,7 +5,8 @@ const { Schema, model } = require("mongoose");
 
 const validator = require("validator"); //this package provides a range of validator checks including email.
 const jwt = require("jsonwebtoken");
-const SALT_WORK_FACTOR = 10;
+const SALT_WORK_FACTOR = process.env.SALT_WORK_FACTOR;
+console.log(SALT_WORK_FACTOR);
 
 //defind the user model schema
 const userSchema = new Schema(
@@ -28,9 +29,22 @@ const userSchema = new Schema(
       },
     },
     token: String,
-    roles: [
-      { type: String, enum: ["Customer", "Provider", "Admin", "SuperAdmin"] },
-    ],
+    roleCustomer: {
+      type: Schema.Types.ObjectId,
+      ref: "customer",
+      default: null,
+    },
+    roleProvider: {
+      type: Schema.Types.ObjectId,
+      ref: "provider",
+      default: null,
+    },
+    roleAdmin: { type: Schema.Types.ObjectId, ref: "admin", default: null },
+
+    // roles: [
+    //   { type: String, enum: ["Customer", "Provider", "Admin", "SuperAdmin"] },
+    // ],
+    // roleModels: [{ type: Schema.Types.ObjectId }],
     password: { type: String, required: true },
     createdAt: {
       type: Date,
@@ -64,28 +78,22 @@ userSchema
     this.set({ first, last });
   });
 
-// Pre-save hook to check for invalid role combinations, which are currently Admin+Customer
-userSchema.pre("save", function (next) {
-  const user = this;
-  if (user.roles.includes("Customer") && user.roles.includes("Admin")) {
-    return next(new Error("A user cannot be both a Customer and an Admin."));
-  }
-  next();
-});
-
 //This is some middleware intercpeting before a password is saved
 userSchema.pre("save", async function (next) {
   if (this.isModified("password") || this.isNew) {
     try {
-      const saltRounds = SALT_WORK_FACTOR;
-      const salt = await bcrypt.genSalt(saltRounds);
+      // Generate salt and hash the password
+      const salt = await bcrypt.genSalt(10);
       this.password = await bcrypt.hash(this.password, salt);
-      this.generateAuthToken();
     } catch (error) {
-      console.error(error);
+      return next(error);
     }
-    next();
   }
+  // Generate token after the user is saved
+  if (this.isNew) {
+    this.token = this.generateAuthToken();
+  }
+  next();
 });
 
 userSchema.methods.isCorrectPassword = async function (password) {
@@ -98,10 +106,10 @@ userSchema.methods.isCorrectPassword = async function (password) {
 
 // Method to generate JWT token
 userSchema.methods.generateAuthToken = function () {
-  //structure the object for signing
-  const authenticatedPerson = this.toObject();
-  const user = { authenticatedPerson };
-  //sign the token
+  const user = {
+    authenticatedPerson: { _id: this._id, email: this.email },
+    token: this.token,
+  };
   const token = jwt.sign(user, process.env.SECRET_KEY, {
     expiresIn: process.env.TOKEN_EXPIRES_IN,
   });

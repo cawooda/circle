@@ -31,10 +31,21 @@ class AuthService {
     return localStorage.getItem("id_token");
   }
 
-  login(idToken) {
+  async loginOrCreateUser(userData) {
     // Saves user token to localStorage
-    localStorage.setItem("id_token", idToken);
-    window.location.assign("/");
+    const response = await fetch("/api/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    });
+    if (response.ok) {
+      const { user, userExists, userCreated } = await response.json();
+      console.log(user);
+      localStorage.setItem("id_token", user.token);
+      return { user, userExists, userCreated };
+    }
   }
 
   logout() {

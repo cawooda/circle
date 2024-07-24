@@ -1,0 +1,53 @@
+[{
+  "_id": {
+    "$oid": "66a083826e76d0e5ababe48f"
+  },
+  "first": "Alice",
+  "last": "Smith",
+  "mobile": "1234567890",
+  "email": "alice@example.com",
+  "password": "password123",
+  "roles": [
+    "Customer",
+    "Admin"
+  ]
+},
+{
+  "_id": {
+    "$oid": "66a083826e76d0e5ababe490"
+  },
+  "first": "Bob",
+  "last": "Brown",
+  "mobile": "0987654321",
+  "email": "bob@example.com",
+  "password": "password123",
+  "roles": [
+    "Provider"
+  ]
+},
+{
+  "_id": {
+    "$oid": "66a083826e76d0e5ababe491"
+  },
+  "first": "Charlie",
+  "last": "Johnson",
+  "mobile": "1122334455",
+  "email": "charlie@example.com",
+  "password": "password123",
+  "roles": [
+    "Customer"
+  ]
+},
+{
+  "_id": {
+    "$oid": "66a083826e76d0e5ababe492"
+  },
+  "first": "Diana",
+  "last": "Williams",
+  "mobile": "2233445566",
+  "email": "diana@example.com",
+  "password": "password123",
+  "roles": [
+    "SuperAdmin"
+  ]
+}]

@@ -4,20 +4,26 @@ const { User, Admin } = require("../../models");
 
 router.post("/users", async (req, res) => {
   const user = req.body;
+
   try {
     const userExists = await User.findOne({ email: req.body.email });
-    if (userExists.isCorrectPassword(req.body.password)) {
-      await userExists.generateAuthToken();
+
+    if (userExists) {
+      if (userExists.isCorrectPassword(req.body.password)) {
+        await userExists.generateAuthToken();
+        res
+          .status(200)
+          .json({ userExists: true, userCreated: false, user: userExists });
+        return userExists;
+      }
+    } else {
+      const userCreated = await User.create(user);
+      await userCreated.generateAuthToken();
+
       res
         .status(200)
-        .json({ userExists: true, userCreated: false, user: userExists });
-      return userExists;
+        .json({ userExists: true, userCreated: true, user: userExists });
     }
-    userCreated = await User.create(user);
-
-    res
-      .status(200)
-      .json({ userExists: true, userCreated: true, user: userExists });
   } catch (error) {
     console.log(error);
   }

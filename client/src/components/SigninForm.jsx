@@ -15,7 +15,6 @@ import {
 } from "@chakra-ui/react";
 
 import AuthService from "../utils/auth";
-import addUser from "../utils/API";
 
 import { ButtonStyles } from "./ButtonStyle";
 import { ButtonHighlightStyle } from "./ButtonHighlightStyle";
@@ -44,10 +43,7 @@ const SigninForm = ({ text }) => {
     const form = event.currentTarget;
 
     try {
-      const newUserAuth = await addUser(userFormData);
-      AuthService.login(newUserAuth.user.token);
-      console.log(newUserAuth.userExists);
-      console.log(newUserAuth.userCreated);
+      const newUserAuth = await AuthService.loginOrCreateUser(userFormData);
     } catch (error) {
       console.log(error);
     }

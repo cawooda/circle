@@ -6,27 +6,38 @@ const resolvers = {
   Query: {
     getAllUsers: async () => {
       try {
-        const user = await User.find().populate();
-        console.log(user);
-        return user;
+        const users = await User.find({}).populate();
+
+        return users;
       } catch (error) {
         console.log(error);
         return error;
       }
     },
     getUserById: async (_parent, { id }) => {
-      return await User.findById(id);
+      console.log(id);
+      const user = await User.findById(id).populate();
+      console.log(user);
+      return user;
     },
     getUserByToken: async (_parent, { token }) => {
-      const { authenticatedPerson } = await jwt.verify(
-        token,
-        process.env.SECRET_KEY,
-        {
-          maxAge: process.env.TOKEN_EXPIRES_IN,
-        }
-      );
-      return await User.findById(authenticatedPerson._id);
+      try {
+        const { authenticatedPerson } = jwt.verify(
+          token,
+          process.env.SECRET_KEY,
+          {
+            maxAge: process.env.TOKEN_EXPIRES_IN,
+          }
+        );
+
+        const user = await User.findById(authenticatedPerson._id).populate();
+
+        return user;
+      } catch (error) {
+        throw new Error("Invalid or expired token");
+      }
     },
+
     getUserRoles: async (_parent, { id }) => {
       const user = await User.findById(id);
     },
@@ -65,20 +76,9 @@ const resolvers = {
     },
     toggleUserRole: async (_parent, { userId, role }) => {
       const user = await User.findById(userId);
+
       try {
-        switch (role) {
-          case "ADMIN":
-            user.isAdmin = !user.isAdmin;
-            break;
-          case "CUSTOMER":
-            user.isCustomer = !user.isCustomer;
-            break;
-          case "PROVIDER":
-            user.isProvider = !user.isProvider;
-            break;
-          default:
-            break;
-        }
+        console.log(user);
       } catch (error) {}
     },
   },

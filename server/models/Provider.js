@@ -3,7 +3,7 @@ const { Schema, model } = require("mongoose");
 
 const providerSchema = new Schema(
   {
-    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    user: { type: Schema.Types.ObjectId, ref: "User" },
     abn: { type: String, required: true },
     address: { type: String, required: true },
     providerName: { type: String, required: true },
@@ -26,6 +26,6 @@ const providerSchema = new Schema(
   }
 );
 
-const Provider = model("Provider", providerSchema);
+const Provider = model("provider", providerSchema);
 
 module.exports = Provider;

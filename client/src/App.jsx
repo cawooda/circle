@@ -13,6 +13,8 @@ import ServiceAgreementsAdmin from "./pages/Admin/ServiceAgreementsAdmin";
 import InvoicesAdmin from "./pages/Admin/InvoicesAdmin";
 import ShiftsAdmin from "./pages/Admin/ShiftsAdmin";
 import ProviderServiceAgreements from "./pages/Provider/ProviderServiceAgreement";
+import ProviderShifts from "./pages/Provider/ProviderShifts";
+import { UserContext } from "./utils/UserContext";
 
 // Router configuration
 const router = createBrowserRouter([
@@ -50,6 +52,10 @@ const router = createBrowserRouter([
             path: "service-agreements",
             element: <ProviderServiceAgreements />,
           },
+          {
+            path: "service-agreements",
+            element: <ProviderShifts />,
+          },
         ],
       },
       { path: "support", element: <Support /> },
@@ -58,7 +64,13 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      {/* <UserContext> */}
+      <RouterProvider router={router} />
+      {/* </UserContext> */}
+    </>
+  );
 }
 
 export default App;

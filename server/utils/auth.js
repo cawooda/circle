@@ -14,13 +14,14 @@ module.exports = {
 
   //token based authentication scheme.
   authMiddleware: async function ({ req, res, next }) {
+    // console.log("req.body", req.body);
     if (req.body.operationName == "addUser") return res;
     let token = req.body.token || req.query.token || req.headers.authorization;
     if (req.headers.authorization) {
       token = token.split(" ").pop().trim();
     }
     if (!token) {
-      //   res.end("not token");
+      res.end("not token");
     }
 
     // verify token and get user data out of it
@@ -35,8 +36,9 @@ module.exports = {
         req.user = authenticatedPerson;
       return res;
     } catch (error) {
-      console.log("Error", error);
-      res.end(error);
+      console.error("Error", error);
+      throw error;
+      // res.end(error);
     }
   },
   signToken: function (payload) {

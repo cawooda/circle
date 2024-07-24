@@ -4,7 +4,7 @@ const { Schema, model } = require("mongoose");
 //definde the user model schema
 const customerSchema = new Schema(
   {
-    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    user: { type: Schema.Types.ObjectId, ref: "User" },
     ndisNumber: { type: String, required: true },
     address: { type: String, required: true },
     dateOfBirth: { type: Date, required: true },
@@ -20,6 +20,6 @@ const customerSchema = new Schema(
   }
 );
 
-const Customer = model("Customer", customerSchema);
+const Customer = model("customer", customerSchema);
 
 module.exports = Customer;

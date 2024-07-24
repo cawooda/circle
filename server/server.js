@@ -34,6 +34,10 @@ const startApolloServer = async () => {
       context: authMiddleware,
     })
   );
+
+  //if any user gets a token, they can query any grapghql query and any data. How can we set what users can query and what restrictions
+  // are in place based on token? role? etc.
+
   app.use("/api", apiRoutes);
 
   if (process.env.NODE_ENV === "production") {
