@@ -5,11 +5,10 @@
     "last": "Smith",
     "mobile": "1234567890",
     "email": "alice@example.com",
-    "password": "password123",
-    "roles": ["Provider", "Admin"],
     "roleCustomer": null,
     "roleProvider": "66a0d9f4a0eb8627cc6320f7",
-    "roleAdmin": "66a0d9f4a0eb8627cc6320fa"
+    "roleAdmin": "66a0d9f4a0eb8627cc6320fa",
+    "password": "$2b$10$lkw0oAwGFBXOgg9smarZTOyYuMh9uPo9Xx0/QEUoZSjri5nEXVn7a"
   },
   {
     "_id": "66a083826e76d0e5ababe490",
@@ -17,11 +16,10 @@
     "last": "Brown",
     "mobile": "0987654321",
     "email": "bob@example.com",
-    "password": "password123",
-    "roles": ["Provider"],
     "roleCustomer": null,
     "roleProvider": "66a0d9f4a0eb8627cc6320f7",
-    "roleAdmin": null
+    "roleAdmin": null,
+    "password": "$2b$10$h7x.laXNIDCJ.CORSk2Wxev./cA096/T77ZnE.maZf6voAbioaxS2"
   },
   {
     "_id": "66a083826e76d0e5ababe491",
@@ -29,11 +27,10 @@
     "last": "Johnson",
     "mobile": "1122334455",
     "email": "charlie@example.com",
-    "password": "password123",
-    "roles": ["Customer"],
     "roleCustomer": "66a0d9f4a0eb8627cc6320f4",
     "roleProvider": null,
-    "roleAdmin": null
+    "roleAdmin": null,
+    "password": "$2b$10$waiI48brvZfcMbl/7.UAF.7DnKIx1xptXaEMQl9taZ/7Kcwir4SMK"
   },
   {
     "_id": "66a083826e76d0e5ababe492",
@@ -41,11 +38,10 @@
     "last": "Williams",
     "mobile": "2233445566",
     "email": "diana@example.com",
-    "password": "password123",
-    "roles": ["SuperAdmin"],
     "roleCustomer": null,
     "roleProvider": null,
-    "roleAdmin": null
+    "roleAdmin": null,
+    "password": "$2b$10$idCRP0uWjUvmDqkefFeOX.JLzHmJE7Ta4D/tfiZs.USlaowkPDiki"
   },
   {
     "_id": "66a083826e76d0e5ababe493",
@@ -53,11 +49,10 @@
     "last": "Taylor",
     "mobile": "3344556677",
     "email": "eve@example.com",
-    "password": "password123",
-    "roles": ["Customer"],
     "roleCustomer": "66a0d9f4a0eb8627cc6320f4",
     "roleProvider": null,
-    "roleAdmin": null
+    "roleAdmin": null,
+    "password": "$2b$10$fQetbx8DJnQEO1lF3XW/vuQHcvKeKAKaihfkK0glPGSdn6HryJp.i"
   },
   {
     "_id": "66a083826e76d0e5ababe494",
@@ -65,10 +60,9 @@
     "last": "Wilson",
     "mobile": "4455667788",
     "email": "frank@example.com",
-    "password": "password123",
-    "roles": ["Customer"],
     "roleCustomer": "66a0d9f4a0eb8627cc6320f5",
     "roleProvider": null,
-    "roleAdmin": null
+    "roleAdmin": null,
+    "password": "$2b$10$99yNJO0iNNrBQQ0iitLdfeyP1FJEGJZHcPjgkM5mTlSPZWxGYhGUi"
   }
 ]

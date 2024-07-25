@@ -38,6 +38,37 @@ export const QUERY_USER_BY_ID = gql`
   }
 `;
 
+export const QUERY_CUSTOMERS = gql`
+  query Query {
+    getCustomers {
+      _id
+      ndisNumber
+      address
+      dateOfBirth
+      customerSpecificField
+      user {
+        _id
+        first
+        last
+        mobile
+        email
+        date_of_birth
+        fullName
+      }
+    }
+  }
+`;
+
+export const QUERY_PRODUCTS = gql`
+  query getProducts {
+    getProducts {
+      _id
+      name
+      price
+    }
+  }
+`;
+
 export const QUERY_USER_BY_TOKEN = gql`
   query Query($token: String!) {
     getUserByToken(token: $token) {

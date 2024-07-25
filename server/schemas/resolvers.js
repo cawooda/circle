@@ -1,4 +1,4 @@
-const { User, Admin } = require("../models");
+const { User, Admin, Customer, Product } = require("../models");
 const { roles } = require("../utils/roles");
 const jwt = require("jsonwebtoken");
 
@@ -7,7 +7,7 @@ const resolvers = {
     getAllUsers: async () => {
       try {
         const users = await User.find({}).populate();
-
+        console.log(users);
         return users;
       } catch (error) {
         console.log(error);
@@ -15,10 +15,28 @@ const resolvers = {
       }
     },
     getUserById: async (_parent, { id }) => {
-      console.log(id);
-      const user = await User.findById(id).populate();
-      console.log(user);
+      const user = await User.findById(id)
+        .populate("roleCustomer")
+        .populate("roleProvider")
+        .populate("roleAdmin");
       return user;
+    },
+    getCustomers: async (_parent, { id }) => {
+      try {
+        const customers = await Customer.find({}).populate("user");
+
+        return customers;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    getProducts: async () => {
+      try {
+        const productList = Product.find({});
+        return productList;
+      } catch (error) {
+        console.error(error);
+      }
     },
     getUserByToken: async (_parent, { token }) => {
       try {

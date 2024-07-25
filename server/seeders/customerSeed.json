@@ -4,20 +4,23 @@
     "ndisNumber": "NDIS987654",
     "address": "789 YetAnother St, City, Country",
     "dateOfBirth": "1992-02-20T00:00:00.000Z",
-    "customerSpecificField": "Specific Requirements"
+    "customerSpecificField": "Specific Requirements",
+    "user": "66a083826e76d0e5ababe491"
   },
   {
     "_id": "66a0d9f4a0eb8627cc6320f5",
     "ndisNumber": "NDIS567890",
     "address": "123 AnotherOne St, City, Country",
     "dateOfBirth": "1988-03-22T00:00:00.000Z",
-    "customerSpecificField": "Unique Needs"
+    "customerSpecificField": "Unique Needs",
+    "user": "66a083826e76d0e5ababe494"
   },
   {
     "_id": "66a0d9f4a0eb8627cc6430f5",
     "ndisNumber": "NDIS567890",
-    "address": "12 This CIty Street, City",
+    "address": "12 This City Street, City",
     "dateOfBirth": "1982-04-22T00:00:00.000Z",
-    "customerSpecificField": "Happy Days"
+    "customerSpecificField": "Happy Days",
+    "user": "66a083826e76d0e5ababe490"
   }
 ]

@@ -1,11 +1,12 @@
 // require the connection to the database
 const connection = require("../config/connection");
 
-// setup user, customer, and provider models
-const { User, Customer, Provider } = require("../models");
+// setup user, customer, provider, and product models
+const { User, Customer, Provider, Product } = require("../models");
 const userSeed = require("./userSeed.json");
 const customerSeed = require("./customerSeed.json");
 const providerSeed = require("./provderSeed.json");
+const productSeed = require("./productSeed.json"); // Include product seed
 
 // require bcrypt for password hashing
 const bcrypt = require("bcrypt");
@@ -55,9 +56,20 @@ connection.once("open", async () => {
     // Insert provider data into the database
     const providers = await Provider.insertMany(providerSeed);
 
+    // Check if the products collection exists
+    let productCheck = await connection.db
+      .listCollections({ name: "products" })
+      .toArray();
+    if (productCheck.length) {
+      await connection.dropCollection("products");
+    }
+    // Insert product data into the database
+    const products = await Product.insertMany(productSeed);
+
     console.table(users);
     console.table(customers);
     console.table(providers);
+    console.table(products);
   } catch (error) {
     console.error("Error seeding the database", error);
   } finally {

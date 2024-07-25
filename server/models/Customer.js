@@ -4,7 +4,7 @@ const { Schema, model } = require("mongoose");
 //definde the user model schema
 const customerSchema = new Schema(
   {
-    user: { type: Schema.Types.ObjectId, ref: "User" },
+    user: { type: Schema.Types.ObjectId, ref: "user" },
     ndisNumber: { type: String, required: true },
     address: { type: String, required: true },
     dateOfBirth: { type: Date, required: true },

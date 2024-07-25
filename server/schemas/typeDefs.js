@@ -27,6 +27,12 @@ type Admin {
     updatedAt: String
 }
 
+type Product {
+_id: ID!
+name: String!
+price: Float!
+}
+
 type Provider {
     _id: ID!
     user: User!
@@ -40,7 +46,7 @@ type Provider {
 
 type Customer {
     _id: ID!
-    user: ID!
+    user: User
     ndisNumber: String
     address: String
     dateOfBirth: String
@@ -59,6 +65,8 @@ type Query {
     getUserByToken(token: String!): User
     getUserById(id: ID!): User
     getUserRoles(id: ID!): [String]
+    getCustomers: [Customer]
+    getProducts: [Product]
 }
 
 type Mutation {

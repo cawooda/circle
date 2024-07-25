@@ -1,30 +1,6 @@
 [{
   "_id": {
-    "$oid": "66a0d9f4a0eb8627cc6320f3"
-  },
-  "user": {
-    "$oid": "66a083826e76d0e5ababe491"
-  },
-  "ndisNumber": "NDIS654321",
-  "address": "456 Another St, City, Country",
-  "dateOfBirth": {
-    "$date": "1985-05-15T00:00:00.000Z"
-  },
-  "customerSpecificField": "Different Needs",
-  "createdAt": {
-    "$date": "2024-07-24T10:39:48.621Z"
-  },
-  "updatedAt": {
-    "$date": "2024-07-24T10:39:48.621Z"
-  },
-  "__v": 0
-},
-{
-  "_id": {
     "$oid": "66a0d9f4a0eb8627cc6320f4"
-  },
-  "user": {
-    "$oid": "66a083826e76d0e5ababe493"
   },
   "ndisNumber": "NDIS987654",
   "address": "789 YetAnother St, City, Country",
@@ -33,19 +9,16 @@
   },
   "customerSpecificField": "Specific Requirements",
   "createdAt": {
-    "$date": "2024-07-24T10:39:48.621Z"
+    "$date": "2024-07-24T14:53:19.305Z"
   },
   "updatedAt": {
-    "$date": "2024-07-24T10:39:48.621Z"
+    "$date": "2024-07-24T14:53:19.305Z"
   },
   "__v": 0
 },
 {
   "_id": {
     "$oid": "66a0d9f4a0eb8627cc6320f5"
-  },
-  "user": {
-    "$oid": "66a083826e76d0e5ababe494"
   },
   "ndisNumber": "NDIS567890",
   "address": "123 AnotherOne St, City, Country",
@@ -54,10 +27,28 @@
   },
   "customerSpecificField": "Unique Needs",
   "createdAt": {
-    "$date": "2024-07-24T10:39:48.621Z"
+    "$date": "2024-07-24T14:53:19.305Z"
   },
   "updatedAt": {
-    "$date": "2024-07-24T10:39:48.621Z"
+    "$date": "2024-07-24T14:53:19.305Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66a0d9f4a0eb8627cc6430f5"
+  },
+  "ndisNumber": "NDIS567890",
+  "address": "12 This CIty Street, City",
+  "dateOfBirth": {
+    "$date": "1982-04-22T00:00:00.000Z"
+  },
+  "customerSpecificField": "Happy Days",
+  "createdAt": {
+    "$date": "2024-07-24T14:53:19.306Z"
+  },
+  "updatedAt": {
+    "$date": "2024-07-24T14:53:19.306Z"
   },
   "__v": 0
 }]

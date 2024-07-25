@@ -13,40 +13,29 @@ import { NavLink } from "react-router-dom";
 import SigninForm from "./SigninForm";
 import AuthService from "../utils/auth";
 
-const logoStyle = { paddingBottom: "15px" };
-
 export default function NavBar() {
   return (
     <>
-      <Container>
+      <Flex gap={3} flexDirection={{ base: "column", md: "column" }}>
         <Box>
-          <Heading {...logoStyle}>Ci</Heading>
+          <NavLink to="/admin">
+            <Container {...ButtonStyles}>Admin</Container>
+          </NavLink>
         </Box>
-        {/* <Flex wrap={{ base: "wrap", sm: "no-wrap" }}> */}
         <Box>
-          <Flex flexDirection={{ base: "column", md: "row" }}>
-            <Box>
-              <NavLink to="/admin">
-                <Container {...ButtonStyles}>Admin</Container>
-              </NavLink>
-            </Box>
-            <Box>
-              <NavLink to="/provider">
-                <Container {...ButtonStyles}>Provider</Container>
-              </NavLink>
-            </Box>
-            <Box>
-              <NavLink to="/support">
-                <Container {...ButtonStyles}>Support</Container>
-              </NavLink>
-            </Box>
-            <Box>
-              <SigninForm text={!AuthService.loggedIn() ? "Login" : "Logout"} />
-            </Box>
-            {/* </Flex> */}
-          </Flex>
+          <NavLink to="/provider">
+            <Container {...ButtonStyles}>Provider</Container>
+          </NavLink>
         </Box>
-      </Container>
+        <Box>
+          <NavLink to="/support">
+            <Container {...ButtonStyles}>Support</Container>
+          </NavLink>
+        </Box>
+        <Box display="flex" justifyContent="center" alignItems="center">
+          <SigninForm text={!AuthService.loggedIn() ? "Login" : "Logout"} />
+        </Box>
+      </Flex>
     </>
   );
 }
