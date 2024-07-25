@@ -13,23 +13,18 @@ const serviceAgreementSchema = new Schema(
       ref: "Customer",
       required: false,
     },
-    otherProvider: {
-      type: Schema.Types.ObjectId,
-      ref: "Provider",
-      required: false,
-    },
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
-    signature: { type: String, required: true }, // Store the path to the image file
+    signature: { type: String, default: null }, // Store the path to the image file
     products: [
       //as an array, this contains multiple instances of the product schema.
       {
         product: {
           type: Schema.Types.ObjectId,
-          ref: "Product", //linking to the Product object
+          ref: "product", //linking to the Product object
           required: true,
         },
-        quantity: { type: Number, required: true },
+        quantity: { type: Number, required: true, default: 0 },
       },
     ],
     totalPrice: { type: Number, required: true, default: 0 },
@@ -50,11 +45,11 @@ serviceAgreementSchema.pre("save", async function (next) {
   const serviceAgreement = this;
 
   // Populate product details
-  await serviceAgreement.populate("products.product").execPopulate();
+  await serviceAgreement.populate("products.product");
 
   serviceAgreement.totalPrice = serviceAgreement.products.reduce(
-    (total, item) => {
-      return total + item.quantity * item.product.price;
+    (total, product) => {
+      return total + product.quantity * product.price;
     },
     0
   );

@@ -4,7 +4,15 @@ const User = require("../models/User");
 const Customer = require("../models/Customer");
 const Provider = require("../models/Provider");
 const Plan = require("../models/Plan");
-const Agreement = require("./ServiceAgreement");
+const ServiceAgreement = require("./ServiceAgreement");
 const Product = require("../models/Product");
 
-module.exports = { User, Customer, Admin, Provider, Plan, Agreement, Product };
+module.exports = {
+  User,
+  Customer,
+  Admin,
+  Provider,
+  Plan,
+  ServiceAgreement,
+  Product,
+};

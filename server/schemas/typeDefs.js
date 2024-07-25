@@ -27,11 +27,7 @@ type Admin {
     updatedAt: String
 }
 
-type Product {
-_id: ID!
-name: String!
-price: Float!
-}
+
 
 type Provider {
     _id: ID!
@@ -42,6 +38,31 @@ type Provider {
     termsAndConditions: [TermsAndConditions]
     createdAt: String
     updatedAt: String
+}
+
+type ServiceAgreement {
+  id: ID!
+  provider: ID!
+  customer: ID
+  startDate: String!
+  endDate: String!
+  products: [Product]!
+  totalPrice: Float!
+  approvedByCustomer: Boolean!
+  createdAt: String!
+  updatedAt: String!
+}
+  
+
+type Product {
+  _id: ID
+  name: String
+  price: Float!
+}
+
+input ProductInput {
+  product: ID!
+  quantity: Int!
 }
 
 type Customer {
@@ -67,6 +88,9 @@ type Query {
     getUserRoles(id: ID!): [String]
     getCustomers: [Customer]
     getProducts: [Product]
+    getServiceAgreements: [ServiceAgreement!]
+    getServiceAgreement(id: ID!): ServiceAgreement
+
 }
 
 type Mutation {
@@ -75,6 +99,14 @@ type Mutation {
     toggleUserRole(userId: ID!, role: RoleType!): User!
     createAdmin(userId: ID!): Admin!
     createProvider(userId: ID!, abn: String!, address: String!, providerName: String!): Provider!
+    addServiceAgreement(
+    provider: ID!,
+    customer: ID!,
+    startDate: String!,
+    endDate: String!,
+    signature: String,
+    products: [ProductInput!]!,
+  ): ServiceAgreement
 }
 
 `;

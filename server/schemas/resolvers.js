@@ -1,4 +1,10 @@
-const { User, Admin, Customer, Product } = require("../models");
+const {
+  User,
+  Admin,
+  Customer,
+  Product,
+  ServiceAgreement,
+} = require("../models");
 const { roles } = require("../utils/roles");
 const jwt = require("jsonwebtoken");
 
@@ -91,6 +97,16 @@ const resolvers = {
       } catch (error) {
         console.log(error);
       }
+    },
+    addServiceAgreement: async (_parent, serviceAgreement) => {
+      console.log(
+        "server mutation reieved for service agreement:",
+        serviceAgreement
+      );
+      const newServiceAgreement = await ServiceAgreement.create(
+        serviceAgreement
+      );
+      console.log(await newServiceAgreement.populate("products.product"));
     },
     toggleUserRole: async (_parent, { userId, role }) => {
       const user = await User.findById(userId);
