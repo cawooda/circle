@@ -39,9 +39,6 @@ const SigninForm = ({ text }) => {
   const handleFormSubmit = async (event) => {
     event.preventDefault();
 
-    // check if form has everything (as per react-bootstrap docs)
-    const form = event.currentTarget;
-
     try {
       const newUserAuth = await AuthService.loginOrCreateUser(userFormData);
     } catch (error) {

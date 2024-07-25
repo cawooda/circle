@@ -14,7 +14,7 @@ import InvoicesAdmin from "./pages/Admin/InvoicesAdmin";
 import ShiftsAdmin from "./pages/Admin/ShiftsAdmin";
 import ProviderServiceAgreements from "./pages/Provider/ProviderServiceAgreement";
 import ProviderShifts from "./pages/Provider/ProviderShifts";
-import { UserContext } from "./utils/UserContext";
+
 
 // Router configuration
 const router = createBrowserRouter([
@@ -66,9 +66,9 @@ const router = createBrowserRouter([
 function App() {
   return (
     <>
-      {/* <UserContext> */}
-      <RouterProvider router={router} />
-      {/* </UserContext> */}
+      
+        <RouterProvider router={router} />
+      
     </>
   );
 }

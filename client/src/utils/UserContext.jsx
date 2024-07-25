@@ -1,34 +1,31 @@
-import { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
+import { useQuery } from "@apollo/client";
 import { QUERY_USER_BY_ID } from "../utils/queries";
 import AuthService from "../utils/auth";
 
-//create our user Context using createContext
+// Create user context
 export const UserContext = createContext();
 
-// Create a custom hook that allows easy access to our ThemeContext values
-export const useUser = () => useContext(UserContext);
+// Create a custom hook
+export const useCurrentUser = () => useContext(UserContext);
 
-export default function UserProvider({ children }) {
-  //creating our state
-  const [currentUser, setCurrentUser] = useState({
-    _id: null,
-    first: null,
-    last: null,
-    mobile: null,
-    email: null,
+
+export const UserProvider = ({ children }) => {
+  const [currentUser, setCurrentUser] = useState(null);
+
+  const { loading, data } = useQuery(QUERY_USER_BY_ID, {
+    variables: { id: AuthService.getProfile()._id },
   });
 
-  const getUser = () => {
-    const { loading, data } = useQuery(QUERY_USER_BY_ID, {
-      variables: { id: AuthService.getProfile()._id },
-    });
-    const user = data?.user || [];
-    return setCurrentUser(user);
-  };
+  useEffect(() => {
+    if (data) {
+      setCurrentUser(data.user);
+    }
+  }, [data]);
 
   return (
-    <UserContext.Provider value={{ currentUser }}>
+    <UserContext.Provider value={{ currentUser, setCurrentUser }}>
       {children}
     </UserContext.Provider>
   );
-}
+};

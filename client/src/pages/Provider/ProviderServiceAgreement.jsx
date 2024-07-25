@@ -1,24 +1,29 @@
+import dayjs from "dayjs";
 import {
   FormControl,
   FormLabel,
   Input,
   AlertIcon,
   AlertTitle,
-  FormHelperText,
   Heading,
   Container,
   Spacer,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+  Select,
   Alert,
   Button,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
-import Select from "react-select";
+//import Select from "react-select";
 import { useQuery } from "@apollo/client";
 
 //currently use state is seving the user. The following line relates to context which is not working
 
-// import { useUser } from "../../utils/UserContext";
-// const { currentUser } = useUser();
+// import { useCurrentUser } from "../../utils/UserContext";
 
 import {
   QUERY_USER_BY_ID,
@@ -34,29 +39,42 @@ const InputStyling = {
   borderWidth: "2px",
 };
 
-//the following relates to context which is not working
-
-// const getUser = () => {
-//   const { loading, data } = useQuery(QUERY_USER_BY_ID, {
-//     variables: { id: AuthService.getProfile()._id },
-//   });
-//   const user = data?.user || [];
-//   return setCurrentUser(user);
-// };
-
-// const { currentUser } = useUser();
-
 export default function ProviderServiceAgreement() {
+  // const { currentUser } = useCurrentUser();
+  console.log(currentUser);
   //setup use State for customers
+  const [agreementFormData, setAgreementFormData] = useState({
+    endDate: dayjs().format("YYYY-MM-DD"),
+  });
   const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);
+  //const [currentUser, setCurrentUser] = useState({});
+
+  const handleInputChange = (event) => {
+    if (event.target.name) {
+      const { name, value } = event.target;
+      setAgreementFormData({ ...agreementFormData, [name]: value }); //handle the change of for an input with useState
+      console.log(event.target);
+      console.log(agreementFormData);
+    } else {
+    }
+  };
+
+  function handleFormSubmit(event) {
+    event.preventDefault();
+    console.log(agreementFormData);
+    try {
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   //set query for customers
   const {
     loading: customerQueryLoading,
     error: customerQueryError,
     data: customerQueryData,
   } = useQuery(QUERY_CUSTOMERS);
-  const [currentUser, setCurrentUser] = useState({});
 
   //set query for user information
   const {
@@ -73,13 +91,23 @@ export default function ProviderServiceAgreement() {
     data: productQueryData,
   } = useQuery(QUERY_PRODUCTS);
 
+  useEffect(() => {
+    setAgreementFormData({
+      provider: !userQueryLoading
+        ? userQueryData.getUserById.roleProvider._id
+        : "",
+    });
+  }, [userQueryLoading, userQueryData]);
+
   //use effects for queries
   useEffect(() => {
     if (!productQueryLoading && productQueryData) {
+      console.log(productQueryData);
       const productList = productQueryData.getProducts.map((item) => ({
         value: item._id,
         label: item.name,
       }));
+      console.log(productList);
       setProducts(productList);
     }
   }, [productQueryLoading, productQueryData]);
@@ -93,9 +121,10 @@ export default function ProviderServiceAgreement() {
   useEffect(() => {
     if (!customerQueryLoading && customerQueryData) {
       const customerList = customerQueryData.getCustomers.map((item) => ({
-        value: item._id,
+        value: item.user._id,
         label: item.user.first,
       }));
+
       setCustomers(customerList);
     }
   }, [customerQueryLoading, customerQueryData]);
@@ -123,36 +152,85 @@ export default function ProviderServiceAgreement() {
     );
   return (
     <Container>
+      <Heading>{currentUser.email}</Heading>
       <Heading>Service Agreement</Heading>
       <Spacer />
       {/* the following are hidden but used for submission */}
       <FormControl hidden={true}>
-        {/* the following are hidden but used for submission */}
         <Input
+          name="provider"
           {...InputStyling}
           defaultValue={
             !userQueryLoading ? userQueryData.getUserById.roleProvider._id : ""
           }
+          onChange={handleInputChange}
+        />
+      </FormControl>
+      {/* end invisible inputs */}
+      <FormControl>
+        <FormLabel>End Date</FormLabel>
+        <Input
+          {...InputStyling}
+          name="endDate"
+          type="date"
+          value={agreementFormData.endDate || ""}
+          onChange={handleInputChange}
         />
       </FormControl>
       <FormControl>
-        <FormLabel>End Date</FormLabel>
-        <Input {...InputStyling} type="date" />
-      </FormControl>
-      <FormControl>
         <FormLabel>Customer</FormLabel>
-        <Select {...InputStyling} options={customers} />
-        <FormHelperText>Select Customer from List</FormHelperText>
+        <Select
+          name="customer"
+          onChange={handleInputChange}
+          value={agreementFormData.customer}
+        >
+          {customers.map((customer) => {
+            return (
+              <option key={customer.value} value={customer.value}>
+                {customer.label}
+              </option>
+            );
+          })}
+        </Select>
       </FormControl>
       <Spacer />
       <Container></Container>
       <FormControl>
         <FormLabel>Product</FormLabel>
-        <Select {...InputStyling} options={products} />
-        <FormHelperText>Select Customer from List</FormHelperText>
+        <Select
+          {...InputStyling}
+          name="product"
+          onChange={handleInputChange}
+          value={agreementFormData.product}
+        >
+          {products.map((customer) => {
+            return (
+              <option key={customer.value} value={customer.value}>
+                {customer.label}
+              </option>
+            );
+          })}
+        </Select>
+      </FormControl>
+      <FormControl>
+        <FormLabel>Quantity</FormLabel>
+        <NumberInput>
+          <NumberInputField
+            {...InputStyling}
+            name="quantity"
+            onInput={handleInputChange}
+            value={agreementFormData.quantity}
+          />
+          <NumberInputStepper>
+            <NumberIncrementStepper />
+            <NumberDecrementStepper />
+          </NumberInputStepper>
+        </NumberInput>
       </FormControl>
       <Container paddingTop={5}>
-        <Button {...ButtonStyles}>Submit</Button>
+        <Button {...ButtonStyles} onClick={handleFormSubmit}>
+          Submit
+        </Button>
       </Container>
     </Container>
   );
