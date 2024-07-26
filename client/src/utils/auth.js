@@ -5,7 +5,10 @@ import { jwtDecode } from "jwt-decode";
 class AuthService {
   // get user data
   getProfile() {
-    return jwtDecode(this.getToken());
+    try {
+      const profile = jwtDecode(this.getToken());
+      return profile;
+    } catch (error) {}
   }
 
   // check if user's logged in

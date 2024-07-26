@@ -14,7 +14,7 @@ import InvoicesAdmin from "./pages/Admin/InvoicesAdmin";
 import ShiftsAdmin from "./pages/Admin/ShiftsAdmin";
 import ProviderServiceAgreements from "./pages/Provider/ProviderServiceAgreement";
 import ProviderShifts from "./pages/Provider/ProviderShifts";
-
+import SupportServiceAgreement from "./pages/Support/SupportServiceAgreement";
 
 // Router configuration
 const router = createBrowserRouter([
@@ -58,7 +58,16 @@ const router = createBrowserRouter([
           },
         ],
       },
-      { path: "support", element: <Support /> },
+      {
+        path: "support",
+        element: <Support />,
+        children: [
+          {
+            path: ":agreementNumber",
+            element: <SupportServiceAgreement />,
+          },
+        ],
+      },
     ],
   },
 ]);
@@ -66,9 +75,7 @@ const router = createBrowserRouter([
 function App() {
   return (
     <>
-      
-        <RouterProvider router={router} />
-      
+      <RouterProvider router={router} />
     </>
   );
 }

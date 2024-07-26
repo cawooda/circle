@@ -20,18 +20,32 @@ export const ADD_USER = gql`
   }
 `;
 
-export const ADD_COMMENT = gql`
-  mutation addComment($thoughtId: ID!, $commentText: String!) {
-    addComment(thoughtId: $thoughtId, commentText: $commentText) {
-      _id
-      thoughtText
-      thoughtAuthor
+export const ADD_SERVICE_AGREEMENT = gql`
+  mutation AddServiceAgreement(
+    $provider: String!
+    $customer: String!
+    $endDate: String!
+    $product: String!
+    $quantity: Int!
+  ) {
+    addServiceAgreement(
+      provider: $provider
+      customer: $customer
+      endDate: $endDate
+      product: $product
+      quantity: $quantity
+    ) {
+      id
+      provider
+      customer
+      startDate
+      product
+      quantity
+      endDate
+      totalPrice
+      approvedByCustomer
       createdAt
-      comments {
-        _id
-        commentText
-        createdAt
-      }
+      updatedAt
     }
   }
 `;

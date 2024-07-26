@@ -1,8 +1,15 @@
 //import the Schema and model from mongoose.
 const { Schema, model, SchemaType } = require("mongoose");
-
+const Product = require("./Product");
 const serviceAgreementSchema = new Schema(
   {
+    agreementNumber: {
+      type: String,
+      required: true,
+      default: () => {
+        return Math.floor(Math.random() * 90) + 10;
+      },
+    },
     provider: {
       type: Schema.Types.ObjectId,
       ref: "Provider",
@@ -13,20 +20,15 @@ const serviceAgreementSchema = new Schema(
       ref: "Customer",
       required: false,
     },
-    startDate: { type: Date, required: true },
-    endDate: { type: Date, required: true },
+    startDate: { type: Date },
+    endDate: { type: Date },
     signature: { type: String, default: null }, // Store the path to the image file
-    products: [
-      //as an array, this contains multiple instances of the product schema.
-      {
-        product: {
-          type: Schema.Types.ObjectId,
-          ref: "product", //linking to the Product object
-          required: true,
-        },
-        quantity: { type: Number, required: true, default: 0 },
-      },
-    ],
+    product: {
+      type: Schema.Types.ObjectId,
+      ref: "product", //linking to the Product object
+      required: true,
+    },
+    quantity: { type: Number, required: true, default: 0 },
     totalPrice: { type: Number, required: true, default: 0 },
     approvedByCustomer: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },
@@ -45,14 +47,6 @@ serviceAgreementSchema.pre("save", async function (next) {
   const serviceAgreement = this;
 
   // Populate product details
-  await serviceAgreement.populate("products.product");
-
-  serviceAgreement.totalPrice = serviceAgreement.products.reduce(
-    (total, product) => {
-      return total + product.quantity * product.price;
-    },
-    0
-  );
 
   next();
 });

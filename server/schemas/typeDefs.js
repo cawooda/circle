@@ -40,24 +40,35 @@ type Provider {
     updatedAt: String
 }
 
-type ServiceAgreement {
-  id: ID!
-  provider: ID!
-  customer: ID
-  startDate: String!
-  endDate: String!
-  products: [Product]!
-  totalPrice: Float!
-  approvedByCustomer: Boolean!
-  createdAt: String!
-  updatedAt: String!
-}
+ type ServiceAgreement {
+    id: ID
+    provider: ID
+    customer: ID
+    agreementNumber:Int
+    startDate: String
+    product: ID
+    quantity: Int
+    endDate: String
+    totalPrice:Float
+    approvedByCustomer:Boolean
+    createdAt:String
+    updatedAt:String
+  }
   
+
+ input ServiceAgreementInput {
+    provider: ID!
+    customer: ID!
+    product: ID!
+    quantity: Int!
+    endDate: String
+    # Add any other fields here
+  }
 
 type Product {
   _id: ID
   name: String
-  price: Float!
+  price: Float
 }
 
 input ProductInput {
@@ -89,9 +100,9 @@ type Query {
     getCustomers: [Customer]
     getProducts: [Product]
     getServiceAgreements: [ServiceAgreement!]
-    getServiceAgreement(id: ID!): ServiceAgreement
-
+    getServiceAgreement(agreementNumber: String!): ServiceAgreement
 }
+
 
 type Mutation {
     addUser(first: String!, last: String!, mobile: String, email: String!, password: String!): User
@@ -99,14 +110,7 @@ type Mutation {
     toggleUserRole(userId: ID!, role: RoleType!): User!
     createAdmin(userId: ID!): Admin!
     createProvider(userId: ID!, abn: String!, address: String!, providerName: String!): Provider!
-    addServiceAgreement(
-    provider: ID!,
-    customer: ID!,
-    startDate: String!,
-    endDate: String!,
-    signature: String,
-    products: [ProductInput!]!,
-  ): ServiceAgreement
+    addServiceAgreement(provider:String!,customer:String!,endDate:String!,product:String!,quantity:Int!): ServiceAgreement
 }
 
 `;

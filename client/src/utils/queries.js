@@ -69,6 +69,25 @@ export const QUERY_PRODUCTS = gql`
   }
 `;
 
+export const QUERY_SERVICE_AGREEMENT = gql`
+  query Query($agreementNumber: String!) {
+    getServiceAgreement(agreementNumber: $agreementNumber) {
+      id
+      provider
+      customer
+      agreementNumber
+      startDate
+      product
+      quantity
+      endDate
+      totalPrice
+      approvedByCustomer
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
 export const QUERY_USER_BY_TOKEN = gql`
   query Query($token: String!) {
     getUserByToken(token: $token) {

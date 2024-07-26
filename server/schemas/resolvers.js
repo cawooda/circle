@@ -44,6 +44,17 @@ const resolvers = {
         console.error(error);
       }
     },
+    getServiceAgreement: async (agreementNumber) => {
+      try {
+        const serviceAgreement = await ServiceAgreement.findOne({
+          agreementNumber: "23",
+        });
+        console.log(serviceAgreement);
+        return serviceAgreement;
+      } catch (error) {
+        console.error(error);
+      }
+    },
     getUserByToken: async (_parent, { token }) => {
       try {
         const { authenticatedPerson } = jwt.verify(
@@ -98,15 +109,24 @@ const resolvers = {
         console.log(error);
       }
     },
-    addServiceAgreement: async (_parent, serviceAgreement) => {
-      console.log(
-        "server mutation reieved for service agreement:",
-        serviceAgreement
-      );
-      const newServiceAgreement = await ServiceAgreement.create(
-        serviceAgreement
-      );
-      console.log(await newServiceAgreement.populate("products.product"));
+    addServiceAgreement: async (
+      _parent,
+      { provider, customer, startDate, quantity, product, endDate }
+    ) => {
+      try {
+        const newServiceAgreement = await ServiceAgreement.create({
+          provider: provider || null,
+          customer: customer || null,
+          startDate: new Date() || null,
+          product: product || null,
+          quantity: quantity || null,
+          endDate: endDate || null,
+        });
+
+        return newServiceAgreement;
+      } catch (error) {
+        console.error(error);
+      }
     },
     toggleUserRole: async (_parent, { userId, role }) => {
       const user = await User.findById(userId);

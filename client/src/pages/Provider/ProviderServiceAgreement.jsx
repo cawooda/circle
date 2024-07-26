@@ -19,7 +19,7 @@ import {
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 //import Select from "react-select";
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 
 //currently use state is seving the user. The following line relates to context which is not working
 
@@ -30,6 +30,7 @@ import {
   QUERY_CUSTOMERS,
   QUERY_PRODUCTS,
 } from "../../utils/queries";
+import { ADD_SERVICE_AGREEMENT } from "../../utils/mutations";
 import AuthService from "../../utils/auth";
 import { ButtonStyles } from "../../components/ButtonStyle";
 
@@ -40,29 +41,38 @@ const InputStyling = {
 };
 
 export default function ProviderServiceAgreement() {
-  // const { currentUser } = useCurrentUser();
-  console.log(currentUser);
+  //const { currentUser } = useCurrentUser();
+
   //setup use State for customers
   const [agreementFormData, setAgreementFormData] = useState({
     endDate: dayjs().format("YYYY-MM-DD"),
   });
   const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);
-  //const [currentUser, setCurrentUser] = useState({});
+  const [currentUser, setCurrentUser] = useState({});
 
   const handleInputChange = (event) => {
+    console.log("agreementFormData", agreementFormData);
     if (event.target.name) {
       const { name, value } = event.target;
-      setAgreementFormData({ ...agreementFormData, [name]: value }); //handle the change of for an input with useState
-      console.log(event.target);
-      console.log(agreementFormData);
+      setAgreementFormData((prevState) => ({ ...prevState, [name]: value })); //handle the change of for an input with useState
     } else {
     }
+    console.log("agreementFormData", agreementFormData);
   };
 
   function handleFormSubmit(event) {
     event.preventDefault();
-    console.log(agreementFormData);
+    console.log("agreementFormData", agreementFormData);
+    addServiceAgreement({
+      variables: {
+        provider: agreementFormData.provider,
+        customer: agreementFormData.customer,
+        endDate: agreementFormData.endDate,
+        product: agreementFormData.product,
+        quantity: parseInt(agreementFormData.quantity),
+      },
+    });
     try {
     } catch (error) {
       console.log(error);
@@ -91,10 +101,26 @@ export default function ProviderServiceAgreement() {
     data: productQueryData,
   } = useQuery(QUERY_PRODUCTS);
 
+  const [
+    addServiceAgreement,
+    {
+      loading: AddServiceAgreementLoading,
+      data: AddServiceAgreementData,
+      error: AddServiceAgreementError,
+    },
+  ] = useMutation(ADD_SERVICE_AGREEMENT, {
+    onError: (err) => {
+      console.error("GraphQL Error:", err.graphQLErrors);
+      console.error("Network Error:", err.networkError);
+      console.error("Message:", err.message);
+    },
+  });
+
+  //use effects
   useEffect(() => {
     setAgreementFormData({
       provider: !userQueryLoading
-        ? userQueryData.getUserById.roleProvider._id
+        ? userQueryData.getUserById.roleProvider?._id
         : "",
     });
   }, [userQueryLoading, userQueryData]);
@@ -113,7 +139,7 @@ export default function ProviderServiceAgreement() {
   }, [productQueryLoading, productQueryData]);
 
   useEffect(() => {
-    if (!userQueryLoading && userQueryData) {
+    if (!userQueryLoading && userQueryData.roleProvider) {
       setCurrentUser(userQueryData.getUserById);
     }
   }, [userQueryLoading, userQueryData]);
@@ -150,9 +176,21 @@ export default function ProviderServiceAgreement() {
         </Alert>
       </Container>
     );
+  if (!userQueryData.getUserById.roleProvider)
+    return (
+      <Container paddingTop={10}>
+        <Alert status="error">
+          {console.log(userQueryData)}
+          <AlertIcon />
+          <AlertTitle>
+            Your current role is not provider. You will need to gain provider
+            access.
+          </AlertTitle>
+        </Alert>
+      </Container>
+    );
   return (
     <Container>
-      <Heading>{currentUser.email}</Heading>
       <Heading>Service Agreement</Heading>
       <Spacer />
       {/* the following are hidden but used for submission */}
@@ -161,7 +199,7 @@ export default function ProviderServiceAgreement() {
           name="provider"
           {...InputStyling}
           defaultValue={
-            !userQueryLoading ? userQueryData.getUserById.roleProvider._id : ""
+            !userQueryLoading ? userQueryData.getUserById.roleProvider?._id : ""
           }
           onChange={handleInputChange}
         />
@@ -221,10 +259,6 @@ export default function ProviderServiceAgreement() {
             onInput={handleInputChange}
             value={agreementFormData.quantity}
           />
-          <NumberInputStepper>
-            <NumberIncrementStepper />
-            <NumberDecrementStepper />
-          </NumberInputStepper>
         </NumberInput>
       </FormControl>
       <Container paddingTop={5}>
