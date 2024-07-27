@@ -19,6 +19,7 @@ router.post("/users", async (req, res) => {
           "Great News, Youve created a new account with Circle. Great to have you here ;)",
           "/"
         );
+        await userExists.save();
         res
           .status(200)
           .json({ userExists: true, userCreated: false, user: userExists });
@@ -26,6 +27,7 @@ router.post("/users", async (req, res) => {
       }
     } else {
       const userCreated = await User.create(user);
+      userCreated.save();
       await userCreated.generateAuthToken();
       controllerSmsService.sendText(
         req.body.mobile,

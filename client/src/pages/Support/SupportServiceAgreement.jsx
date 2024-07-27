@@ -20,6 +20,7 @@ import {
 import { useState, useEffect } from "react";
 //import Select from "react-select";
 import { useQuery, useMutation } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
 
 import {
   QUERY_USER_BY_ID,
@@ -40,6 +41,7 @@ const InputStyling = {
 
 export default function SupportServiceAgreement() {
   let { agreementNumber } = useParams();
+  const navigate = useNavigate();
 
   const {
     loading: userQueryLoading,
@@ -56,7 +58,7 @@ export default function SupportServiceAgreement() {
   } = useQuery(QUERY_SERVICE_AGREEMENT, {
     variables: { agreementNumber },
   });
-
+  !agreementNumber ? navigate("/") : "";
   //product list query
   const {
     loading: productQueryLoading,

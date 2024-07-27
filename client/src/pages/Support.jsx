@@ -1,5 +1,5 @@
 import React from "react";
-import SupportSubMenu from "../components/AdminSubMenu";
+import SupportSubMenu from "../pages/Support/_SupportSubMenu";
 import { Outlet } from "react-router-dom";
 
 export default function Support() {

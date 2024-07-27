@@ -32,10 +32,14 @@ class SMSService {
       redirect: "follow",
     };
 
-    fetch(process.env.CLICK_SEND_URL_SEND_ENDPOINT, requestOptions)
-      .then((response) => response.text())
-      .then((result) => console.log(result))
-      .catch((error) => console.error(error));
+    if (!process.env.TESTING) {
+      fetch(process.env.CLICK_SEND_URL_SEND_ENDPOINT, requestOptions)
+        .then((response) => response.text())
+        .then((result) => console.log(result))
+        .catch((error) => console.error(error));
+    } else {
+      console.log(requestOptions);
+    }
   }
 }
 module.exports = { SMSService };

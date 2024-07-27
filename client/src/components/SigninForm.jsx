@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Button,
   Flex,
@@ -13,23 +13,34 @@ import {
   useDisclosure,
   FormControl,
 } from "@chakra-ui/react";
-
+//routing and redirecting
+import { useNavigate } from "react-router-dom";
+//Auth Service
 import AuthService from "../utils/auth";
-
+//Styles and Splash
 import { ButtonStyles } from "./ButtonStyle";
 import { ButtonHighlightStyle } from "./ButtonHighlightStyle";
 import { InputStyles } from "./InputStyles";
+import Splash from "./splash";
 
 const SigninForm = ({ text }) => {
+  const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
-
+  // set state for alert
+  const [showAlert, setShowAlert] = useState(false);
   const [userFormData, setUserFormData] = useState({
     mobile: "",
     password: "",
   });
+  const [splashVisible, setSplashVisible] = useState(true);
 
-  // set state for alert
-  const [showAlert, setShowAlert] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSplashVisible(false);
+    }, 1500); // 3 seconds
+
+    return () => clearTimeout(timer); // Cleanup the timer
+  }, [splashVisible]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -38,6 +49,8 @@ const SigninForm = ({ text }) => {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
+    setSplashVisible(true);
+    navigate("/");
 
     try {
       //the only use of traditional API in this app is for new user creation or login. Other queries are done in grapghQL.
@@ -56,11 +69,13 @@ const SigninForm = ({ text }) => {
 
   return (
     <>
+      <Splash visible={splashVisible} />
       <Button
         {...ButtonStyles}
         {...ButtonHighlightStyle}
         onClick={() => {
           !AuthService.loggedIn() ? onOpen() : AuthService.logout();
+          navigate("/");
         }}
       >
         {text}
@@ -79,6 +94,12 @@ const SigninForm = ({ text }) => {
 
                 <FormLabel htmlFor="phone">Mobile</FormLabel>
                 <Input
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleSubmit(e);
+                    }
+                  }}
+                  autoFocus
                   id="emailInput"
                   {...InputStyles}
                   type="mobile"
@@ -91,6 +112,11 @@ const SigninForm = ({ text }) => {
 
                 <FormLabel htmlFor="password">Password</FormLabel>
                 <Input
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleSubmit(e);
+                    }
+                  }}
                   id="passwordInput"
                   {...InputStyles}
                   type="password"

@@ -113,7 +113,7 @@ export default function ProviderServiceAgreement() {
   useEffect(() => {
     setAgreementFormData({
       provider: !userQueryLoading
-        ? userQueryData.getUserById.roleProvider?._id
+        ? userQueryData?.getUserById.roleProvider?._id
         : "",
     });
   }, [userQueryLoading, userQueryData]);
@@ -132,7 +132,7 @@ export default function ProviderServiceAgreement() {
   }, [productQueryLoading, productQueryData]);
 
   useEffect(() => {
-    if (!userQueryLoading && userQueryData.roleCustomer) {
+    if (!userQueryLoading && !userQueryError && userQueryData.roleCustomer) {
       console.log(
         "current user should be set as customer",
         userQueryData.roleCustomer
@@ -204,7 +204,7 @@ export default function ProviderServiceAgreement() {
         </Alert>
       </Container>
     );
-  if (!userQueryData.getUserById.roleProvider)
+  if (!userQueryData?.getUserById.roleProvider)
     return (
       <Container paddingTop={10}>
         <Alert status="error">
@@ -231,7 +231,9 @@ export default function ProviderServiceAgreement() {
           name="provider"
           {...InputStyling}
           defaultValue={
-            !userQueryLoading ? userQueryData.getUserById.roleProvider?._id : ""
+            !userQueryLoading
+              ? userQueryData?.getUserById.roleProvider?._id
+              : ""
           }
           onChange={handleInputChange}
         />

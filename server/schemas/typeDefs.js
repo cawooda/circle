@@ -41,7 +41,7 @@ type Provider {
 }
 
  type ServiceAgreement {
-    _id: ID
+    _id: ID!
     provider: ID
     customer: Customer
     agreementNumber:Int
