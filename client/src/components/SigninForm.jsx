@@ -24,7 +24,7 @@ const SigninForm = ({ text }) => {
   const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
 
   const [userFormData, setUserFormData] = useState({
-    email: "",
+    mobile: "",
     password: "",
   });
 
@@ -40,13 +40,14 @@ const SigninForm = ({ text }) => {
     event.preventDefault();
 
     try {
+      //the only use of traditional API in this app is for new user creation or login. Other queries are done in grapghQL.
       const newUserAuth = await AuthService.loginOrCreateUser(userFormData);
     } catch (error) {
       console.log(error);
     }
 
     setUserFormData({
-      email: "",
+      mobile: "",
       password: "",
     });
     window.location.reload();
@@ -70,20 +71,21 @@ const SigninForm = ({ text }) => {
         <ModalContent>
           <ModalHeader>Signup</ModalHeader>
           <ModalCloseButton />
+          <ModalHeader>New? Use this to create an account</ModalHeader>
           <ModalBody>
             <Flex direction="column" align="center" justify="center">
               <FormControl onSubmit={() => handleFormSubmit()}>
                 {/* show alert if server response is bad */}
 
-                <FormLabel htmlFor="email">Email</FormLabel>
+                <FormLabel htmlFor="phone">Mobile</FormLabel>
                 <Input
                   id="emailInput"
                   {...InputStyles}
-                  type="email"
-                  placeholder="Your email address"
-                  name="email"
+                  type="mobile"
+                  placeholder="Your phone number"
+                  name="mobile"
                   onChange={handleInputChange}
-                  value={userFormData.email}
+                  value={userFormData.mobile}
                   required
                 />
 
@@ -102,12 +104,12 @@ const SigninForm = ({ text }) => {
                 <Button
                   {...ButtonStyles}
                   style={{ marginTop: "10px" }}
-                  disabled={!(userFormData.email && userFormData.password)}
+                  disabled={!(userFormData.mobile && userFormData.password)}
                   type="submit"
                   onClick={handleFormSubmit}
                   variant="success"
                 >
-                  Submit
+                  Go
                 </Button>
               </FormControl>
             </Flex>

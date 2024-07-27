@@ -8,6 +8,10 @@ const {
 const { roles } = require("../utils/roles");
 const jwt = require("jsonwebtoken");
 
+const { SMSService } = require("../utils/smsService");
+
+const smsService = new SMSService();
+
 const resolvers = {
   Query: {
     getAllUsers: async () => {
@@ -84,10 +88,10 @@ const resolvers = {
     addUser: async (_parent, { first, last, mobile, email, password }) => {
       try {
         const newUser = await User.create({
-          first,
-          last,
-          mobile,
-          email,
+          first: first || "",
+          last: last || "",
+          mobile: mobile || process.env.TESTING_PHONE,
+          email: email || "",
           password,
         });
         return newUser;

@@ -18,10 +18,10 @@ const userSchema = new Schema(
       type: String,
       minLength: 10,
       maxLength: 10,
+      required: true,
     },
     email: {
       type: String,
-      unique: true,
       toLowerCase: true,
       validate: {
         validator: validator.isEmail,
@@ -107,7 +107,7 @@ userSchema.methods.isCorrectPassword = async function (password) {
 // Method to generate JWT token
 userSchema.methods.generateAuthToken = function () {
   const user = {
-    authenticatedPerson: { _id: this._id, email: this.email },
+    authenticatedPerson: { _id: this._id, mobile: this.mobile },
     token: this.token,
   };
   const token = jwt.sign(user, process.env.SECRET_KEY, {
@@ -117,7 +117,7 @@ userSchema.methods.generateAuthToken = function () {
   return token;
 };
 
-// Sanitize inputs
+// Sanitizing of input would be handled here
 userSchema.pre("save", function (next) {
   const user = this;
 

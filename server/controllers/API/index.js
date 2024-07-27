@@ -1,16 +1,24 @@
 const router = require("express").Router();
 const { User, Admin } = require("../../models");
 // const { User } = require("../../models");
+const { SMSService } = require("../../utils/smsService");
+
+const controllerSmsService = new SMSService();
 
 router.post("/users", async (req, res) => {
   const user = req.body;
 
   try {
-    const userExists = await User.findOne({ email: req.body.email });
+    const userExists = await User.findOne({ mobile: req.body.mobile });
 
     if (userExists) {
       if (userExists.isCorrectPassword(req.body.password)) {
         await userExists.generateAuthToken();
+        controllerSmsService.sendText(
+          req.body.mobile,
+          "Great News, Youve created a new account with Circle. Great to have you here ;)",
+          "/"
+        );
         res
           .status(200)
           .json({ userExists: true, userCreated: false, user: userExists });
@@ -19,7 +27,12 @@ router.post("/users", async (req, res) => {
     } else {
       const userCreated = await User.create(user);
       await userCreated.generateAuthToken();
-
+      controllerSmsService.sendText(
+        req.body.mobile,
+        `Great News, Youve signed in ;)
+        `,
+        "/"
+      );
       res
         .status(200)
         .json({ userExists: true, userCreated: true, user: userExists });
