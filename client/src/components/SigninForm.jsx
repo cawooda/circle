@@ -49,6 +49,7 @@ const SigninForm = ({ text }) => {
       email: "",
       password: "",
     });
+    window.location.reload();
     onClose();
   };
 

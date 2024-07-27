@@ -6,7 +6,7 @@ import { NavLink } from "react-router-dom";
 
 export default function SupportSubMenu() {
   return (
-    <HStack justifyContent="space-around">
+    <HStack justifyContent="center">
       <NavLink to="service-agreements">
         <Container {...ButtonStyles}>Service Agreements</Container>
       </NavLink>

@@ -30,7 +30,7 @@ const resolvers = {
     getCustomers: async (_parent, { id }) => {
       try {
         const customers = await Customer.find({}).populate("user");
-
+        console.log(customers);
         return customers;
       } catch (error) {
         console.error(error);
@@ -44,12 +44,15 @@ const resolvers = {
         console.error(error);
       }
     },
-    getServiceAgreement: async (agreementNumber) => {
+    getServiceAgreement: async (__parent, { agreementNumber }) => {
+      console.log("agreementNumber", agreementNumber);
       try {
         const serviceAgreement = await ServiceAgreement.findOne({
-          agreementNumber: "23",
-        });
+          agreementNumber: agreementNumber,
+        }).populate("customer");
+
         console.log(serviceAgreement);
+
         return serviceAgreement;
       } catch (error) {
         console.error(error);
@@ -122,7 +125,7 @@ const resolvers = {
           quantity: quantity || null,
           endDate: endDate || null,
         });
-
+        console.log("newServiceAgreement", newServiceAgreement);
         return newServiceAgreement;
       } catch (error) {
         console.error(error);

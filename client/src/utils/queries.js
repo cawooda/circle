@@ -72,9 +72,19 @@ export const QUERY_PRODUCTS = gql`
 export const QUERY_SERVICE_AGREEMENT = gql`
   query Query($agreementNumber: String!) {
     getServiceAgreement(agreementNumber: $agreementNumber) {
-      id
+      _id
       provider
-      customer
+      customer {
+        _id
+        address
+        ndisNumber
+        user {
+          first
+          last
+          mobile
+          _id
+        }
+      }
       agreementNumber
       startDate
       product

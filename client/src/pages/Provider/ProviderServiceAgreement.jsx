@@ -20,6 +20,8 @@ import {
 import { useState, useEffect } from "react";
 //import Select from "react-select";
 import { useQuery, useMutation } from "@apollo/client";
+import Splash from "../../components/splash";
+import { useNavigate } from "react-router-dom";
 
 //currently use state is seving the user. The following line relates to context which is not working
 
@@ -43,6 +45,16 @@ const InputStyling = {
 export default function ProviderServiceAgreement() {
   //const { currentUser } = useCurrentUser();
 
+  const [splashVisible, setSplashVisible] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSplashVisible(false);
+    }, 3000); // 3 seconds
+
+    return () => clearTimeout(timer); // Cleanup the timer
+  }, [splashVisible]);
+
   //setup use State for customers
   const [agreementFormData, setAgreementFormData] = useState({
     endDate: dayjs().format("YYYY-MM-DD"),
@@ -50,34 +62,6 @@ export default function ProviderServiceAgreement() {
   const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
-
-  const handleInputChange = (event) => {
-    console.log("agreementFormData", agreementFormData);
-    if (event.target.name) {
-      const { name, value } = event.target;
-      setAgreementFormData((prevState) => ({ ...prevState, [name]: value })); //handle the change of for an input with useState
-    } else {
-    }
-    console.log("agreementFormData", agreementFormData);
-  };
-
-  function handleFormSubmit(event) {
-    event.preventDefault();
-    console.log("agreementFormData", agreementFormData);
-    addServiceAgreement({
-      variables: {
-        provider: agreementFormData.provider,
-        customer: agreementFormData.customer,
-        endDate: agreementFormData.endDate,
-        product: agreementFormData.product,
-        quantity: parseInt(agreementFormData.quantity),
-      },
-    });
-    try {
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   //set query for customers
   const {
@@ -116,7 +100,16 @@ export default function ProviderServiceAgreement() {
     },
   });
 
-  //use effects
+  const navigate = useNavigate();
+
+  //implement this throughout the app and change window.location into the following router hook
+  useEffect(() => {
+    if (!AuthService.loggedIn()) {
+      AuthService.logout();
+      navigate("/");
+    }
+  }, []);
+
   useEffect(() => {
     setAgreementFormData({
       provider: !userQueryLoading
@@ -139,21 +132,56 @@ export default function ProviderServiceAgreement() {
   }, [productQueryLoading, productQueryData]);
 
   useEffect(() => {
-    if (!userQueryLoading && userQueryData.roleProvider) {
+    if (!userQueryLoading && userQueryData.roleCustomer) {
+      console.log(
+        "current user should be set as customer",
+        userQueryData.roleCustomer
+      );
       setCurrentUser(userQueryData.getUserById);
     }
   }, [userQueryLoading, userQueryData]);
 
   useEffect(() => {
     if (!customerQueryLoading && customerQueryData) {
-      const customerList = customerQueryData.getCustomers.map((item) => ({
-        value: item.user._id,
-        label: item.user.first,
+      const customerList = customerQueryData.getCustomers.map((customer) => ({
+        value: customer._id,
+        label: customer.user.first,
       }));
 
       setCustomers(customerList);
     }
   }, [customerQueryLoading, customerQueryData]);
+
+  const handleInputChange = (event) => {
+    console.log("agreementFormData", agreementFormData);
+    if (event.target.name) {
+      const { name, value } = event.target;
+      setAgreementFormData((prevState) => ({ ...prevState, [name]: value })); //handle the change of for an input with useState
+    } else {
+    }
+    console.log("agreementFormData", agreementFormData);
+  };
+
+  function handleFormSubmit(event) {
+    event.preventDefault();
+    console.log("agreementFormData", agreementFormData);
+
+    try {
+      addServiceAgreement({
+        variables: {
+          provider: agreementFormData.provider,
+          customer: agreementFormData.customer,
+          endDate: agreementFormData.endDate,
+          product: agreementFormData.product,
+          quantity: parseInt(agreementFormData.quantity),
+        },
+      });
+      setSplashVisible(true);
+      navigate("/support");
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   if (userQueryLoading)
     return (
@@ -191,10 +219,14 @@ export default function ProviderServiceAgreement() {
     );
   return (
     <Container>
+      <div>
+        <Splash visible={splashVisible} />
+      </div>
       <Heading>Service Agreement</Heading>
       <Spacer />
       {/* the following are hidden but used for submission */}
-      <FormControl hidden={true}>
+      <FormControl hidden={false}>
+        <FormLabel>Provider Id</FormLabel>
         <Input
           name="provider"
           {...InputStyling}

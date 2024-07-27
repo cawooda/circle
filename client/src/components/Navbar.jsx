@@ -8,7 +8,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { ButtonStyles } from "./ButtonStyle";
-
+import Splash from "./splash";
 import { NavLink } from "react-router-dom";
 import SigninForm from "./SigninForm";
 import AuthService from "../utils/auth";
@@ -16,6 +16,7 @@ import AuthService from "../utils/auth";
 export default function NavBar() {
   return (
     <>
+      <Splash />
       <Flex gap={3} flexDirection={{ base: "column", md: "column" }}>
         <Box>
           <NavLink to="/admin">

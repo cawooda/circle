@@ -6,7 +6,7 @@ import { NavLink } from "react-router-dom";
 
 export default function AdminSubMenu() {
   return (
-    <HStack justifyContent="space-around">
+    <HStack justifyContent="center">
       <NavLink to="users">
         <Container {...ButtonStyles}>Users</Container>
       </NavLink>

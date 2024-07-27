@@ -12,12 +12,12 @@ const serviceAgreementSchema = new Schema(
     },
     provider: {
       type: Schema.Types.ObjectId,
-      ref: "Provider",
+      ref: "provider",
       required: true,
     },
     customer: {
       type: Schema.Types.ObjectId,
-      ref: "Customer",
+      ref: "customer",
       required: false,
     },
     startDate: { type: Date },
@@ -38,7 +38,7 @@ const serviceAgreementSchema = new Schema(
     toJSON: {
       virtuals: true,
     },
-    id: false,
+    toObject: { virtuals: true },
   }
 );
 

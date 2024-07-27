@@ -22,8 +22,8 @@ export const ADD_USER = gql`
 
 export const ADD_SERVICE_AGREEMENT = gql`
   mutation AddServiceAgreement(
-    $provider: String!
-    $customer: String!
+    $provider: ID!
+    $customer: ID!
     $endDate: String!
     $product: String!
     $quantity: Int!
@@ -35,9 +35,21 @@ export const ADD_SERVICE_AGREEMENT = gql`
       product: $product
       quantity: $quantity
     ) {
-      id
+      _id
       provider
-      customer
+      customer {
+        _id
+        user {
+          _id
+          first
+          mobile
+        }
+        ndisNumber
+        address
+        dateOfBirth
+        customerSpecificField
+      }
+      agreementNumber
       startDate
       product
       quantity

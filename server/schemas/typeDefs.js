@@ -41,9 +41,9 @@ type Provider {
 }
 
  type ServiceAgreement {
-    id: ID
+    _id: ID
     provider: ID
-    customer: ID
+    customer: Customer
     agreementNumber:Int
     startDate: String
     product: ID
@@ -110,7 +110,7 @@ type Mutation {
     toggleUserRole(userId: ID!, role: RoleType!): User!
     createAdmin(userId: ID!): Admin!
     createProvider(userId: ID!, abn: String!, address: String!, providerName: String!): Provider!
-    addServiceAgreement(provider:String!,customer:String!,endDate:String!,product:String!,quantity:Int!): ServiceAgreement
+    addServiceAgreement(provider:ID!,customer:ID!,endDate:String!,product:String!,quantity:Int!): ServiceAgreement
 }
 
 `;

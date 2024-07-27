@@ -157,6 +157,11 @@ export default function SupportServiceAgreement() {
     agreementQueryData,
   ]);
 
+  console.log(
+    "checking agreement loading for provider _id",
+    !agreementQueryLoading ? agreementQueryData : ""
+  );
+
   if (userQueryLoading)
     return (
       <Container paddingTop={10}>
@@ -178,7 +183,7 @@ export default function SupportServiceAgreement() {
         </Alert>
       </Container>
     );
-  if (!userQueryData.getUserById.roleProvider)
+  if (!userQueryData.getUserById.roleCustomer)
     return (
       <Container paddingTop={10}>
         <Alert status="error">
@@ -196,12 +201,14 @@ export default function SupportServiceAgreement() {
       <Heading>Service Agreement</Heading>
       <Spacer />
       {/* the following are hidden but used for submission */}
-      <FormControl hidden={true}>
+      <FormControl>
         <Input
           name="provider"
           {...InputStyling}
           defaultValue={
-            !userQueryLoading ? userQueryData.getUserById.roleProvider?._id : ""
+            !agreementQueryLoading
+              ? agreementQueryData.getServiceAgreement.provider?._id
+              : ""
           }
           onChange={handleInputChange}
         />
@@ -213,17 +220,23 @@ export default function SupportServiceAgreement() {
           {...InputStyling}
           name="endDate"
           type="date"
-          value={agreementFormData.endDate || ""}
+          defaultValue={
+            !agreementQueryLoading
+              ? agreementQueryData.getServiceAgreement.endDate
+              : dayjs()
+          }
           onChange={handleInputChange}
         />
       </FormControl>
       <FormControl>
         <FormLabel>Customer</FormLabel>
-        <Select
+        <Input
           name="customer"
           onChange={handleInputChange}
-          value={agreementFormData.customer}
-        ></Select>
+          value={
+            !userQueryLoading ? userQueryData.getUserById.roleCustomer._id : ""
+          }
+        ></Input>
         {<p>replace with details from params {agreementNumber}</p>}
       </FormControl>
       <Spacer />

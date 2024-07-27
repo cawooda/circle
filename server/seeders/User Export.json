@@ -1,0 +1,24 @@
+{
+  "_id": {
+    "$oid": "66a083826e76d0e5ababe48f"
+  },
+  "first": "Alice",
+  "last": "Smith",
+  "mobile": "1234567890",
+  "email": "alice@example.com",
+  "roleCustomer": { "$oid": "66a0d9f4a0eb8627cc6320f5" },
+  "roleProvider": {
+    "$oid": "66a0d9f4a0eb8627cc6320f7"
+  },
+  "roleAdmin": {
+    "$oid": "66a0d9f4a0eb8627cc6320fa"
+  },
+  "password": "$2b$10$xmRFqdqB8s2oR0VxY.b/Ue6vZyx5CiAljfZdWzMIGPJu6L0xv6G/e",
+  "createdAt": {
+    "$date": "2024-07-25T00:34:35.745Z"
+  },
+  "updatedAt": {
+    "$date": "2024-07-25T00:34:35.745Z"
+  },
+  "__v": 0
+}
