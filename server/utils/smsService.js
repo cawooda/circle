@@ -10,11 +10,10 @@ class SMSService {
   }
 
   async sendText(to, body, endpoint) {
-    const protocol = "http"; // Get the request protocol (http or https)
-    const host = process.env.HOST || "localhost"; // Get the host (hostname:port)
+    const host = process.env.HOST || `http://localhost:${process.env.PORT}`; // Get the host (hostname:port)
     // Define your endpoint path
 
-    const fullUrl = `${protocol}://${host}${endpoint}`;
+    const fullUrl = `${host}${endpoint}`;
     const fetch = (await import("node-fetch")).default;
     console.log(fullUrl);
     const raw = JSON.stringify({
