@@ -14,11 +14,7 @@ router.post("/users", async (req, res) => {
     if (userExists) {
       if (userExists.isCorrectPassword(req.body.password)) {
         await userExists.generateAuthToken();
-        controllerSmsService.sendText(
-          req.body.mobile,
-          "Great News, Youve created a new account with Circle. Great to have you here ;)",
-          "/"
-        );
+
         await userExists.save();
         res
           .status(200)
@@ -26,12 +22,19 @@ router.post("/users", async (req, res) => {
         return userExists;
       }
     } else {
-      const userCreated = await User.create(user);
+      //wishing not to take more information than required from a user, this app allows registration with only mobile, however we use the below code to
+      //create dummy data for some fields
+      const userCreated = await User.create({
+        first: "firstName",
+        last: "lastName",
+        email: "email@email.com",
+        ...user,
+      });
       userCreated.save();
       await userCreated.generateAuthToken();
       controllerSmsService.sendText(
         req.body.mobile,
-        `Great News, Youve signed in ;)
+        `Great News, We've just given you a Circle Account ;)
         `,
         "/"
       );

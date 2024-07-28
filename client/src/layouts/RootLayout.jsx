@@ -23,7 +23,7 @@ export default function RootLayout() {
         </Box>
       </Flex>
       <Box bg="blue.500" p={4} color="white" textAlign="center">
-        Footer
+        (C) Circle Indeendent
       </Box>
     </Flex>
   );

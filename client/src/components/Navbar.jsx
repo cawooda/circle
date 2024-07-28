@@ -6,7 +6,7 @@ import {
   Flex,
   Spacer,
 } from "@chakra-ui/react";
-import React from "react";
+import { useEffect, useState } from "react";
 import { ButtonStyles } from "./ButtonStyle";
 import Splash from "./Splash";
 import { NavLink } from "react-router-dom";
@@ -14,6 +14,12 @@ import SigninForm from "./SigninForm";
 import AuthService from "../utils/auth";
 
 export default function NavBar() {
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    AuthService.loggedIn() ? setLoggedIn(true) : setLoggedIn(false);
+  }, [loggedIn]);
+
   return (
     <>
       <Splash />
@@ -34,7 +40,7 @@ export default function NavBar() {
           </NavLink>
         </Box>
         <Box display="flex" justifyContent="center" alignItems="center">
-          <SigninForm text={!AuthService.loggedIn() ? "Login" : "Logout"} />
+          <SigninForm text={loggedIn ? "Logout" : "Login"} />
         </Box>
       </Flex>
     </>

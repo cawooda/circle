@@ -42,11 +42,11 @@ type Provider {
 
  type ServiceAgreement {
     _id: ID!
-    provider: ID
+    provider: Provider
     customer: Customer
     agreementNumber:Int
     startDate: String
-    product: ID
+    product: Product
     quantity: Int
     endDate: String
     totalPrice:Float

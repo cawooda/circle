@@ -3,30 +3,22 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Flex,
   AlertIcon,
   AlertTitle,
   Heading,
   Container,
   Spacer,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
-  Select,
   Alert,
   Button,
+  AlertDescription,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 //import Select from "react-select";
 import { useQuery, useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
+import { QUERY_USER_BY_ID, QUERY_SERVICE_AGREEMENT } from "../../utils/queries";
 
-import {
-  QUERY_USER_BY_ID,
-  QUERY_PRODUCTS,
-  QUERY_SERVICE_AGREEMENT,
-} from "../../utils/queries";
 // import { SIGN_SERVICE_AGREEMENT } from "../../utils/mutations";
 import AuthService from "../../utils/auth";
 import { ButtonStyles } from "../../components/ButtonStyle";
@@ -42,7 +34,7 @@ const InputStyling = {
 export default function SupportServiceAgreement() {
   let { agreementNumber } = useParams();
   const navigate = useNavigate();
-
+  !agreementNumber ? navigate("/") : "";
   const {
     loading: userQueryLoading,
     error: userQueryError,
@@ -60,11 +52,6 @@ export default function SupportServiceAgreement() {
   });
   !agreementNumber ? navigate("/") : "";
   //product list query
-  const {
-    loading: productQueryLoading,
-    error: productQueryError,
-    data: productQueryData,
-  } = useQuery(QUERY_PRODUCTS);
 
   // const [
   //   signServiceAgreement,
@@ -83,7 +70,6 @@ export default function SupportServiceAgreement() {
 
   //const { currentUser } = useCurrentUser();
 
-  const [products, setProducts] = useState([]);
   const [agreementFormData, setAgreementFormData] = useState({});
 
   const [currentUser, setCurrentUser] = useState({});
@@ -133,6 +119,9 @@ export default function SupportServiceAgreement() {
       provider: !userQueryLoading
         ? userQueryData.getUserById.roleCustomer?._id
         : "",
+      product: !agreementQueryLoading
+        ? agreementQueryData.getServiceAgreement.product
+        : "",
     });
   }, [userQueryLoading, userQueryData]);
 
@@ -142,38 +131,32 @@ export default function SupportServiceAgreement() {
       console.log("agreementQueryData", agreementQueryData);
       setAgreementFormData((prev) => ({ ...prev, agreementFormData }));
     }
-
-    if (!productQueryLoading && productQueryData) {
-      console.log(productQueryData);
-      const productList = productQueryData.getProducts.map((item) => ({
-        value: item._id,
-        label: item.name,
-      }));
-
-      setProducts(productList);
-    }
-  }, [
-    productQueryLoading,
-    productQueryData,
-    agreementQueryData,
-    agreementQueryData,
-  ]);
+  }, [agreementQueryData, agreementQueryData]);
 
   console.log(
     "checking agreement loading for provider _id",
     !agreementQueryLoading ? agreementQueryData : ""
   );
+  // console.log(agreementQueryData.getServiceAgreement.endDate);
 
-  if (userQueryLoading)
+  if (userQueryLoading || agreementQueryLoading)
     return (
       <Container paddingTop={10}>
         <Alert status="info">
           <AlertIcon />
-          <AlertTitle>Loading Info about Your Service</AlertTitle>
+          <AlertTitle>
+            Loading Info about you and your Service Agreement
+          </AlertTitle>
+          <AlertDescription>
+            {userQueryLoading ? "..loading user information" : ""}
+          </AlertDescription>
+          <AlertDescription>
+            {agreementQueryLoading ? "..loading agreement information" : ""}
+          </AlertDescription>
         </Alert>
       </Container>
     );
-  if (userQueryError)
+  if (userQueryError || agreementQueryError)
     return (
       <Container paddingTop={10}>
         <Alert status="error">
@@ -182,6 +165,14 @@ export default function SupportServiceAgreement() {
             We recieved an error loading your data. try refresh and make sure
             you are logged in.
           </AlertTitle>
+          <AlertDescription>
+            {userQueryError
+              ? "...error getting your info, are you logged on?"
+              : ""}
+          </AlertDescription>
+          <AlertDescription>
+            {agreementQueryError ? "...error getting your agreement info" : ""}
+          </AlertDescription>
         </Alert>
       </Container>
     );
@@ -199,17 +190,26 @@ export default function SupportServiceAgreement() {
       </Container>
     );
   return (
-    <Container>
+    <Flex direction="column">
       <Heading>Service Agreement</Heading>
+      <Heading size="xl">with</Heading>
       <Spacer />
       {/* the following are hidden but used for submission */}
       <FormControl>
+        <Heading size="lg">
+          {agreementQueryData.getServiceAgreement.provider.providerName}
+        </Heading>
+        <Heading size="sm">
+          <strong>ABN:</strong>
+          {agreementQueryData.getServiceAgreement.provider.abn}
+        </Heading>
         <Input
           name="provider"
+          hidden
           {...InputStyling}
-          defaultValue={
+          value={
             !agreementQueryLoading
-              ? agreementQueryData.getServiceAgreement.provider?._id
+              ? agreementQueryData.getServiceAgreement.provider._id
               : ""
           }
           onChange={handleInputChange}
@@ -221,11 +221,13 @@ export default function SupportServiceAgreement() {
         <Input
           {...InputStyling}
           name="endDate"
-          type="date"
-          defaultValue={
+          type="text"
+          value={
             !agreementQueryLoading
-              ? agreementQueryData.getServiceAgreement.endDate
-              : dayjs()
+              ? dayjs(agreementQueryData.getServiceAgreement.endDate).format(
+                  "DD/MM/YYYY"
+                )
+              : dayjs().format("DD-MM-YYYY")
           }
           onChange={handleInputChange}
         />
@@ -233,50 +235,64 @@ export default function SupportServiceAgreement() {
       <FormControl>
         <FormLabel>Customer</FormLabel>
         <Input
+          {...InputStyling}
           name="customer"
           onChange={handleInputChange}
-          value={
-            !userQueryLoading ? userQueryData.getUserById.roleCustomer._id : ""
-          }
+          value={!userQueryLoading ? userQueryData.getUserById.first : "name"}
         ></Input>
         {<p>replace with details from params {agreementNumber}</p>}
       </FormControl>
       <Spacer />
-      <Container></Container>
-      <FormControl>
-        <FormLabel>Product</FormLabel>
-        <Select
-          {...InputStyling}
-          name="product"
-          onChange={handleInputChange}
-          value={agreementFormData.product}
-        >
-          {products.map((customer) => {
-            return (
-              <option key={customer.value} value={customer.value}>
-                {customer.label}
-              </option>
-            );
-          })}
-        </Select>
-      </FormControl>
-      <FormControl>
-        <FormLabel>Quantity</FormLabel>
-        <NumberInput>
-          <NumberInputField
+      <Flex direction="column">
+        <FormControl>
+          <FormLabel>Product</FormLabel>
+          <Input
+            {...InputStyling}
+            name="product"
+            type="text"
+            value={
+              !agreementQueryLoading
+                ? agreementQueryData.getServiceAgreement.product.name
+                : "no product ask to check"
+            }
+            onChange={handleInputChange}
+          />
+        </FormControl>
+        <FormControl>
+          <FormLabel>Quantity</FormLabel>
+          <Input
             {...InputStyling}
             name="quantity"
-            onInput={handleInputChange}
-            value={agreementFormData.quantity}
+            type="text"
+            value={
+              !agreementQueryLoading
+                ? agreementQueryData.getServiceAgreement.quantity
+                : "no product ask to check"
+            }
+            onChange={handleInputChange}
           />
-        </NumberInput>
-      </FormControl>
-      <Container paddingTop={5}>
-        <Button {...ButtonStyles} onClick={handleFormSubmit}>
-          Submit
-        </Button>
-      </Container>
-    </Container>
+        </FormControl>
+        <FormControl>
+          <FormLabel>Total Cost</FormLabel>
+          <Input
+            {...InputStyling}
+            name="quantity"
+            type="text"
+            value={
+              !agreementQueryLoading
+                ? agreementQueryData.getServiceAgreement.totalPrice
+                : "no product ask to check"
+            }
+            onChange={handleInputChange}
+          />
+        </FormControl>
+        <Container paddingTop={5}>
+          <Button {...ButtonStyles} onClick={handleFormSubmit}>
+            Submit
+          </Button>
+        </Container>
+      </Flex>
+    </Flex>
   );
 }
 

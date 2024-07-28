@@ -70,10 +70,26 @@ export const QUERY_PRODUCTS = gql`
 `;
 
 export const QUERY_SERVICE_AGREEMENT = gql`
-  query Query($agreementNumber: String!) {
+  query getServiceAgreement($agreementNumber: String!) {
     getServiceAgreement(agreementNumber: $agreementNumber) {
       _id
-      provider
+      provider {
+        _id
+        user {
+          _id
+          first
+          last
+        }
+        abn
+        address
+        providerName
+        termsAndConditions {
+          heading
+          paragraph
+        }
+        createdAt
+        updatedAt
+      }
       customer {
         _id
         address
@@ -87,7 +103,11 @@ export const QUERY_SERVICE_AGREEMENT = gql`
       }
       agreementNumber
       startDate
-      product
+      product {
+        _id
+        name
+        price
+      }
       quantity
       endDate
       totalPrice
@@ -99,7 +119,7 @@ export const QUERY_SERVICE_AGREEMENT = gql`
 `;
 
 export const QUERY_USER_BY_TOKEN = gql`
-  query Query($token: String!) {
+  query getUserByToken($token: String!) {
     getUserByToken(token: $token) {
       _id
       first

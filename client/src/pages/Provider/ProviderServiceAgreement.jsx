@@ -13,11 +13,12 @@ import {
   Select,
   Alert,
   Button,
+  AlertDescription,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
-//import Select from "react-select";
+
 import { useQuery, useMutation } from "@apollo/client";
-// import Splash from "../../components/Splash";
+import Splash from "../../components/Splash";
 import { useNavigate } from "react-router-dom";
 
 //currently use state is seving the user. The following line relates to context which is not working
@@ -40,18 +41,13 @@ const InputStyling = {
 };
 
 export default function ProviderServiceAgreement() {
+  //router navigation
+  const navigate = useNavigate();
+
   //const { currentUser } = useCurrentUser();
 
-  // const [splashVisible, setSplashVisible] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      // setSplashVisible(false);
-    }, 3000); // 3 seconds
-
-    return () => clearTimeout(timer); // Cleanup the timer
-  }, [splashVisible]);
-
+  //use States
+  const [splashVisible, setSplashVisible] = useState(true);
   //setup use State for customers
   const [agreementFormData, setAgreementFormData] = useState({
     endDate: dayjs().format("YYYY-MM-DD"),
@@ -59,6 +55,14 @@ export default function ProviderServiceAgreement() {
   const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSplashVisible(false);
+    }, 3000); // 3 seconds
+
+    return () => clearTimeout(timer); // Cleanup the timer
+  }, [splashVisible]);
 
   //set query for customers
   const {
@@ -75,6 +79,7 @@ export default function ProviderServiceAgreement() {
   } = useQuery(QUERY_USER_BY_ID, {
     variables: { id: AuthService.getProfile().authenticatedPerson._id },
   });
+
   //product list query
   const {
     loading: productQueryLoading,
@@ -96,8 +101,6 @@ export default function ProviderServiceAgreement() {
       console.error("Message:", err.message);
     },
   });
-
-  const navigate = useNavigate();
 
   //implement this throughout the app and change window.location into the following router hook
   useEffect(() => {
@@ -140,14 +143,18 @@ export default function ProviderServiceAgreement() {
 
   useEffect(() => {
     if (!customerQueryLoading && customerQueryData) {
-      const customerList = customerQueryData.getCustomers.map((customer) => ({
-        value: customer._id,
-        label: customer.user.first,
-      }));
-
+      const customerList = customerQueryData.getCustomers.map((customer) => {
+        return {
+          value: customer._id,
+          label: `${customer.user.first} ${customer.user.last}`,
+        };
+      });
       setCustomers(customerList);
+      console.log("customerList", customerList);
     }
   }, [customerQueryLoading, customerQueryData]);
+  console.log("customers", customers);
+  console.log("agreementFormData", agreementFormData);
 
   const handleInputChange = (event) => {
     console.log("agreementFormData", agreementFormData);
@@ -168,7 +175,7 @@ export default function ProviderServiceAgreement() {
         variables: {
           provider: agreementFormData.provider,
           customer: agreementFormData.customer,
-          endDate: agreementFormData.endDate,
+          endDate: new Date(agreementFormData.endDate),
           product: agreementFormData.product,
           quantity: parseInt(agreementFormData.quantity),
         },
@@ -180,16 +187,24 @@ export default function ProviderServiceAgreement() {
     }
   }
 
-  if (userQueryLoading)
+  if (userQueryLoading || customerQueryLoading)
     return (
       <Container paddingTop={10}>
         <Alert status="info">
           <AlertIcon />
           <AlertTitle>Loading Info about Your Service</AlertTitle>
+          <AlertDescription>
+            {userQueryLoading ? "loading user data... " : ""}
+            {customerQueryLoading ? "loading user data... " : ""}
+          </AlertDescription>
         </Alert>
       </Container>
     );
-  if (userQueryError)
+  if (
+    userQueryError ||
+    !userQueryData.getUserById.roleProvider._id ||
+    customerQueryError
+  )
     return (
       <Container paddingTop={10}>
         <Alert status="error">
@@ -198,6 +213,17 @@ export default function ProviderServiceAgreement() {
             We recieved an error loading your data. try refresh and make sure
             you are logged in.
           </AlertTitle>
+          <AlertDescription>
+            {userQueryError
+              ? "Error loading user data...are you logged in? "
+              : ""}
+            {customerQueryError
+              ? "loading customer data... please notify Admin "
+              : ""}
+            {!userQueryData.getUserById.roleProvider._id
+              ? "It doesent look like you have a provider account "
+              : ""}
+          </AlertDescription>
         </Alert>
       </Container>
     );
@@ -222,7 +248,7 @@ export default function ProviderServiceAgreement() {
       <Heading>Service Agreement</Heading>
       <Spacer />
       {/* the following are hidden but used for submission */}
-      <FormControl hidden={false}>
+      <FormControl hidden={true}>
         <FormLabel>Provider Id</FormLabel>
         <Input
           name="provider"
@@ -248,10 +274,12 @@ export default function ProviderServiceAgreement() {
       </FormControl>
       <FormControl>
         <FormLabel>Customer</FormLabel>
+
         <Select
           name="customer"
+          onClick={handleInputChange}
           onChange={handleInputChange}
-          value={agreementFormData.customer}
+          // value={agreementFormData.customer}
         >
           {customers.map((customer) => {
             return (

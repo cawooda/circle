@@ -36,28 +36,39 @@ export const ADD_SERVICE_AGREEMENT = gql`
       quantity: $quantity
     ) {
       _id
-      provider
+      provider {
+        _id
+        providerName
+        address
+      }
       customer {
         _id
         user {
           _id
           first
           mobile
+          __typename
         }
         ndisNumber
         address
         dateOfBirth
         customerSpecificField
+        __typename
       }
       agreementNumber
       startDate
-      product
+      product {
+        _id
+        name
+        price
+      }
       quantity
       endDate
       totalPrice
       approvedByCustomer
       createdAt
       updatedAt
+      __typename
     }
   }
 `;

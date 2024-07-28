@@ -8,7 +8,9 @@ const {
 const { roles } = require("../utils/roles");
 const jwt = require("jsonwebtoken");
 
+//handling SMS for this resolver
 const { SMSService } = require("../utils/smsService");
+const controllerSmsService = new SMSService();
 
 const smsService = new SMSService();
 
@@ -43,6 +45,7 @@ const resolvers = {
     getProducts: async () => {
       try {
         const productList = Product.find({});
+
         return productList;
       } catch (error) {
         console.error(error);
@@ -53,7 +56,7 @@ const resolvers = {
       try {
         const serviceAgreement = await ServiceAgreement.findOne({
           agreementNumber: agreementNumber,
-        }).populate("customer");
+        }).populate("customer customer.user product provider");
 
         console.log(serviceAgreement);
 
@@ -129,7 +132,18 @@ const resolvers = {
           quantity: quantity || null,
           endDate: endDate || null,
         });
-        console.log("newServiceAgreement", newServiceAgreement);
+        await newServiceAgreement.populate(
+          "customer provider provider.user customer.user"
+        );
+
+        console.log("newServiceAgreement user", newServiceAgreement.customer);
+        controllerSmsService.sendText(
+          newServiceAgreement.customer.user.mobile,
+          `Great News, We've just given you a Circle Account ;)
+        `,
+          `/support/agreement/${newServiceAgreement.agreementNumber}`
+        );
+        newServiceAgreement.save();
         return newServiceAgreement;
       } catch (error) {
         console.error(error);
