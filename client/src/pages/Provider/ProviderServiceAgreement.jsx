@@ -17,7 +17,7 @@ import {
 import { useState, useEffect } from "react";
 //import Select from "react-select";
 import { useQuery, useMutation } from "@apollo/client";
-import Splash from "../../components/Splash";
+// import Splash from "../../components/Splash";
 import { useNavigate } from "react-router-dom";
 
 //currently use state is seving the user. The following line relates to context which is not working
@@ -42,11 +42,11 @@ const InputStyling = {
 export default function ProviderServiceAgreement() {
   //const { currentUser } = useCurrentUser();
 
-  const [splashVisible, setSplashVisible] = useState(true);
+  // const [splashVisible, setSplashVisible] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setSplashVisible(false);
+      // setSplashVisible(false);
     }, 3000); // 3 seconds
 
     return () => clearTimeout(timer); // Cleanup the timer
