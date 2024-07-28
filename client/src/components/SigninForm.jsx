@@ -21,7 +21,7 @@ import AuthService from "../utils/auth";
 import { ButtonStyles } from "./ButtonStyle";
 import { ButtonHighlightStyle } from "./ButtonHighlightStyle";
 import { InputStyles } from "./InputStyles";
-import Splash from "./splash";
+import Splash from "./Splash";
 
 const SigninForm = ({ text }) => {
   const navigate = useNavigate();

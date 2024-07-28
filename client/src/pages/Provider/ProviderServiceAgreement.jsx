@@ -20,7 +20,7 @@ import {
 import { useState, useEffect } from "react";
 //import Select from "react-select";
 import { useQuery, useMutation } from "@apollo/client";
-import Splash from "../../components/splash";
+import Splash from "../../components/Splash";
 import { useNavigate } from "react-router-dom";
 
 //currently use state is seving the user. The following line relates to context which is not working

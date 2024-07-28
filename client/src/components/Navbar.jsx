@@ -8,7 +8,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { ButtonStyles } from "./ButtonStyle";
-import Splash from "./splash";
+import Splash from "./Splash";
 import { NavLink } from "react-router-dom";
 import SigninForm from "./SigninForm";
 import AuthService from "../utils/auth";
