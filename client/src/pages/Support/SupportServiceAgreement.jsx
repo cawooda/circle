@@ -98,7 +98,7 @@ export default function SupportServiceAgreement() {
     });
 
     navigate(
-      `/signed/?name=${agreementQueryData.getServiceAgreement.customer.user.name}`
+      `/signed?name=${agreementQueryData.getServiceAgreement.customer.user.first}`
     );
     try {
     } catch (error) {
