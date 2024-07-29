@@ -6,12 +6,17 @@ import {
   FormLabel,
   Modal,
   ModalOverlay,
+  Heading,
   ModalContent,
   ModalHeader,
   ModalBody,
   ModalCloseButton,
   useDisclosure,
   FormControl,
+  Container,
+  Image,
+  Center,
+  VStack,
 } from "@chakra-ui/react";
 //routing and redirecting
 import { useNavigate } from "react-router-dom";
@@ -22,6 +27,7 @@ import { ButtonStyles } from "./ButtonStyle";
 import { ButtonHighlightStyle } from "./ButtonHighlightStyle";
 import { InputStyles } from "./InputStyles";
 import Splash from "./Splash";
+import logo from "/logo.png";
 
 const SigninForm = ({ text, loggedIn, setLoggedIn }) => {
   const navigate = useNavigate();
@@ -61,6 +67,8 @@ const SigninForm = ({ text, loggedIn, setLoggedIn }) => {
     }
 
     setUserFormData({
+      first: "",
+      last: "",
       mobile: "",
       password: "",
     });
@@ -90,15 +98,21 @@ const SigninForm = ({ text, loggedIn, setLoggedIn }) => {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Signup</ModalHeader>
+          <ModalHeader>
+            <Center>
+              <VStack>
+                <Heading>Signup</Heading>
+                <Image src={logo} boxSize="100px" />
+              </VStack>
+            </Center>
+          </ModalHeader>
           <ModalCloseButton />
           <ModalHeader>New? Use this to create an account</ModalHeader>
           <ModalBody>
             <Flex direction="column" align="center" justify="center">
               <FormControl onSubmit={() => handleFormSubmit()}>
                 {/* show alert if server response is bad */}
-
-                <FormLabel htmlFor="phone">Mobile</FormLabel>
+                <FormLabel htmlFor="first">First Name</FormLabel>
                 <Input
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
@@ -106,10 +120,26 @@ const SigninForm = ({ text, loggedIn, setLoggedIn }) => {
                     }
                   }}
                   autoFocus
+                  id="first-name"
+                  {...InputStyles}
+                  type="text"
+                  placeholder="name..."
+                  name="first"
+                  onChange={handleInputChange}
+                  value={userFormData.first}
+                  required
+                />
+                <FormLabel htmlFor="phone">Mobile</FormLabel>
+                <Input
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleFormSubmit(e);
+                    }
+                  }}
                   id="emailInput"
                   {...InputStyles}
                   type="mobile"
-                  placeholder="Your phone number"
+                  placeholder="mobile..."
                   name="mobile"
                   onChange={handleInputChange}
                   value={userFormData.mobile}
@@ -126,23 +156,24 @@ const SigninForm = ({ text, loggedIn, setLoggedIn }) => {
                   id="passwordInput"
                   {...InputStyles}
                   type="password"
-                  placeholder="Your password"
+                  placeholder="password..."
                   name="password"
                   onChange={handleInputChange}
                   value={userFormData.password}
                   required
                 />
-
-                <Button
-                  {...ButtonStyles}
-                  style={{ marginTop: "10px" }}
-                  disabled={!(userFormData.mobile && userFormData.password)}
-                  type="submit"
-                  onClick={handleFormSubmit}
-                  variant="success"
-                >
-                  Go
-                </Button>
+                <Container centerContent>
+                  <Button
+                    {...ButtonStyles}
+                    style={{ margin: "50px" }}
+                    disabled={!(userFormData.mobile && userFormData.password)}
+                    type="submit"
+                    onClick={handleFormSubmit}
+                    variant="success"
+                  >
+                    Go
+                  </Button>
+                </Container>
               </FormControl>
             </Flex>
           </ModalBody>
