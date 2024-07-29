@@ -10,8 +10,10 @@ import {
   Container,
   Spacer,
   Alert,
+  Text,
   Button,
   AlertDescription,
+  Center,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 //import Select from "react-select";
@@ -19,9 +21,10 @@ import { useQuery, useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
 import { QUERY_USER_BY_ID, QUERY_SERVICE_AGREEMENT } from "../../utils/queries";
 
-// import { SIGN_SERVICE_AGREEMENT } from "../../utils/mutations";
+import { SIGN_SERVICE_AGREEMENT } from "../../utils/mutations";
 import AuthService from "../../utils/auth";
 import { ButtonStyles } from "../../components/ButtonStyle";
+import { ButtonHighlightStyle } from "../../components/ButtonHighlightStyle";
 
 import { Routes, Route, useParams } from "react-router-dom";
 
@@ -53,20 +56,20 @@ export default function SupportServiceAgreement() {
   !agreementNumber ? navigate("/") : "";
   //product list query
 
-  // const [
-  //   signServiceAgreement,
-  //   {
-  //     loading: AddServiceAgreementLoading,
-  //     data: AddServiceAgreementData,
-  //     error: AddServiceAgreementError,
-  //   },
-  // ] = useMutation(SIGN_SERVICE_AGREEMENT, {
-  //   onError: (err) => {
-  //     console.error("GraphQL Error:", err.graphQLErrors);
-  //     console.error("Network Error:", err.networkError);
-  //     console.error("Message:", err.message);
-  //   },
-  // });
+  const [
+    signServiceAgreement,
+    {
+      loading: AddServiceAgreementLoading,
+      data: AddServiceAgreementData,
+      error: AddServiceAgreementError,
+    },
+  ] = useMutation(SIGN_SERVICE_AGREEMENT, {
+    onError: (err) => {
+      console.error("GraphQL Error:", err.graphQLErrors);
+      console.error("Network Error:", err.networkError);
+      console.error("Message:", err.message);
+    },
+  });
 
   //const { currentUser } = useCurrentUser();
 
@@ -87,19 +90,16 @@ export default function SupportServiceAgreement() {
   function handleFormSubmit(event) {
     event.preventDefault();
     console.log("agreementFormData", agreementFormData);
-    //   signServiceAgreement({
-    //     variables: {
-    //       provider: agreementFormData.provider,
-    //       customer: agreementFormData.customer,
-    //       endDate: agreementFormData.endDate,
-    //       product: agreementFormData.product,
-    //       quantity: parseInt(agreementFormData.quantity),
-    //     },
-    //   });
-    //   try {
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
+    signServiceAgreement({
+      variables: {
+        agreementId: agreementQueryData.getServiceAgreement._id,
+        signature: "http://signature.com/sig.jpg",
+      },
+    });
+    try {
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   //use effects
@@ -179,66 +179,97 @@ export default function SupportServiceAgreement() {
       </Container>
     );
   return (
-    <Flex direction="column">
-      <Heading>Service Agreement</Heading>
-      <Heading size="xl">with</Heading>
-      <Spacer />
-      {/* the following are hidden but used for submission */}
-      <FormControl>
-        <Heading size="lg">
-          {agreementQueryData.getServiceAgreement.provider.providerName}
-        </Heading>
-        <Heading size="sm">
-          <strong>ABN:</strong>
-          {agreementQueryData.getServiceAgreement.provider.abn}
-        </Heading>
+    <Container
+      borderRadius="50px"
+      marginTop="50px"
+      borderWidth="2px"
+      bgColor="yellow.50"
+      paddingTop="20px"
+    >
+      <Flex
+        maxWidth={{ lg: "700px" }}
+        justifyItems={"center"}
+        direction="column"
+        alignItems="center"
+        textAlign="center"
+      >
+        <Heading size="md">You have a new</Heading>
+        <Heading>Service Agreement</Heading>
+        <Heading size="md">with</Heading>
+        <Spacer />
+        {/* the following are hidden but used for submission */}
+        <FormControl>
+          <Heading size="lg">
+            {agreementQueryData.getServiceAgreement.provider.providerName}
+          </Heading>
+          <Heading size="sm">
+            <strong>ABN:</strong>
+            {agreementQueryData.getServiceAgreement.provider.abn}
+          </Heading>
+          <Input
+            name="provider"
+            hidden
+            {...InputStyling}
+            value={
+              !agreementQueryLoading
+                ? agreementQueryData.getServiceAgreement.provider._id
+                : ""
+            }
+            onChange={handleInputChange}
+          />
+        </FormControl>
+        {/* end invisible inputs */}
+        <FormControl>
+          <FormLabel>End Date</FormLabel>
+          <Input
+            {...InputStyling}
+            name="endDate"
+            type="text"
+            readOnly
+            value={
+              !agreementQueryLoading
+                ? dayjs(agreementQueryData.getServiceAgreement.endDate).format(
+                    "DD/MM/YYYY"
+                  )
+                : dayjs().format("DD-MM-YYYY")
+            }
+            onChange={handleInputChange}
+          />
+        </FormControl>
+        <FormControl>
+          <FormLabel>Customer</FormLabel>
+          <Input
+            {...InputStyling}
+            name="customer"
+            readOnly
+            value={
+              !userQueryLoading
+                ? `${agreementQueryData.getServiceAgreement.customer.user.first} ${agreementQueryData.getServiceAgreement.customer.user.last}`
+                : "name"
+            }
+          ></Input>
+        </FormControl>
+        <FormLabel>NDIS Number</FormLabel>
         <Input
-          name="provider"
-          hidden
           {...InputStyling}
+          name="ndisNumber"
+          readOnly
           value={
-            !agreementQueryLoading
-              ? agreementQueryData.getServiceAgreement.provider._id
-              : ""
+            !userQueryLoading
+              ? `${agreementQueryData.getServiceAgreement.customer.ndisNumber} `
+              : "name"
           }
-          onChange={handleInputChange}
-        />
-      </FormControl>
-      {/* end invisible inputs */}
-      <FormControl>
-        <FormLabel>End Date</FormLabel>
-        <Input
-          {...InputStyling}
-          name="endDate"
-          type="text"
-          value={
-            !agreementQueryLoading
-              ? dayjs(agreementQueryData.getServiceAgreement.endDate).format(
-                  "DD/MM/YYYY"
-                )
-              : dayjs().format("DD-MM-YYYY")
-          }
-          onChange={handleInputChange}
-        />
-      </FormControl>
-      <FormControl>
-        <FormLabel>Customer</FormLabel>
-        <Input
-          {...InputStyling}
-          name="customer"
-          onChange={handleInputChange}
-          value={!userQueryLoading ? userQueryData.getUserById.first : "name"}
         ></Input>
-        {<p>replace with details from params {agreementNumber}</p>}
-      </FormControl>
-      <Spacer />
-      <Flex direction="column">
+
+        <Spacer />
+
         <FormControl>
           <FormLabel>Product</FormLabel>
           <Input
             {...InputStyling}
             name="product"
             type="text"
+            readOnly
             value={
               !agreementQueryLoading
                 ? agreementQueryData.getServiceAgreement.product.name
@@ -253,6 +284,7 @@ export default function SupportServiceAgreement() {
             {...InputStyling}
             name="quantity"
             type="text"
+            readOnly
             value={
               !agreementQueryLoading
                 ? agreementQueryData.getServiceAgreement.quantity
@@ -267,6 +299,7 @@ export default function SupportServiceAgreement() {
             {...InputStyling}
             name="quantity"
             type="text"
+            readOnly
             value={
               !agreementQueryLoading
                 ? agreementQueryData.getServiceAgreement.totalPrice
@@ -276,12 +309,27 @@ export default function SupportServiceAgreement() {
           />
         </FormControl>
         <Container paddingTop={5}>
-          <Button {...ButtonStyles} onClick={handleFormSubmit}>
+          <Button
+            {...ButtonStyles}
+            {...ButtonHighlightStyle}
+            onClick={handleFormSubmit}
+          >
             Submit
           </Button>
         </Container>
+        <Container paddingTop="20px">
+          <Heading>Terms and Conditions</Heading>
+          {agreementQueryData.getServiceAgreement.provider.termsAndConditions.map(
+            (item) => (
+              <>
+                <Heading size="md">{item.heading}</Heading>
+                <Text>{item.paragraph}</Text>
+              </>
+            )
+          )}
+        </Container>
       </Flex>
-    </Flex>
+    </Container>
   );
 }
 

@@ -72,3 +72,58 @@ export const ADD_SERVICE_AGREEMENT = gql`
     }
   }
 `;
+
+export const SIGN_SERVICE_AGREEMENT = gql`
+  mutation SignServiceAgreement($agreementId: ID!, $signature: String!) {
+    signServiceAgreement(agreementId: $agreementId, signature: $signature) {
+      _id
+      provider {
+        _id
+        user {
+          _id
+          first
+          last
+          mobile
+          email
+          date_of_birth
+          fullName
+        }
+        abn
+        address
+        providerName
+        termsAndConditions {
+          heading
+          paragraph
+        }
+        createdAt
+        updatedAt
+      }
+      customer {
+        _id
+        user {
+          first
+          _id
+          email
+          mobile
+        }
+        ndisNumber
+        address
+        dateOfBirth
+        customerSpecificField
+      }
+      agreementNumber
+      startDate
+      product {
+        _id
+        name
+        price
+      }
+      quantity
+      endDate
+      totalPrice
+      approvedByCustomer
+      createdAt
+      updatedAt
+    }
+  }
+`;

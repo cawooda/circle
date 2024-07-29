@@ -1,68 +1,27 @@
 [{
   "_id": {
-    "$oid": "66a0d9f4a0eb8627cc6320f7"
+    "$oid": "66a758e614613fa9ed9a8fc2"
   },
   "user": {
-    "$oid": "66a083826e76d0e5ababe490"
+    "$oid": "66a758e614613fa9ed9a8fbf"
   },
-  "abn": "12345678901",
-  "address": "123 Provider St, City, Country",
-  "providerName": "ProviderOne",
+  "abn": "5339034625",
+  "address": "1 Street Name, Town, PostCode",
+  "providerName": "Acme Electronics",
   "termsAndConditions": [
     {
-      "heading": "Term 1",
-      "paragraph": "ProviderOne Term 1 details.",
+      "heading": "Important Terms",
+      "paragraph": "Important ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant Paragraph",
       "_id": {
-        "$oid": "66a0d9f4a0eb8627cc6320f8"
-      }
-    },
-    {
-      "heading": "Term 2",
-      "paragraph": "ProviderOne Term 2 details.",
-      "_id": {
-        "$oid": "66a0d9f4a0eb8627cc6320f9"
+        "$oid": "66a758e614613fa9ed9a8fc3"
       }
     }
   ],
   "createdAt": {
-    "$date": "2024-07-24T10:39:48.751Z"
+    "$date": "2024-07-29T08:55:02.360Z"
   },
   "updatedAt": {
-    "$date": "2024-07-24T10:39:48.751Z"
-  },
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66a0d9f4a0eb8627cc6320fa"
-  },
-  "user": {
-    "$oid": "66a083826e76d0e5ababe48f"
-  },
-  "abn": "12345678901",
-  "address": "153 Wayward St, City, Country",
-  "providerName": "We Love Work",
-  "termsAndConditions": [
-    {
-      "heading": "Term 1",
-      "paragraph": "ProviderOne Term 1 details.",
-      "_id": {
-        "$oid": "66a0d9f4a0eb8627cc6320fb"
-      }
-    },
-    {
-      "heading": "Term 2",
-      "paragraph": "ProviderOne Term 2 details.",
-      "_id": {
-        "$oid": "66a0d9f4a0eb8627cc6320fc"
-      }
-    }
-  ],
-  "createdAt": {
-    "$date": "2024-07-24T10:39:48.751Z"
-  },
-  "updatedAt": {
-    "$date": "2024-07-24T10:39:48.751Z"
+    "$date": "2024-07-29T08:55:02.360Z"
   },
   "__v": 0
 }]

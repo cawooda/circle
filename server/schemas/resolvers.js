@@ -56,7 +56,12 @@ const resolvers = {
       try {
         const serviceAgreement = await ServiceAgreement.findOne({
           agreementNumber: agreementNumber,
-        }).populate("customer customer.user product provider");
+        });
+
+        await serviceAgreement.populate("customer");
+        await serviceAgreement.populate("provider");
+        await serviceAgreement.populate("product");
+        await serviceAgreement.populate("customer.user");
 
         console.log(serviceAgreement);
 
@@ -138,14 +143,14 @@ const resolvers = {
         await newServiceAgreement.populate("provider");
         await newServiceAgreement.populate("customer.user");
         await newServiceAgreement.populate("provider.user");
-
+        newServiceAgreement.save();
         controllerSmsService.sendText(
           newServiceAgreement.customer.user.mobile,
           `Hi ${newServiceAgreement.customer.user.first}, a new service agreement with ${newServiceAgreement.provider.providerName} agreement is ready. Use the link to securely review and sign ;)
         `,
           `/support/agreement/${newServiceAgreement.agreementNumber}`
         );
-        newServiceAgreement.save();
+
         return newServiceAgreement;
       } catch (error) {
         console.error(error);
@@ -158,20 +163,19 @@ const resolvers = {
         );
         if (signature) {
           signedServiceAgreement.approvedByCustomer = true;
-          await signedServiceAgreement.save();
         }
         // Populate paths individually to fix an issue I cant trace
         await signedServiceAgreement.populate("customer");
         await signedServiceAgreement.populate("provider");
         await signedServiceAgreement.populate("customer.user");
         await signedServiceAgreement.populate("provider.user");
-
+        await signedServiceAgreement.save();
         controllerSmsService.sendText(
           signedServiceAgreement.provider.user.mobile,
           `Hi ${signedServiceAgreement.provider.user.first}, a new service agreement with ${signedServiceAgreement.customer.user.first} has been signed. ;)`
         );
-        newServiceAgreement.save();
-        return newServiceAgreement;
+
+        return signedServiceAgreement;
       } catch (error) {
         console.error(error);
       }
