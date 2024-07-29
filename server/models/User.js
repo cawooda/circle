@@ -88,9 +88,7 @@ userSchema.pre("save", async function (next) {
     try {
       const newCustomer = new Customer({
         user: this._id,
-        ndisNumber: process.env.TESTING
-          ? generateRandom10DigitNumber()
-          : "52525242",
+        ndisNumber: `${generateRandom10DigitNumber()}`,
         address: "1 Street Name, Town, PostCode",
         dateOfBirth: "1999-07-07",
       });

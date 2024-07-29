@@ -122,10 +122,11 @@ export default function ProviderServiceAgreement() {
   useEffect(() => {
     if (!productQueryLoading && productQueryData) {
       console.log(productQueryData);
-      const productList = productQueryData.getProducts.map((item) => ({
-        value: item._id,
-        label: item.name,
+      const productList = productQueryData.getProducts.map((product) => ({
+        value: product._id,
+        label: product.name,
       }));
+      productList.unshift({ value: "00000--0000", label: "...choose product" });
       console.log(productList);
       setProducts(productList);
     }
@@ -139,9 +140,6 @@ export default function ProviderServiceAgreement() {
       );
       setCurrentUser(userQueryData.getUserById);
     }
-  }, [userQueryLoading, userQueryData]);
-
-  useEffect(() => {
     if (!customerQueryLoading && customerQueryData) {
       const customerList = customerQueryData.getCustomers.map((customer) => {
         return {
@@ -149,13 +147,24 @@ export default function ProviderServiceAgreement() {
           label: `${customer.user.first} ${customer.user.last}`,
         };
       });
-      customerList.unshift({ value: "00000--0000", label: "select name" });
+      customerList.unshift({
+        value: "00000--0000",
+        label: "...choose customer",
+      });
       setCustomers(customerList);
-      console.log("customerList", customerList);
     }
-  }, [customerQueryLoading, customerQueryData]);
-  console.log("customers", customers);
-  console.log("agreementFormData", agreementFormData);
+    //try to set the default end date to 3 months from now
+    const defaultEndDate = dayjs().add(3, "month").format("YYYY-MM-DD");
+    setAgreementFormData((prevState) => ({
+      ...prevState,
+      endDate: defaultEndDate,
+    }));
+  }, [
+    userQueryLoading,
+    userQueryData,
+    customerQueryLoading,
+    customerQueryData,
+  ]);
 
   const handleInputChange = (event) => {
     console.log("agreementFormData", agreementFormData);
@@ -305,10 +314,14 @@ export default function ProviderServiceAgreement() {
           onChange={handleInputChange}
           value={agreementFormData.product}
         >
-          {products.map((customer) => {
+          {products.map((product, index) => {
             return (
-              <option key={customer.value} value={customer.value}>
-                {customer.label}
+              <option
+                key={product.value}
+                selected={index === 0}
+                value={product.value}
+              >
+                {product.label}
               </option>
             );
           })}

@@ -93,13 +93,14 @@ const resolvers = {
         const newUser = await User.create({
           first: first || "",
           last: last || "",
-          mobile: mobile || process.env.TESTING_PHONE,
+          mobile: mobile,
           email: email || "",
           password,
         });
         return newUser;
       } catch (error) {
         console.log(error);
+        return error;
       }
     },
     loginUser: async (_parent, { mobile, email, password }) => {
