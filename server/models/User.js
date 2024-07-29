@@ -88,7 +88,9 @@ userSchema.pre("save", async function (next) {
     try {
       const newCustomer = new Customer({
         user: this._id,
-        ndisNumber: process.env.TESTING ? generateRandom10DigitNumber() : "",
+        ndisNumber: process.env.TESTING
+          ? generateRandom10DigitNumber()
+          : "52525242",
         address: "1 Street Name, Town, PostCode",
         dateOfBirth: "1999-07-07",
       });
@@ -134,7 +136,7 @@ userSchema.pre("save", async function (next) {
   }
   // Generate token after the user is saved
   if (this.isNew) {
-    this.token = this.generateAuthToken();
+    generateAuthToken();
   }
   next();
 });
@@ -151,7 +153,6 @@ userSchema.methods.isCorrectPassword = async function (password) {
 userSchema.methods.generateAuthToken = function () {
   const user = {
     authenticatedPerson: { _id: this._id, mobile: this.mobile },
-    token: this.token,
   };
   const token = jwt.sign(user, process.env.SECRET_KEY, {
     expiresIn: process.env.TOKEN_EXPIRES_IN,

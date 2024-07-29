@@ -23,7 +23,7 @@ import { ButtonHighlightStyle } from "./ButtonHighlightStyle";
 import { InputStyles } from "./InputStyles";
 import Splash from "./Splash";
 
-const SigninForm = ({ text }) => {
+const SigninForm = ({ text, loggedIn, setLoggedIn }) => {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
   // set state for alert
@@ -50,11 +50,12 @@ const SigninForm = ({ text }) => {
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     setSplashVisible(true);
+    const newUserAuth = await AuthService.loginOrCreateUser(userFormData);
+    if (newUserAuth) setLoggedIn(true);
     navigate("/");
 
     try {
       //the only use of traditional API in this app is for new user creation or login. Other queries are done in grapghQL.
-      const newUserAuth = await AuthService.loginOrCreateUser(userFormData);
     } catch (error) {
       console.log(error);
     }
@@ -63,7 +64,7 @@ const SigninForm = ({ text }) => {
       mobile: "",
       password: "",
     });
-    window.location.reload();
+    navigate("/");
     onClose();
   };
 
@@ -74,8 +75,13 @@ const SigninForm = ({ text }) => {
         {...ButtonStyles}
         {...ButtonHighlightStyle}
         onClick={() => {
-          !AuthService.loggedIn() ? onOpen() : AuthService.logout();
-          navigate("/");
+          if (!loggedIn) {
+            onOpen();
+          } else {
+            AuthService.logout();
+            setLoggedIn(false);
+            navigate("/");
+          }
         }}
       >
         {text}
@@ -96,7 +102,7 @@ const SigninForm = ({ text }) => {
                 <Input
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
-                      handleSubmit(e);
+                      handleFormSubmit(e);
                     }
                   }}
                   autoFocus
@@ -114,7 +120,7 @@ const SigninForm = ({ text }) => {
                 <Input
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
-                      handleSubmit(e);
+                      handleFormSubmit(e);
                     }
                   }}
                   id="passwordInput"

@@ -149,6 +149,7 @@ export default function ProviderServiceAgreement() {
           label: `${customer.user.first} ${customer.user.last}`,
         };
       });
+      customerList.unshift({ value: "00000--0000", label: "select name" });
       setCustomers(customerList);
       console.log("customerList", customerList);
     }
@@ -166,12 +167,12 @@ export default function ProviderServiceAgreement() {
     console.log("agreementFormData", agreementFormData);
   };
 
-  function handleFormSubmit(event) {
+  async function handleFormSubmit(event) {
     event.preventDefault();
     console.log("agreementFormData", agreementFormData);
-
+    setSplashVisible(true);
     try {
-      addServiceAgreement({
+      const newServiceAgreement = await addServiceAgreement({
         variables: {
           provider: agreementFormData.provider,
           customer: agreementFormData.customer,
@@ -180,8 +181,12 @@ export default function ProviderServiceAgreement() {
           quantity: parseInt(agreementFormData.quantity),
         },
       });
-      setSplashVisible(true);
-      navigate("/support");
+
+      if (newServiceAgreement?.data?.addServiceAgreement?.agreementNumber) {
+        navigate(
+          `/support/agreement/${newServiceAgreement.data.addServiceAgreement.agreementNumber}`
+        );
+      } else navigate("/support");
     } catch (error) {
       console.log(error);
     }
@@ -200,18 +205,14 @@ export default function ProviderServiceAgreement() {
         </Alert>
       </Container>
     );
-  if (
-    userQueryError ||
-    !userQueryData.getUserById.roleProvider._id ||
-    customerQueryError
-  )
+  if (userQueryError)
     return (
       <Container paddingTop={10}>
         <Alert status="error">
           <AlertIcon />
           <AlertTitle>
             We recieved an error loading your data. try refresh and make sure
-            you are logged in.
+            you are logged in. {userQueryError.message}
           </AlertTitle>
           <AlertDescription>
             {userQueryError
@@ -220,14 +221,14 @@ export default function ProviderServiceAgreement() {
             {customerQueryError
               ? "loading customer data... please notify Admin "
               : ""}
-            {!userQueryData.getUserById.roleProvider._id
+            {!userQueryData
               ? "It doesent look like you have a provider account "
               : ""}
           </AlertDescription>
         </Alert>
       </Container>
     );
-  if (!userQueryData?.getUserById.roleProvider)
+  if (!userQueryData.getUserById.roleProvider)
     return (
       <Container paddingTop={10}>
         <Alert status="error">
@@ -281,9 +282,13 @@ export default function ProviderServiceAgreement() {
           onChange={handleInputChange}
           // value={agreementFormData.customer}
         >
-          {customers.map((customer) => {
+          {customers.map((customer, index) => {
             return (
-              <option key={customer.value} value={customer.value}>
+              <option
+                key={customer.value}
+                selected={index === 0}
+                value={customer.value}
+              >
                 {customer.label}
               </option>
             );

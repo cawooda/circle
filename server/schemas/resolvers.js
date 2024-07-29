@@ -132,14 +132,26 @@ const resolvers = {
           quantity: quantity || null,
           endDate: endDate || null,
         });
-        await newServiceAgreement.populate(
-          "customer provider provider.user customer.user"
-        );
+        // Populate paths individually to fix an issue I cant trace
+        await newServiceAgreement.populate("customer");
 
-        console.log("newServiceAgreement user", newServiceAgreement.customer);
+        await newServiceAgreement.populate("provider");
+
+        await newServiceAgreement.populate("customer.user");
+
+        await newServiceAgreement.populate("provider.user");
+
+        console.log(
+          "newServiceAgreement user",
+          newServiceAgreement.customer.user
+        );
+        console.log(
+          "newServiceAgreement.customer.user.mobile",
+          newServiceAgreement.customer.user.mobile
+        );
         controllerSmsService.sendText(
           newServiceAgreement.customer.user.mobile,
-          `Great News, We've just given you a Circle Account ;)
+          `Hi ${newServiceAgreement.customer.user.first}, a new service agreement with ${newServiceAgreement.provider.providerName} agreement is ready. Use the link to securely review and sign ;)
         `,
           `/support/agreement/${newServiceAgreement.agreementNumber}`
         );

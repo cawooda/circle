@@ -40,7 +40,11 @@ export default function NavBar() {
           </NavLink>
         </Box>
         <Box display="flex" justifyContent="center" alignItems="center">
-          <SigninForm text={loggedIn ? "Logout" : "Login"} />
+          <SigninForm
+            text={loggedIn ? "Logout" : "Login"}
+            loggedIn={loggedIn}
+            setLoggedIn={setLoggedIn}
+          />
         </Box>
       </Flex>
     </>
