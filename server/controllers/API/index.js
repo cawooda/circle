@@ -15,6 +15,8 @@ router.post("/users", async (req, res) => {
       if (userExists.isCorrectPassword(req.body.password)) {
         await userExists.generateAuthToken();
 
+        await userExists.populate("customer");
+        await userExists.populate("provider");
         await userExists.save();
         res
           .status(200)
@@ -40,7 +42,7 @@ router.post("/users", async (req, res) => {
       );
       res
         .status(200)
-        .json({ userExists: true, userCreated: true, user: userExists });
+        .json({ userExists: true, userCreated: true, user: userCreated });
     }
   } catch (error) {
     console.log(error);

@@ -78,7 +78,7 @@ input ProductInput {
 
 type Customer {
     _id: ID!
-    user: User
+    user: User!
     ndisNumber: String
     address: String
     dateOfBirth: String

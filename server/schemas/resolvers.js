@@ -141,14 +141,6 @@ const resolvers = {
 
         await newServiceAgreement.populate("provider.user");
 
-        console.log(
-          "newServiceAgreement user",
-          newServiceAgreement.customer.user
-        );
-        console.log(
-          "newServiceAgreement.customer.user.mobile",
-          newServiceAgreement.customer.user.mobile
-        );
         controllerSmsService.sendText(
           newServiceAgreement.customer.user.mobile,
           `Hi ${newServiceAgreement.customer.user.first}, a new service agreement with ${newServiceAgreement.provider.providerName} agreement is ready. Use the link to securely review and sign ;)
