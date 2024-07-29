@@ -1,6 +1,6 @@
 import { Container, Image } from "@chakra-ui/react";
 import React from "react";
-import splashImg from "./splash.gif";
+import splashImg from "./LOADING.gif";
 
 export default function Splash({ visible }) {
   if (!visible) {

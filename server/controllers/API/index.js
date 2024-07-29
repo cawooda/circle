@@ -15,8 +15,8 @@ router.post("/users", async (req, res) => {
       if (userExists.isCorrectPassword(req.body.password)) {
         await userExists.generateAuthToken();
 
-        await userExists.populate("customer");
-        await userExists.populate("provider");
+        await userExists.populate("roleCustomer");
+        await userExists.populate("roleProvider");
         await userExists.save();
         res
           .status(200)

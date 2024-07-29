@@ -152,7 +152,11 @@ userSchema.methods.isCorrectPassword = async function (password) {
 // Method to generate JWT token
 userSchema.methods.generateAuthToken = function () {
   const user = {
-    authenticatedPerson: { _id: this._id, mobile: this.mobile },
+    authenticatedPerson: {
+      _id: this._id,
+      mobile: this.mobile,
+      first: this.first,
+    },
   };
   const token = jwt.sign(user, process.env.SECRET_KEY, {
     expiresIn: process.env.TOKEN_EXPIRES_IN,
