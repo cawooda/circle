@@ -96,6 +96,10 @@ export default function SupportServiceAgreement() {
         signature: "http://signature.com/sig.jpg",
       },
     });
+
+    navigate(
+      `/signed/?name=${agreementQueryData.getServiceAgreement.customer.user.name}`
+    );
     try {
     } catch (error) {
       console.log(error);
@@ -256,7 +260,7 @@ export default function SupportServiceAgreement() {
           readOnly
           value={
             !userQueryLoading
-              ? `${agreementQueryData.getServiceAgreement.customer.ndisNumber} `
+              ? `${agreementQueryData.getServiceAgreement.customer.ndisNumber}`
               : "name"
           }
         ></Input>

@@ -20,6 +20,7 @@ import SupportServiceAgreement from "./pages/Support/SupportServiceAgreement";
 import SupportServiceAgreementList from "./pages/Support/SupportServiceAgreementList";
 import SupportShifts from "./pages/Support/SupportShifts";
 import SupportInvoices from "./pages/Support/SupportInvoices";
+import Signed from "./pages/Support/Signed";
 
 // Router configuration
 const router = createBrowserRouter([
@@ -27,6 +28,7 @@ const router = createBrowserRouter([
     path: "/",
     element: <RootLayout />,
     children: [
+      { path: "signed", element: <Signed /> },
       {
         path: "admin",
         element: <Admin />,
