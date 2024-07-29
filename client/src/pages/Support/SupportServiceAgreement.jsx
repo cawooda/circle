@@ -87,7 +87,7 @@ export default function SupportServiceAgreement() {
   function handleFormSubmit(event) {
     event.preventDefault();
     console.log("agreementFormData", agreementFormData);
-    //   addServiceAgreement({
+    //   signServiceAgreement({
     //     variables: {
     //       provider: agreementFormData.provider,
     //       customer: agreementFormData.customer,
@@ -101,17 +101,6 @@ export default function SupportServiceAgreement() {
     //     console.log(error);
     //   }
   }
-
-  //set query for customers
-  // const {
-  //   loading: customerQueryLoading,
-  //   error: customerQueryError,
-  //   data: customerQueryData,
-  // } = useQuery(QUERY_CUSTOMERS);
-
-  //set query for user information
-
-  //
 
   //use effects
   useEffect(() => {

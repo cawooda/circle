@@ -32,7 +32,7 @@ class SMSService {
       redirect: "follow",
     };
 
-    if (!process.env.TESTING) {
+    if (!process.env.TESTING_SMS) {
       fetch(process.env.CLICK_SEND_URL_SEND_ENDPOINT, requestOptions)
         .then((response) => response.text())
         .then((result) => console.log(result))

@@ -135,11 +135,8 @@ const resolvers = {
         });
         // Populate paths individually to fix an issue I cant trace
         await newServiceAgreement.populate("customer");
-
         await newServiceAgreement.populate("provider");
-
         await newServiceAgreement.populate("customer.user");
-
         await newServiceAgreement.populate("provider.user");
 
         controllerSmsService.sendText(
@@ -147,6 +144,31 @@ const resolvers = {
           `Hi ${newServiceAgreement.customer.user.first}, a new service agreement with ${newServiceAgreement.provider.providerName} agreement is ready. Use the link to securely review and sign ;)
         `,
           `/support/agreement/${newServiceAgreement.agreementNumber}`
+        );
+        newServiceAgreement.save();
+        return newServiceAgreement;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    signServiceAgreement: async (_parent, { agreementId, signature }) => {
+      try {
+        const signedServiceAgreement = await ServiceAgreement.findById(
+          agreementId
+        );
+        if (signature) {
+          signedServiceAgreement.approvedByCustomer = true;
+          await signedServiceAgreement.save();
+        }
+        // Populate paths individually to fix an issue I cant trace
+        await signedServiceAgreement.populate("customer");
+        await signedServiceAgreement.populate("provider");
+        await signedServiceAgreement.populate("customer.user");
+        await signedServiceAgreement.populate("provider.user");
+
+        controllerSmsService.sendText(
+          signedServiceAgreement.provider.user.mobile,
+          `Hi ${signedServiceAgreement.provider.user.first}, a new service agreement with ${signedServiceAgreement.customer.user.first} has been signed. ;)`
         );
         newServiceAgreement.save();
         return newServiceAgreement;

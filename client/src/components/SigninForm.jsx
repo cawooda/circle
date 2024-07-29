@@ -86,6 +86,7 @@ const SigninForm = ({ text, loggedIn, setLoggedIn }) => {
           if (!loggedIn) {
             onOpen();
           } else {
+            onClose();
             AuthService.logout();
             setLoggedIn(false);
             navigate("/");

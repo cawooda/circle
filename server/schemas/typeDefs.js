@@ -111,6 +111,7 @@ type Mutation {
     createAdmin(userId: ID!): Admin!
     createProvider(userId: ID!, abn: String!, address: String!, providerName: String!): Provider!
     addServiceAgreement(provider:ID!,customer:ID!,endDate:String!,product:String!,quantity:Int!): ServiceAgreement
+    signServiceAgreement(agreementId:ID!,signature:String!):ServiceAgreement
 }
 
 `;
