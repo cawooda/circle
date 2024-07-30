@@ -34,7 +34,7 @@ const InputStyling = {
   borderWidth: "2px",
 };
 
-const userId = AuthService.getProfile().authenticatedPerson._id || false;
+const userId = AuthService?.getProfile()?.authenticatedPerson?._id || false;
 
 export default function CustomerServiceAgreement() {
   let { agreementNumber } = useParams();
