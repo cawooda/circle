@@ -21,10 +21,6 @@ import { useQuery, useMutation } from "@apollo/client";
 import Splash from "../../components/Splash";
 import { useNavigate } from "react-router-dom";
 
-//currently use state is seving the user. The following line relates to context which is not working
-
-// import { useCurrentUser } from "../../utils/UserContext";
-
 import {
   QUERY_USER_BY_ID,
   QUERY_CUSTOMERS,

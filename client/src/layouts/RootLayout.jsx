@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { Container, Spacer, Flex, Box, Heading } from "@chakra-ui/react";
-import { UserProvider } from "../utils/UserContext";
+
 import logo from "/logo.png";
 
 const logoStyle = { paddingBottom: "15px" };
