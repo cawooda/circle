@@ -1,5 +1,9 @@
 # Circle Independent
 
+- [Link to Deployment](https://circleindependent.onrender.com/)
+
+- [Presentation](/Circle%20Independent.pdf)
+
 Circle Independent is an application developed for a small business called Circle Support. The application is the platform through which the business will be transitioning its support work and coordination staff to independent emloyment as sole trading businesses working in the provision of disability supports.
 
 - Easy to Use
@@ -46,12 +50,11 @@ Circle Independent makes use of hte following technologies.
 
 ## How it works
 
-The react based client serves a simple page with a prominent submenu based on the role of the user. For example Admin, Provider, Customer
+The react based client serves a simple page with a prominent submenu based on the role of the user. For example Admin, Provider, Customer.
+The main feature of this deployment is the ability of a user to register(in testing they automatically become both a provider and a customer).
+They are then able to prepare a service agreement for a customer.
+That service agreement is then sent to the customer for viewing and signing.
+
+The UI is deliberatly simple and focussed on buttons and selections rather than inputing details using a keyboard.
 
 ![alt text](./screenshot.png)
-
-## Check out my other repositories
-
-- [Domain-Driven Hexagon](https://github.com/Sairyss/domain-driven-hexagon) - Guide on Domain-Driven Design, software architecture, design patterns, best practices etc.
-- [Backend best practices](https://github.com/Sairyss/backend-best-practices) - Best practices, tools and guidelines for backend development.
-- [System Design Patterns](https://github.com/Sairyss/system-design-patterns) - list of topics and resources related to distributed systems, system design, microservices, scalability and performance, etc.

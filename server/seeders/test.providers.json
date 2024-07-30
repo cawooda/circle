@@ -1,0 +1,54 @@
+[{
+  "_id": {
+    "$oid": "66a8962667957e8d2603c58c"
+  },
+  "user": {
+    "$oid": "66a8962667957e8d2603c589"
+  },
+  "abn": "7097539151",
+  "address": "1 Street Name, Town, PostCode",
+  "providerName": "Acme Electronics",
+  "termsAndConditions": [
+    {
+      "heading": "Important Terms",
+      "paragraph": "Important ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant Paragraph",
+      "_id": {
+        "$oid": "66a8962667957e8d2603c58d"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2024-07-30T07:28:38.824Z"
+  },
+  "updatedAt": {
+    "$date": "2024-07-30T07:28:38.824Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66a8965867957e8d2603c595"
+  },
+  "user": {
+    "$oid": "66a8965867957e8d2603c592"
+  },
+  "abn": "9844491270",
+  "address": "1 Street Name, Town, PostCode",
+  "providerName": "Acme Electronics",
+  "termsAndConditions": [
+    {
+      "heading": "Important Terms",
+      "paragraph": "Important ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant Paragraph",
+      "_id": {
+        "$oid": "66a8965867957e8d2603c596"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2024-07-30T07:29:28.498Z"
+  },
+  "updatedAt": {
+    "$date": "2024-07-30T07:29:28.498Z"
+  },
+  "__v": 0
+}]
