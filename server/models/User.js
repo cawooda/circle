@@ -25,10 +25,10 @@ const userSchema = new Schema(
     email: {
       type: String,
       toLowerCase: true,
-      validate: {
-        validator: validator.isEmail,
-        message: "email did not pass validation",
-      },
+      // validate: {
+      //   validator: validator.isEmail,
+      //   message: "email did not pass validation",
+      // },
     },
     token: String,
     roleCustomer: {

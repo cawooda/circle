@@ -29,7 +29,6 @@ router.post("/users", async (req, res) => {
       const userCreated = await User.create({
         first: "firstName",
         last: "lastName",
-        email: "email@email.com",
         ...user,
       });
       userCreated.save();
