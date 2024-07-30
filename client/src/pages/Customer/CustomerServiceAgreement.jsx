@@ -34,6 +34,8 @@ const InputStyling = {
   borderWidth: "2px",
 };
 
+const userId = AuthService.getProfile().authenticatedPerson._id || false;
+
 export default function CustomerServiceAgreement() {
   let { agreementNumber } = useParams();
   const navigate = useNavigate();
@@ -43,7 +45,7 @@ export default function CustomerServiceAgreement() {
     error: userQueryError,
     data: userQueryData,
   } = useQuery(QUERY_USER_BY_ID, {
-    variables: { id: AuthService.getProfile().authenticatedPerson._id },
+    variables: { id: userId },
   });
 
   const {
@@ -128,7 +130,7 @@ export default function CustomerServiceAgreement() {
     !agreementQueryLoading ? agreementQueryData : ""
   );
 
-  if (userQueryLoading || agreementQueryLoading)
+  if (userQueryLoading || agreementQueryLoading || !userId)
     return (
       <Container paddingTop={10}>
         <Alert status="info">
@@ -141,6 +143,9 @@ export default function CustomerServiceAgreement() {
           </AlertDescription>
           <AlertDescription>
             {agreementQueryLoading ? "..loading agreement information" : ""}
+          </AlertDescription>
+          <AlertDescription>
+            {!userId ? "..You need to be logged in for this" : ""}
           </AlertDescription>
         </Alert>
       </Container>
@@ -243,7 +248,7 @@ export default function CustomerServiceAgreement() {
             readOnly
             value={
               !userQueryLoading
-                ? `${agreementQueryData.getServiceAgreement.customer.user.first} ${agreementQueryData.getServiceAgreement.customer.user.last}`
+                ? `${agreementQueryData.getServiceAgreement.customer.user.first} ${agreementQueryData.getServiceAgreement.customer.user?.last}`
                 : "name"
             }
           ></Input>

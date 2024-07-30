@@ -34,6 +34,8 @@ import { ADD_SERVICE_AGREEMENT } from "../../utils/mutations";
 import AuthService from "../../utils/auth";
 import { ButtonStyles } from "../../components/ButtonStyle";
 
+const userId = AuthService.getProfile().authenticatedPerson._id || false;
+
 const InputStyling = {
   borderRadius: "50px",
   borderColor: "Black",
@@ -77,7 +79,7 @@ export default function ProviderServiceAgreement() {
     error: userQueryError,
     data: userQueryData,
   } = useQuery(QUERY_USER_BY_ID, {
-    variables: { id: AuthService.getProfile().authenticatedPerson._id },
+    variables: { id: userId },
   });
 
   //product list query
@@ -139,8 +141,10 @@ export default function ProviderServiceAgreement() {
       );
       setCurrentUser(userQueryData.getUserById);
     }
+    console.log("customerQueryData", customerQueryData);
     if (!customerQueryLoading && customerQueryData) {
       const customerList = customerQueryData.getCustomers.map((customer) => {
+        console.log(customer);
         return {
           value: customer._id,
           label: `${customer.user.first} ${customer.user.last}`,
@@ -198,7 +202,7 @@ export default function ProviderServiceAgreement() {
     }
   }
 
-  if (userQueryLoading || customerQueryLoading)
+  if (userQueryLoading || customerQueryLoading || !userId)
     return (
       <Container paddingTop={10}>
         <Alert status="info">
@@ -207,6 +211,7 @@ export default function ProviderServiceAgreement() {
           <AlertDescription>
             {userQueryLoading ? "loading user data... " : ""}
             {customerQueryLoading ? "loading user data... " : ""}
+            {!userId ? "You need to be signed in..." : ""}
           </AlertDescription>
         </Alert>
       </Container>
@@ -246,6 +251,7 @@ export default function ProviderServiceAgreement() {
         </Alert>
       </Container>
     );
+  console.log("customers", customers);
   return (
     <Container>
       <div>

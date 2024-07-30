@@ -1,132 +1,25 @@
 [{
   "_id": {
-    "$oid": "66a083826e76d0e5ababe48f"
+    "$oid": "66a85360edd67b60f2126e31"
   },
-  "first": "Alice",
-  "last": "Smith",
-  "mobile": "1234567890",
-  "email": "alice@example.com",
-  "roleCustomer": null,
+  "first": "Andrew",
+  "last": "lastName",
+  "mobile": "0494140390",
+  "email": "email@email.com",
+  "roleCustomer": {
+    "$oid": "66a85360edd67b60f2126e32"
+  },
   "roleProvider": {
-    "$oid": "66a0d9f4a0eb8627cc6320f7"
-  },
-  "roleAdmin": {
-    "$oid": "66a0d9f4a0eb8627cc6320fa"
-  },
-  "password": "$2b$10$lkw0oAwGFBXOgg9smarZTOyYuMh9uPo9Xx0/QEUoZSjri5nEXVn7a",
-  "createdAt": {
-    "$date": "2024-07-24T14:53:19.271Z"
-  },
-  "updatedAt": {
-    "$date": "2024-07-24T14:53:19.271Z"
-  },
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66a083826e76d0e5ababe490"
-  },
-  "first": "Bob",
-  "last": "Brown",
-  "mobile": "0987654321",
-  "email": "bob@example.com",
-  "roleCustomer": null,
-  "roleProvider": {
-    "$oid": "66a0d9f4a0eb8627cc6320f7"
+    "$oid": "66a85360edd67b60f2126e34"
   },
   "roleAdmin": null,
-  "password": "$2b$10$h7x.laXNIDCJ.CORSk2Wxev./cA096/T77ZnE.maZf6voAbioaxS2",
+  "password": "$2b$10$qhnfffoqjrt61BKDPQdx4OOQ1BCLA37UZdCeD2Gs5GYt.ltTDv8Ry",
   "createdAt": {
-    "$date": "2024-07-24T14:53:19.272Z"
+    "$date": "2024-07-30T02:43:44.687Z"
   },
   "updatedAt": {
-    "$date": "2024-07-24T14:53:19.272Z"
+    "$date": "2024-07-30T02:43:44.687Z"
   },
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66a083826e76d0e5ababe491"
-  },
-  "first": "Charlie",
-  "last": "Johnson",
-  "mobile": "1122334455",
-  "email": "charlie@example.com",
-  "roleCustomer": {
-    "$oid": "66a0d9f4a0eb8627cc6320f4"
-  },
-  "roleProvider": null,
-  "roleAdmin": null,
-  "password": "$2b$10$waiI48brvZfcMbl/7.UAF.7DnKIx1xptXaEMQl9taZ/7Kcwir4SMK",
-  "createdAt": {
-    "$date": "2024-07-24T14:53:19.272Z"
-  },
-  "updatedAt": {
-    "$date": "2024-07-24T14:53:19.272Z"
-  },
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66a083826e76d0e5ababe492"
-  },
-  "first": "Diana",
-  "last": "Williams",
-  "mobile": "2233445566",
-  "email": "diana@example.com",
-  "roleCustomer": null,
-  "roleProvider": null,
-  "roleAdmin": null,
-  "password": "$2b$10$idCRP0uWjUvmDqkefFeOX.JLzHmJE7Ta4D/tfiZs.USlaowkPDiki",
-  "createdAt": {
-    "$date": "2024-07-24T14:53:19.272Z"
-  },
-  "updatedAt": {
-    "$date": "2024-07-24T14:53:19.272Z"
-  },
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66a083826e76d0e5ababe493"
-  },
-  "first": "Eve",
-  "last": "Taylor",
-  "mobile": "3344556677",
-  "email": "eve@example.com",
-  "roleCustomer": {
-    "$oid": "66a0d9f4a0eb8627cc6320f4"
-  },
-  "roleProvider": null,
-  "roleAdmin": null,
-  "password": "$2b$10$fQetbx8DJnQEO1lF3XW/vuQHcvKeKAKaihfkK0glPGSdn6HryJp.i",
-  "createdAt": {
-    "$date": "2024-07-24T14:53:19.272Z"
-  },
-  "updatedAt": {
-    "$date": "2024-07-24T14:53:19.272Z"
-  },
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66a083826e76d0e5ababe494"
-  },
-  "first": "Frank",
-  "last": "Wilson",
-  "mobile": "4455667788",
-  "email": "frank@example.com",
-  "roleCustomer": {
-    "$oid": "66a0d9f4a0eb8627cc6320f5"
-  },
-  "roleProvider": null,
-  "roleAdmin": null,
-  "password": "$2b$10$99yNJO0iNNrBQQ0iitLdfeyP1FJEGJZHcPjgkM5mTlSPZWxGYhGUi",
-  "createdAt": {
-    "$date": "2024-07-24T14:53:19.273Z"
-  },
-  "updatedAt": {
-    "$date": "2024-07-24T14:53:19.273Z"
-  },
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoZW50aWNhdGVkUGVyc29uIjp7Il9pZCI6IjY2YTg1MzYwZWRkNjdiNjBmMjEyNmUzMSIsIm1vYmlsZSI6IjA0OTQxNDAzOTAiLCJmaXJzdCI6IkFuZHJldyJ9LCJpYXQiOjE3MjIzMDc0MjQsImV4cCI6MTcyMjMxNDYyNH0.83lCJpiRhdJf15BmpGxm587zn1EBTQJWDsTEXuOQhOg",
   "__v": 0
 }]
