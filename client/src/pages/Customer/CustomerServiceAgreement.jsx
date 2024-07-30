@@ -28,6 +28,8 @@ import { ButtonHighlightStyle } from "../../components/ButtonHighlightStyle";
 
 import { Routes, Route, useParams } from "react-router-dom";
 
+const navigate = useNavigate();
+
 const InputStyling = {
   borderRadius: "50px",
   borderColor: "Black",
@@ -38,8 +40,7 @@ const userId = AuthService?.getProfile()?.authenticatedPerson?._id || false;
 
 export default function CustomerServiceAgreement() {
   let { agreementNumber } = useParams();
-  const navigate = useNavigate();
-  !agreementNumber ? navigate("/") : "";
+
   const {
     loading: userQueryLoading,
     error: userQueryError,
@@ -56,7 +57,6 @@ export default function CustomerServiceAgreement() {
     variables: { agreementNumber },
   });
   !agreementNumber ? navigate("/") : "";
-  //product list query
 
   const [
     signServiceAgreement,
@@ -123,7 +123,7 @@ export default function CustomerServiceAgreement() {
     if (!agreementQueryLoading && agreementQueryData) {
       setAgreementFormData((prev) => ({ ...prev, agreementFormData }));
     }
-  }, [agreementQueryData, agreementQueryData]);
+  }, [agreementQueryData, agreementQueryLoading]);
 
   console.log(
     "checking agreement loading for provider _id",
