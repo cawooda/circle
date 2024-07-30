@@ -5,16 +5,22 @@ import RootLayout from "./layouts/RootLayout";
 
 // Pages
 import Provider from "./pages/Provider";
-import Support from "./pages/Support";
+import Customer from "./pages/Customer";
 import Admin from "./pages/Admin";
 
 import UsersAdmin from "./pages/Admin/UsersAdmin";
 import ServiceAgreementsAdmin from "./pages/Admin/ServiceAgreementsAdmin";
 import InvoicesAdmin from "./pages/Admin/InvoicesAdmin";
 import ShiftsAdmin from "./pages/Admin/ShiftsAdmin";
-import ProviderServiceAgreements from "./pages/Provider/ProviderServiceAgreement";
+import ProviderServiceAgreement from "./pages/Provider/ProviderServiceAgreement";
+import ProviderServiceAgreements from "./pages/Provider/ProviderServiceAgreements";
 import ProviderShifts from "./pages/Provider/ProviderShifts";
-import SupportServiceAgreement from "./pages/Support/SupportServiceAgreement";
+
+import CustomerServiceAgreement from "./pages/Customer/CustomerServiceAgreement";
+import CustomerServiceAgreementList from "./pages/Customer/CustomerServiceAgreementList";
+import CustomerShifts from "./pages/Customer/CustomerShifts";
+import CustomerInvoices from "./pages/Customer/CustomerInvoices";
+import Signed from "./pages/Customer/Signed";
 
 // Router configuration
 const router = createBrowserRouter([
@@ -22,6 +28,7 @@ const router = createBrowserRouter([
     path: "/",
     element: <RootLayout />,
     children: [
+      { path: "signed", element: <Signed /> },
       {
         path: "admin",
         element: <Admin />,
@@ -49,22 +56,38 @@ const router = createBrowserRouter([
         element: <Provider />,
         children: [
           {
+            path: "service-agreement",
+            element: <ProviderServiceAgreement />,
+          },
+          {
             path: "service-agreements",
             element: <ProviderServiceAgreements />,
           },
           {
-            path: "service-agreements",
+            path: "shifts",
             element: <ProviderShifts />,
           },
         ],
       },
       {
-        path: "support",
-        element: <Support />,
+        path: "customer",
+        element: <Customer />,
         children: [
           {
-            path: ":agreementNumber",
-            element: <SupportServiceAgreement />,
+            path: "agreement/:agreementNumber",
+            element: <CustomerServiceAgreement />,
+          },
+          {
+            path: "service-agreements",
+            element: <CustomerServiceAgreementList />,
+          },
+          {
+            path: "shifts",
+            element: <CustomerShifts />,
+          },
+          {
+            path: "invoices",
+            element: <CustomerInvoices />,
           },
         ],
       },

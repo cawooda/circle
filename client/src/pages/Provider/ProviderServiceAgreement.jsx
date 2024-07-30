@@ -10,17 +10,15 @@ import {
   Spacer,
   NumberInput,
   NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
   Select,
   Alert,
   Button,
+  AlertDescription,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
-//import Select from "react-select";
+
 import { useQuery, useMutation } from "@apollo/client";
-import Splash from "../../components/splash";
+import Splash from "../../components/Splash";
 import { useNavigate } from "react-router-dom";
 
 //currently use state is seving the user. The following line relates to context which is not working
@@ -43,9 +41,20 @@ const InputStyling = {
 };
 
 export default function ProviderServiceAgreement() {
+  //router navigation
+  const navigate = useNavigate();
+
   //const { currentUser } = useCurrentUser();
 
+  //use States
   const [splashVisible, setSplashVisible] = useState(true);
+  //setup use State for customers
+  const [agreementFormData, setAgreementFormData] = useState({
+    endDate: dayjs().format("YYYY-MM-DD"),
+  });
+  const [customers, setCustomers] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [currentUser, setCurrentUser] = useState({});
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -54,14 +63,6 @@ export default function ProviderServiceAgreement() {
 
     return () => clearTimeout(timer); // Cleanup the timer
   }, [splashVisible]);
-
-  //setup use State for customers
-  const [agreementFormData, setAgreementFormData] = useState({
-    endDate: dayjs().format("YYYY-MM-DD"),
-  });
-  const [customers, setCustomers] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [currentUser, setCurrentUser] = useState({});
 
   //set query for customers
   const {
@@ -78,6 +79,7 @@ export default function ProviderServiceAgreement() {
   } = useQuery(QUERY_USER_BY_ID, {
     variables: { id: AuthService.getProfile().authenticatedPerson._id },
   });
+
   //product list query
   const {
     loading: productQueryLoading,
@@ -100,8 +102,6 @@ export default function ProviderServiceAgreement() {
     },
   });
 
-  const navigate = useNavigate();
-
   //implement this throughout the app and change window.location into the following router hook
   useEffect(() => {
     if (!AuthService.loggedIn()) {
@@ -113,7 +113,7 @@ export default function ProviderServiceAgreement() {
   useEffect(() => {
     setAgreementFormData({
       provider: !userQueryLoading
-        ? userQueryData.getUserById.roleProvider?._id
+        ? userQueryData?.getUserById.roleProvider?._id
         : "",
     });
   }, [userQueryLoading, userQueryData]);
@@ -121,74 +121,93 @@ export default function ProviderServiceAgreement() {
   //use effects for queries
   useEffect(() => {
     if (!productQueryLoading && productQueryData) {
-      console.log(productQueryData);
-      const productList = productQueryData.getProducts.map((item) => ({
-        value: item._id,
-        label: item.name,
+      const productList = productQueryData.getProducts.map((product) => ({
+        value: product._id,
+        label: product.name,
       }));
-      console.log(productList);
+      productList.unshift({ value: "00000--0000", label: "...choose product" });
+
       setProducts(productList);
     }
   }, [productQueryLoading, productQueryData]);
 
   useEffect(() => {
-    if (!userQueryLoading && userQueryData.roleCustomer) {
+    if (!userQueryLoading && !userQueryError && userQueryData.roleCustomer) {
       console.log(
         "current user should be set as customer",
         userQueryData.roleCustomer
       );
       setCurrentUser(userQueryData.getUserById);
     }
-  }, [userQueryLoading, userQueryData]);
-
-  useEffect(() => {
     if (!customerQueryLoading && customerQueryData) {
-      const customerList = customerQueryData.getCustomers.map((customer) => ({
-        value: customer._id,
-        label: customer.user.first,
-      }));
-
+      const customerList = customerQueryData.getCustomers.map((customer) => {
+        return {
+          value: customer._id,
+          label: `${customer.user.first} ${customer.user.last}`,
+        };
+      });
+      customerList.unshift({
+        value: "00000--0000",
+        label: "...choose customer",
+      });
       setCustomers(customerList);
     }
-  }, [customerQueryLoading, customerQueryData]);
+    //try to set the default end date to 3 months from now
+    const defaultEndDate = dayjs().add(3, "month").format("YYYY-MM-DD");
+    setAgreementFormData((prevState) => ({
+      ...prevState,
+      endDate: defaultEndDate,
+    }));
+  }, [
+    userQueryLoading,
+    userQueryData,
+    customerQueryLoading,
+    customerQueryData,
+  ]);
 
   const handleInputChange = (event) => {
-    console.log("agreementFormData", agreementFormData);
     if (event.target.name) {
       const { name, value } = event.target;
       setAgreementFormData((prevState) => ({ ...prevState, [name]: value })); //handle the change of for an input with useState
     } else {
     }
-    console.log("agreementFormData", agreementFormData);
   };
 
-  function handleFormSubmit(event) {
+  async function handleFormSubmit(event) {
     event.preventDefault();
-    console.log("agreementFormData", agreementFormData);
 
+    setSplashVisible(true);
     try {
-      addServiceAgreement({
+      const newServiceAgreement = await addServiceAgreement({
         variables: {
           provider: agreementFormData.provider,
           customer: agreementFormData.customer,
-          endDate: agreementFormData.endDate,
+          endDate: new Date(agreementFormData.endDate),
           product: agreementFormData.product,
           quantity: parseInt(agreementFormData.quantity),
         },
       });
-      setSplashVisible(true);
-      navigate("/support");
+
+      if (newServiceAgreement?.data?.addServiceAgreement?.agreementNumber) {
+        navigate(
+          `/customer/agreement/${newServiceAgreement.data.addServiceAgreement.agreementNumber}`
+        );
+      } else navigate("/customer");
     } catch (error) {
       console.log(error);
     }
   }
 
-  if (userQueryLoading)
+  if (userQueryLoading || customerQueryLoading)
     return (
       <Container paddingTop={10}>
         <Alert status="info">
           <AlertIcon />
           <AlertTitle>Loading Info about Your Service</AlertTitle>
+          <AlertDescription>
+            {userQueryLoading ? "loading user data... " : ""}
+            {customerQueryLoading ? "loading user data... " : ""}
+          </AlertDescription>
         </Alert>
       </Container>
     );
@@ -199,8 +218,19 @@ export default function ProviderServiceAgreement() {
           <AlertIcon />
           <AlertTitle>
             We recieved an error loading your data. try refresh and make sure
-            you are logged in.
+            you are logged in. {userQueryError.message}
           </AlertTitle>
+          <AlertDescription>
+            {userQueryError
+              ? "Error loading user data...are you logged in? "
+              : ""}
+            {customerQueryError
+              ? "loading customer data... please notify Admin "
+              : ""}
+            {!userQueryData
+              ? "It doesent look like you have a provider account "
+              : ""}
+          </AlertDescription>
         </Alert>
       </Container>
     );
@@ -208,7 +238,6 @@ export default function ProviderServiceAgreement() {
     return (
       <Container paddingTop={10}>
         <Alert status="error">
-          {console.log(userQueryData)}
           <AlertIcon />
           <AlertTitle>
             Your current role is not provider. You will need to gain provider
@@ -225,13 +254,15 @@ export default function ProviderServiceAgreement() {
       <Heading>Service Agreement</Heading>
       <Spacer />
       {/* the following are hidden but used for submission */}
-      <FormControl hidden={false}>
+      <FormControl hidden={true}>
         <FormLabel>Provider Id</FormLabel>
         <Input
           name="provider"
           {...InputStyling}
           defaultValue={
-            !userQueryLoading ? userQueryData.getUserById.roleProvider?._id : ""
+            !userQueryLoading
+              ? userQueryData?.getUserById.roleProvider?._id
+              : ""
           }
           onChange={handleInputChange}
         />
@@ -249,14 +280,20 @@ export default function ProviderServiceAgreement() {
       </FormControl>
       <FormControl>
         <FormLabel>Customer</FormLabel>
+
         <Select
           name="customer"
+          onClick={handleInputChange}
           onChange={handleInputChange}
-          value={agreementFormData.customer}
+          // value={agreementFormData.customer}
         >
-          {customers.map((customer) => {
+          {customers.map((customer, index) => {
             return (
-              <option key={customer.value} value={customer.value}>
+              <option
+                key={customer.value}
+                selected={index === 0}
+                value={customer.value}
+              >
                 {customer.label}
               </option>
             );
@@ -273,10 +310,14 @@ export default function ProviderServiceAgreement() {
           onChange={handleInputChange}
           value={agreementFormData.product}
         >
-          {products.map((customer) => {
+          {products.map((product, index) => {
             return (
-              <option key={customer.value} value={customer.value}>
-                {customer.label}
+              <option
+                key={product.value}
+                selected={index === 0}
+                value={product.value}
+              >
+                {product.label}
               </option>
             );
           })}

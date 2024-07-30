@@ -2,11 +2,13 @@ require("dotenv").config();
 const bcrypt = require("bcrypt");
 //import the Schema and model from mongoose.
 const { Schema, model } = require("mongoose");
+const { generateRandom10DigitNumber } = require("../utils/helpers");
 
 const validator = require("validator"); //this package provides a range of validator checks including email.
 const jwt = require("jsonwebtoken");
+const Customer = require("./Customer");
+const Provider = require("./Provider");
 const SALT_WORK_FACTOR = process.env.SALT_WORK_FACTOR;
-console.log(SALT_WORK_FACTOR);
 
 //defind the user model schema
 const userSchema = new Schema(
@@ -18,10 +20,10 @@ const userSchema = new Schema(
       type: String,
       minLength: 10,
       maxLength: 10,
+      required: true,
     },
     email: {
       type: String,
-      unique: true,
       toLowerCase: true,
       validate: {
         validator: validator.isEmail,
@@ -80,6 +82,46 @@ userSchema
 
 //This is some middleware intercpeting before a password is saved
 userSchema.pre("save", async function (next) {
+  if (this.roleCustomer === null) {
+    console.log("roleCustomer Missing or null");
+    try {
+      const newCustomer = new Customer({
+        user: this._id,
+        ndisNumber: `${generateRandom10DigitNumber()}`,
+        address: "1 Street Name, Town, PostCode",
+        dateOfBirth: "1999-07-07",
+      });
+      await newCustomer.save();
+      this.roleCustomer = newCustomer._id;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  if (!this.roleProvider && process.env.TESTING) {
+    try {
+      const newProvider = new Provider({
+        user: this._id,
+        abn: process.env.TESTING
+          ? require("../utils/helpers").generateRandom10DigitNumber()
+          : "",
+        address: "1 Street Name, Town, PostCode",
+        providerName: "Acme Electronics",
+        termsAndConditions: [
+          {
+            heading: "Important Terms",
+            paragraph:
+              "Important ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant Paragraph",
+          },
+        ],
+      });
+      await newProvider.save();
+      this.roleProvider = newProvider._id;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   if (this.isModified("password") || this.isNew) {
     try {
       // Generate salt and hash the password
@@ -91,7 +133,7 @@ userSchema.pre("save", async function (next) {
   }
   // Generate token after the user is saved
   if (this.isNew) {
-    this.token = this.generateAuthToken();
+    this.generateAuthToken();
   }
   next();
 });
@@ -107,8 +149,11 @@ userSchema.methods.isCorrectPassword = async function (password) {
 // Method to generate JWT token
 userSchema.methods.generateAuthToken = function () {
   const user = {
-    authenticatedPerson: { _id: this._id, email: this.email },
-    token: this.token,
+    authenticatedPerson: {
+      _id: this._id,
+      mobile: this.mobile,
+      first: this.first,
+    },
   };
   const token = jwt.sign(user, process.env.SECRET_KEY, {
     expiresIn: process.env.TOKEN_EXPIRES_IN,
@@ -117,7 +162,7 @@ userSchema.methods.generateAuthToken = function () {
   return token;
 };
 
-// Sanitize inputs
+// Sanitizing of input would be handled here
 userSchema.pre("save", function (next) {
   const user = this;
 

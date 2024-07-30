@@ -3,7 +3,7 @@ const { Schema, model } = require("mongoose");
 
 const providerSchema = new Schema(
   {
-    user: { type: Schema.Types.ObjectId, ref: "User" },
+    user: { type: Schema.Types.ObjectId, ref: "user" },
     abn: { type: String, required: true },
     address: { type: String, required: true },
     providerName: { type: String, required: true },

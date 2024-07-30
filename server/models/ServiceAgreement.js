@@ -45,7 +45,9 @@ const serviceAgreementSchema = new Schema(
 // Pre-save hook to calculate total price
 serviceAgreementSchema.pre("save", async function (next) {
   const serviceAgreement = this;
+  serviceAgreement.populate("product");
 
+  serviceAgreement.totalPrice = this.product.price * this.quantity;
   // Populate product details
 
   next();

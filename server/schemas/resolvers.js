@@ -8,6 +8,12 @@ const {
 const { roles } = require("../utils/roles");
 const jwt = require("jsonwebtoken");
 
+//handling SMS for this resolver
+const { SMSService } = require("../utils/smsService");
+const controllerSmsService = new SMSService();
+
+const smsService = new SMSService();
+
 const resolvers = {
   Query: {
     getAllUsers: async () => {
@@ -39,19 +45,22 @@ const resolvers = {
     getProducts: async () => {
       try {
         const productList = Product.find({});
+
         return productList;
       } catch (error) {
         console.error(error);
       }
     },
     getServiceAgreement: async (__parent, { agreementNumber }) => {
-      console.log("agreementNumber", agreementNumber);
       try {
         const serviceAgreement = await ServiceAgreement.findOne({
           agreementNumber: agreementNumber,
-        }).populate("customer");
+        });
 
-        console.log(serviceAgreement);
+        await serviceAgreement.populate("customer");
+        await serviceAgreement.populate("provider");
+        await serviceAgreement.populate("product");
+        await serviceAgreement.populate("customer.user");
 
         return serviceAgreement;
       } catch (error) {
@@ -84,15 +93,16 @@ const resolvers = {
     addUser: async (_parent, { first, last, mobile, email, password }) => {
       try {
         const newUser = await User.create({
-          first,
-          last,
-          mobile,
-          email,
+          first: first || "",
+          last: last || "",
+          mobile: mobile,
+          email: email || "",
           password,
         });
         return newUser;
       } catch (error) {
         console.log(error);
+        return error;
       }
     },
     loginUser: async (_parent, { mobile, email, password }) => {
@@ -125,8 +135,44 @@ const resolvers = {
           quantity: quantity || null,
           endDate: endDate || null,
         });
-        console.log("newServiceAgreement", newServiceAgreement);
+        // Populate paths individually to fix an issue I cant trace
+        await newServiceAgreement.populate("customer");
+        await newServiceAgreement.populate("provider");
+        await newServiceAgreement.populate("customer.user");
+        await newServiceAgreement.populate("provider.user");
+        newServiceAgreement.save();
+        controllerSmsService.sendText(
+          newServiceAgreement.customer.user.mobile,
+          `Hi ${newServiceAgreement.customer.user.first}, a new service agreement with ${newServiceAgreement.provider.providerName} agreement is ready. Use the link to securely review and sign ;)
+        `,
+          `/customer/agreement/${newServiceAgreement.agreementNumber}`
+        );
+
         return newServiceAgreement;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    signServiceAgreement: async (_parent, { agreementId, signature }) => {
+      try {
+        const signedServiceAgreement = await ServiceAgreement.findById(
+          agreementId
+        );
+        if (signature) {
+          signedServiceAgreement.approvedByCustomer = true;
+        }
+        // Populate paths individually to fix an issue I cant trace
+        await signedServiceAgreement.populate("customer");
+        await signedServiceAgreement.populate("provider");
+        await signedServiceAgreement.populate("customer.user");
+        await signedServiceAgreement.populate("provider.user");
+        await signedServiceAgreement.save();
+        controllerSmsService.sendText(
+          signedServiceAgreement.provider.user.mobile,
+          `Hi ${signedServiceAgreement.provider.user.first}, a new service agreement with ${signedServiceAgreement.customer.user.first} has been signed. ;)`
+        );
+
+        return signedServiceAgreement;
       } catch (error) {
         console.error(error);
       }

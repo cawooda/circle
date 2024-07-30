@@ -41,12 +41,12 @@ type Provider {
 }
 
  type ServiceAgreement {
-    _id: ID
-    provider: ID
+    _id: ID!
+    provider: Provider
     customer: Customer
     agreementNumber:Int
     startDate: String
-    product: ID
+    product: Product
     quantity: Int
     endDate: String
     totalPrice:Float
@@ -78,7 +78,7 @@ input ProductInput {
 
 type Customer {
     _id: ID!
-    user: User
+    user: User!
     ndisNumber: String
     address: String
     dateOfBirth: String
@@ -111,6 +111,7 @@ type Mutation {
     createAdmin(userId: ID!): Admin!
     createProvider(userId: ID!, abn: String!, address: String!, providerName: String!): Provider!
     addServiceAgreement(provider:ID!,customer:ID!,endDate:String!,product:String!,quantity:Int!): ServiceAgreement
+    signServiceAgreement(agreementId:ID!,signature:String!):ServiceAgreement
 }
 
 `;

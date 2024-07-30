@@ -1,10 +1,10 @@
 import { Heading, HStack, Container, Box, Spacer } from "@chakra-ui/react";
 import React from "react";
-import { ButtonStyles } from "./ButtonStyle";
+import { ButtonStyles } from "../../components/ButtonStyle";
 import { GridItem } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
 
-export default function SupportSubMenu() {
+export default function AdminSubMenu() {
   return (
     <HStack justifyContent="center">
       <NavLink to="service-agreements">
