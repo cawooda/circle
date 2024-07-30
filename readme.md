@@ -1,64 +1,54 @@
-# Full stack starter template
+# Circle Independent
 
-Monorepository TypeScript template for full stack applications.
+Circle Independent is an application developed for a small business called Circle Support. The application is the platform through which the business will be transitioning its support work and coordination staff to independent emloyment as sole trading businesses working in the provision of disability supports.
 
-- Maximized for productivity
-- Based on cutting edge technologies
-- Follows best practices for project structure, architecture, security
-- Includes authentication module
+- Easy to Use
+- Secure
+- Role Based Interface
+- Modern Reactive feel
 
 ## Libraries/frameworks
 
-This template includes a bunch of libraries to get you up and running quickly and improve your developer experience.
+Circle Independent makes use of hte following technologies.
 
 ### Frontend
 
 - [React](https://reactjs.org/) - main frontend library
-- [Vite](https://vitejs.dev/) - modern and fast build tool
-- [React Query](https://react-query-v3.tanstack.com/) - react hooks to facilitate fetching/updating/caching data on the server
-- [Zustand](https://github.com/pmndrs/zustand) - easy state-management
 - [React router](https://reactrouter.com/en/main) - for routing
-- [Cypress](https://www.cypress.io/) - end-to-end testing for your frontend
-- [Storybook](https://storybook.js.org/) - build your UI web components in isolation
 
 #### Frontend UI
 
-- [ChakraUI](https://chakra-ui.com/) - UI library that lets you create beautiful interfaces quickly
-- [Framer Motion](https://www.framer.com/motion/) - create beautiful motion animations ([compatible with ChakraUI](https://chakra-ui.com/getting-started/with-framer))
-- [React Icons](https://react-icons.github.io/react-icons/) - icons for your app
-- [React-toastify](https://fkhadra.github.io/react-toastify/introduction) - show notifications when something happens
+- [Chakra UI](https://v2.chakra-ui.com/) - for react components and styling of Interface
 
 ### Backend
 
-- [Fastify](https://www.fastify.io/) - fast web framework for NodeJS
-- [Prisma](https://www.prisma.io/) - new generation ORM for working with relational databases
-- [Zod](https://github.com/colinhacks/zod) - TypeScript-first schema validation with static type inference
+- [Node JS](https://nodejs.org/en) - provides the server and overall back end capabilities
+- [Mongoose JS](https://mongoosejs.com/) - elegant mongodb object modeling for node.js
+- [Apollo Server](https://www.apollographql.com/docs/apollo-server/) - An open-source library for server-side GraphQL operation handling. It can be used as a monolithic GraphQL server or a subgraph server within a supergraph.
+- [dotenv](https://www.npmjs.com/package/jsonwebtoken) - creation of token based authentication
 - [dotenv](https://www.npmjs.com/package/dotenv) - to load your configs from an .env file
-- [env-var](https://www.npmjs.com/package/env-var) - validate and sanitize your environmental variables
 
-### Shared libraries
+### Development
 
-- [tRPC](https://trpc.io/) - Remote Procedure Calls for your TypeScript applications. Move faster by removing the need of a traditional API-layer.
-- [NX](https://nx.dev/) - build system with first class monorepo support and powerful integrations
-- [Jest](https://jestjs.io/) - testing framework
+- [Vite](https://vitejs.dev/) - modern and fast build tool
 - [Eslint](https://eslint.org/) - static code analysis for identifying problematic patterns found in your code
 
 ## Starting the app
 
 - Clone the repository
 - Copy `.env.example` and rename to `.env`
-- `npm run docker:env` - setup the database (postgresql) in docker
-- `npm install` - install dependencies
-- `npm run migrate:dev` - run migrations to create tables
-- `npm run backend:dev` - run backend
-- `npm run frontend:dev` - run frontend
+- Update `.env` variables
+- Create a mongoDB database and update `.env` connection string
+- In a production environment set up:
+- `npm run install` - from the root directory to install dependencies for both server and client
+- `npm run build` - from the root directory to build the client distribution folder
+- `npm run start` - to start the server and begin serving the client distribution folder and back end serving.
 
-## Scripts
+## How it works
 
-- `npm run frontend:storybook` - start storybook to develop components in isolation
-- `npm run dep-graph` - see dependency graph
-- For more commands check `package.json`
-- To generate new apps in the monorepo, check out [NX documentation](https://nx.dev/packages/nx/documents/generate).
+The react based client serves a simple page with a prominent submenu based on the role of the user. For example Admin, Provider, Customer
+
+![alt text](./screenshot.png)
 
 ## Check out my other repositories
 

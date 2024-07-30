@@ -15,7 +15,7 @@ class SMSService {
 
     const fullUrl = `${host}${endpoint}`;
     const fetch = (await import("node-fetch")).default;
-    console.log(fullUrl);
+
     const raw = JSON.stringify({
       messages: [
         {
@@ -32,7 +32,7 @@ class SMSService {
       redirect: "follow",
     };
 
-    if (!process.env.TESTING_SMS) {
+    if (!process.env.TESTING_AVOID_SMS) {
       fetch(process.env.CLICK_SEND_URL_SEND_ENDPOINT, requestOptions)
         .then((response) => response.text())
         .then((result) => console.log(result))

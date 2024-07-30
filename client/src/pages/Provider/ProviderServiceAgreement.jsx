@@ -121,13 +121,12 @@ export default function ProviderServiceAgreement() {
   //use effects for queries
   useEffect(() => {
     if (!productQueryLoading && productQueryData) {
-      console.log(productQueryData);
       const productList = productQueryData.getProducts.map((product) => ({
         value: product._id,
         label: product.name,
       }));
       productList.unshift({ value: "00000--0000", label: "...choose product" });
-      console.log(productList);
+
       setProducts(productList);
     }
   }, [productQueryLoading, productQueryData]);
@@ -167,18 +166,16 @@ export default function ProviderServiceAgreement() {
   ]);
 
   const handleInputChange = (event) => {
-    console.log("agreementFormData", agreementFormData);
     if (event.target.name) {
       const { name, value } = event.target;
       setAgreementFormData((prevState) => ({ ...prevState, [name]: value })); //handle the change of for an input with useState
     } else {
     }
-    console.log("agreementFormData", agreementFormData);
   };
 
   async function handleFormSubmit(event) {
     event.preventDefault();
-    console.log("agreementFormData", agreementFormData);
+
     setSplashVisible(true);
     try {
       const newServiceAgreement = await addServiceAgreement({
@@ -193,9 +190,9 @@ export default function ProviderServiceAgreement() {
 
       if (newServiceAgreement?.data?.addServiceAgreement?.agreementNumber) {
         navigate(
-          `/support/agreement/${newServiceAgreement.data.addServiceAgreement.agreementNumber}`
+          `/customer/agreement/${newServiceAgreement.data.addServiceAgreement.agreementNumber}`
         );
-      } else navigate("/support");
+      } else navigate("/customer");
     } catch (error) {
       console.log(error);
     }
@@ -241,7 +238,6 @@ export default function ProviderServiceAgreement() {
     return (
       <Container paddingTop={10}>
         <Alert status="error">
-          {console.log(userQueryData)}
           <AlertIcon />
           <AlertTitle>
             Your current role is not provider. You will need to gain provider

@@ -52,7 +52,6 @@ const resolvers = {
       }
     },
     getServiceAgreement: async (__parent, { agreementNumber }) => {
-      console.log("agreementNumber", agreementNumber);
       try {
         const serviceAgreement = await ServiceAgreement.findOne({
           agreementNumber: agreementNumber,
@@ -62,8 +61,6 @@ const resolvers = {
         await serviceAgreement.populate("provider");
         await serviceAgreement.populate("product");
         await serviceAgreement.populate("customer.user");
-
-        console.log(serviceAgreement);
 
         return serviceAgreement;
       } catch (error) {
@@ -148,7 +145,7 @@ const resolvers = {
           newServiceAgreement.customer.user.mobile,
           `Hi ${newServiceAgreement.customer.user.first}, a new service agreement with ${newServiceAgreement.provider.providerName} agreement is ready. Use the link to securely review and sign ;)
         `,
-          `/support/agreement/${newServiceAgreement.agreementNumber}`
+          `/customer/agreement/${newServiceAgreement.agreementNumber}`
         );
 
         return newServiceAgreement;

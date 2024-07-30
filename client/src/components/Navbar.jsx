@@ -35,8 +35,8 @@ export default function NavBar() {
           </NavLink>
         </Box>
         <Box>
-          <NavLink to="/support">
-            <Container {...ButtonStyles}>Support</Container>
+          <NavLink to="/customer">
+            <Container {...ButtonStyles}>Customer</Container>
           </NavLink>
         </Box>
         <Box display="flex" justifyContent="center" alignItems="center">

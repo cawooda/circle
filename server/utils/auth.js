@@ -14,7 +14,6 @@ module.exports = {
 
   //token based authentication scheme.
   authMiddleware: async function ({ req, res, next }) {
-    // console.log("req.body", req.body);
     if (req.body.operationName == "addUser") return res;
     let token = req.body.token || req.query.token || req.headers.authorization;
     if (req.headers.authorization) {

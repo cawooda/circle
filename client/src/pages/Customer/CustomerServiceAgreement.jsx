@@ -34,7 +34,7 @@ const InputStyling = {
   borderWidth: "2px",
 };
 
-export default function SupportServiceAgreement() {
+export default function CustomerServiceAgreement() {
   let { agreementNumber } = useParams();
   const navigate = useNavigate();
   !agreementNumber ? navigate("/") : "";
@@ -78,18 +78,16 @@ export default function SupportServiceAgreement() {
   const [currentUser, setCurrentUser] = useState({});
 
   const handleInputChange = (event) => {
-    console.log("agreementFormData", agreementFormData);
     if (event.target.name) {
       const { name, value } = event.target;
       setAgreementFormData((prevState) => ({ ...prevState, [name]: value })); //handle the change of for an input with useState
     } else {
     }
-    console.log("agreementFormData", agreementFormData);
   };
 
   function handleFormSubmit(event) {
     event.preventDefault();
-    console.log("agreementFormData", agreementFormData);
+
     signServiceAgreement({
       variables: {
         agreementId: agreementQueryData.getServiceAgreement._id,
@@ -121,7 +119,6 @@ export default function SupportServiceAgreement() {
   //use effects for queries
   useEffect(() => {
     if (!agreementQueryLoading && agreementQueryData) {
-      console.log("agreementQueryData", agreementQueryData);
       setAgreementFormData((prev) => ({ ...prev, agreementFormData }));
     }
   }, [agreementQueryData, agreementQueryData]);
@@ -130,7 +127,6 @@ export default function SupportServiceAgreement() {
     "checking agreement loading for provider _id",
     !agreementQueryLoading ? agreementQueryData : ""
   );
-  // console.log(agreementQueryData.getServiceAgreement.endDate);
 
   if (userQueryLoading || agreementQueryLoading)
     return (
@@ -173,7 +169,6 @@ export default function SupportServiceAgreement() {
     return (
       <Container paddingTop={10}>
         <Alert status="error">
-          {console.log(userQueryData)}
           <AlertIcon />
           <AlertTitle>
             Your current role is not provider. You will need to gain provider
@@ -336,13 +331,3 @@ export default function SupportServiceAgreement() {
     </Container>
   );
 }
-
-// export default function SupportServiceAgreement() {
-//   return (
-//     <Container>This will contain a support service agreement form</Container>
-//   );
-// }
-
-//_______________________________________________________________________________________________________
-
-// import { useCurrentUser } from "../../utils/UserContext";

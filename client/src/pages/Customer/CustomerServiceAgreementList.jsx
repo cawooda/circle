@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function SupportServiceAgreementList() {
+export default function CustomerServiceAgreementList() {
   return (
     <div>
       <p>list of service agreements</p>

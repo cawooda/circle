@@ -5,7 +5,7 @@ import RootLayout from "./layouts/RootLayout";
 
 // Pages
 import Provider from "./pages/Provider";
-import Support from "./pages/Support";
+import Customer from "./pages/Customer";
 import Admin from "./pages/Admin";
 
 import UsersAdmin from "./pages/Admin/UsersAdmin";
@@ -16,11 +16,11 @@ import ProviderServiceAgreement from "./pages/Provider/ProviderServiceAgreement"
 import ProviderServiceAgreements from "./pages/Provider/ProviderServiceAgreements";
 import ProviderShifts from "./pages/Provider/ProviderShifts";
 
-import SupportServiceAgreement from "./pages/Support/SupportServiceAgreement";
-import SupportServiceAgreementList from "./pages/Support/SupportServiceAgreementList";
-import SupportShifts from "./pages/Support/SupportShifts";
-import SupportInvoices from "./pages/Support/SupportInvoices";
-import Signed from "./pages/Support/Signed";
+import CustomerServiceAgreement from "./pages/Customer/CustomerServiceAgreement";
+import CustomerServiceAgreementList from "./pages/Customer/CustomerServiceAgreementList";
+import CustomerShifts from "./pages/Customer/CustomerShifts";
+import CustomerInvoices from "./pages/Customer/CustomerInvoices";
+import Signed from "./pages/Customer/Signed";
 
 // Router configuration
 const router = createBrowserRouter([
@@ -70,24 +70,24 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: "support",
-        element: <Support />,
+        path: "customer",
+        element: <Customer />,
         children: [
           {
             path: "agreement/:agreementNumber",
-            element: <SupportServiceAgreement />,
+            element: <CustomerServiceAgreement />,
           },
           {
             path: "service-agreements",
-            element: <SupportServiceAgreementList />,
+            element: <CustomerServiceAgreementList />,
           },
           {
             path: "shifts",
-            element: <SupportShifts />,
+            element: <CustomerShifts />,
           },
           {
             path: "invoices",
-            element: <SupportInvoices />,
+            element: <CustomerInvoices />,
           },
         ],
       },

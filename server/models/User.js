@@ -9,7 +9,6 @@ const jwt = require("jsonwebtoken");
 const Customer = require("./Customer");
 const Provider = require("./Provider");
 const SALT_WORK_FACTOR = process.env.SALT_WORK_FACTOR;
-console.log(SALT_WORK_FACTOR);
 
 //defind the user model schema
 const userSchema = new Schema(

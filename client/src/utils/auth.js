@@ -36,7 +36,7 @@ class AuthService {
 
   async loginOrCreateUser(userData) {
     // Saves user token to localStorage
-    console.log("react login user data", userData);
+
     const response = await fetch("/api/users", {
       method: "POST",
       headers: {
