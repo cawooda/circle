@@ -41,10 +41,10 @@ const InputStyling = {
   borderColor: "Black",
   borderWidth: "2px",
 };
+const navigate = useNavigate();
 
 export default function ProviderServiceAgreement() {
   //router navigation
-  const navigate = useNavigate();
 
   //const { currentUser } = useCurrentUser();
 
