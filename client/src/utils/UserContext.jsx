@@ -7,8 +7,7 @@ import AuthService from "../utils/auth";
 export const UserContext = createContext();
 
 // Create a custom hook
-export const useCurrentUser = () => useContext(UserContext);
-
+//export const useCurrentUser = () => useContext(UserContext);
 
 export const UserProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
