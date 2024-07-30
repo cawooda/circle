@@ -8,6 +8,8 @@ import {
   AlertIcon,
   AlertTitle,
 } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
+const navigate = useNavigate();
 
 const userId = AuthService.getProfile()?.authenticatedPerson._id || false;
 

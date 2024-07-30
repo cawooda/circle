@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from "react";
+import React, { createContext, useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import { QUERY_USER_BY_ID } from "../utils/queries";
 import AuthService from "../utils/auth";
