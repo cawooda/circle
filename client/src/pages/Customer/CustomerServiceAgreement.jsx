@@ -28,8 +28,6 @@ import { ButtonHighlightStyle } from "../../components/ButtonHighlightStyle";
 
 import { Routes, Route, useParams } from "react-router-dom";
 
-const navigate = useNavigate();
-
 const InputStyling = {
   borderRadius: "50px",
   borderColor: "Black",
@@ -39,6 +37,7 @@ const InputStyling = {
 const userId = AuthService?.getProfile()?.authenticatedPerson?._id || false;
 
 export default function CustomerServiceAgreement() {
+  const navigate = useNavigate();
   let { agreementNumber } = useParams();
 
   const {

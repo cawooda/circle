@@ -41,8 +41,9 @@ const serviceAgreements = [
 ];
 
 export default function ServiceAgreementsAdmin() {
-  const serviceAgreementArray = serviceAgreements.map((agreement) => (
+  const serviceAgreementArray = serviceAgreements.map((agreement, index) => (
     <Flex
+      key={index * 122}
       p={4}
       borderWidth={1}
       borderRadius="lg"

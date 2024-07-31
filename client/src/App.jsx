@@ -1,104 +1,44 @@
-import { createBrowserRouter, Route, RouterProvider } from "react-router-dom";
-
-// Layouts
+import {
+  ApolloClient,
+  InMemoryCache,
+  createHttpLink,
+  ApolloProvider,
+} from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
+import { ChakraProvider } from "@chakra-ui/react";
+import { Outlet } from "react-router-dom";
 import RootLayout from "./layouts/RootLayout";
 
-// Pages
-import Provider from "./pages/Provider";
-import Customer from "./pages/Customer";
-import Admin from "./pages/Admin";
+const httpLink = createHttpLink({
+  uri: "/graphql",
+  cache: new InMemoryCache(),
+});
 
-import UsersAdmin from "./pages/Admin/UsersAdmin";
-import ServiceAgreementsAdmin from "./pages/Admin/ServiceAgreementsAdmin";
-import InvoicesAdmin from "./pages/Admin/InvoicesAdmin";
-import ShiftsAdmin from "./pages/Admin/ShiftsAdmin";
-import ProviderServiceAgreement from "./pages/Provider/ProviderServiceAgreement";
-import ProviderServiceAgreements from "./pages/Provider/ProviderServiceAgreements";
-import ProviderShifts from "./pages/Provider/ProviderShifts";
+const authLink = setContext((_, { headers }) => {
+  const token = localStorage.getItem("id_token");
 
-import CustomerServiceAgreement from "./pages/Customer/CustomerServiceAgreement";
-import CustomerServiceAgreementList from "./pages/Customer/CustomerServiceAgreementList";
-import CustomerShifts from "./pages/Customer/CustomerShifts";
-import CustomerInvoices from "./pages/Customer/CustomerInvoices";
-import Signed from "./pages/Customer/Signed";
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : ``,
+    },
+  };
+});
 
-// Router configuration
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <RootLayout />,
-    children: [
-      { path: "signed", element: <Signed /> },
-      {
-        path: "admin",
-        element: <Admin />,
-        children: [
-          {
-            path: "users",
-            element: <UsersAdmin />,
-          },
-          {
-            path: "service-agreements",
-            element: <ServiceAgreementsAdmin />,
-          },
-          {
-            path: "shifts",
-            element: <ShiftsAdmin />,
-          },
-          {
-            path: "invoices",
-            element: <InvoicesAdmin />,
-          },
-        ],
-      },
-      {
-        path: "provider",
-        element: <Provider />,
-        children: [
-          {
-            path: "service-agreement",
-            element: <ProviderServiceAgreement />,
-          },
-          {
-            path: "service-agreements",
-            element: <ProviderServiceAgreements />,
-          },
-          {
-            path: "shifts",
-            element: <ProviderShifts />,
-          },
-        ],
-      },
-      {
-        path: "customer",
-        element: <Customer />,
-        children: [
-          {
-            path: "agreement/:agreementNumber",
-            element: <CustomerServiceAgreement />,
-          },
-          {
-            path: "service-agreements",
-            element: <CustomerServiceAgreementList />,
-          },
-          {
-            path: "shifts",
-            element: <CustomerShifts />,
-          },
-          {
-            path: "invoices",
-            element: <CustomerInvoices />,
-          },
-        ],
-      },
-    ],
-  },
-]);
+const client = new ApolloClient({
+  // Set up our client to execute the `authLink` middleware prior to making the request to our GraphQL API
+  link: authLink.concat(httpLink),
+  cache: new InMemoryCache(),
+});
 
 function App() {
   return (
     <>
-      <RouterProvider router={router} />
+      <ApolloProvider client={client}>
+        <ChakraProvider>
+          <RootLayout />
+        </ChakraProvider>
+      </ApolloProvider>
     </>
   );
 }

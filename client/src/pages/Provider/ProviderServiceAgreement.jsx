@@ -15,36 +15,33 @@ import {
   Button,
   AlertDescription,
 } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
-
-import { useQuery, useMutation } from "@apollo/client";
-import Splash from "../../components/Splash";
 import { useNavigate } from "react-router-dom";
 
+import { useState, useEffect } from "react";
+
+import Splash from "../../components/Splash";
+
+import AuthService from "../../utils/auth";
+
+import { useQuery, useMutation } from "@apollo/client";
 import {
   QUERY_USER_BY_ID,
   QUERY_CUSTOMERS,
   QUERY_PRODUCTS,
 } from "../../utils/queries";
 import { ADD_SERVICE_AGREEMENT } from "../../utils/mutations";
-import AuthService from "../../utils/auth";
+
 import { ButtonStyles } from "../../components/ButtonStyle";
-
-const userId = AuthService?.getProfile()?.authenticatedPerson?._id || false;
-
-const InputStyling = {
-  borderRadius: "50px",
-  borderColor: "Black",
-  borderWidth: "2px",
-};
-const navigate = useNavigate();
+import { InputStyles } from "../../components/InputStyles";
+import CustomerControl from "../../components/CustomerControl";
+import ProductControl from "../../components/ProductControl";
 
 export default function ProviderServiceAgreement() {
-  //router navigation
-
-  //const { currentUser } = useCurrentUser();
-
+  const navigate = useNavigate();
   //use States
+  const [userId, setUserId] = useState(
+    AuthService?.getProfile()?.authenticatedPerson?._id || false
+  );
   const [splashVisible, setSplashVisible] = useState(true);
   //setup use State for customers
   const [agreementFormData, setAgreementFormData] = useState({
@@ -102,11 +99,11 @@ export default function ProviderServiceAgreement() {
 
   //implement this throughout the app and change window.location into the following router hook
   useEffect(() => {
-    if (!AuthService.loggedIn()) {
+    if (!userId) {
       AuthService.logout();
       navigate("/");
     }
-  }, []);
+  }, [userId, userQueryLoading]);
 
   useEffect(() => {
     setAgreementFormData({
@@ -166,6 +163,7 @@ export default function ProviderServiceAgreement() {
   ]);
 
   const handleInputChange = (event) => {
+    console.log(event.target);
     if (event.target.name) {
       const { name, value } = event.target;
       setAgreementFormData((prevState) => ({ ...prevState, [name]: value })); //handle the change of for an input with useState
@@ -198,7 +196,8 @@ export default function ProviderServiceAgreement() {
     }
   }
 
-  if (userQueryLoading || customerQueryLoading || !userId)
+  if (userQueryLoading || customerQueryLoading || !userId) {
+    console.log("userId", userId);
     return (
       <Container paddingTop={10}>
         <Alert status="info">
@@ -212,6 +211,7 @@ export default function ProviderServiceAgreement() {
         </Alert>
       </Container>
     );
+  }
   if (userQueryError)
     return (
       <Container paddingTop={10}>
@@ -260,7 +260,7 @@ export default function ProviderServiceAgreement() {
         <FormLabel>Provider Id</FormLabel>
         <Input
           name="provider"
-          {...InputStyling}
+          {...InputStyles}
           defaultValue={
             !userQueryLoading
               ? userQueryData?.getUserById.roleProvider?._id
@@ -273,63 +273,28 @@ export default function ProviderServiceAgreement() {
       <FormControl>
         <FormLabel>End Date</FormLabel>
         <Input
-          {...InputStyling}
+          {...InputStyles}
           name="endDate"
           type="date"
           value={agreementFormData.endDate || ""}
           onChange={handleInputChange}
         />
       </FormControl>
-      <FormControl>
-        <FormLabel>Customer</FormLabel>
+      <CustomerControl
+        handleInputChange={handleInputChange}
+        customers={customers}
+      />
 
-        <Select
-          name="customer"
-          onClick={handleInputChange}
-          onChange={handleInputChange}
-          // value={agreementFormData.customer}
-        >
-          {customers.map((customer, index) => {
-            return (
-              <option
-                key={customer.value}
-                selected={index === 0}
-                value={customer.value}
-              >
-                {customer.label}
-              </option>
-            );
-          })}
-        </Select>
-      </FormControl>
       <Spacer />
-      <Container></Container>
-      <FormControl>
-        <FormLabel>Product</FormLabel>
-        <Select
-          {...InputStyling}
-          name="product"
-          onChange={handleInputChange}
-          value={agreementFormData.product}
-        >
-          {products.map((product, index) => {
-            return (
-              <option
-                key={product.value}
-                selected={index === 0}
-                value={product.value}
-              >
-                {product.label}
-              </option>
-            );
-          })}
-        </Select>
-      </FormControl>
+      <ProductControl
+        handleInputChange={handleInputChange}
+        products={products}
+      />
       <FormControl>
         <FormLabel>Quantity</FormLabel>
         <NumberInput>
           <NumberInputField
-            {...InputStyling}
+            {...InputStyles}
             name="quantity"
             onInput={handleInputChange}
             value={agreementFormData.quantity}

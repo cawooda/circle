@@ -1,43 +1,113 @@
 import React from "react";
-import {
-  ApolloClient,
-  InMemoryCache,
-  createHttpLink,
-  ApolloProvider,
-} from "@apollo/client";
-import { setContext } from "@apollo/client/link/context";
 import ReactDOM from "react-dom/client";
+
 import App from "./App";
-import { ChakraProvider } from "@chakra-ui/react";
+
+// Layouts
+import RootLayout from "./layouts/RootLayout";
+
+// Pages
+import Provider from "./pages/Provider";
+import Customer from "./pages/Customer";
+import Admin from "./pages/Admin";
+
+import UsersAdmin from "./pages/Admin/UsersAdmin";
+import ServiceAgreementsAdmin from "./pages/Admin/ServiceAgreementsAdmin";
+import InvoicesAdmin from "./pages/Admin/InvoicesAdmin";
+import ShiftsAdmin from "./pages/Admin/ShiftsAdmin";
+import ProviderServiceAgreement from "./pages/Provider/ProviderServiceAgreement";
+import ProviderServiceAgreements from "./pages/Provider/ProviderServiceAgreements";
+import ProviderShifts from "./pages/Provider/ProviderShifts";
+import ProviderInvoices from "./pages/Provider/ProviderInvoices";
+
+import CustomerServiceAgreement from "./pages/Customer/CustomerServiceAgreement";
+import CustomerServiceAgreementList from "./pages/Customer/CustomerServiceAgreementList";
+import CustomerShifts from "./pages/Customer/CustomerShifts";
+import CustomerInvoices from "./pages/Customer/CustomerInvoices";
+import Signed from "./pages/Customer/Signed";
+
 import "./index.css";
 
-const httpLink = createHttpLink({
-  uri: "/graphql",
-});
-
-const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem("id_token");
-
-  return {
-    headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token}` : ``,
-    },
-  };
-});
-
-const client = new ApolloClient({
-  // Set up our client to execute the `authLink` middleware prior to making the request to our GraphQL API
-  link: authLink.concat(httpLink),
-  cache: new InMemoryCache(),
-});
+import { createBrowserRouter, Route, RouterProvider } from "react-router-dom";
+// Router configuration
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      { path: "signed", element: <Signed /> },
+      {
+        path: "admin",
+        element: <Admin />,
+        children: [
+          {
+            path: "users",
+            element: <UsersAdmin />,
+          },
+          {
+            path: "service-agreements",
+            element: <ServiceAgreementsAdmin />,
+          },
+          {
+            path: "shifts",
+            element: <ShiftsAdmin />,
+          },
+          {
+            path: "invoices",
+            element: <InvoicesAdmin />,
+          },
+        ],
+      },
+      {
+        path: "provider",
+        element: <Provider />,
+        children: [
+          {
+            path: "service-agreement",
+            element: <ProviderServiceAgreement />,
+          },
+          {
+            path: "service-agreements",
+            element: <ProviderServiceAgreements />,
+          },
+          {
+            path: "shifts",
+            element: <ProviderShifts />,
+          },
+          {
+            path: "invoices",
+            element: <ProviderInvoices />,
+          },
+        ],
+      },
+      {
+        path: "customer",
+        element: <Customer />,
+        children: [
+          {
+            path: "agreement/:agreementNumber",
+            element: <CustomerServiceAgreement />,
+          },
+          {
+            path: "service-agreements",
+            element: <CustomerServiceAgreementList />,
+          },
+          {
+            path: "shifts",
+            element: <CustomerShifts />,
+          },
+          {
+            path: "invoices",
+            element: <CustomerInvoices />,
+          },
+        ],
+      },
+    ],
+  },
+]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  // <React.StrictMode>
-  <ApolloProvider client={client}>
-    <ChakraProvider>
-      <App />
-    </ChakraProvider>
-  </ApolloProvider>
-  // </React.StrictMode>
+  <React.StrictMode>
+    <RouterProvider router={router} />
+  </React.StrictMode>
 );

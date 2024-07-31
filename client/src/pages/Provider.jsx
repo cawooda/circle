@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import ProviderSubMenu from "../pages/Provider/_ProviderSubMenu";
+
 import AuthService from "../utils/auth";
 import {
   Heading,
@@ -9,28 +9,32 @@ import {
   AlertTitle,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-const navigate = useNavigate();
+import { useEffect } from "react";
+import SubMenu from "../components/SubMenu";
 
 const userId = AuthService.getProfile()?.authenticatedPerson._id || false;
 
+const menu = [
+  { label: "New Agreement", link: "service-agreement" },
+  { label: "Service Agreements", link: "service-agreements" },
+  { label: "Shifts", link: "shifts" },
+  { label: "Invoices", link: "invoices" },
+];
+
 export default function Provider() {
-  if (userId) {
-    return (
-      <>
-        <ProviderSubMenu />
-        {userId ? (
-          <Outlet />
-        ) : (
-          <Container paddingTop={10}>
-            <Alert status="error">
-              <AlertIcon />
-              <AlertTitle>You Need to Be logged in for this</AlertTitle>
-            </Alert>
-          </Container>
-        )}
-      </>
-    );
-  } else {
-    navigate("/");
-  }
+  return (
+    <>
+      <SubMenu items={menu} />
+      {userId ? (
+        <Outlet />
+      ) : (
+        <Container paddingTop={10}>
+          <Alert status="error">
+            <AlertIcon />
+            <AlertTitle>You Need to Be logged in for this</AlertTitle>
+          </Alert>
+        </Container>
+      )}
+    </>
+  );
 }

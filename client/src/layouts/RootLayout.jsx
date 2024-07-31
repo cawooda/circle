@@ -10,9 +10,7 @@ export default function RootLayout() {
   return (
     <Flex direction="column" height="100vh">
       <Box bg="blue.500" p={4} color="white" textAlign="center">
-        {/* <Heading {...logoStyle}> */}
         <img src={logo} width={60}></img>
-        {/* </Heading> */}
       </Box>
       <Flex flex="1" direction={{ base: "column", md: "row" }}>
         <Box bg="gray.200" p={4} maxWidth={{ base: "100vw", md: "100vw" }}>
