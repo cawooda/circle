@@ -137,7 +137,7 @@ const SigninForm = ({ text, loggedIn, setLoggedIn }) => {
                       handleFormSubmit(e);
                     }
                   }}
-                  id="emailInput"
+                  id="mobileInput"
                   {...InputStyles}
                   type="mobile"
                   placeholder="mobile..."

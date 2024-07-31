@@ -1,6 +1,12 @@
 # Circle Independent
 
+<<<<<<< HEAD
+- [Link to Deployment](https://circleindependent.onrender.com/)
+
+- [Presentation](/Circle%20Independent.pdf)
+=======
 ![license](https://img.shields.io/badge/license-MIT-blue)
+>>>>>>> main
 
 Circle Independent is an application developed for a small business called Circle Support. The application is the platform through which the business will be transitioning its support work and coordination staff to independent emloyment as sole trading businesses working in the provision of disability supports.
 
@@ -48,9 +54,16 @@ Circle Independent makes use of hte following technologies.
 
 ## How it works
 
-The react based client serves a simple page with a prominent submenu based on the role of the user. For example Admin, Provider, Customer
+The react based client serves a simple page with a prominent submenu based on the role of the user. For example Admin, Provider, Customer.
+The main feature of this deployment is the ability of a user to register(in testing they automatically become both a provider and a customer).
+They are then able to prepare a service agreement for a customer.
+That service agreement is then sent to the customer for viewing and signing.
+
+The UI is deliberatly simple and focussed on buttons and selections rather than inputing details using a keyboard.
 
 ![alt text](./screenshot.png)
+<<<<<<< HEAD
+=======
 
 ## Questions
 
@@ -89,3 +102,4 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.;
 
 ---
+>>>>>>> main

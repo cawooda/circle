@@ -28,8 +28,7 @@ router.post("/users", async (req, res) => {
       //create dummy data for some fields
       const userCreated = await User.create({
         first: "firstName",
-        last: "--",
-        email: "email@email.com",
+        last: "lastName",
         ...user,
       });
       userCreated.save();
