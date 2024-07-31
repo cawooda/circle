@@ -8,21 +8,29 @@ import {
   AlertIcon,
   AlertTitle,
 } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
+const navigate = useNavigate();
+
+const userId = AuthService.getProfile()?.authenticatedPerson._id || false;
 
 export default function Provider() {
-  return (
-    <>
-      <ProviderSubMenu />
-      {AuthService.getProfile()?.authenticatedPerson._id ? (
-        <Outlet />
-      ) : (
-        <Container paddingTop={10}>
-          <Alert status="error">
-            <AlertIcon />
-            <AlertTitle>You Need to Be logged in for this</AlertTitle>
-          </Alert>
-        </Container>
-      )}
-    </>
-  );
+  if (userId) {
+    return (
+      <>
+        <ProviderSubMenu />
+        {userId ? (
+          <Outlet />
+        ) : (
+          <Container paddingTop={10}>
+            <Alert status="error">
+              <AlertIcon />
+              <AlertTitle>You Need to Be logged in for this</AlertTitle>
+            </Alert>
+          </Container>
+        )}
+      </>
+    );
+  } else {
+    navigate("/");
+  }
 }

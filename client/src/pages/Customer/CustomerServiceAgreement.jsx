@@ -28,22 +28,25 @@ import { ButtonHighlightStyle } from "../../components/ButtonHighlightStyle";
 
 import { Routes, Route, useParams } from "react-router-dom";
 
+const navigate = useNavigate();
+
 const InputStyling = {
   borderRadius: "50px",
   borderColor: "Black",
   borderWidth: "2px",
 };
 
+const userId = AuthService?.getProfile()?.authenticatedPerson?._id || false;
+
 export default function CustomerServiceAgreement() {
   let { agreementNumber } = useParams();
-  const navigate = useNavigate();
-  !agreementNumber ? navigate("/") : "";
+
   const {
     loading: userQueryLoading,
     error: userQueryError,
     data: userQueryData,
   } = useQuery(QUERY_USER_BY_ID, {
-    variables: { id: AuthService.getProfile().authenticatedPerson._id },
+    variables: { id: userId },
   });
 
   const {
@@ -54,7 +57,6 @@ export default function CustomerServiceAgreement() {
     variables: { agreementNumber },
   });
   !agreementNumber ? navigate("/") : "";
-  //product list query
 
   const [
     signServiceAgreement,
@@ -121,14 +123,14 @@ export default function CustomerServiceAgreement() {
     if (!agreementQueryLoading && agreementQueryData) {
       setAgreementFormData((prev) => ({ ...prev, agreementFormData }));
     }
-  }, [agreementQueryData, agreementQueryData]);
+  }, [agreementQueryData, agreementQueryLoading]);
 
   console.log(
     "checking agreement loading for provider _id",
     !agreementQueryLoading ? agreementQueryData : ""
   );
 
-  if (userQueryLoading || agreementQueryLoading)
+  if (userQueryLoading || agreementQueryLoading || !userId)
     return (
       <Container paddingTop={10}>
         <Alert status="info">
@@ -141,6 +143,9 @@ export default function CustomerServiceAgreement() {
           </AlertDescription>
           <AlertDescription>
             {agreementQueryLoading ? "..loading agreement information" : ""}
+          </AlertDescription>
+          <AlertDescription>
+            {!userId ? "..You need to be logged in for this" : ""}
           </AlertDescription>
         </Alert>
       </Container>
@@ -243,7 +248,7 @@ export default function CustomerServiceAgreement() {
             readOnly
             value={
               !userQueryLoading
-                ? `${agreementQueryData.getServiceAgreement.customer.user.first} ${agreementQueryData.getServiceAgreement.customer.user.last}`
+                ? `${agreementQueryData.getServiceAgreement.customer.user.first} ${agreementQueryData.getServiceAgreement.customer.user?.last}`
                 : "name"
             }
           ></Input>

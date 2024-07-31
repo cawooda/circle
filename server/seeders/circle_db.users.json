@@ -1,0 +1,25 @@
+[{
+  "_id": {
+    "$oid": "66a85360edd67b60f2126e31"
+  },
+  "first": "Andrew",
+  "last": "lastName",
+  "mobile": "0494140390",
+  "email": "email@email.com",
+  "roleCustomer": {
+    "$oid": "66a85360edd67b60f2126e32"
+  },
+  "roleProvider": {
+    "$oid": "66a85360edd67b60f2126e34"
+  },
+  "roleAdmin": null,
+  "password": "$2b$10$qhnfffoqjrt61BKDPQdx4OOQ1BCLA37UZdCeD2Gs5GYt.ltTDv8Ry",
+  "createdAt": {
+    "$date": "2024-07-30T02:43:44.687Z"
+  },
+  "updatedAt": {
+    "$date": "2024-07-30T02:43:44.687Z"
+  },
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoZW50aWNhdGVkUGVyc29uIjp7Il9pZCI6IjY2YTg1MzYwZWRkNjdiNjBmMjEyNmUzMSIsIm1vYmlsZSI6IjA0OTQxNDAzOTAiLCJmaXJzdCI6IkFuZHJldyJ9LCJpYXQiOjE3MjIzMDc0MjQsImV4cCI6MTcyMjMxNDYyNH0.83lCJpiRhdJf15BmpGxm587zn1EBTQJWDsTEXuOQhOg",
+  "__v": 0
+}]
