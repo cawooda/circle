@@ -1,7 +1,14 @@
 import { Outlet } from "react-router-dom";
 
 import AuthService from "../utils/auth";
-import { Container, Alert, AlertIcon, AlertTitle } from "@chakra-ui/react";
+import {
+  Container,
+  Heading,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  Spacer,
+} from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import SubMenu from "../components/SubMenu";
@@ -14,21 +21,32 @@ const menu = [
   { label: "Shifts", link: "shifts" },
   { label: "Invoices", link: "invoices" },
 ];
+import { useUser } from "../contexts/UserContext";
 
 export default function ProviderLayout() {
-  return (
-    <>
-      <SubMenu items={menu} />
-      {userId ? (
-        <Outlet />
-      ) : (
-        <Container paddingTop={10}>
-          <Alert status="error">
-            <AlertIcon />
-            <AlertTitle>You Need to Be logged in for this</AlertTitle>
-          </Alert>
+  const { user, setUser, loading, error } = useUser();
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+  if (user)
+    return (
+      <>
+        <Container paddingBottom={5}>
+          <Heading textAlign="right" size="sm">
+            Hello {user.first}
+          </Heading>
         </Container>
-      )}
-    </>
-  );
+        <SubMenu items={menu} />
+
+        {user ? (
+          <Outlet />
+        ) : (
+          <Container paddingTop={10}>
+            <Alert status="error">
+              <AlertIcon />
+              <AlertTitle>You Need to Be logged in for this</AlertTitle>
+            </Alert>
+          </Container>
+        )}
+      </>
+    );
 }
