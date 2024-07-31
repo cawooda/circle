@@ -290,17 +290,6 @@ export default function ProviderServiceAgreement() {
         handleInputChange={handleInputChange}
         products={products}
       />
-      <FormControl>
-        <FormLabel>Quantity</FormLabel>
-        <NumberInput>
-          <NumberInputField
-            {...InputStyles}
-            name="quantity"
-            onInput={handleInputChange}
-            value={agreementFormData.quantity}
-          />
-        </NumberInput>
-      </FormControl>
       <Container paddingTop={5}>
         <Button {...ButtonStyles} onClick={handleFormSubmit}>
           Submit

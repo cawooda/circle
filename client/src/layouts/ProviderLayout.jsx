@@ -1,13 +1,7 @@
 import { Outlet } from "react-router-dom";
 
 import AuthService from "../utils/auth";
-import {
-  Heading,
-  Container,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-} from "@chakra-ui/react";
+import { Container, Alert, AlertIcon, AlertTitle } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import SubMenu from "../components/SubMenu";
@@ -21,7 +15,7 @@ const menu = [
   { label: "Invoices", link: "invoices" },
 ];
 
-export default function Provider() {
+export default function ProviderLayout() {
   return (
     <>
       <SubMenu items={menu} />

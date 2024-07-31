@@ -7,24 +7,31 @@ import App from "./App";
 import RootLayout from "./layouts/RootLayout";
 
 // Pages
-import Provider from "./pages/Provider";
-import Customer from "./pages/Customer";
-import Admin from "./pages/Admin";
+import ProviderLayout from "./layouts/ProviderLayout";
+import CustomerLayout from "./layouts/CustomerLayout";
+import AdminLayout from "./layouts/AdminLayout";
 
-import UsersAdmin from "./pages/Admin/UsersAdmin";
-import ServiceAgreementsAdmin from "./pages/Admin/ServiceAgreementsAdmin";
-import InvoicesAdmin from "./pages/Admin/InvoicesAdmin";
-import ShiftsAdmin from "./pages/Admin/ShiftsAdmin";
-import ProviderServiceAgreement from "./pages/Provider/ProviderServiceAgreement";
-import ProviderServiceAgreements from "./pages/Provider/ProviderServiceAgreements";
-import ProviderShifts from "./pages/Provider/ProviderShifts";
-import ProviderInvoices from "./pages/Provider/ProviderInvoices";
+import {
+  UsersAdmin,
+  ServiceAgreementsAdmin,
+  ShiftsAdmin,
+  InvoicesAdmin,
+} from "./pages/Admin";
 
-import CustomerServiceAgreement from "./pages/Customer/CustomerServiceAgreement";
-import CustomerServiceAgreementList from "./pages/Customer/CustomerServiceAgreementList";
-import CustomerShifts from "./pages/Customer/CustomerShifts";
-import CustomerInvoices from "./pages/Customer/CustomerInvoices";
-import Signed from "./pages/Customer/Signed";
+import {
+  CustomerInvoices,
+  CustomerServiceAgreement,
+  CustomerServiceAgreementList,
+  CustomerShifts,
+  Signed,
+} from "./pages/Customer";
+
+import {
+  ProviderServiceAgreement,
+  ProviderServiceAgreements,
+  ProviderShifts,
+  ProviderInvoices,
+} from "./pages/Provider";
 
 import "./index.css";
 
@@ -38,7 +45,7 @@ const router = createBrowserRouter([
       { path: "signed", element: <Signed /> },
       {
         path: "admin",
-        element: <Admin />,
+        element: <AdminLayout />,
         children: [
           {
             path: "users",
@@ -60,7 +67,7 @@ const router = createBrowserRouter([
       },
       {
         path: "provider",
-        element: <Provider />,
+        element: <ProviderLayout />,
         children: [
           {
             path: "service-agreement",
@@ -82,11 +89,15 @@ const router = createBrowserRouter([
       },
       {
         path: "customer",
-        element: <Customer />,
+        element: <CustomerLayout />,
         children: [
           {
             path: "agreement/:agreementNumber",
             element: <CustomerServiceAgreement />,
+          },
+          {
+            path: "agreement",
+            element: <CustomerLayout />,
           },
           {
             path: "service-agreements",

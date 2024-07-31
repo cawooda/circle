@@ -1,25 +1,20 @@
 import dayjs from "dayjs";
 import {
   FormControl,
-  FormLabel,
   Input,
   Flex,
-  AlertIcon,
-  AlertTitle,
   Heading,
   Container,
   Spacer,
-  Alert,
   Text,
   Button,
-  AlertDescription,
-  Center,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 //import Select from "react-select";
 import { useQuery, useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
 import { QUERY_USER_BY_ID, QUERY_SERVICE_AGREEMENT } from "../../utils/queries";
+import Splash from "../../components/Splash";
 
 import { SIGN_SERVICE_AGREEMENT } from "../../utils/mutations";
 import AuthService from "../../utils/auth";
@@ -27,6 +22,11 @@ import { ButtonStyles } from "../../components/ButtonStyle";
 import { ButtonHighlightStyle } from "../../components/ButtonHighlightStyle";
 
 import { Routes, Route, useParams } from "react-router-dom";
+import Error from "../../components/Error";
+import NotifyUser from "../../components/NotifyUser";
+import DateDisplay from "../../components/FormDisplays/DateDisplay";
+import CustomerDisplay from "../../components/FormDisplays/CustomerDisplay";
+import ProductDisplay from "../../components/FormDisplays/ProductDisplay";
 
 const InputStyling = {
   borderRadius: "50px",
@@ -34,11 +34,21 @@ const InputStyling = {
   borderWidth: "2px",
 };
 
-const userId = AuthService?.getProfile()?.authenticatedPerson?._id || false;
-
 export default function CustomerServiceAgreement() {
+  const [splashVisible, setSplashVisible] = useState(true);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSplashVisible(false);
+    }, 3000); // 3 seconds
+
+    return () => clearTimeout(timer); // Cleanup the timer
+  }, [splashVisible]);
   const navigate = useNavigate();
   let { agreementNumber } = useParams();
+
+  const [userId, setUserId] = useState(
+    AuthService?.getProfile()?.authenticatedPerson?._id || false
+  );
 
   const {
     loading: userQueryLoading,
@@ -47,15 +57,6 @@ export default function CustomerServiceAgreement() {
   } = useQuery(QUERY_USER_BY_ID, {
     variables: { id: userId },
   });
-
-  const {
-    loading: agreementQueryLoading,
-    error: agreementQueryError,
-    data: agreementQueryData,
-  } = useQuery(QUERY_SERVICE_AGREEMENT, {
-    variables: { agreementNumber },
-  });
-  !agreementNumber ? navigate("/") : "";
 
   const [
     signServiceAgreement,
@@ -72,11 +73,35 @@ export default function CustomerServiceAgreement() {
     },
   });
 
-  //const { currentUser } = useCurrentUser();
+  //Agreement Query and state
+  const {
+    loading: agreementQueryLoading,
+    error: agreementQueryError,
+    data: agreementQueryData,
+  } = useQuery(QUERY_SERVICE_AGREEMENT, {
+    variables: { agreementNumber },
+  });
 
   const [agreementFormData, setAgreementFormData] = useState({});
 
-  const [currentUser, setCurrentUser] = useState({});
+  useEffect(() => {
+    if (userId) {
+      if (!agreementQueryLoading && agreementQueryData) {
+        setAgreementFormData((prev) => ({
+          ...prev,
+          provider: agreementQueryData.getServiceAgreement.provider._id,
+          product: agreementQueryData.getServiceAgreement.product.name,
+          quantity: agreementQueryData.getServiceAgreement.quantity,
+          totalPrice: agreementQueryData.getServiceAgreement.totalPrice,
+        }));
+      }
+    }
+  }, [
+    userQueryLoading,
+    userQueryData,
+    agreementQueryData,
+    agreementQueryLoading,
+  ]);
 
   const handleInputChange = (event) => {
     if (event.target.name) {
@@ -88,7 +113,6 @@ export default function CustomerServiceAgreement() {
 
   function handleFormSubmit(event) {
     event.preventDefault();
-
     signServiceAgreement({
       variables: {
         agreementId: agreementQueryData.getServiceAgreement._id,
@@ -105,82 +129,43 @@ export default function CustomerServiceAgreement() {
     }
   }
 
-  //use effects
-  useEffect(() => {
-    setAgreementFormData({
-      provider: !userQueryLoading
-        ? userQueryData.getUserById.roleCustomer?._id
-        : "",
-      product: !agreementQueryLoading
-        ? agreementQueryData.getServiceAgreement.product
-        : "",
-    });
-  }, [userQueryLoading, userQueryData]);
-
-  //use effects for queries
-  useEffect(() => {
-    if (!agreementQueryLoading && agreementQueryData) {
-      setAgreementFormData((prev) => ({ ...prev, agreementFormData }));
-    }
-  }, [agreementQueryData, agreementQueryLoading]);
-
-  console.log(
-    "checking agreement loading for provider _id",
-    !agreementQueryLoading ? agreementQueryData : ""
-  );
-
-  if (userQueryLoading || agreementQueryLoading || !userId)
+  if (userQueryLoading)
     return (
-      <Container paddingTop={10}>
-        <Alert status="info">
-          <AlertIcon />
-          <AlertTitle>
-            Loading Info about you and your Service Agreement
-          </AlertTitle>
-          <AlertDescription>
-            {userQueryLoading ? "..loading user information" : ""}
-          </AlertDescription>
-          <AlertDescription>
-            {agreementQueryLoading ? "..loading agreement information" : ""}
-          </AlertDescription>
-          <AlertDescription>
-            {!userId ? "..You need to be logged in for this" : ""}
-          </AlertDescription>
-        </Alert>
-      </Container>
+      <NotifyUser
+        component="Customer Service agreement"
+        message="user still loading..."
+      />
     );
-  if (userQueryError || agreementQueryError)
+  if (agreementQueryLoading)
     return (
-      <Container paddingTop={10}>
-        <Alert status="error">
-          <AlertIcon />
-          <AlertTitle>
-            We recieved an error loading your data. try refresh and make sure
-            you are logged in.
-          </AlertTitle>
-          <AlertDescription>
-            {userQueryError
-              ? "...error getting your info, are you logged on?"
-              : ""}
-          </AlertDescription>
-          <AlertDescription>
-            {agreementQueryError ? "...error getting your agreement info" : ""}
-          </AlertDescription>
-        </Alert>
-      </Container>
+      <NotifyUser
+        component="Customer Service agreement"
+        message="agreement still loading..."
+      />
+    );
+
+  if (userQueryError)
+    return (
+      <Error
+        component="Customer Service Agreement"
+        message="user query error... are you logged in"
+      />
+    );
+  if (agreementQueryError)
+    return (
+      <Error
+        component="Customer Service Agreement"
+        message="agreement query error... try again"
+      />
     );
   if (!userQueryData.getUserById.roleCustomer)
     return (
-      <Container paddingTop={10}>
-        <Alert status="error">
-          <AlertIcon />
-          <AlertTitle>
-            Your current role is not provider. You will need to gain provider
-            access.
-          </AlertTitle>
-        </Alert>
-      </Container>
+      <Error
+        component="Customer Service Agreement"
+        message="it doesent look like you are a customer on this agreement..."
+      />
     );
+
   return (
     <Container
       borderRadius="50px"
@@ -189,6 +174,7 @@ export default function CustomerServiceAgreement() {
       bgColor="yellow.50"
       paddingTop="20px"
     >
+      <Splash visible={splashVisible} />
       <Flex
         maxWidth={{ lg: "700px" }}
         justifyItems={"center"}
@@ -222,95 +208,23 @@ export default function CustomerServiceAgreement() {
           />
         </FormControl>
         {/* end invisible inputs */}
-        <FormControl>
-          <FormLabel>End Date</FormLabel>
-          <Input
-            {...InputStyling}
-            name="endDate"
-            type="text"
-            readOnly
-            value={
-              !agreementQueryLoading
-                ? dayjs(agreementQueryData.getServiceAgreement.endDate).format(
-                    "DD/MM/YYYY"
-                  )
-                : dayjs().format("DD-MM-YYYY")
-            }
-            onChange={handleInputChange}
-          />
-        </FormControl>
-        <FormControl>
-          <FormLabel>Customer</FormLabel>
-          <Input
-            {...InputStyling}
-            name="customer"
-            readOnly
-            value={
-              !userQueryLoading
-                ? `${agreementQueryData.getServiceAgreement.customer.user.first} ${agreementQueryData.getServiceAgreement.customer.user?.last}`
-                : "name"
-            }
-          ></Input>
-        </FormControl>
-        <FormLabel>NDIS Number</FormLabel>
-        <Input
-          {...InputStyling}
-          name="ndisNumber"
-          readOnly
-          value={
-            !userQueryLoading
-              ? `${agreementQueryData.getServiceAgreement.customer.ndisNumber}`
-              : "name"
+        <DateDisplay
+          date={
+            !agreementQueryLoading
+              ? dayjs(agreementQueryData.getServiceAgreement.endDate).format(
+                  "DD/MM/YYYY"
+                )
+              : dayjs().format("DD-MM-YYYY")
           }
-        ></Input>
-
-        <Spacer />
-
-        <FormControl>
-          <FormLabel>Product</FormLabel>
-          <Input
-            {...InputStyling}
-            name="product"
-            type="text"
-            readOnly
-            value={
-              !agreementQueryLoading
-                ? agreementQueryData.getServiceAgreement.product.name
-                : "no product ask to check"
-            }
-            onChange={handleInputChange}
-          />
-        </FormControl>
-        <FormControl>
-          <FormLabel>Quantity</FormLabel>
-          <Input
-            {...InputStyling}
-            name="quantity"
-            type="text"
-            readOnly
-            value={
-              !agreementQueryLoading
-                ? agreementQueryData.getServiceAgreement.quantity
-                : "no product ask to check"
-            }
-            onChange={handleInputChange}
-          />
-        </FormControl>
-        <FormControl>
-          <FormLabel>Total Cost</FormLabel>
-          <Input
-            {...InputStyling}
-            name="quantity"
-            type="text"
-            readOnly
-            value={
-              !agreementQueryLoading
-                ? agreementQueryData.getServiceAgreement.totalPrice
-                : "no product ask to check"
-            }
-            onChange={handleInputChange}
-          />
-        </FormControl>
+        />
+        <CustomerDisplay
+          customer={agreementQueryData.getServiceAgreement.customer}
+        />
+        <ProductDisplay
+          product={agreementQueryData.getServiceAgreement.product}
+          quantity={agreementQueryData.getServiceAgreement.quantity}
+          total={agreementQueryData.getServiceAgreement.totalPrice}
+        />
         <Container paddingTop={5}>
           <Button
             {...ButtonStyles}
