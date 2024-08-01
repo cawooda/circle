@@ -14,14 +14,11 @@ export default function CustomerControl({
         name="customer"
         onClick={handleInputChange}
         onChange={handleInputChange}
+        defaultValue={customers.length > 0 ? customers[0].value : ""}
       >
         {customers.map((customer, index) => {
           return (
-            <option
-              key={customer.value}
-              selected={index === 0}
-              value={customer.value}
-            >
+            <option key={customer.value} value={customer.value}>
               {customer.label}
             </option>
           );

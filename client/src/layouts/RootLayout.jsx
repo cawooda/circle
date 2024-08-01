@@ -11,13 +11,13 @@ export default function RootLayout() {
   const { user, loading, error } = useUser();
 
   if (loading) return <p>Loading...</p>;
-  if (error) return <SigninForm user={user} />;
+  if (error) return <SigninForm />;
 
   return (
     <Flex direction="column" height="100vh">
       <Box bg="blue.500" p={4} color="white" textAlign="center">
         <img src={logo} width={60} style={logoStyle} />
-        <SigninForm user={user} />
+        <SigninForm />
       </Box>
       <Flex flex="1" direction={{ base: "column", md: "row" }}>
         <Box bg="gray.200" p={4} maxWidth={{ base: "100vw", md: "100vw" }}>

@@ -25,7 +25,10 @@ import { useUser } from "../contexts/UserContext";
 export default function ProviderLayout() {
   const { user, setUser, loading, error } = useUser();
   if (loading) return <p>Loading...</p>;
-  if (error) return <SigninForm user={user} />;
+  if (error) {
+    console.log("error", error);
+    return <SigninForm user={user} />;
+  }
   if (user)
     return (
       <>

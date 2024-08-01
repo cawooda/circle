@@ -8,7 +8,7 @@ export default function SubMenu({ items }) {
   return (
     <Flex justifyContent="center" wrap="wrap" gap={2}>
       {items.map((item) => (
-        <NavLink to={item.link}>
+        <NavLink key={item.link} to={item.link}>
           <Container {...ButtonStyles}>{item.label}</Container>
         </NavLink>
       ))}

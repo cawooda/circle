@@ -3,6 +3,9 @@ import { jwtDecode } from "jwt-decode";
 
 // create a new class to instantiate for a user
 class AuthService {
+  constructor() {
+    if (this.isTokenExpired(this.getProfile())) this.logout();
+  }
   // get user data
   getProfile() {
     try {
