@@ -21,8 +21,8 @@ import {
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import AuthService from "../utils/auth";
-import { ButtonStyles } from "./ButtonStyle";
-import { ButtonHighlightStyle } from "./ButtonHighlightStyle";
+import { ButtonStyles, ButtonHighlightStyle } from "./ButtonStyle";
+
 import { InputStyles } from "./InputStyles";
 import Splash from "./Splash";
 import logo from "/logo.png";
