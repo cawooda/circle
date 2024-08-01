@@ -42,7 +42,7 @@ const userSchema = new Schema(
       default: null,
     },
     roleAdmin: { type: Schema.Types.ObjectId, ref: "admin", default: null },
-
+    roleSuperAdmin: { type: Boolean, required: true, default: false },
     // roles: [
     //   { type: String, enum: ["Customer", "Provider", "Admin", "SuperAdmin"] },
     // ],

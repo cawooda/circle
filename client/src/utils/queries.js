@@ -1,5 +1,44 @@
 import { gql } from "@apollo/client";
 
+export const QUERY_ALL_USERS = gql`
+  query getAllUsers($id: ID!) {
+    getAllUsers(id: $id) {
+      _id
+      first
+      last
+      mobile
+      email
+      date_of_birth
+      fullName
+      roleAdmin {
+        _id
+        createdAt
+        updatedAt
+      }
+      roleProvider {
+        _id
+        abn
+        address
+        providerName
+        termsAndConditions {
+          heading
+          paragraph
+        }
+        createdAt
+        updatedAt
+      }
+      roleCustomer {
+        _id
+        ndisNumber
+        address
+        dateOfBirth
+        customerSpecificField
+      }
+      roleSuperAdmin
+    }
+  }
+`;
+
 export const QUERY_USER_BY_ID = gql`
   query getUserById($id: ID!) {
     getUserById(id: $id) {
@@ -10,6 +49,7 @@ export const QUERY_USER_BY_ID = gql`
       email
       date_of_birth
       fullName
+      roleSuperAdmin
       roleAdmin {
         _id
         createdAt

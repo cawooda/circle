@@ -11,6 +11,7 @@ type User {
     roleAdmin: Admin
     roleProvider: Provider
     roleCustomer: Customer
+    roleSuperAdmin: Boolean
 }
 
 enum RoleType {
@@ -93,7 +94,7 @@ type TermsAndConditions {
 union RoleModel = Admin | Provider | Customer
 
 type Query {
-    getAllUsers: [User]
+    getAllUsers(id: ID!): [User]
     getUserByToken(token: String!): User
     getUserById(id: ID!): User!
     getUserRoles(id: ID!): [String]

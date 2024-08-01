@@ -10,3 +10,7 @@ export const ButtonStyles = {
   borderWidth: "2px",
   padding: "5px",
 };
+
+export const ButtonHighlightStyle = {
+  bgColor: "yellow.400",
+};
