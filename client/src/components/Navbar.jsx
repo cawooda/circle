@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { ButtonStyles } from "./ButtonStyle";
 import Splash from "./Splash";
 import { NavLink } from "react-router-dom";
-import SigninForm from "./SigninForm";
+
 import AuthService from "../utils/auth";
 
 export default function NavBar() {
@@ -39,13 +39,7 @@ export default function NavBar() {
             <Container {...ButtonStyles}>Customer</Container>
           </NavLink>
         </Box>
-        <Box display="flex" justifyContent="center" alignItems="center">
-          <SigninForm
-            text={loggedIn ? "Logout" : "Login"}
-            loggedIn={loggedIn}
-            setLoggedIn={setLoggedIn}
-          />
-        </Box>
+        <Box display="flex" justifyContent="center" alignItems="center"></Box>
       </Flex>
     </>
   );

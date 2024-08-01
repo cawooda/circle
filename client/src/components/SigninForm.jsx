@@ -18,11 +18,8 @@ import {
   Center,
   VStack,
 } from "@chakra-ui/react";
-//routing and redirecting
 import { useNavigate } from "react-router-dom";
-//Auth Service
 import AuthService from "../utils/auth";
-//Styles and Splash
 import { ButtonStyles } from "./ButtonStyle";
 import { ButtonHighlightStyle } from "./ButtonHighlightStyle";
 import { InputStyles } from "./InputStyles";
@@ -30,12 +27,10 @@ import Splash from "./Splash";
 import logo from "/logo.png";
 import { useUser } from "../contexts/UserContext";
 
-const SigninForm = ({ text, loggedIn, setLoggedIn }) => {
-  const { user, setUser, loading, error } = useUser();
+const SigninForm = ({ user }) => {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
-  // set state for alert
-  const [showAlert, setShowAlert] = useState(false);
+  const { setUser } = useUser();
   const [userFormData, setUserFormData] = useState({
     mobile: "",
     password: "",
@@ -45,10 +40,16 @@ const SigninForm = ({ text, loggedIn, setLoggedIn }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setSplashVisible(false);
-    }, 1500); // 3 seconds
+    }, 1500); // 1.5 seconds
 
     return () => clearTimeout(timer); // Cleanup the timer
   }, [splashVisible]);
+
+  useEffect(() => {
+    if (!user) {
+      onOpen();
+    }
+  }, [user, onOpen]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -58,12 +59,14 @@ const SigninForm = ({ text, loggedIn, setLoggedIn }) => {
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     setSplashVisible(true);
-    const newUserAuth = await AuthService.loginOrCreateUser(userFormData);
-    if (newUserAuth) setLoggedIn(true);
-    navigate("/");
-
     try {
-      //the only use of traditional API in this app is for new user creation or login. Other queries are done in grapghQL.
+      const newUserAuth = await AuthService.loginOrCreateUser(userFormData);
+
+      if (newUserAuth) {
+        setUser(newUserAuth);
+        onClose();
+        navigate("/");
+      }
     } catch (error) {
       console.log(error);
     }
@@ -74,8 +77,6 @@ const SigninForm = ({ text, loggedIn, setLoggedIn }) => {
       mobile: "",
       password: "",
     });
-    navigate("/");
-    onClose();
   };
 
   return (
@@ -85,17 +86,16 @@ const SigninForm = ({ text, loggedIn, setLoggedIn }) => {
         {...ButtonStyles}
         {...ButtonHighlightStyle}
         onClick={() => {
-          if (!loggedIn) {
+          if (!user) {
             onOpen();
           } else {
-            onClose();
+            setUser(null);
             AuthService.logout();
-            setLoggedIn(false);
             navigate("/");
           }
         }}
       >
-        {text}
+        {user ? "Logout" : "Login"}
       </Button>
 
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -113,8 +113,7 @@ const SigninForm = ({ text, loggedIn, setLoggedIn }) => {
           <ModalHeader>New? Use this to create an account</ModalHeader>
           <ModalBody>
             <Flex direction="column" align="center" justify="center">
-              <FormControl onSubmit={() => handleFormSubmit()}>
-                {/* show alert if server response is bad */}
+              <FormControl as="form" onSubmit={handleFormSubmit}>
                 <FormLabel htmlFor="first">First Name</FormLabel>
                 <Input
                   onKeyDown={(e) => {
@@ -182,8 +181,6 @@ const SigninForm = ({ text, loggedIn, setLoggedIn }) => {
           </ModalBody>
         </ModalContent>
       </Modal>
-
-      {/* This is needed for the validation functionality above */}
     </>
   );
 };
