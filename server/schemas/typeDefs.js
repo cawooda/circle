@@ -4,7 +4,7 @@ type User {
     _id: ID!
     first: String
     last: String
-    mobile: String
+    mobile: String!
     email: String
     date_of_birth: String
     fullName: String
@@ -95,7 +95,7 @@ union RoleModel = Admin | Provider | Customer
 type Query {
     getAllUsers: [User]
     getUserByToken(token: String!): User
-    getUserById(id: ID!): User
+    getUserById(id: ID!): User!
     getUserRoles(id: ID!): [String]
     getCustomers: [Customer]
     getProducts: [Product]

@@ -27,6 +27,7 @@ const resolvers = {
       }
     },
     getUserById: async (_parent, { id }) => {
+      console.log("get user:", id);
       const user = await User.findById(id)
         .populate("roleCustomer")
         .populate("roleProvider")
