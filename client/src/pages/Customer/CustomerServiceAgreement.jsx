@@ -18,8 +18,10 @@ import Splash from "../../components/Splash";
 
 import { SIGN_SERVICE_AGREEMENT } from "../../utils/mutations";
 import AuthService from "../../utils/auth";
-import { ButtonStyles } from "../../components/ButtonStyle";
-import { ButtonHighlightStyle } from "../../components/ButtonHighlightStyle";
+import {
+  ButtonStyles,
+  ButtonHighlightStyle,
+} from "../../components/ButtonStyle";
 
 import { Routes, Route, useParams } from "react-router-dom";
 import Error from "../../components/Error";
