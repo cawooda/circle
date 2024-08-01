@@ -17,6 +17,7 @@ import {
   Image,
   Center,
   VStack,
+  Alert,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import AuthService from "../utils/auth";
@@ -31,6 +32,7 @@ const SigninForm = ({ user }) => {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
   const { setUser } = useUser();
+  const { message, setMessage } = useState("");
   const [userFormData, setUserFormData] = useState({
     mobile: "",
     password: "",
@@ -60,15 +62,16 @@ const SigninForm = ({ user }) => {
     event.preventDefault();
     setSplashVisible(true);
     try {
-      const newUserAuth = await AuthService.loginOrCreateUser(userFormData);
-
-      if (newUserAuth) {
-        setUser(newUserAuth);
+      const response = await AuthService.loginOrCreateUser(userFormData);
+      console.log("response", response);
+      if (!response.user === undefined) {
+        setMessage(response.message); // Set the error message
+      } else {
+        setUser(response.user);
         onClose();
-        navigate("/");
       }
     } catch (error) {
-      console.log(error);
+      console.log("Error received trying to create new userAuth", error);
     }
 
     setUserFormData({
@@ -114,23 +117,6 @@ const SigninForm = ({ user }) => {
           <ModalBody>
             <Flex direction="column" align="center" justify="center">
               <FormControl as="form" onSubmit={handleFormSubmit}>
-                <FormLabel htmlFor="first">First Name</FormLabel>
-                <Input
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleFormSubmit(e);
-                    }
-                  }}
-                  autoFocus
-                  id="first-name"
-                  {...InputStyles}
-                  type="text"
-                  placeholder="name..."
-                  name="first"
-                  onChange={handleInputChange}
-                  value={userFormData.first}
-                  required
-                />
                 <FormLabel htmlFor="phone">Mobile</FormLabel>
                 <Input
                   onKeyDown={(e) => {
@@ -164,6 +150,7 @@ const SigninForm = ({ user }) => {
                   value={userFormData.password}
                   required
                 />
+                {message ? <Alert status="error">{message}</Alert> : null}
                 <Container centerContent>
                   <Button
                     {...ButtonStyles}

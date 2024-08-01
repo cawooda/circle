@@ -12,16 +12,22 @@ router.post("/users", async (req, res) => {
     const userExists = await User.findOne({ mobile: req.body.mobile });
 
     if (userExists) {
-      if (userExists.isCorrectPassword(req.body.password)) {
+      if (await userExists.isCorrectPassword(req.body.password)) {
         await userExists.generateAuthToken();
-
         await userExists.populate("roleCustomer");
         await userExists.populate("roleProvider");
         await userExists.save();
+        console.log("userExists", userExists);
         res
           .status(200)
           .json({ userExists: true, userCreated: false, user: userExists });
         return userExists;
+      } else {
+        res.status(401).json({
+          userExists: true,
+          userCreated: false,
+          message: "Incorrect password",
+        });
       }
     } else {
       //wishing not to take more information than required from a user, this app allows registration with only mobile, however we use the below code to

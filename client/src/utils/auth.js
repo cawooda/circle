@@ -44,12 +44,13 @@ class AuthService {
       },
       body: JSON.stringify(userData),
     });
+
     if (response.ok) {
-      const { user, userExists, userCreated } = await response.json();
-      console.log(user);
-      localStorage.setItem("id_token", user.token);
-      return { user, userExists, userCreated };
+      const res = await response.json();
+      localStorage.setItem("id_token", res.user.token);
+      return res;
     }
+    return response;
   }
 
   logout() {

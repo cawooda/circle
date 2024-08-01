@@ -13,24 +13,24 @@ module.exports = {
   }),
 
   // token-based authentication scheme.
-  authMiddleware: async function ({ req, res, next }) {
-    if (req.body.operationName == "addUser") return res;
+  authMiddleware: async function ({ req }) {
     let token = req.body.token || req.query.token || req.headers.authorization;
     if (req.headers.authorization) {
       token = token.split(" ").pop().trim();
     }
     if (!token) {
-      res.status(401).json({ error: "No token provided" });
-      return;
+      throw new GraphQLError("No token provided", {
+        extensions: { code: "UNAUTHENTICATED" },
+      });
     }
 
-    // verify token and get user data out of it
     try {
       const { authenticatedPerson } = await jwt.verify(token, secret, {
         maxAge: process.env.TOKEN_EXPIRES_IN,
       });
 
       const registeredUser = await User.findById(authenticatedPerson._id);
+
       if (!registeredUser) {
         throw new GraphQLError("No user found", {
           extensions: { code: "UNAUTHENTICATED" },
@@ -38,15 +38,21 @@ module.exports = {
       }
 
       if (registeredUser._id == authenticatedPerson._id) {
-        req.user = authenticatedPerson;
+        return { user: authenticatedPerson };
       }
-      return next();
+      throw new GraphQLError("Authentication failed", {
+        extensions: { code: "UNAUTHENTICATED" },
+      });
     } catch (error) {
       if (error.name === "TokenExpiredError") {
-        res.status(401).json({ error: "Token expired" });
+        throw new GraphQLError("Token expired", {
+          extensions: { code: "UNAUTHENTICATED" },
+        });
       } else {
         console.error("Authentication Error:", error);
-        res.status(401).json({ error: "Authentication failed" });
+        throw new GraphQLError("Authentication failed", {
+          extensions: { code: "UNAUTHENTICATED" },
+        });
       }
     }
   },
