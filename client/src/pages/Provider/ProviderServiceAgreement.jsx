@@ -54,7 +54,7 @@ export default function ProviderServiceAgreement() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setSplashVisible(false);
-    }, 3000); // 3 seconds
+    }, 1500); // 3 seconds
 
     return () => clearTimeout(timer); // Cleanup the timer
   }, [splashVisible]);

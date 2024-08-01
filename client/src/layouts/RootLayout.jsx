@@ -33,8 +33,9 @@ export default function RootLayout() {
   return (
     <Flex direction="column" height="100vh">
       <Box bg="blue.500" p={4} color="white" textAlign="center">
-        <img src={logo} width={60} style={logoStyle} />
-        <SigninForm />
+        <Center>
+          <img src={logo} width={60} style={logoStyle} />
+        </Center>
       </Box>
       <Flex flex="1" direction={{ base: "column", md: "row" }}>
         <Box bg="gray.200" p={4} maxWidth={{ base: "100vw", md: "100vw" }}>
@@ -47,6 +48,9 @@ export default function RootLayout() {
       <Box bg="blue.500" p={4} color="white" textAlign="center">
         (C) Circle Indeendent
       </Box>
+      <Center padding={5}>
+        <SigninForm />
+      </Center>
     </Flex>
   );
 }
