@@ -11,7 +11,7 @@ export default function RootLayout() {
   const { user, loading, error } = useUser();
 
   if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (error) return <SigninForm user={user} />;
 
   return (
     <Flex direction="column" height="100vh">

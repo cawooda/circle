@@ -91,9 +91,15 @@ export default function ProviderServiceAgreement() {
     },
   ] = useMutation(ADD_SERVICE_AGREEMENT, {
     onError: (err) => {
-      console.error("GraphQL Error:", err.graphQLErrors);
-      console.error("Network Error:", err.networkError);
-      console.error("Message:", err.message);
+      console.error(
+        "GraphQL Error adding service agreement:",
+        err.graphQLErrors
+      );
+      console.error(
+        "Network Error adding service agreement:",
+        err.networkError
+      );
+      console.error("Message adding service agreement:", err.message);
     },
   });
 

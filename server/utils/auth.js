@@ -4,7 +4,6 @@ const { User } = require("../models/");
 const { GraphQLError } = require("graphql");
 const jwt = require("jsonwebtoken");
 
-// function for our authenticated routes
 module.exports = {
   AuthenticationError: new GraphQLError("Could not authenticate user.", {
     extensions: {
@@ -12,7 +11,6 @@ module.exports = {
     },
   }),
 
-  // token-based authentication scheme.
   authMiddleware: async function ({ req }) {
     let token = req.body.token || req.query.token || req.headers.authorization;
     if (req.headers.authorization) {
@@ -45,6 +43,7 @@ module.exports = {
       });
     } catch (error) {
       if (error.name === "TokenExpiredError") {
+        console.error("Token expired error:", error);
         throw new GraphQLError("Token expired", {
           extensions: { code: "UNAUTHENTICATED" },
         });
