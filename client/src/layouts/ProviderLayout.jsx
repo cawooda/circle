@@ -13,8 +13,6 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import SubMenu from "../components/SubMenu";
 
-const userId = AuthService.getProfile()?.authenticatedPerson._id || false;
-
 const menu = [
   { label: "New Agreement", link: "service-agreement" },
   { label: "Service Agreements", link: "service-agreements" },
@@ -25,6 +23,7 @@ import { useUser } from "../contexts/UserContext";
 
 export default function ProviderLayout() {
   const { user, setUser, loading, error } = useUser();
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
   if (user)

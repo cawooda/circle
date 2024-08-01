@@ -28,8 +28,10 @@ import { ButtonHighlightStyle } from "./ButtonHighlightStyle";
 import { InputStyles } from "./InputStyles";
 import Splash from "./Splash";
 import logo from "/logo.png";
+import { useUser } from "../contexts/UserContext";
 
 const SigninForm = ({ text, loggedIn, setLoggedIn }) => {
+  const { user, setUser, loading, error } = useUser();
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
   // set state for alert
