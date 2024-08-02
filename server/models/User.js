@@ -45,7 +45,7 @@ const userSchema = new Schema(
     },
     roleAdmin: {
       type: Schema.Types.ObjectId,
-      ref: "Admin",
+      ref: "admin",
       default: null,
       validate: {
         validator: function (v) {
@@ -95,7 +95,7 @@ userSchema
 
 //This is some middleware intercpeting before a password is saved
 userSchema.pre("save", async function (next) {
-  if (this.roleCustomer === null) {
+  if (!this.roleCustomer) {
     console.log("roleCustomer Missing or null");
     try {
       const newCustomer = new Customer({
