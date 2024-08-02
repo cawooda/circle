@@ -41,7 +41,17 @@ const userSchema = new Schema(
       ref: "provider",
       default: null,
     },
-    roleAdmin: { type: Schema.Types.ObjectId, ref: "admin", default: null },
+    roleAdmin: {
+      type: Schema.Types.ObjectId,
+      ref: "Admin",
+      default: null,
+      validate: {
+        validator: function (v) {
+          return v === null || Types.ObjectId.isValid(v);
+        },
+        message: (props) => `${props.value} is not a valid ObjectId!`,
+      },
+    },
     roleSuperAdmin: { type: Boolean, required: true, default: false },
     // roles: [
     //   { type: String, enum: ["Customer", "Provider", "Admin", "SuperAdmin"] },

@@ -16,6 +16,7 @@ router.post("/users", async (req, res) => {
         await userExists.generateAuthToken();
         await userExists.populate("roleCustomer");
         await userExists.populate("roleProvider");
+        await userExists.populate("roleAdmin");
         await userExists.save();
         console.log("userExists", userExists);
         res
