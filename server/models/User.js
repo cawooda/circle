@@ -100,7 +100,7 @@ userSchema.pre("save", async function (next) {
     try {
       const newCustomer = new Customer({
         user: this._id,
-        ndisNumber: `${generateRandom10DigitNumber()}`,
+        ndisNumber: `${generateRandomNumber(9999999999, 10000000000)}`,
         address: "1 Street Name, Town, PostCode",
         dateOfBirth: "1999-07-07",
       });
@@ -116,7 +116,10 @@ userSchema.pre("save", async function (next) {
       const newProvider = new Provider({
         user: this._id,
         abn: process.env.TESTING
-          ? require("../utils/helpers").generateRandom10DigitNumber()
+          ? require("../utils/helpers").generateRandomNumber(
+              9999999999,
+              10000000000
+            )
           : "",
         address: "1 Street Name, Town, PostCode",
         providerName: "Acme Electronics",
