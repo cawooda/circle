@@ -37,6 +37,24 @@ class AuthService {
     return localStorage.getItem("id_token");
   }
 
+  async resetPassword(userData) {
+    if (userData.mobile) {
+      const response = await fetch("/api/users", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
+      if (response.ok) {
+        const res = await response.json();
+        return res;
+      }
+      return response;
+    } else {
+      return null;
+    }
+  }
   async loginOrCreateUser(userData) {
     // Saves user token to localStorage
 

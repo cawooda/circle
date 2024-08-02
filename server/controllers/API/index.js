@@ -5,6 +5,32 @@ const { SMSService } = require("../../utils/smsService");
 
 const controllerSmsService = new SMSService();
 
+router.put("/users", async (req, res) => {
+  const { mobile } = req.body;
+  console.log("put recieved");
+  try {
+    const userExists = await User.findOne({ mobile: req.body.mobile });
+    console.log("user exists");
+    if (userExists) {
+      await userExists.sendAuthLink();
+      res.status(401).json({
+        userExists: true,
+        userCreated: false,
+        authLinkSent: true,
+        message: "auth link Sent",
+      });
+    } else {
+      res.status(401).json({
+        userExists: false,
+        userCreated: false,
+        message: "user doesent exist",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 router.post("/users", async (req, res) => {
   const user = req.body;
 

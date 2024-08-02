@@ -4,6 +4,7 @@ import {
   Flex,
   Input,
   FormLabel,
+  InputRightElement,
   Modal,
   ModalOverlay,
   Heading,
@@ -18,6 +19,7 @@ import {
   Center,
   VStack,
   Alert,
+  InputGroup,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import AuthService from "../utils/auth";
@@ -56,6 +58,27 @@ const SigninForm = () => {
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setUserFormData({ ...userFormData, [name]: value }); //handle the change of for an input with useState
+  };
+
+  const handlePasswordHelp = async (event) => {
+    event.preventDefault();
+    setSplashVisible(true);
+    if (userFormData.mobile.length == 10) {
+      try {
+        const response = await AuthService.resetPassword(userFormData);
+
+        if (!response.user === undefined) {
+          setMessage(response.message); // Set the error message
+        } else {
+          setUser(response.user);
+          onClose();
+        }
+      } catch (error) {
+        console.log("Error received trying to create new userAuth", error);
+      }
+    } else {
+      setMessage("add your mobile to reset password");
+    }
   };
 
   const handleFormSubmit = async (event) => {
@@ -135,21 +158,28 @@ const SigninForm = () => {
                 />
 
                 <FormLabel htmlFor="password">Password</FormLabel>
-                <Input
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleFormSubmit(e);
-                    }
-                  }}
-                  id="passwordInput"
-                  {...InputStyles}
-                  type="password"
-                  placeholder="password..."
-                  name="password"
-                  onChange={handleInputChange}
-                  value={userFormData.password}
-                  required
-                />
+                <InputGroup>
+                  <InputRightElement width="4.5rem">
+                    <Button h="1.75rem" size="sm" onClick={handlePasswordHelp}>
+                      Help
+                    </Button>
+                  </InputRightElement>
+                  <Input
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleFormSubmit(e);
+                      }
+                    }}
+                    id="passwordInput"
+                    {...InputStyles}
+                    type="password"
+                    placeholder="password..."
+                    name="password"
+                    onChange={handleInputChange}
+                    value={userFormData.password}
+                    required
+                  />
+                </InputGroup>
                 {message ? <Alert status="error">{message}</Alert> : null}
                 <Container centerContent>
                   <Button

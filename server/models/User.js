@@ -2,7 +2,9 @@ require("dotenv").config();
 const bcrypt = require("bcrypt");
 //import the Schema and model from mongoose.
 const { Schema, model } = require("mongoose");
-const { generateRandom10DigitNumber } = require("../utils/helpers");
+const { generateRandomNumber } = require("../utils/helpers");
+const { SMSService } = require("../utils/smsService");
+const controllerSmsService = new SMSService();
 
 const validator = require("validator"); //this package provides a range of validator checks including email.
 const jwt = require("jsonwebtoken");
@@ -58,6 +60,7 @@ const userSchema = new Schema(
     // ],
     // roleModels: [{ type: Schema.Types.ObjectId }],
     password: { type: String, required: true },
+    authLinkNumber: { type: String },
     createdAt: {
       type: Date,
       immutable: true, //this prevents changes to the date once created
@@ -147,6 +150,16 @@ userSchema.pre("save", async function (next) {
   }
   next();
 });
+
+userSchema.methods.sendAuthLink = async function () {
+  this.authLinkNumber = generateRandomNumber(100, 4000);
+  await controllerSmsService.sendText(
+    this.mobile,
+    `Resetting your login is as easy as clicking a link :)
+        `,
+    `/reset/${this.authLinkNumber}`
+  );
+};
 
 userSchema.methods.isCorrectPassword = async function (password) {
   if (await bcrypt.compare(password, this.password)) {
