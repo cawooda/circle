@@ -26,6 +26,19 @@ const providerSchema = new Schema(
   }
 );
 
+providerSchema.pre("findOneAndRemove", async function (next) {
+  try {
+    const userId = this.user;
+    const user = await User.findById(userId);
+    user.roleProvider = null;
+    await user.save();
+    next();
+  } catch (error) {
+    console.error("Error while deleting provider", error);
+    next();
+  }
+});
+
 const Provider = model("provider", providerSchema);
 
 module.exports = Provider;

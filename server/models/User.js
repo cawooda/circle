@@ -23,6 +23,7 @@ const userSchema = new Schema(
       minLength: 10,
       maxLength: 10,
       required: true,
+      unique: true,
     },
     email: {
       type: String,
@@ -47,12 +48,6 @@ const userSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "admin",
       default: null,
-      validate: {
-        validator: function (v) {
-          return v === null || Types.ObjectId.isValid(v);
-        },
-        message: (props) => `${props.value} is not a valid ObjectId!`,
-      },
     },
     roleSuperAdmin: { type: Boolean, required: true, default: false },
     // roles: [
@@ -95,7 +90,7 @@ userSchema
 
 //This is some middleware intercpeting before a password is saved
 userSchema.pre("save", async function (next) {
-  if (!this.roleCustomer) {
+  if (!this.roleCustomer && process.env.TESTING) {
     console.log("roleCustomer Missing or null");
     try {
       const newCustomer = new Customer({
@@ -113,8 +108,7 @@ userSchema.pre("save", async function (next) {
 
   if (!this.roleProvider && process.env.TESTING) {
     try {
-      const newProvider = new Provider({
-        user: this._id,
+      const newProvider = Provider.create({
         abn: process.env.TESTING
           ? require("../utils/helpers").generateRandomNumber(
               9999999999,
@@ -132,6 +126,7 @@ userSchema.pre("save", async function (next) {
         ],
       });
       await newProvider.save();
+      newProvider.user = this._id;
       this.roleProvider = newProvider._id;
     } catch (error) {
       console.log(error);

@@ -20,6 +20,45 @@ export const ADD_USER = gql`
   }
 `;
 
+export const TOGGLE_USER_ROLE = gql`
+  mutation Mutation($userId: ID!, $role: String!) {
+    toggleUserRole(userId: $userId, role: $role) {
+      _id
+      first
+      last
+      mobile
+      email
+      date_of_birth
+      fullName
+      roleAdmin {
+        _id
+        createdAt
+        updatedAt
+      }
+      roleProvider {
+        _id
+        abn
+        address
+        providerName
+        termsAndConditions {
+          heading
+          paragraph
+        }
+        createdAt
+        updatedAt
+      }
+      roleCustomer {
+        _id
+        ndisNumber
+        address
+        dateOfBirth
+        customerSpecificField
+      }
+      roleSuperAdmin
+    }
+  }
+`;
+
 export const ADD_SERVICE_AGREEMENT = gql`
   mutation AddServiceAgreement(
     $provider: ID!

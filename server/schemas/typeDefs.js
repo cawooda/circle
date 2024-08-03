@@ -21,14 +21,21 @@ enum RoleType {
     SUPERADMIN
 }
 
+type Customer {
+    _id: ID!
+    user: User!
+    ndisNumber: String
+    address: String
+    dateOfBirth: String
+    customerSpecificField:String
+}
+
 type Admin {
     _id: ID!
     user: User!
     createdAt: String
     updatedAt: String
 }
-
-
 
 type Provider {
     _id: ID!
@@ -77,14 +84,7 @@ input ProductInput {
   quantity: Int!
 }
 
-type Customer {
-    _id: ID!
-    user: User!
-    ndisNumber: String
-    address: String
-    dateOfBirth: String
-    customerSpecificField:String
-}
+
 
 type TermsAndConditions {
     heading: String
@@ -106,13 +106,9 @@ type Query {
 
 
 type Mutation {
-    addUser(first: String!, last: String!, mobile: String, email: String!, password: String!): User
-    loginUser(mobile: String, email: String!, password: String!): User
-    toggleUserRole(userId: ID!, role: RoleType!): User!
-    createAdmin(userId: ID!): Admin!
-    createProvider(userId: ID!, abn: String!, address: String!, providerName: String!): Provider!
     addServiceAgreement(provider:ID!,customer:ID!,endDate:String!,product:String!,quantity:Int!): ServiceAgreement
-    signServiceAgreement(agreementId:ID!,signature:String!):ServiceAgreement
+    signServiceAgreement(agreementId:ID!,signature:String!):ServiceAgreement    
+    toggleUserRole(userId: ID!,role: String!): User!    
 }
 
 `;

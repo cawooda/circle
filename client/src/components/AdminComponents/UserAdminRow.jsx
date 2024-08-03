@@ -10,8 +10,24 @@ import {
 } from "@chakra-ui/react";
 import { DisplayStyles, InputStyles } from "../InputStyles";
 import { ButtonStyles, ButtonHighlightStyle } from "../ButtonStyle";
+import { useMutation } from "@apollo/client";
+import { TOGGLE_USER_ROLE } from "../../utils/mutations";
 
 export default function UserAdminRow({ user, index }) {
+  const [
+    toggleUserRole,
+    {
+      loading: toggleUserRoleLoading,
+      data: toggleUserRoleData,
+      error: toggleUserRoleError,
+    },
+  ] = useMutation(TOGGLE_USER_ROLE, {
+    onError: (err) => {
+      console.error("GraphQL Error toggling user role", err.graphQLErrors);
+      console.error("Network Error toggling user role", err.networkError);
+      console.error("Message toggling user role", err.message);
+    },
+  });
   //variables to manage state
   const [formData, setFormData] = useState({
     _id: user._id,
@@ -29,6 +45,34 @@ export default function UserAdminRow({ user, index }) {
       ...formData,
       [name]: type === "checkbox" ? checked : value,
     });
+  };
+
+  const handleAdminChange = async (e) => {
+    const response = await toggleUserRole({
+      variables: {
+        userId: formData._id,
+        role: "admin",
+      },
+    });
+    setFormData((prev) => ({ ...prev, isAdmin: !prev.isAdmin }));
+  };
+  const handleProviderChange = async (e) => {
+    const response = await toggleUserRole({
+      variables: {
+        userId: formData._id,
+        role: "provider",
+      },
+    });
+    setFormData((prev) => ({ ...prev, isProvider: !prev.isProvider }));
+  };
+  const handleCustomerChange = async (e) => {
+    const response = await toggleUserRole({
+      variables: {
+        userId: formData._id,
+        role: "customer",
+      },
+    });
+    setFormData((prev) => ({ ...prev, isCustomer: !prev.isCustomer }));
   };
 
   const handleSubmit = (e) => {
@@ -86,8 +130,8 @@ export default function UserAdminRow({ user, index }) {
                 <Switch
                   id={`admin-switch-${index}`}
                   name="isAdmin"
-                  isChecked={formData.isAdmin}
-                  onChange={handleChange}
+                  isChecked={!formData.isAdmin}
+                  onChange={handleAdminChange}
                 />
               </Box>
               <Box>
@@ -97,8 +141,8 @@ export default function UserAdminRow({ user, index }) {
                 <Switch
                   id={`provider-switch-${index}`}
                   name="isProvider"
-                  isChecked={formData.isProvider}
-                  onChange={handleChange}
+                  isChecked={!formData.isProvider}
+                  onChange={handleProviderChange}
                 />
               </Box>
               <Box>
@@ -108,8 +152,8 @@ export default function UserAdminRow({ user, index }) {
                 <Switch
                   id={`customer-switch-${index}`}
                   name="isCustomer"
-                  isChecked={formData.isCustomer}
-                  onChange={handleChange}
+                  isChecked={!formData.isCustomer}
+                  onChange={handleCustomerChange}
                 />
               </Box>
             </Flex>

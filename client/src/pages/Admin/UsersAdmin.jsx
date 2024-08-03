@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAdmin } from "../../contexts/AdminContext";
 import UserAdminRow from "../../components/AdminComponents/UserAdminRow";
+import { TOGGLE_USER_ROLE } from "../../utils/mutations";
 
 export default function UsersAdmin() {
   const [users, setUsers] = useState([]);

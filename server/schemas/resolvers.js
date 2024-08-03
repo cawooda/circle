@@ -2,6 +2,7 @@ const {
   User,
   Admin,
   Customer,
+  Provider,
   Product,
   ServiceAgreement,
 } = require("../models");
@@ -91,38 +92,6 @@ const resolvers = {
     },
   },
   Mutation: {
-    addUser: async (_parent, { first, last, mobile, email, password }) => {
-      try {
-        const newUser = await User.create({
-          first: first || "",
-          last: last || "",
-          mobile: mobile,
-          email: email || "",
-          password,
-        });
-        return newUser;
-      } catch (error) {
-        console.log(error);
-        return error;
-      }
-    },
-    loginUser: async (_parent, { mobile, email, password }) => {
-      //find the user
-      try {
-        const authenticatedUser = await User.findOne({
-          $or: [{ mobile: mobile }, { email: email }],
-        }).populate();
-        //check their password. Model gives them a token if password correct
-        if (await authenticatedUser.isCorrectPassword) {
-          return authenticatedUser;
-        } else {
-          console.log("incorrect password");
-          return { error: "password incorrect" };
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    },
     addServiceAgreement: async (
       _parent,
       { provider, customer, startDate, quantity, product, endDate }
@@ -178,12 +147,94 @@ const resolvers = {
         console.error(error);
       }
     },
-    toggleUserRole: async (_parent, { userId, role }) => {
-      const user = await User.findById(userId);
 
+    toggleUserRole: async (_parent, { userId, role }) => {
       try {
-        console.log(user);
-      } catch (error) {}
+        const user = await User.findById(userId);
+        if (!user) {
+          throw new Error("User not found");
+        }
+        switch (role) {
+          case "admin":
+            if (user.roleAdmin) {
+              console.log("Deleting provider with ID:", user.roleAdmin);
+              console.log(
+                await Admin.findOneAndDelete({
+                  _id: user.roleAdmin,
+                })
+              );
+              user.roleAdmin = null;
+              await user.save(); // Update user document
+            } else {
+              const newAdmin = await Admin.create({ user: user._id });
+              user.roleAdmin = newAdmin._id;
+            }
+            await user.save();
+            break;
+          case "provider":
+            if (user.roleProvider) {
+              console.log("Deleting provider with ID:", user.roleProvider);
+              console.log(
+                await Provider.findOneAndDelete({
+                  _id: user.roleProvider,
+                })
+              );
+              user.roleProvider = null;
+              await user.save(); // Update user document
+            } else {
+              const newProvider = await Provider.create({
+                user: user._id,
+                abn: require("../utils/helpers").generateRandomNumber(
+                  9999999999,
+                  10000000000
+                ),
+                address: "1 Street Name, Town, PostCode",
+                providerName: "Acme Electronics",
+                termsAndConditions: [
+                  {
+                    heading: "Important Terms",
+                    paragraph:
+                      "Important ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant Paragraph",
+                  },
+                ],
+              });
+              user.roleProvider = newProvider._id;
+            }
+            await user.save();
+            break;
+          case "customer":
+            if (user.roleCustomer) {
+              await Customer.findOneAndDelete({
+                _id: user.roleCustomer,
+              });
+              user.roleCustomer = null;
+              await user.save();
+            } else {
+              const newCustomer = await Customer.create({
+                user: user._id,
+                ndisNumber: require("../utils/helpers").generateRandomNumber(
+                  1000000000,
+                  9999999999
+                ),
+                address: "1 Street Name, Town, PostCode",
+                dateOfBirth: new Date(1990, 0, 1), // Example date of birth
+                customerSpecificField: "Specific details about the customer",
+              });
+              user.roleCustomer = newCustomer._id;
+            }
+            await user.save();
+            break;
+
+          default:
+            throw new Error("Invalid role");
+        }
+
+        console.log("Updated user:", user);
+        return user;
+      } catch (error) {
+        console.error("Error in toggleUserRole:", error);
+        throw new Error("Failed to toggle user role");
+      }
     },
   },
 };
