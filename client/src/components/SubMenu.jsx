@@ -1,6 +1,6 @@
 import { Container, Flex } from "@chakra-ui/react";
 import React from "react";
-import { ButtonStyles } from ".styles/ButtonStyle";
+import { ButtonStyles } from "./styles/ButtonStyle";
 
 import { NavLink } from "react-router-dom";
 

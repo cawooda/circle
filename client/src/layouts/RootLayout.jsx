@@ -9,6 +9,7 @@ import {
   Center,
 } from "@chakra-ui/react";
 import SigninForm from "../components/SigninForm";
+import ProfileForm from "../components/ProfileForm";
 import { useUser } from "../contexts/UserContext";
 import logo from "/logo.png";
 
@@ -49,6 +50,7 @@ export default function RootLayout() {
         (C) Circle Indeendent
       </Box>
       <Center padding={5}>
+        <ProfileForm />
         <SigninForm />
       </Center>
     </Flex>

@@ -1,0 +1,202 @@
+import { useState, useEffect } from "react";
+import {
+  Button,
+  Flex,
+  Input,
+  FormLabel,
+  InputRightElement,
+  Modal,
+  ModalOverlay,
+  Heading,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  FormControl,
+  Container,
+  Image,
+  Center,
+  VStack,
+  Alert,
+  InputGroup,
+} from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
+import AuthService from "../utils/auth";
+import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
+
+import { InputStyles } from "./styles/InputStyles";
+import Splash from "./Splash";
+import logo from "/logo.png";
+import { useUser } from "../contexts/UserContext";
+
+const ProfileForm = () => {
+  const navigate = useNavigate();
+  const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
+  const { user, setUser } = useUser();
+
+  const [formData, setFormData] = useState({
+    first: user.first,
+    last: user.last,
+    password: "",
+    passwordAgain: "",
+    mobile: user.mobile,
+    email: user.email,
+  });
+  const [splashVisible, setSplashVisible] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSplashVisible(false);
+    }, 1500); // 1.5 seconds
+
+    return () => clearTimeout(timer); // Cleanup the timer
+  }, [splashVisible]);
+
+  useEffect(() => {
+    if (!user) {
+      onOpen();
+    }
+  }, [user, onOpen]);
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({ ...formData, [name]: value }); //handle the change of for an input with useState
+  };
+
+  const handleFormSubmit = async (event) => {};
+
+  return (
+    <>
+      <Splash visible={splashVisible} />
+      <Button
+        {...ButtonStyles}
+        {...ButtonHighlightStyle}
+        onClick={() => {
+          if (!user) {
+            onClose();
+          } else {
+            onOpen();
+          }
+        }}
+      >
+        Profile
+      </Button>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            <Center>
+              <VStack>
+                <Heading>My Profile</Heading>
+                <Image src={logo} boxSize="100px" />
+              </VStack>
+            </Center>
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalHeader>Update your details here</ModalHeader>
+          <ModalBody>
+            <Flex direction="column" align="center" justify="center">
+              <FormControl as="form" onSubmit={handleFormSubmit}>
+                <FormLabel htmlFor="first">First Name</FormLabel>
+                <Input
+                  id="first"
+                  {...InputStyles}
+                  placeholder="First Name..."
+                  name="first"
+                  onChange={handleInputChange}
+                  value={formData.first}
+                  required
+                />
+
+                <FormLabel htmlFor="last">Last Name</FormLabel>
+                <Input
+                  id="last"
+                  {...InputStyles}
+                  placeholder="Last Name..."
+                  name="last"
+                  onChange={handleInputChange}
+                  value={formData.last}
+                  required
+                />
+
+                <FormLabel htmlFor="email">Email</FormLabel>
+                <Input
+                  id="email"
+                  {...InputStyles}
+                  placeholder="Email..."
+                  name="email"
+                  onChange={handleInputChange}
+                  value={formData.email}
+                  required
+                />
+
+                <FormLabel htmlFor="mobile">Mobile</FormLabel>
+                <Input
+                  id="mobile"
+                  {...InputStyles}
+                  placeholder="Mobile..."
+                  name="mobile"
+                  onChange={handleInputChange}
+                  value={formData.mobile}
+                  required
+                />
+
+                <FormLabel htmlFor="password">New Password</FormLabel>
+                <InputGroup>
+                  <Input
+                    id="password"
+                    {...InputStyles}
+                    type="password"
+                    placeholder="Password..."
+                    name="password"
+                    onChange={handleInputChange}
+                    value={formData.password}
+                    required
+                  />
+                </InputGroup>
+
+                <FormLabel htmlFor="passwordAgain">
+                  Confirm New Password
+                </FormLabel>
+                <InputGroup>
+                  <Input
+                    id="passwordAgain"
+                    {...InputStyles}
+                    type="password"
+                    placeholder="Confirm Password..."
+                    name="passwordAgain"
+                    onChange={handleInputChange}
+                    value={formData.passwordAgain}
+                    required
+                  />
+                </InputGroup>
+
+                <Container centerContent>
+                  <Button
+                    {...ButtonStyles}
+                    style={{ margin: "50px" }}
+                    disabled={
+                      !(
+                        formData.mobile &&
+                        formData.email &&
+                        formData.first &&
+                        formData.last
+                      )
+                    }
+                    type="submit"
+                    variant="success"
+                  >
+                    Go
+                  </Button>
+                </Container>
+              </FormControl>
+            </Flex>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+    </>
+  );
+};
+export default ProfileForm;

@@ -7,7 +7,7 @@ import {
   Spacer,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { ButtonStyles } from ".styles/ButtonStyle";
+import { ButtonStyles } from "./styles/ButtonStyle";
 import Splash from "./Splash";
 import { NavLink } from "react-router-dom";
 
