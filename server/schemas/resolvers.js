@@ -39,7 +39,8 @@ const resolvers = {
       try {
         const customers = await Customer.find({}).populate("user");
         console.log(customers);
-        return customers;
+        const returnedCustomers = customers.filter((customer) => customer.user);
+        return returnedCustomers;
       } catch (error) {
         console.error(error);
       }
@@ -63,7 +64,7 @@ const resolvers = {
         await serviceAgreement.populate("provider");
         await serviceAgreement.populate("product");
         await serviceAgreement.populate("customer.user");
-
+        console.log(serviceAgreement);
         return serviceAgreement;
       } catch (error) {
         console.error(error);

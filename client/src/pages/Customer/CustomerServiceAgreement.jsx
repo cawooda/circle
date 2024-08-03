@@ -89,6 +89,7 @@ export default function CustomerServiceAgreement() {
   useEffect(() => {
     if (userId) {
       if (!agreementQueryLoading && agreementQueryData) {
+        console.log("agreementQueryData", agreementQueryData);
         setAgreementFormData((prev) => ({
           ...prev,
           provider: agreementQueryData.getServiceAgreement.provider._id,

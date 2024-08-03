@@ -33,9 +33,9 @@ export default function UserAdminRow({ user, index }) {
     _id: user._id,
     first: user.first,
     mobile: user.mobile,
-    isAdmin: false,
-    isProvider: false,
-    isCustomer: false,
+    isAdmin: user.roleAdmin,
+    isProvider: user.roleProvider,
+    isCustomer: user.roleCustomer,
   });
 
   //Change handler
@@ -130,7 +130,7 @@ export default function UserAdminRow({ user, index }) {
                 <Switch
                   id={`admin-switch-${index}`}
                   name="isAdmin"
-                  isChecked={!formData.isAdmin}
+                  isChecked={formData.isAdmin}
                   onChange={handleAdminChange}
                 />
               </Box>
@@ -141,7 +141,7 @@ export default function UserAdminRow({ user, index }) {
                 <Switch
                   id={`provider-switch-${index}`}
                   name="isProvider"
-                  isChecked={!formData.isProvider}
+                  isChecked={formData.isProvider}
                   onChange={handleProviderChange}
                 />
               </Box>
@@ -152,7 +152,7 @@ export default function UserAdminRow({ user, index }) {
                 <Switch
                   id={`customer-switch-${index}`}
                   name="isCustomer"
-                  isChecked={!formData.isCustomer}
+                  isChecked={formData.isCustomer}
                   onChange={handleCustomerChange}
                 />
               </Box>
