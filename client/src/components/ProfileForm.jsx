@@ -32,6 +32,7 @@ import { useUser } from "../contexts/UserContext";
 
 import { useMutation } from "@apollo/client";
 import { UPDATE_USER_PROFILE } from "../utils/mutations";
+import PasswordResetForm from "./PasswordResetForm";
 
 const ProfileForm = () => {
   const [
@@ -119,6 +120,9 @@ const ProfileForm = () => {
           <ModalCloseButton />
           <ModalHeader size="md">Update your details here</ModalHeader>
           <ModalBody>
+            <Flex direction="row" wrap="wrap">
+              <PasswordResetForm />
+            </Flex>
             <Flex direction="column" align="center" justify="center">
               <FormControl as="form" onSubmit={handleFormSubmit}>
                 <FormLabel htmlFor="first">First Name</FormLabel>
