@@ -1,6 +1,6 @@
 import React from "react";
 import { FormControl, FormLabel, Input } from "@chakra-ui/react";
-import { DisplayStyles } from "../InputStyles";
+import { DisplayStyles } from "../styles/InputStyles";
 
 export default function ProductDisplay({ product, quantity, total }) {
   if (!product) return null;

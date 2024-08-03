@@ -21,7 +21,7 @@ import AuthService from "../../utils/auth";
 import {
   ButtonStyles,
   ButtonHighlightStyle,
-} from "../../components/ButtonStyle";
+} from "../../components/styles/ButtonStyle";
 
 import { Routes, Route, useParams } from "react-router-dom";
 import Error from "../../components/Error";

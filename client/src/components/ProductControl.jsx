@@ -6,7 +6,7 @@ import {
   NumberInput,
   NumberInputField,
 } from "@chakra-ui/react";
-import { InputStyles } from "./InputStyles";
+import { InputStyles } from "./styles/InputStyles";
 
 export default function CustomerControl({
   products,

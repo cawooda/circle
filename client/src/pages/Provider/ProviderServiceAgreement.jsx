@@ -31,8 +31,8 @@ import {
 } from "../../utils/queries";
 import { ADD_SERVICE_AGREEMENT } from "../../utils/mutations";
 
-import { ButtonStyles } from "../../components/ButtonStyle";
-import { InputStyles } from "../../components/InputStyles";
+import { ButtonStyles } from "../../components/styles/ButtonStyle";
+import { InputStyles } from "../../components/styles/InputStyles";
 import CustomerControl from "../../components/CustomerControl";
 import ProductControl from "../../components/ProductControl";
 

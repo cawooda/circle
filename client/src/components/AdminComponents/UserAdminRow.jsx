@@ -8,8 +8,8 @@ import {
   FormLabel,
   Switch,
 } from "@chakra-ui/react";
-import { DisplayStyles, InputStyles } from "../InputStyles";
-import { ButtonStyles, ButtonHighlightStyle } from "../ButtonStyle";
+import { DisplayStyles, InputStyles } from "../styles/InputStyles";
+import { ButtonStyles, ButtonHighlightStyle } from "../styles/ButtonStyle";
 import { useMutation } from "@apollo/client";
 import { TOGGLE_USER_ROLE } from "../../utils/mutations";
 

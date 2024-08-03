@@ -1,6 +1,6 @@
 import React from "react";
 import { FormControl, FormLabel, Input } from "@chakra-ui/react";
-import { DisplayStyles } from "../InputStyles";
+import { DisplayStyles } from "../styles/InputStyles";
 
 export default function CustomerDisplay({ customer }) {
   console.log("customer.user", customer);
