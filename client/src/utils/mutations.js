@@ -20,6 +20,57 @@ export const ADD_USER = gql`
   }
 `;
 
+export const UPDATE_USER_PROFILE = gql`
+  mutation UpdateProfile(
+    $userId: ID!
+    $first: String
+    $last: String
+    $mobile: String
+    $email: String
+  ) {
+    updateProfile(
+      userId: $userId
+      first: $first
+      last: $last
+      mobile: $mobile
+      email: $email
+    ) {
+      _id
+      first
+      last
+      mobile
+      email
+      date_of_birth
+      fullName
+      roleAdmin {
+        _id
+        createdAt
+        updatedAt
+      }
+      roleProvider {
+        _id
+        abn
+        address
+        providerName
+        termsAndConditions {
+          heading
+          paragraph
+        }
+        createdAt
+        updatedAt
+      }
+      roleCustomer {
+        _id
+        ndisNumber
+        address
+        dateOfBirth
+        customerSpecificField
+      }
+      roleSuperAdmin
+    }
+  }
+`;
+
 export const TOGGLE_USER_ROLE = gql`
   mutation Mutation($userId: ID!, $role: String!) {
     toggleUserRole(userId: $userId, role: $role) {

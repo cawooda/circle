@@ -147,7 +147,6 @@ const resolvers = {
         console.error(error);
       }
     },
-
     toggleUserRole: async (_parent, { userId, role }) => {
       try {
         const user = await User.findById(userId);
@@ -235,6 +234,23 @@ const resolvers = {
         console.error("Error in toggleUserRole:", error);
         throw new Error("Failed to toggle user role");
       }
+    },
+    updateProfile: async (_parent, { userId, first, last, mobile, email }) => {
+      try {
+        const updatedUser = await User.findById(userId);
+        if (!updatedUser) {
+          throw new Error("User not found");
+        } else {
+          await updatedUser.updateOne({
+            first: first,
+            last: last,
+            mobile: mobile,
+            email: email,
+          });
+          await updatedUser.save();
+        }
+        return updatedUser;
+      } catch (error) {}
     },
   },
 };

@@ -30,7 +30,24 @@ import Splash from "./Splash";
 import logo from "/logo.png";
 import { useUser } from "../contexts/UserContext";
 
+import { useMutation } from "@apollo/client";
+import { UPDATE_USER_PROFILE } from "../utils/mutations";
+
 const ProfileForm = () => {
+  const [
+    updateUserProfile,
+    {
+      loading: updateUserRoleLoading,
+      data: updateUserRoleData,
+      error: updateUserRoleError,
+    },
+  ] = useMutation(UPDATE_USER_PROFILE, {
+    onError: (error) => {
+      console.error("GraphQL Error updating user Profile", err.graphQLErrors);
+      console.error("Network Error updating user Profile", err.networkError);
+      console.error("Message updating user Profile", err.message);
+    },
+  });
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
   const { user, setUser } = useUser();
@@ -38,8 +55,6 @@ const ProfileForm = () => {
   const [formData, setFormData] = useState({
     first: user.first,
     last: user.last,
-    password: "",
-    passwordAgain: "",
     mobile: user.mobile,
     email: user.email,
   });
@@ -64,7 +79,14 @@ const ProfileForm = () => {
     setFormData({ ...formData, [name]: value }); //handle the change of for an input with useState
   };
 
-  const handleFormSubmit = async (event) => {};
+  const handleFormSubmit = async (event) => {
+    const response = updateUserProfile({
+      variables: {
+        userId: user._id,
+        ...formData,
+      },
+    });
+  };
 
   return (
     <>
@@ -89,13 +111,13 @@ const ProfileForm = () => {
           <ModalHeader>
             <Center>
               <VStack>
-                <Heading>My Profile</Heading>
-                <Image src={logo} boxSize="100px" />
+                <Image src={logo} boxSize="70" />
+                <Heading size="sm">My Profile</Heading>
               </VStack>
             </Center>
           </ModalHeader>
           <ModalCloseButton />
-          <ModalHeader>Update your details here</ModalHeader>
+          <ModalHeader size="md">Update your details here</ModalHeader>
           <ModalBody>
             <Flex direction="column" align="center" justify="center">
               <FormControl as="form" onSubmit={handleFormSubmit}>
@@ -142,36 +164,6 @@ const ProfileForm = () => {
                   value={formData.mobile}
                   required
                 />
-
-                <FormLabel htmlFor="password">New Password</FormLabel>
-                <InputGroup>
-                  <Input
-                    id="password"
-                    {...InputStyles}
-                    type="password"
-                    placeholder="Password..."
-                    name="password"
-                    onChange={handleInputChange}
-                    value={formData.password}
-                    required
-                  />
-                </InputGroup>
-
-                <FormLabel htmlFor="passwordAgain">
-                  Confirm New Password
-                </FormLabel>
-                <InputGroup>
-                  <Input
-                    id="passwordAgain"
-                    {...InputStyles}
-                    type="password"
-                    placeholder="Confirm Password..."
-                    name="passwordAgain"
-                    onChange={handleInputChange}
-                    value={formData.passwordAgain}
-                    required
-                  />
-                </InputGroup>
 
                 <Container centerContent>
                   <Button
