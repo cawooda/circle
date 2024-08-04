@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import {
   FormControl,
+  Box,
   Input,
   Flex,
   Heading,
@@ -9,12 +10,13 @@ import {
   Text,
   Button,
 } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 //import Select from "react-select";
 import { useQuery, useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
 import { QUERY_USER_BY_ID, QUERY_SERVICE_AGREEMENT } from "../../utils/queries";
 import Splash from "../../components/Splash";
+import SignatureCanvas from "react-signature-canvas";
 
 import { SIGN_SERVICE_AGREEMENT } from "../../utils/mutations";
 import AuthService from "../../utils/auth";
@@ -29,12 +31,7 @@ import NotifyUser from "../../components/NotifyUser";
 import DateDisplay from "../../components/FormDisplays/DateDisplay";
 import CustomerDisplay from "../../components/FormDisplays/CustomerDisplay";
 import ProductDisplay from "../../components/FormDisplays/ProductDisplay";
-
-const InputStyling = {
-  borderRadius: "50px",
-  borderColor: "Black",
-  borderWidth: "2px",
-};
+import { InputStyles } from "../../components/styles/InputStyles";
 
 export default function CustomerServiceAgreement() {
   const [splashVisible, setSplashVisible] = useState(true);
@@ -85,6 +82,7 @@ export default function CustomerServiceAgreement() {
   });
 
   const [agreementFormData, setAgreementFormData] = useState({});
+  const sigCanvas = useRef(null);
 
   useEffect(() => {
     if (userId) {
@@ -113,6 +111,13 @@ export default function CustomerServiceAgreement() {
     } else {
     }
   };
+
+  function handleSignatureEnd() {
+    setAgreementFormData((prevState) => ({
+      ...prevState,
+      signature: sigCanvas.current.toDataURL(),
+    })); //handle the change of for an input with useState
+  }
 
   function handleFormSubmit(event) {
     event.preventDefault();
@@ -201,7 +206,7 @@ export default function CustomerServiceAgreement() {
           <Input
             name="provider"
             hidden
-            {...InputStyling}
+            {...InputStyles}
             value={
               !agreementQueryLoading
                 ? agreementQueryData.getServiceAgreement.provider._id
@@ -228,6 +233,32 @@ export default function CustomerServiceAgreement() {
           quantity={agreementQueryData.getServiceAgreement.quantity}
           total={agreementQueryData.getServiceAgreement.totalPrice}
         />
+        <Heading>Please Sign</Heading>
+        <div
+          style={{
+            marginTop: 20,
+            ...InputStyles,
+            position: "relative",
+            width: "100%",
+            height: "200px",
+            border: "1px solid #000",
+          }}
+        >
+          <SignatureCanvas
+            ref={sigCanvas}
+            onEnd={handleSignatureEnd}
+            canvasProps={{
+              style: {
+                width: "100%",
+                height: "100%",
+                display: "block",
+              },
+            }}
+          />
+        </div>
+        <button type="button" onClick={() => sigCanvas.current.clear()}>
+          Clear Signature
+        </button>
         <Container paddingTop={5}>
           <Button
             {...ButtonStyles}
