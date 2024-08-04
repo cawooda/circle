@@ -20,6 +20,45 @@ export const ADD_USER = gql`
   }
 `;
 
+export const UPDATE_USER_PASSWORD = gql`
+  mutation UpdateUserPassword($userId: ID!, $password: String) {
+    updateUserPassword(userId: $userId, password: $password) {
+      _id
+      first
+      last
+      mobile
+      email
+      date_of_birth
+      fullName
+      roleAdmin {
+        _id
+        createdAt
+        updatedAt
+      }
+      roleProvider {
+        _id
+        abn
+        address
+        providerName
+        termsAndConditions {
+          heading
+          paragraph
+        }
+        createdAt
+        updatedAt
+      }
+      roleCustomer {
+        _id
+        ndisNumber
+        address
+        dateOfBirth
+        customerSpecificField
+      }
+      roleSuperAdmin
+    }
+  }
+`;
+
 export const UPDATE_USER_PROFILE = gql`
   mutation UpdateProfile(
     $userId: ID!

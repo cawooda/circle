@@ -28,7 +28,6 @@ const resolvers = {
       }
     },
     getUserById: async (_parent, { id }) => {
-      console.log("get user:", id);
       const user = await User.findById(id)
         .populate("roleCustomer")
         .populate("roleProvider")
@@ -252,6 +251,20 @@ const resolvers = {
         }
         return updatedUser;
       } catch (error) {}
+    },
+    updateUserPassword: async (_parent, { userId, password }) => {
+      try {
+        const updatedUser = await User.findById(userId);
+        if (!updatedUser) {
+          throw new Error("User not found");
+        } else {
+          updatedUser.password = password;
+          await updatedUser.save();
+        }
+        return updatedUser;
+      } catch (error) {
+        throw new Error(error.message);
+      }
     },
   },
 };

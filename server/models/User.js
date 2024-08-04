@@ -88,7 +88,6 @@ userSchema
     this.set({ first, last });
   });
 
-//This is some middleware intercpeting before a password is saved
 userSchema.pre("save", async function (next) {
   if (!this.roleCustomer && process.env.TESTING) {
     console.log("roleCustomer Missing or null");

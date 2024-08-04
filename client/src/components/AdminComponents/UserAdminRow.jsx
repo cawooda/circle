@@ -11,9 +11,23 @@ import {
 import { DisplayStyles, InputStyles } from "../styles/InputStyles";
 import { ButtonStyles, ButtonHighlightStyle } from "../styles/ButtonStyle";
 import { useMutation } from "@apollo/client";
-import { TOGGLE_USER_ROLE } from "../../utils/mutations";
+import { TOGGLE_USER_ROLE, UPDATE_USER_PROFILE } from "../../utils/mutations";
 
 export default function UserAdminRow({ user, index }) {
+  const [
+    updateUserProfile,
+    {
+      loading: updateUserRoleLoading,
+      data: updateUserRoleData,
+      error: updateUserRoleError,
+    },
+  ] = useMutation(UPDATE_USER_PROFILE, {
+    onError: (error) => {
+      console.error("GraphQL Error updating user Profile", err.graphQLErrors);
+      console.error("Network Error updating user Profile", err.networkError);
+      console.error("Message updating user Profile", err.message);
+    },
+  });
   const [
     toggleUserRole,
     {
@@ -32,7 +46,9 @@ export default function UserAdminRow({ user, index }) {
   const [formData, setFormData] = useState({
     _id: user._id,
     first: user.first,
+    last: user.last,
     mobile: user.mobile,
+    email: user.email,
     isAdmin: user.roleAdmin,
     isProvider: user.roleProvider,
     isCustomer: user.roleCustomer,
@@ -77,6 +93,12 @@ export default function UserAdminRow({ user, index }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    updateUserProfile({
+      variables: {
+        userId: user._id,
+        ...formData,
+      },
+    });
     console.log("formdata", formData);
   };
 
@@ -99,16 +121,35 @@ export default function UserAdminRow({ user, index }) {
               <Input
                 {...DisplayStyles}
                 name="_id"
+                readOnly
                 value={formData._id}
                 onInput={handleChange}
+              ></Input>
+            </Box>
+            <Box>
+              <FormLabel>First</FormLabel>
+              <Input
+                {...InputStyles}
+                name="first"
+                value={formData.first}
+                onChange={handleChange}
               ></Input>
             </Box>
             <Box>
               <FormLabel>Last</FormLabel>
               <Input
                 {...InputStyles}
-                name="first"
-                value={formData.first}
+                name="last"
+                value={formData.last}
+                onChange={handleChange}
+              ></Input>
+            </Box>
+            <Box>
+              <FormLabel>Email</FormLabel>
+              <Input
+                {...InputStyles}
+                name="email"
+                value={formData.email}
                 onChange={handleChange}
               ></Input>
             </Box>

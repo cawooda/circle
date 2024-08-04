@@ -47,7 +47,7 @@ export default function RootLayout() {
         </Box>
       </Flex>
       <Box bg="blue.500" p={4} color="white" textAlign="center">
-        (C) Circle Indeendent
+        (Ci) Circle Independent
       </Box>
       <Center padding={5}>
         <ProfileForm />
