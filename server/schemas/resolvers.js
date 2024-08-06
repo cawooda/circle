@@ -1,3 +1,5 @@
+const path = require("path");
+const dayjs = require("dayjs");
 const {
   User,
   Admin,
@@ -8,6 +10,9 @@ const {
 } = require("../models");
 const { roles } = require("../utils/roles");
 const jwt = require("jsonwebtoken");
+
+const { renderTemplate } = require("../templates/renderTemplate");
+const { convertToPdf } = require(".././utils/pdfUtility");
 
 //handling SMS for this resolver
 const { SMSService } = require("../utils/smsService");
@@ -37,7 +42,7 @@ const resolvers = {
     getCustomers: async (_parent, { id }) => {
       try {
         const customers = await Customer.find({}).populate("user");
-        console.log(customers);
+
         const returnedCustomers = customers.filter((customer) => customer.user);
         return returnedCustomers;
       } catch (error) {
@@ -63,7 +68,7 @@ const resolvers = {
         await serviceAgreement.populate("provider");
         await serviceAgreement.populate("product");
         await serviceAgreement.populate("customer.user");
-        console.log(serviceAgreement);
+
         return serviceAgreement;
       } catch (error) {
         console.error(error);
@@ -111,8 +116,7 @@ const resolvers = {
         await newServiceAgreement.populate("customer.user");
         await newServiceAgreement.populate("provider.user");
         newServiceAgreement.save();
-        controllerSmsService.sendText(
-          newServiceAgreement.customer.user.mobile,
+        newServiceAgreement.customer.user.sendMessage(
           `Hi ${newServiceAgreement.customer.user.first}, a new service agreement with ${newServiceAgreement.provider.providerName} agreement is ready. Use the link to securely review and sign ;)
         `,
           `/customer/agreement/${newServiceAgreement.agreementNumber}`
@@ -123,28 +127,59 @@ const resolvers = {
         console.error(error);
       }
     },
-    signServiceAgreement: async (_parent, { agreementId, signature }) => {
+    signServiceAgreement: async (
+      _parent,
+      { userId, agreementId, signature }
+    ) => {
       try {
         const signedServiceAgreement = await ServiceAgreement.findById(
           agreementId
         );
-        if (signature) {
-          signedServiceAgreement.approvedByCustomer = true;
-        }
-        // Populate paths individually to fix an issue I cant trace
+        // Populate paths individually to fix an issue I can't trace
         await signedServiceAgreement.populate("customer");
         await signedServiceAgreement.populate("provider");
+        await signedServiceAgreement.populate("product");
         await signedServiceAgreement.populate("customer.user");
         await signedServiceAgreement.populate("provider.user");
         await signedServiceAgreement.save();
-        controllerSmsService.sendText(
-          signedServiceAgreement.provider.user.mobile,
-          `Hi ${signedServiceAgreement.provider.user.first}, a new service agreement with ${signedServiceAgreement.customer.user.first} has been signed. ;)`
+
+        if (signature) {
+          signedServiceAgreement.approvedByCustomer = true;
+          signedServiceAgreement.signature = signature;
+        }
+
+        const { first, last } = signedServiceAgreement.customer.user;
+        const { providerName } = signedServiceAgreement.provider;
+        const { product, startDate } = signedServiceAgreement;
+
+        const renderedHtml = renderTemplate(
+          signedServiceAgreement.toObject(),
+          "template"
+        ); // Ensure the template file name matches
+
+        const outputPath = path.join(
+          __dirname,
+          `../customerData/agreements/${providerName}-${first}-${last}/ServiceAgreement-${providerName}-${first}-${last}-${dayjs(
+            startDate
+          ).format("DD-MM-YYYY")}.pdf`
         );
 
-        return signedServiceAgreement;
+        const pdfPath = await convertToPdf(renderedHtml, outputPath);
+        const customerUser = await User.findById(
+          signedServiceAgreement.customer.user._id
+        );
+        customerUser.sendEmail(
+          "A new Service Agreement has Arrived",
+          `Hi, ${this.first}, you just signed a new service agreement with ${providerName}, We've attached a copy for your reccords and included your plan manager for reference. Have a great day`,
+          "",
+          "/"
+        );
+        signedServiceAgreement.agreementPath = pdfPath;
+        await signedServiceAgreement.save();
+        return pdfPath;
       } catch (error) {
-        console.error(error);
+        console.error("Error in signServiceAgreement:", error);
+        throw error;
       }
     },
     toggleUserRole: async (_parent, { userId, role }) => {
@@ -172,12 +207,6 @@ const resolvers = {
             break;
           case "provider":
             if (user.roleProvider) {
-              console.log("Deleting provider with ID:", user.roleProvider);
-              console.log(
-                await Provider.findOneAndDelete({
-                  _id: user.roleProvider,
-                })
-              );
               user.roleProvider = null;
               await user.save(); // Update user document
             } else {
@@ -236,6 +265,7 @@ const resolvers = {
       }
     },
     updateProfile: async (_parent, { userId, first, last, mobile, email }) => {
+      console.log("update user resolver reached");
       try {
         const updatedUser = await User.findById(userId);
         if (!updatedUser) {
@@ -248,7 +278,21 @@ const resolvers = {
             email: email,
           });
           await updatedUser.save();
+          await updatedUser.sendEmail(
+            "Profile updated",
+            `Hi ${first}, we have updated your profile`,
+            `<p>Hi ${first}, we have updated your profile</p>
+            <h2>firstName:</h2>
+            <h3>${first}</h2>
+            <h2>Last Name:</h2>
+            <h3> ${last}</h2>
+            <h2>mobile:</h2><h3> ${mobile}</h2>
+            <h2>email:</h2><h3> ${email}</h2>            
+            `,
+            `/`
+          );
         }
+
         return updatedUser;
       } catch (error) {}
     },

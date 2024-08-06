@@ -5,6 +5,16 @@ const { Schema, model } = require("mongoose");
 const customerSchema = new Schema(
   {
     user: { type: Schema.Types.ObjectId, ref: "user" },
+    invoiceEmail: {
+      type: String,
+      required: true,
+      default: "hello@circleindependent.com",
+    },
+    serviceAgreementEmail: {
+      type: String,
+      required: true,
+      default: "hello@circleindependent.com",
+    },
     ndisNumber: { type: String, required: true },
     address: { type: String, required: true },
     dateOfBirth: { type: Date, required: true },

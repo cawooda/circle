@@ -61,6 +61,7 @@ type Provider {
     approvedByCustomer:Boolean
     createdAt:String
     updatedAt:String
+    signature:String
   }
   
 
@@ -107,7 +108,7 @@ type Query {
 
 type Mutation {
     addServiceAgreement(provider:ID!,customer:ID!,endDate:String!,product:String!,quantity:Int!): ServiceAgreement
-    signServiceAgreement(agreementId:ID!,signature:String!):ServiceAgreement    
+    signServiceAgreement(userId:ID!,agreementId:ID!,signature:String!):ServiceAgreement    
     toggleUserRole(userId: ID!,role: String!): User!  
     updateProfile( userId:ID!, first: String, last: String, mobile: String,email: String):User  
     updateUserPassword(userId:ID!,password:String):User

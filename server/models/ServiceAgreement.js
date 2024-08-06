@@ -31,6 +31,7 @@ const serviceAgreementSchema = new Schema(
     quantity: { type: Number, required: true, default: 0 },
     totalPrice: { type: Number, required: true, default: 0 },
     approvedByCustomer: { type: Boolean, default: false },
+    agreementPath: String,
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
   },
