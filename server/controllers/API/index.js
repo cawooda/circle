@@ -66,8 +66,7 @@ router.post("/users", async (req, res) => {
       });
       userCreated.save();
       await userCreated.generateAuthToken();
-      controllerSmsService.sendText(
-        req.body.mobile,
+      userCreated.message(
         `Great News, We've just given you a Circle Account ;)
         `,
         "/"

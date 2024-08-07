@@ -203,8 +203,16 @@ export const ADD_SERVICE_AGREEMENT = gql`
 `;
 
 export const SIGN_SERVICE_AGREEMENT = gql`
-  mutation SignServiceAgreement($agreementId: ID!, $signature: String!) {
-    signServiceAgreement(agreementId: $agreementId, signature: $signature) {
+  mutation SignServiceAgreement(
+    $userId: ID!
+    $agreementId: ID!
+    $signature: String!
+  ) {
+    signServiceAgreement(
+      userId: $userId
+      agreementId: $agreementId
+      signature: $signature
+    ) {
       _id
       provider {
         _id

@@ -81,12 +81,13 @@ const ProfileForm = () => {
   };
 
   const handleFormSubmit = async (event) => {
-    const response = updateUserProfile({
+    const response = await updateUserProfile({
       variables: {
         userId: user._id,
         ...formData,
       },
     });
+    console.log(response);
   };
 
   return (

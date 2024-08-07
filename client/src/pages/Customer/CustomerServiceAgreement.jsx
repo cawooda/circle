@@ -15,6 +15,8 @@ import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
 import { QUERY_USER_BY_ID, QUERY_SERVICE_AGREEMENT } from "../../utils/queries";
+import { useUser } from "../../contexts/UserContext";
+
 import Splash from "../../components/Splash";
 import SignatureCanvas from "react-signature-canvas";
 
@@ -45,16 +47,14 @@ export default function CustomerServiceAgreement() {
   const navigate = useNavigate();
   let { agreementNumber } = useParams();
 
-  const [userId, setUserId] = useState(
-    AuthService?.getProfile()?.authenticatedPerson?._id || false
-  );
+  const { user, loading, error } = useUser();
 
   const {
     loading: userQueryLoading,
     error: userQueryError,
     data: userQueryData,
   } = useQuery(QUERY_USER_BY_ID, {
-    variables: { id: userId },
+    variables: { id: user._id },
   });
 
   const [
@@ -85,7 +85,7 @@ export default function CustomerServiceAgreement() {
   const sigCanvas = useRef(null);
 
   useEffect(() => {
-    if (userId) {
+    if (user._id) {
       if (!agreementQueryLoading && agreementQueryData) {
         console.log("agreementQueryData", agreementQueryData);
         setAgreementFormData((prev) => ({
@@ -118,13 +118,14 @@ export default function CustomerServiceAgreement() {
       signature: sigCanvas.current.toDataURL(),
     })); //handle the change of for an input with useState
   }
-
+  console.log("user._id:", user._id);
   function handleFormSubmit(event) {
     event.preventDefault();
     signServiceAgreement({
       variables: {
+        userId: user._id,
         agreementId: agreementQueryData.getServiceAgreement._id,
-        signature: "http://signature.com/sig.jpg",
+        signature: agreementFormData.signature,
       },
     });
 

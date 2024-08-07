@@ -4,7 +4,9 @@ const bcrypt = require("bcrypt");
 const { Schema, model } = require("mongoose");
 const { generateRandomNumber } = require("../utils/helpers");
 const { SMSService } = require("../utils/smsService");
-const controllerSmsService = new SMSService();
+const userSmsService = new SMSService();
+const { EMAILService } = require("../utils/mailer");
+const userEmailService = new EMAILService();
 
 const validator = require("validator"); //this package provides a range of validator checks including email.
 const jwt = require("jsonwebtoken");
@@ -56,6 +58,8 @@ const userSchema = new Schema(
     // roleModels: [{ type: Schema.Types.ObjectId }],
     password: { type: String, required: true },
     authLinkNumber: { type: String },
+    sendEmails: { type: Boolean, default: true },
+    sendTexts: { type: Boolean, default: true },
     createdAt: {
       type: Date,
       immutable: true, //this prevents changes to the date once created
@@ -148,9 +152,44 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+userSchema.methods.sendMessage = async function (body, endpoint = "") {
+  await userSmsService.sendText(this.mobile, body, (endPoint = ""));
+  await this.sendEmail("subject", body, `<p>text</p>`, (endpoint = ""));
+};
+
+userSchema.methods.sendEmail = async function (
+  subject,
+  text,
+  html,
+  endpoint,
+  attachment
+) {
+  console.log("user method send email reached");
+  if (this.email) {
+    console.log("Email exists in methods:", this.email);
+    try {
+      const messageSent = await userEmailService.sendMail(
+        [this.email, "hello@circleindependent.com"],
+        subject,
+        text,
+        html,
+        attachment
+      );
+      console.log("Email sent successfully:", messageSent);
+      return { message: messageSent };
+    } catch (error) {
+      console.error("Error sending email:", error);
+      throw error;
+    }
+  } else {
+    console.log("No email found for user");
+    return { message: "no email" };
+  }
+};
+
 userSchema.methods.sendAuthLink = async function () {
   this.authLinkNumber = generateRandomNumber(100, 4000);
-  await controllerSmsService.sendText(
+  await userSmsService.sendText(
     this.mobile,
     `Resetting your login is as easy as clicking a link :)
         `,
