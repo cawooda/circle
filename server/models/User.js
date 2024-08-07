@@ -157,16 +157,23 @@ userSchema.methods.sendMessage = async function (body, endpoint = "") {
   await this.sendEmail("subject", body, `<p>text</p>`, (endpoint = ""));
 };
 
-userSchema.methods.sendEmail = async function (subject, text, html, endpoint) {
+userSchema.methods.sendEmail = async function (
+  subject,
+  text,
+  html,
+  endpoint,
+  attachment
+) {
   console.log("user method send email reached");
   if (this.email) {
     console.log("Email exists in methods:", this.email);
     try {
       const messageSent = await userEmailService.sendMail(
-        this.email,
+        [this.email, "hello@circleindependent.com"],
         subject,
         text,
-        html
+        html,
+        attachment
       );
       console.log("Email sent successfully:", messageSent);
       return { message: messageSent };

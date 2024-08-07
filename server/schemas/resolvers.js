@@ -165,6 +165,7 @@ const resolvers = {
         );
 
         const pdfPath = await convertToPdf(renderedHtml, outputPath);
+
         const customerUser = await User.findById(
           signedServiceAgreement.customer.user._id
         );
@@ -172,7 +173,8 @@ const resolvers = {
           "A new Service Agreement has Arrived",
           `Hi, ${this.first}, you just signed a new service agreement with ${providerName}, We've attached a copy for your reccords and included your plan manager for reference. Have a great day`,
           "",
-          "/"
+          "/",
+          outputPath
         );
         signedServiceAgreement.agreementPath = pdfPath;
         await signedServiceAgreement.save();
