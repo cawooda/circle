@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+const html_to_pdf = require("html-pdf-node");
 const fs = require("fs");
 const path = require("path");
 
@@ -11,7 +11,22 @@ const ensureDirectoryExistence = (filePath) => {
   fs.mkdirSync(dirname);
 };
 
-const convertToPdf = async (html, outputPath) => {
+const convertToPdf = async (content, outputPath) => {
+  let options = { format: "A4", path: outputPath };
+  let file = { content: content };
+
+  try {
+    await html_to_pdf.generatePdf(file, options).then((pdfBuffer) => {
+      console.log("PDF Buffer:-", pdfBuffer);
+    });
+
+    console.log("outputPath", outputPath);
+    return outputPath;
+  } catch (error) {
+    return null;
+    console.log(error);
+  }
+
   try {
     ensureDirectoryExistence(outputPath);
     const browser = await puppeteer.launch();
