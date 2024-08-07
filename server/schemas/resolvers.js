@@ -119,7 +119,8 @@ const resolvers = {
         newServiceAgreement.customer.user.sendMessage(
           `Hi ${newServiceAgreement.customer.user.first}, a new service agreement with ${newServiceAgreement.provider.providerName} agreement is ready. Use the link to securely review and sign ;)
         `,
-          `/customer/agreement/${newServiceAgreement.agreementNumber}`
+          `/customer/agreement/${newServiceAgreement.agreementNumber}`,
+          ""
         );
 
         return newServiceAgreement;

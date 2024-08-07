@@ -173,7 +173,7 @@ userSchema.methods.sendEmail = async function (
         subject,
         text,
         html,
-        attachment
+        attachment || null
       );
       console.log("Email sent successfully:", messageSent);
       return { message: messageSent };
