@@ -17,28 +17,40 @@ class EMAILService {
   async sendMail(to, subject, text = "", html = "", attachment) {
     console.log("mailer send email reached attachement", attachment);
     try {
-      const info = await this.transporter.sendMail({
-        from: '"Hello" <hello@circleindependent.com>', // sender address
-        to, // list of receivers
-        subject, // Subject line
-        text, // plain text body
-        html, // html body
-        attachments: [
-          {
-            // file on disk as an attachment
-            filename: "service-agreement.pdf",
-            path: attachment, // stream this file
-          },
+      if (attachment) {
+        const info = await this.transporter.sendMail({
+          from: '"Hello" <hello@circleindependent.com>', // sender address
+          to, // list of receivers
+          subject, // Subject line
+          text, // plain text body
+          html, // html body
+          attachments: [
+            // {
+            //   // file on disk as an attachment
+            //   filename: "service-agreement.pdf",
+            //   path: attachment, // stream this file
+            // },
 
-          // Another alternative using streams
-          {
-            filename: "service-agreement-stream.pdf",
-            content: fs.createReadStream(attachment),
-          },
-        ],
-      });
-      console.log("email", info.messageId);
-      return info.messageId;
+            // Another alternative using streams
+            {
+              filename: "service-agreement-stream.pdf",
+              content: fs.createReadStream(attachment),
+            },
+          ],
+        });
+        console.log("email", info.messageId);
+        return info.messageId;
+      } else {
+        const info = await this.transporter.sendMail({
+          from: '"Hello" <hello@circleindependent.com>', // sender address
+          to, // list of receivers
+          subject, // Subject line
+          text, // plain text body
+          html, // html body
+        });
+        console.log("email", info.messageId);
+        return info.messageId;
+      }
     } catch (error) {
       console.error("Error sending email:", error);
       throw error;
