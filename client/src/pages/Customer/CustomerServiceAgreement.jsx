@@ -124,7 +124,7 @@ export default function CustomerServiceAgreement() {
       variables: {
         userId: user._id,
         agreementId: agreementQueryData.getServiceAgreement._id,
-        customerSignature: agreementFormData.signature,
+        customerSignature: agreementFormData.customerSignature,
       },
     });
 
