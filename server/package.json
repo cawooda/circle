@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "watch": "nodemon server.js",
-    "seed": "node seeders/seed.js",
+    "seed": "node seeders/seed.js"
   },
   "dependencies": {
     "@apollo/server": "^4.10.4",
