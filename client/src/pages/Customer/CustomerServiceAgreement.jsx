@@ -114,7 +114,7 @@ export default function CustomerServiceAgreement() {
   function handleSignatureEnd() {
     setAgreementFormData((prevState) => ({
       ...prevState,
-      signature: sigCanvas.current.toDataURL(),
+      customerSignature: sigCanvas.current.toDataURL(),
     })); //handle the change of for an input with useState
   }
 
@@ -124,7 +124,7 @@ export default function CustomerServiceAgreement() {
       variables: {
         userId: user._id,
         agreementId: agreementQueryData.getServiceAgreement._id,
-        signature: agreementFormData.signature,
+        customerSignature: agreementFormData.signature,
       },
     });
 

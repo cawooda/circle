@@ -156,6 +156,7 @@ export const ADD_SERVICE_AGREEMENT = gql`
     $endDate: String!
     $product: String!
     $quantity: Int!
+    $providerSignature: String!
   ) {
     addServiceAgreement(
       provider: $provider
@@ -163,6 +164,7 @@ export const ADD_SERVICE_AGREEMENT = gql`
       endDate: $endDate
       product: $product
       quantity: $quantity
+      providerSignature: $providerSignature
     ) {
       _id
       provider {
@@ -206,12 +208,12 @@ export const SIGN_SERVICE_AGREEMENT = gql`
   mutation SignServiceAgreement(
     $userId: ID!
     $agreementId: ID!
-    $signature: String!
+    $customerSignature: String!
   ) {
     signServiceAgreement(
       userId: $userId
       agreementId: $agreementId
-      signature: $signature
+      customerSignature: $customerSignature
     ) {
       _id
       provider {

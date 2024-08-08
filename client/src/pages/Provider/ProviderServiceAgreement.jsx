@@ -16,8 +16,8 @@ import {
   AlertDescription,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-
-import { useState, useEffect } from "react";
+import SignatureCanvas from "react-signature-canvas";
+import { useState, useEffect, useRef } from "react";
 
 import Splash from "../../components/Splash";
 
@@ -47,6 +47,7 @@ export default function ProviderServiceAgreement() {
   const [agreementFormData, setAgreementFormData] = useState({
     endDate: dayjs().format("YYYY-MM-DD"),
   });
+  const sigCanvas = useRef(null);
   const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
@@ -169,6 +170,13 @@ export default function ProviderServiceAgreement() {
     }
   };
 
+  function handleSignatureEnd() {
+    setAgreementFormData((prevState) => ({
+      ...prevState,
+      providerSignature: sigCanvas.current.toDataURL(),
+    })); //handle the change of for an input with useState
+  }
+
   async function handleFormSubmit(event) {
     event.preventDefault();
 
@@ -181,6 +189,7 @@ export default function ProviderServiceAgreement() {
           endDate: new Date(agreementFormData.endDate),
           product: agreementFormData.product,
           quantity: parseInt(agreementFormData.quantity),
+          providerSignature: agreementFormData.providerSignature,
         },
       });
 
@@ -286,6 +295,29 @@ export default function ProviderServiceAgreement() {
         handleInputChange={handleInputChange}
         products={products}
       />
+      <Heading>Please Sign</Heading>
+      <div
+        style={{
+          marginTop: 20,
+          ...InputStyles,
+          position: "relative",
+          width: "100%",
+          height: "200px",
+          border: "1px solid #000",
+        }}
+      >
+        <SignatureCanvas
+          ref={sigCanvas}
+          onEnd={handleSignatureEnd}
+          canvasProps={{
+            style: {
+              width: "100%",
+              height: "100%",
+              display: "block",
+            },
+          }}
+        />
+      </div>
       <Container paddingTop={5}>
         <Button {...ButtonStyles} onClick={handleFormSubmit}>
           Submit

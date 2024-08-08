@@ -107,8 +107,8 @@ type Query {
 
 
 type Mutation {
-    addServiceAgreement(provider:ID!,customer:ID!,endDate:String!,product:String!,quantity:Int!): ServiceAgreement
-    signServiceAgreement(userId:ID!,agreementId:ID!,signature:String!):ServiceAgreement    
+    addServiceAgreement(provider:ID!,customer:ID!,endDate:String!,product:String!,quantity:Int!,providerSignature:String!): ServiceAgreement
+    signServiceAgreement(userId:ID!,agreementId:ID!,customerSignature:String!):ServiceAgreement    
     toggleUserRole(userId: ID!,role: String!): User!  
     updateProfile( userId:ID!, first: String, last: String, mobile: String,email: String):User  
     updateUserPassword(userId:ID!,password:String):User

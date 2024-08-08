@@ -24,8 +24,9 @@ const smsService = new SMSService();
 const resolvers = {
   Query: {
     getAllUsers: async (_parent, {}, context) => {
-      const admin = await Admin.findById(context.user.roleAdmin);
-      if (admin) {
+      const user = await User.findById(context.user._id);
+      const admin = await User.findById(context.user.roleAdmin);
+      if (admin || user.roleSuperAdmin) {
         try {
           const users = await User.find({}).populate();
           return users;
@@ -123,7 +124,7 @@ const resolvers = {
   Mutation: {
     addServiceAgreement: async (
       _parent,
-      { provider, customer, startDate, quantity, product, endDate },
+      { provider, customer, startDate, quantity, product, endDate, signature },
       context
     ) => {
       if (!context.user.roleProvider === provider)
@@ -136,6 +137,7 @@ const resolvers = {
           product: product || null,
           quantity: quantity || null,
           endDate: endDate || null,
+          providerSignature: signature || null,
         });
         // Populate paths individually to fix an issue I cant trace
         await newServiceAgreement.populate("customer");
@@ -161,7 +163,7 @@ const resolvers = {
     },
     signServiceAgreement: async (
       _parent,
-      { userId, agreementId, signature },
+      { userId, agreementId, customerSignature },
       context
     ) => {
       if (!userId === context.user._id)
@@ -178,9 +180,9 @@ const resolvers = {
         await signedServiceAgreement.populate("provider.user");
         await signedServiceAgreement.save();
 
-        if (signature) {
+        if (customerSignature) {
           signedServiceAgreement.approvedByCustomer = true;
-          signedServiceAgreement.signature = signature;
+          signedServiceAgreement.customerSignature = signature;
         }
 
         const { first, last } = signedServiceAgreement.customer.user;

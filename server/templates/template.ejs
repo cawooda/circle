@@ -42,7 +42,7 @@
       }
       h1,
       h2 {
-        color: #4caf50;
+        color: #000000;
         margin-bottom: 20px;
       }
       h1 {
@@ -56,15 +56,18 @@
       .signature {
         margin-bottom: 30px;
         padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        background-color: #f5f5f5;
+        border: 2px solid black;
+        border-radius: 30px;
+        background-color: #fbce44;
       }
       .details p,
       .terms p,
       .signature p {
         margin: 10px 0;
         font-size: 1.1rem;
+      }
+      .service {
+        text-align: center;
       }
       .footer {
         text-align: center;
@@ -105,7 +108,7 @@
         </div>
       </div>
 
-      <section class="details">
+      <section class="details service">
         <h2>Service Details</h2>
         <p><strong>Product:</strong> <%= product.name %></p>
         <p><strong>Total Units:</strong> <%= product.quantity %></p>
@@ -121,7 +124,7 @@
             <div>
               <img
                 width="50%"
-                src="<%= signature %>"
+                src="<%= customerSignature %>"
                 alt="Customer Signature"
               />
             </div>
@@ -133,7 +136,7 @@
             <div>
               <img
                 width="50%"
-                src="<%= signature %>"
+                src="<%= providerSignature %>"
                 alt="Provider Signature"
               />
             </div>
@@ -143,6 +146,18 @@
 
       <section class="terms">
         <h2>Terms and Conditions</h2>
+
+        <ul class="timeline">
+          <% for (var i = 0; i < provider.termsAndConditions.length; i++) { %>
+          <li class="timeline-yellow">
+            <div class="timeline-time">
+              <h3><%= provider.termsAndConditions[i].heading %></h3>
+              <p><%= provider.termsAndConditions[i].paragragh %></p>
+            </div>
+          </li>
+          <% } %>
+        </ul>
+
         <p>
           <strong>Service Provision:</strong> We're excited to provide you with
           the service described in this agreement at a time that works for both
@@ -191,7 +206,8 @@
       </section>
 
       <div class="footer">
-        &copy; 2024 Circle Supports. All rights reserved.
+        <img width="5%" src="../../client/public/logo.png" />
+        &copy; 2024 Circle Independent. All rights reserved.
       </div>
     </div>
     <script
