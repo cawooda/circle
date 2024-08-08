@@ -32,7 +32,6 @@ const data = [
   },
 ];
 
-
 export default function RootLayout() {
   const { user, loading, error } = useUser();
 
@@ -43,7 +42,7 @@ export default function RootLayout() {
         <div>
           <Heading>Please log in</Heading>
           <Flex justify="center" align="center">
-            <Slideshow data={data]} />
+            <Slideshow data={data} />
             <SigninForm />
           </Flex>
         </div>
