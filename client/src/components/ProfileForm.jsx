@@ -87,7 +87,6 @@ const ProfileForm = () => {
         ...formData,
       },
     });
-    console.log(response);
   };
 
   return (

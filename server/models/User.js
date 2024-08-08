@@ -94,7 +94,6 @@ userSchema
 
 userSchema.pre("save", async function (next) {
   if (!this.roleCustomer && process.env.TESTING) {
-    console.log("roleCustomer Missing or null");
     try {
       const newCustomer = new Customer({
         user: this._id,
@@ -164,9 +163,7 @@ userSchema.methods.sendEmail = async function (
   endpoint,
   attachment
 ) {
-  console.log("user method send email reached");
   if (this.email) {
-    console.log("Email exists in methods:", this.email);
     try {
       const messageSent = await userEmailService.sendMail(
         [this.email, "hello@circleindependent.com"],
@@ -182,8 +179,7 @@ userSchema.methods.sendEmail = async function (
       throw error;
     }
   } else {
-    console.log("No email found for user");
-    return { message: "no email" };
+    throw new Error("No email found for user");
   }
 };
 

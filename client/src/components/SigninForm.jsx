@@ -77,7 +77,8 @@ const SigninForm = () => {
           onClose();
         }
       } catch (error) {
-        console.log("Error received trying to create new userAuth", error);
+        console.error("Error received trying to create new userAuth", error);
+        throw error;
       }
     } else {
       setMessage("add your mobile to reset password");
@@ -89,7 +90,7 @@ const SigninForm = () => {
     setSplashVisible(true);
     try {
       const response = await AuthService.loginOrCreateUser(userFormData);
-      console.log("response", response);
+
       if (!response.user === undefined) {
         setMessage(response.message); // Set the error message
       } else {

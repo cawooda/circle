@@ -3,9 +3,6 @@ import { FormControl, FormLabel, Input } from "@chakra-ui/react";
 import { DisplayStyles } from "../styles/InputStyles";
 
 export default function CustomerDisplay({ customer }) {
-  console.log("customer.user", customer);
-  console.log(customer.user.first);
-  console.log(customer.user.last);
   if (!customer) return null;
   return (
     <>

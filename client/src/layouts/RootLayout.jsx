@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { useState, useEffect } from "react";
 import {
   Container,
   Spacer,
@@ -13,36 +14,22 @@ import ProfileForm from "../components/ProfileForm";
 import { useUser } from "../contexts/UserContext";
 import logo from "/logo.png";
 import Slideshow from "../components/Slideshow";
-
+import { firstVisitSlideShow } from "../assets/training";
 const logoStyle = { paddingBottom: "15px" };
-
-const data = [
-  {
-    title: "Welcome to Circle",
-    description:
-      "Circle helps you build trust in your NDIS business by making transparent pricing and NDIS compliant invoicing easy.",
-  },
-  {
-    title: "Log in with your phone",
-    description: "Create a password so we can show you around.",
-  },
-  {
-    title: "Get Started",
-    description: "Let’s start exploring the features of Circle.",
-  },
-];
 
 export default function RootLayout() {
   const { user, loading, error } = useUser();
+  const [slideShow, setSlideShow] = useState(true);
 
   if (loading) return <p>Loading...</p>;
+  if (slideShow)
+    return <Slideshow data={firstVisitSlideShow} setSlideShow={setSlideShow} />;
   if (error || !user)
     return (
       <Center height="100vh">
         <div>
           <Heading>Please log in</Heading>
           <Flex justify="center" align="center">
-            <Slideshow data={data} />
             <SigninForm />
           </Flex>
         </div>

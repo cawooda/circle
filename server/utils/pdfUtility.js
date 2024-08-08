@@ -1,16 +1,11 @@
-const puppeteer = require("puppeteer-core");
+const puppeteer = require("puppeteer");
 const puppeteerConfig = require("../puppeteer.config.cjs");
 const fs = require("fs").promises;
 const path = require("path");
 
 async function convertToPdf(htmlContent, outputPath) {
   try {
-    const browser = await puppeteer.launch({
-      executablePath:
-        process.env.PUPPETEER_EXECUTABLE_PATH ||
-        "/opt/render/.cache/puppeteer/chrome/linux-127.0.6533.88/chrome-linux64/chrome",
-      cacheDirectory: puppeteerConfig.cacheDirectory,
-    });
+    const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.setContent(htmlContent);
     const pdfBuffer = await page.pdf();

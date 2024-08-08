@@ -99,7 +99,6 @@ export default function UserAdminRow({ user, index }) {
         ...formData,
       },
     });
-    console.log("formdata", formData);
   };
 
   return (

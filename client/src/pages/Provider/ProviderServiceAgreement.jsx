@@ -132,16 +132,11 @@ export default function ProviderServiceAgreement() {
 
   useEffect(() => {
     if (!userQueryLoading && !userQueryError && userQueryData.roleCustomer) {
-      console.log(
-        "current user should be set as customer",
-        userQueryData.roleCustomer
-      );
       setCurrentUser(userQueryData.getMe);
     }
-    console.log("customerQueryData", customerQueryData);
+
     if (!customerQueryLoading && customerQueryData) {
       const customerList = customerQueryData.getCustomers.map((customer) => {
-        console.log(customer);
         return {
           value: customer._id,
           label: `${customer.user.first} ${customer.user.last}`,
@@ -167,7 +162,6 @@ export default function ProviderServiceAgreement() {
   ]);
 
   const handleInputChange = (event) => {
-    console.log(event.target);
     if (event.target.name) {
       const { name, value } = event.target;
       setAgreementFormData((prevState) => ({ ...prevState, [name]: value })); //handle the change of for an input with useState
@@ -197,11 +191,11 @@ export default function ProviderServiceAgreement() {
       } else navigate("/customer");
     } catch (error) {
       console.log(error);
+      throw error;
     }
   }
 
   if (userQueryLoading || customerQueryLoading || !userId) {
-    console.log("userId", userId);
     return (
       <Container paddingTop={10}>
         <Alert status="info">
@@ -251,7 +245,7 @@ export default function ProviderServiceAgreement() {
         </Alert>
       </Container>
     );
-  console.log("customers", customers);
+
   return (
     <Container>
       <div>

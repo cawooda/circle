@@ -7,10 +7,10 @@ const controllerSmsService = new SMSService();
 
 router.put("/users", async (req, res) => {
   const { mobile } = req.body;
-  console.log("put recieved");
+
   try {
     const userExists = await User.findOne({ mobile: req.body.mobile });
-    console.log("user exists");
+
     if (userExists) {
       await userExists.sendAuthLink();
       res.status(401).json({
@@ -28,6 +28,7 @@ router.put("/users", async (req, res) => {
     }
   } catch (error) {
     console.log(error);
+    throw error;
   }
 });
 
@@ -44,7 +45,7 @@ router.post("/users", async (req, res) => {
         await userExists.populate("roleProvider");
         await userExists.populate("roleAdmin");
         await userExists.save();
-        console.log("userExists", userExists);
+
         res
           .status(200)
           .json({ userExists: true, userCreated: false, user: userExists });

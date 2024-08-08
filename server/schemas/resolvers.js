@@ -16,6 +16,7 @@ const { convertToPdf } = require(".././utils/pdfUtility");
 
 //handling SMS for this resolver
 const { SMSService } = require("../utils/smsService");
+const { generateRandomNumber } = require("../utils/helpers");
 const controllerSmsService = new SMSService();
 
 const smsService = new SMSService();
@@ -82,10 +83,13 @@ const resolvers = {
         });
 
         await serviceAgreement.toObject();
-        const stringedId = String(serviceAgreement.customer.user._id);
-        if (stringedId !== String(context.user._id))
+        const stringedContextId = String(context.user._id);
+        const stringedCustomerId = String(serviceAgreement.customer.user._id);
+        const stringedProviderId = String(serviceAgreement.provider.user._id);
+
+        if (stringedCustomerId !== stringedContextId)
           throw new Error("user does not match the customer of the agreement");
-        if (serviceAgreement.provider.user._id !== context.user._id)
+        if (stringedProviderId !== context.user._id)
           throw new Error("user is not the same as the agreement");
 
         return serviceAgreement;
@@ -192,7 +196,7 @@ const resolvers = {
           __dirname,
           `../customerData/agreements/${providerName}-${first}-${last}/ServiceAgreement-${providerName}-${first}-${last}-${dayjs(
             startDate
-          ).format("DD-MM-YYYY")}.pdf`
+          ).format("DD-MM-YYYY")}-${generateRandomNumber}.pdf`
         );
 
         const pdfPath = await convertToPdf(renderedHtml, outputPath);
@@ -202,8 +206,12 @@ const resolvers = {
         );
         customerUser.sendEmail(
           "A new Service Agreement has Arrived",
-          `Hi, ${this.first}, you just signed a new service agreement with ${providerName}, We've attached a copy for your reccords and included your plan manager for reference. Have a great day`,
-          "",
+          ``,
+          `<h3>Hi, ${first}</h3>, <p>you just signed a new service agreement with ${providerName.user.first} for ${product}, We've attached a copy for your reccords and included your plan manager for reference. Have a great day.</p>
+          <br/>
+          <h2>Circle Independent</h2>
+          <br/>
+          <h3><a href="http://circleindependent.com">circleindependent.com</a><h3><br/>`,
           "/",
           outputPath
         );

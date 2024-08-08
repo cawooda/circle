@@ -19,7 +19,7 @@ class EMAILService {
     try {
       if (attachment) {
         const info = await this.transporter.sendMail({
-          from: '"Hello" <hello@circleindependent.com>', // sender address
+          from: '"Circle" <hello@circleindependent.com>', // sender address
           to, // list of receivers
           subject, // Subject line
           text, // plain text body

@@ -87,7 +87,6 @@ export default function CustomerServiceAgreement() {
   useEffect(() => {
     if (user._id) {
       if (!agreementQueryLoading && agreementQueryData) {
-        console.log("agreementQueryData", agreementQueryData);
         setAgreementFormData((prev) => ({
           ...prev,
           provider: agreementQueryData.getServiceAgreement.provider._id,
@@ -118,7 +117,7 @@ export default function CustomerServiceAgreement() {
       signature: sigCanvas.current.toDataURL(),
     })); //handle the change of for an input with useState
   }
-  console.log("user._id:", user._id);
+
   function handleFormSubmit(event) {
     event.preventDefault();
     signServiceAgreement({
@@ -135,6 +134,7 @@ export default function CustomerServiceAgreement() {
     try {
     } catch (error) {
       console.log(error);
+      throw error;
     }
   }
 
