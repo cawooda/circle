@@ -167,7 +167,7 @@ export default function CustomerServiceAgreement() {
         message="agreement query error... try again"
       />
     );
-  if (!userQueryData.getUserById.roleCustomer)
+  if (!userQueryData.getMe.roleCustomer)
     return (
       <Error
         component="Customer Service Agreement"

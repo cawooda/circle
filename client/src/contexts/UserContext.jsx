@@ -19,8 +19,8 @@ export const UserProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    if (data && data.getUserById) {
-      setUser(data.getUserById);
+    if (data && data.getMe) {
+      setUser(data.getMe);
     }
   }, [data]);
 

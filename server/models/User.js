@@ -212,6 +212,9 @@ userSchema.methods.generateAuthToken = function () {
       _id: this._id,
       mobile: this.mobile,
       first: this.first,
+      admin: this.roleAdmin || null,
+      provider: this.roleProvider || null,
+      customer: this.roleCustomer || null,
     },
   };
   const token = jwt.sign(user, process.env.SECRET_KEY, {

@@ -22,27 +22,36 @@ const smsService = new SMSService();
 
 const resolvers = {
   Query: {
-    getAllUsers: async () => {
-      try {
-        const users = await User.find({}).populate();
-        console.log(users);
-        return users;
-      } catch (error) {
-        console.log(error);
-        return error;
-      }
+    getAllUsers: async (_parent, {}, context) => {
+      const admin = await Admin.findById(context.user.roleAdmin);
+      if (admin) {
+        try {
+          const users = await User.find({}).populate();
+          return users;
+        } catch (error) {
+          console.log(error);
+          return error;
+        }
+      } else
+        return { message: "user needs to be admin to perform this action" };
     },
-    getUserById: async (_parent, { id }) => {
-      const user = await User.findById(id)
+    getMe: async (_parent, {}, context) => {
+      const user = await User.findById(context.user._id)
         .populate("roleCustomer")
         .populate("roleProvider")
         .populate("roleAdmin");
-      return user;
+
+      if (user) {
+        return user;
+      } else {
+        return { message: "user not found" };
+      }
     },
-    getCustomers: async (_parent, { id }) => {
+    getCustomers: async (_parent, { id }, context) => {
+      //check what users the context user can get.
+
       try {
         const customers = await Customer.find({}).populate("user");
-
         const returnedCustomers = customers.filter((customer) => customer.user);
         return returnedCustomers;
       } catch (error) {
@@ -58,20 +67,31 @@ const resolvers = {
         console.error(error);
       }
     },
-    getServiceAgreement: async (__parent, { agreementNumber }) => {
+    getServiceAgreement: async (__parent, { agreementNumber }, context) => {
       try {
         const serviceAgreement = await ServiceAgreement.findOne({
           agreementNumber: agreementNumber,
         });
+        await serviceAgreement.populate({
+          path: "customer",
+          populate: { path: "user" },
+        });
+        await serviceAgreement.populate({
+          path: "provider",
+          populate: { path: "user" },
+        });
 
-        await serviceAgreement.populate("customer");
-        await serviceAgreement.populate("provider");
-        await serviceAgreement.populate("product");
-        await serviceAgreement.populate("customer.user");
+        await serviceAgreement.toObject();
+        const stringedId = String(serviceAgreement.customer.user._id);
+        if (stringedId !== String(context.user._id))
+          throw new Error("user does not match the customer of the agreement");
+        if (serviceAgreement.provider.user._id !== context.user._id)
+          throw new Error("user is not the same as the agreement");
 
         return serviceAgreement;
       } catch (error) {
         console.error(error);
+        throw error;
       }
     },
     getUserByToken: async (_parent, { token }) => {
@@ -99,8 +119,11 @@ const resolvers = {
   Mutation: {
     addServiceAgreement: async (
       _parent,
-      { provider, customer, startDate, quantity, product, endDate }
+      { provider, customer, startDate, quantity, product, endDate },
+      context
     ) => {
+      if (!context.user.roleProvider === provider)
+        throw new Error("provider is not in context. not valid");
       try {
         const newServiceAgreement = await ServiceAgreement.create({
           provider: provider || null,
@@ -125,13 +148,20 @@ const resolvers = {
 
         return newServiceAgreement;
       } catch (error) {
-        console.error(error);
+        console.error(
+          "unable to create service agreement through mutation addServiceAgreement",
+          error
+        );
+        throw error;
       }
     },
     signServiceAgreement: async (
       _parent,
-      { userId, agreementId, signature }
+      { userId, agreementId, signature },
+      context
     ) => {
+      if (!userId === context.user._id)
+        throw new Error("user id didnt match the service agreement");
       try {
         const signedServiceAgreement = await ServiceAgreement.findById(
           agreementId
@@ -181,11 +211,16 @@ const resolvers = {
         await signedServiceAgreement.save();
         return pdfPath;
       } catch (error) {
-        console.error("Error in signServiceAgreement:", error);
+        console.error(
+          `Error in signServiceAgreement:${userId} signed Service Agreement: ${signedServiceAgreement}`,
+          error
+        );
         throw error;
       }
     },
-    toggleUserRole: async (_parent, { userId, role }) => {
+    toggleUserRole: async (_parent, { userId, role }, context) => {
+      if (!userId === (context.user.roleAdmin || context.user.superAdmin))
+        throw new Error("userId didnt match with admin");
       try {
         const user = await User.findById(userId);
         if (!user) {

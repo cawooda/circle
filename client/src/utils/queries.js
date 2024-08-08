@@ -40,8 +40,8 @@ export const QUERY_ALL_USERS = gql`
 `;
 
 export const QUERY_USER_BY_ID = gql`
-  query getUserById($id: ID!) {
-    getUserById(id: $id) {
+  query getMe {
+    getMe {
       _id
       first
       last

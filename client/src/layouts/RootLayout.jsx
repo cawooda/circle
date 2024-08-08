@@ -12,8 +12,19 @@ import SigninForm from "../components/SigninForm";
 import ProfileForm from "../components/ProfileForm";
 import { useUser } from "../contexts/UserContext";
 import logo from "/logo.png";
+import Slideshow from "../components/Slideshow";
 
 const logoStyle = { paddingBottom: "15px" };
+
+const data = [
+  {
+    title: 'Welcome to Circle',
+    description: 'Circle helps you build trust in your NDIS business by making transparent pricing and NDIS compliant invoicing easy.',
+  },
+  {
+    title: 'Log in with your phone',
+    description: 'Create a password so
+
 
 export default function RootLayout() {
   const { user, loading, error } = useUser();
@@ -25,6 +36,7 @@ export default function RootLayout() {
         <div>
           <Heading>Please log in</Heading>
           <Flex justify="center" align="center">
+            <Slideshow />
             <SigninForm />
           </Flex>
         </div>
