@@ -151,9 +151,9 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.methods.sendMessage = async function (body, endpoint = "") {
-  await userSmsService.sendText(this.mobile, body, (endPoint = ""));
-  await this.sendEmail("subject", body, `<p>text</p>`, (endpoint = ""));
+userSchema.methods.sendMessage = async function (body, endpoint) {
+  await userSmsService.sendText(this.mobile, body, endPoint);
+  await this.sendEmail("subject", body, `<p>text</p>`, endpoint);
 };
 
 userSchema.methods.sendEmail = async function (

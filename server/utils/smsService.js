@@ -13,7 +13,7 @@ class SMSService {
     const host = process.env.HOST || `http://localhost:${process.env.PORT}`; // Get the host (hostname:port)
     // Define your endpoint path
 
-    const fullUrl = `${host}${endpoint}`;
+    const fullUrl = `${host}${endpoint ? endpoint : ""}`;
     const fetch = (await import("node-fetch")).default;
 
     const raw = JSON.stringify({
