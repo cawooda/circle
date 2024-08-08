@@ -17,7 +17,7 @@ else
 fi
 
 # Install dependencies
-# cd server && npm install && cd ../client && npm install
+cd server && npm install && cd ../client && npm install
 
 # Install Puppeteer
-npx puppeteer install
+cd $HOME/project/src && npx puppeteer install
