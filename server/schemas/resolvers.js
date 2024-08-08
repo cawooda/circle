@@ -88,10 +88,13 @@ const resolvers = {
         const stringedCustomerId = String(serviceAgreement.customer.user._id);
         const stringedProviderId = String(serviceAgreement.provider.user._id);
 
-        if (stringedCustomerId !== stringedContextId)
-          throw new Error("user does not match the customer of the agreement");
-        if (stringedProviderId !== context.user._id)
-          throw new Error("user is not the same as the agreement");
+        if (stringedCustomerId !== stringedContextId) {
+          if (stringedProviderId !== context.user._id) {
+            throw new Error(
+              "user does not match the customer or provider of the agreement"
+            );
+          }
+        }
 
         return serviceAgreement;
       } catch (error) {
