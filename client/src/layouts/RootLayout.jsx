@@ -18,12 +18,19 @@ const logoStyle = { paddingBottom: "15px" };
 
 const data = [
   {
-    title: 'Welcome to Circle',
-    description: 'Circle helps you build trust in your NDIS business by making transparent pricing and NDIS compliant invoicing easy.',
+    title: "Welcome to Circle",
+    description:
+      "Circle helps you build trust in your NDIS business by making transparent pricing and NDIS compliant invoicing easy.",
   },
   {
-    title: 'Log in with your phone',
-    description: 'Create a password so
+    title: "Log in with your phone",
+    description: "Create a password so we can show you around.",
+  },
+  {
+    title: "Get Started",
+    description: "Let’s start exploring the features of Circle.",
+  },
+];
 
 
 export default function RootLayout() {
@@ -36,7 +43,7 @@ export default function RootLayout() {
         <div>
           <Heading>Please log in</Heading>
           <Flex justify="center" align="center">
-            <Slideshow />
+            <Slideshow data={data]} />
             <SigninForm />
           </Flex>
         </div>
