@@ -152,8 +152,19 @@ userSchema.pre("save", async function (next) {
 });
 
 userSchema.methods.sendMessage = async function (body, endpoint) {
-  await userSmsService.sendText(this.mobile, body, endPoint);
-  await this.sendEmail("subject", body, `<p>text</p>`, endpoint);
+  try {
+    await userSmsService.sendText(this.mobile, body, endpoint || "");
+  } catch (error) {
+    throw new Error("sms service in user schema send message errorred", error);
+  }
+  try {
+    await this.sendEmail("subject", body, `<p>text</p>`, endpoint);
+  } catch (error) {
+    throw new Error(
+      "email service in user schema send message errorred",
+      error
+    );
+  }
 };
 
 userSchema.methods.sendEmail = async function (

@@ -54,7 +54,7 @@ export default function RootLayout() {
       <Box bg="blue.500" p={4} color="white" textAlign="center">
         (Ci) Circle Independent
       </Box>
-      <Center padding={5}>
+      <Center bgColor="yellow.100" padding={5} gap={3}>
         <ProfileForm />
         <SigninForm />
       </Center>

@@ -94,7 +94,6 @@ const ProfileForm = () => {
       <Splash visible={splashVisible} />
       <Button
         {...ButtonStyles}
-        {...ButtonHighlightStyle}
         onClick={() => {
           if (!user) {
             onClose();

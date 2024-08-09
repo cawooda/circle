@@ -114,7 +114,6 @@ const SigninForm = () => {
       <Splash visible={splashVisible} />
       <Button
         {...ButtonStyles}
-        {...ButtonHighlightStyle}
         onClick={() => {
           if (!user) {
             onOpen();

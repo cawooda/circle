@@ -185,12 +185,14 @@ const resolvers = {
 
         if (customerSignature) {
           signedServiceAgreement.approvedByCustomer = true;
-          signedServiceAgreement.customerSignature = signature;
+          signedServiceAgreement.customerSignature = customerSignature;
         }
 
-        const { first, last } = signedServiceAgreement.customer.user;
-        const { providerName } = signedServiceAgreement.provider;
-        const { product, startDate } = signedServiceAgreement;
+        const first = signedServiceAgreement.customer.user?.first;
+        const last = signedServiceAgreement.customer.user?.last;
+        const providerName = signedServiceAgreement.provider?.providerName;
+        const product = signedServiceAgreement?.product;
+        const startDate = signedServiceAgreement?.startDate;
 
         const renderedHtml = renderTemplate(
           signedServiceAgreement.toObject(),
@@ -201,7 +203,7 @@ const resolvers = {
           __dirname,
           `../customerData/agreements/${providerName}-${first}-${last}/ServiceAgreement-${providerName}-${first}-${last}-${dayjs(
             startDate
-          ).format("DD-MM-YYYY")}-${generateRandomNumber}.pdf`
+          ).format("DD-MM-YYYY")}-${generateRandomNumber(1, 3000000)}.pdf`
         );
 
         const pdfPath = await convertToPdf(renderedHtml, outputPath);
@@ -212,7 +214,7 @@ const resolvers = {
         customerUser.sendEmail(
           "A new Service Agreement has Arrived",
           ``,
-          `<h3>Hi, ${first}</h3>, <p>you just signed a new service agreement with ${providerName.user.first} for ${product}, We've attached a copy for your reccords and included your plan manager for reference. Have a great day.</p>
+          `<h3>Hi, ${first}</h3>, <p>you just signed a new service agreement with ${providerName} for ${product.name}, We've attached a copy for your reccords and included your plan manager for reference. Have a great day.</p>
           <br/>
           <h2>Circle Independent</h2>
           <br/>

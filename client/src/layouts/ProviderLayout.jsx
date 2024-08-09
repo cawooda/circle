@@ -15,7 +15,7 @@ import SubMenu from "../components/SubMenu";
 import SigninForm from "../components/SigninForm";
 
 const menu = [
-  { label: "New Agreement", link: "service-agreement" },
+  { highlight: true, label: "New Agreement", link: "service-agreement" },
   { label: "Service Agreements", link: "service-agreements" },
   { label: "Shifts", link: "shifts" },
   { label: "Invoices", link: "invoices" },
