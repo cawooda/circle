@@ -82,14 +82,22 @@ const resolvers = {
           path: "provider",
           populate: { path: "user" },
         });
+        await serviceAgreement.populate({
+          path: "product",
+          populate: { path: "name price" },
+        });
 
         await serviceAgreement.toObject();
         const stringedContextId = String(context.user._id);
-        const stringedCustomerId = String(serviceAgreement.customer.user._id);
-        const stringedProviderId = String(serviceAgreement.provider.user._id);
+        const stringedCustomerUserId = String(
+          serviceAgreement.customer.user._id
+        );
+        const stringedProviderUserId = String(
+          serviceAgreement.provider.user._id
+        );
 
-        if (stringedCustomerId !== stringedContextId) {
-          if (stringedProviderId !== context.user._id) {
+        if (stringedCustomerUserId !== stringedContextId) {
+          if (stringedProviderUserId !== String(context.user._id)) {
             throw new Error(
               "user does not match the customer or provider of the agreement"
             );
@@ -130,14 +138,15 @@ const resolvers = {
       { provider, customer, startDate, quantity, product, endDate, signature },
       context
     ) => {
-      if (!context.user.roleProvider === provider)
+      if (!(context.user.roleProvider._id == provider))
         throw new Error("provider is not in context. not valid");
+      productPopulated = await Product.findById(product);
       try {
         const newServiceAgreement = await ServiceAgreement.create({
           provider: provider || null,
           customer: customer || null,
           startDate: new Date() || null,
-          product: product || null,
+          product: productPopulated || null,
           quantity: quantity || null,
           endDate: endDate || null,
           providerSignature: signature || null,
@@ -211,17 +220,19 @@ const resolvers = {
         const customerUser = await User.findById(
           signedServiceAgreement.customer.user._id
         );
+
+        const renderedEmail = renderTemplate(
+          { subject: "New Service Agreement", first, providerName, product },
+          emailTemplate
+        );
         customerUser.sendEmail(
           "A new Service Agreement has Arrived",
           ``,
-          `<h3>Hi, ${first}</h3>, <p>you just signed a new service agreement with ${providerName} for ${product.name}, We've attached a copy for your reccords and included your plan manager for reference. Have a great day.</p>
-          <br/>
-          <h2>Circle Independent</h2>
-          <br/>
-          <h3><a href="http://circleindependent.com">circleindependent.com</a><h3><br/>`,
+          renderedEmail,
           "/",
           outputPath
         );
+
         signedServiceAgreement.agreementPath = pdfPath;
         await signedServiceAgreement.save();
         return pdfPath;

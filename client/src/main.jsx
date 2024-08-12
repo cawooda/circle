@@ -32,6 +32,8 @@ import {
   ProviderShifts,
   ProviderInvoices,
 } from "./pages/Provider";
+import AuthReset from "./pages/AuthReset";
+<pages></pages>;
 
 import "./index.css";
 
@@ -42,6 +44,7 @@ const router = createBrowserRouter([
     path: "/",
     element: <App />,
     children: [
+      { path: "reset/:authLinkNumber", element: <AuthReset /> },
       { path: "signed", element: <Signed /> },
       {
         path: "admin",

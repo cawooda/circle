@@ -36,7 +36,11 @@ module.exports = {
       }
 
       if (registeredUser._id == authenticatedPerson._id) {
-        return { user: authenticatedPerson };
+        await registeredUser.populate("roleCustomer");
+        await registeredUser.populate("roleAdmin");
+        await registeredUser.populate("roleProvider");
+        await registeredUser.toObject();
+        return { user: registeredUser };
       }
       throw new GraphQLError("Authentication failed", {
         extensions: { code: "UNAUTHENTICATED" },

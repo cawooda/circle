@@ -31,7 +31,7 @@ const Slideshow = ({ data, setSlideShow }) => {
       style={{
         height: "100vh",
         display: "flex",
-        justifyContent: "center",
+        justifyContent: "space-around",
         alignItems: "center",
         textAlign: "center",
         backgroundColor: "rgba(255, 223, 89, 0.6)",
@@ -39,14 +39,18 @@ const Slideshow = ({ data, setSlideShow }) => {
       direction="column"
     >
       <div>
-        <Center gap={10}>
-          <Image src={logo} width="25vw"></Image>
-        </Center>
-
-        <Center padding={30} gap={10}>
+        {currentIndex == 0 ? (
+          <Center gap={10} marginBottom="20vh">
+            <Image src={logo} width="25vw"></Image>
+            <Heading>Circle Independent</Heading>
+          </Center>
+        ) : (
+          <></>
+        )}
+        <Center padding={30} gap={10} marginBottom={`${currentIndex * 10}vh`}>
           <Flex
             direction={{ base: "column", md: "row" }}
-            justifyContent="center"
+            alignItems={currentIndex % 2 ? "end" : "start"}
           >
             <Heading key={data[currentIndex].title} className="fade-in">
               {data[currentIndex].title}
@@ -63,6 +67,14 @@ const Slideshow = ({ data, setSlideShow }) => {
             </Box>
           </Flex>
         </Center>
+        {currentIndex !== 0 ? (
+          <Center gap={10} marginTop="20vh">
+            <Image src={logo} width="10vw"></Image>
+            <Heading>Circle Independent</Heading>
+          </Center>
+        ) : (
+          <></>
+        )}
       </div>
     </Flex>
   );

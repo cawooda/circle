@@ -37,12 +37,14 @@ const SigninForm = () => {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
   const { user, setUser } = useUser();
-  const { message, setMessage } = useState("");
+  const [message, setMessage] = useState("");
   const [userFormData, setUserFormData] = useState({
     mobile: "",
     password: "",
   });
   const [splashVisible, setSplashVisible] = useState(true);
+
+  useEffect(() => {}, message);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -56,7 +58,7 @@ const SigninForm = () => {
     if (!user) {
       onOpen();
     }
-  }, [user, onOpen]);
+  }, [user]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -64,6 +66,7 @@ const SigninForm = () => {
   };
 
   const handlePasswordHelp = async (event) => {
+    console.log("handlepasswordhelp");
     event.preventDefault();
     setSplashVisible(true);
     if (userFormData.mobile.length == 10) {
@@ -86,8 +89,9 @@ const SigninForm = () => {
   };
 
   const handleFormSubmit = async (event) => {
-    event.preventDefault();
     setSplashVisible(true);
+    onClose();
+    event.preventDefault();
     try {
       const response = await AuthService.loginOrCreateUser(userFormData);
 
