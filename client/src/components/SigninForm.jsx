@@ -29,30 +29,21 @@ import {
 } from "../components/styles/ButtonStyle";
 
 import { InputStyles } from "./styles/InputStyles";
-import Splash from "./Splash";
+
 import logo from "/logo.png";
 import { useUser } from "../contexts/UserContext";
 
 const SigninForm = () => {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
-  const { user, setUser } = useUser();
+  const { user, setUser, loading, error } = useUser();
   const [message, setMessage] = useState("");
   const [userFormData, setUserFormData] = useState({
     mobile: "",
     password: "",
   });
-  const [splashVisible, setSplashVisible] = useState(true);
 
-  useEffect(() => {}, message);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setSplashVisible(false);
-    }, 1500); // 1.5 seconds
-
-    return () => clearTimeout(timer); // Cleanup the timer
-  }, [splashVisible]);
+  useEffect(() => {}, [message]);
 
   useEffect(() => {
     if (!user) {
@@ -68,7 +59,7 @@ const SigninForm = () => {
   const handlePasswordHelp = async (event) => {
     console.log("handlepasswordhelp");
     event.preventDefault();
-    setSplashVisible(true);
+
     if (userFormData.mobile.length == 10) {
       try {
         const response = await AuthService.resetPassword(userFormData);
@@ -89,7 +80,6 @@ const SigninForm = () => {
   };
 
   const handleFormSubmit = async (event) => {
-    setSplashVisible(true);
     onClose();
     event.preventDefault();
     try {
@@ -115,16 +105,11 @@ const SigninForm = () => {
 
   return (
     <>
-      <Splash visible={splashVisible} />
       <Button
         {...ButtonStyles}
         onClick={() => {
           if (!user) {
             onOpen();
-          } else {
-            setUser(null);
-            AuthService.logout();
-            navigate("/");
           }
         }}
       >

@@ -88,7 +88,7 @@ const resolvers = {
         });
 
         await serviceAgreement.toObject();
-        const stringedContextId = String(context.user._id);
+        const stringedContextId = String(serviceAgreement?.customer?.user?._id);
         const stringedCustomerUserId = String(
           serviceAgreement.customer.user._id
         );
@@ -160,7 +160,7 @@ const resolvers = {
         newServiceAgreement.customer.user.sendMessage(
           `Hi ${newServiceAgreement.customer.user.first}, a new service agreement with ${newServiceAgreement.provider.providerName} agreement is ready. Use the link to securely review and sign ;)
         `,
-          `/customer/agreement/${newServiceAgreement.agreementNumber}`,
+          `/agreement/${newServiceAgreement.agreementNumber}`,
           ""
         );
 
@@ -175,11 +175,9 @@ const resolvers = {
     },
     signServiceAgreement: async (
       _parent,
-      { userId, agreementId, customerSignature },
+      { agreementId, customerSignature },
       context
     ) => {
-      if (!userId === context.user._id)
-        throw new Error("user id didnt match the service agreement");
       try {
         const signedServiceAgreement = await ServiceAgreement.findById(
           agreementId
@@ -223,7 +221,7 @@ const resolvers = {
 
         const renderedEmail = renderTemplate(
           { subject: "New Service Agreement", first, providerName, product },
-          emailTemplate
+          "emailTemplate"
         );
         customerUser.sendEmail(
           "A new Service Agreement has Arrived",
@@ -238,7 +236,7 @@ const resolvers = {
         return pdfPath;
       } catch (error) {
         console.error(
-          `Error in signServiceAgreement:${userId} signed Service Agreement: ${signedServiceAgreement}`,
+          `Error in signServiceAgreementsigned Service Agreement: `,
           error
         );
         throw error;

@@ -160,10 +160,7 @@ userSchema.methods.sendMessage = async function (body, endpoint) {
   try {
     await this.sendEmail("subject", body, `<p>text</p>`, endpoint);
   } catch (error) {
-    throw new Error(
-      "email service in user schema send message errorred",
-      error
-    );
+    console.log(error);
   }
 };
 
@@ -230,16 +227,6 @@ userSchema.methods.generateAuthToken = function () {
   this.token = token;
   return token;
 };
-
-// Sanitizing of input would be handled here
-userSchema.pre("save", function (next) {
-  const user = this;
-
-  if (user.email) {
-    user.email = validator.normalizeEmail(user.email);
-  }
-  next();
-});
 
 //initialise User Model. creates a collection called user based on the defined user schema
 const User = model("user", userSchema);

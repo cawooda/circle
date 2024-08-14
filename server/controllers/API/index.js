@@ -34,10 +34,8 @@ router.put("/users", async (req, res) => {
 
 router.post("/users", async (req, res) => {
   const user = req.body;
-
   try {
     const userExists = await User.findOne({ mobile: req.body.mobile });
-
     if (userExists) {
       if (await userExists.isCorrectPassword(req.body.password)) {
         await userExists.generateAuthToken();

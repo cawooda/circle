@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 
 import App from "./App";
+import ServiceSign from "./ServiceSign";
 
 // Layouts
 import RootLayout from "./layouts/RootLayout";
@@ -40,6 +41,13 @@ import "./index.css";
 import { createBrowserRouter, Route, RouterProvider } from "react-router-dom";
 // Router configuration
 const router = createBrowserRouter([
+  {
+    path: "agreement",
+    element: <ServiceSign />,
+    children: [
+      { path: ":agreementNumber", element: <CustomerServiceAgreement /> },
+    ],
+  },
   {
     path: "/",
     element: <App />,

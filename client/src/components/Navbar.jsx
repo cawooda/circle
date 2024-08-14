@@ -8,7 +8,7 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { ButtonStyles } from "./styles/ButtonStyle";
-import Splash from "./Splash";
+
 import { NavLink } from "react-router-dom";
 
 import AuthService from "../utils/auth";
@@ -16,7 +16,6 @@ import AuthService from "../utils/auth";
 export default function NavBar({ user }) {
   return (
     <>
-      <Splash />
       <Flex gap={3} flexDirection={{ base: "column", md: "column" }}>
         {/* Check roles and serve up what they should see */}
         {user?.roleAdmin || user?.roleSuperAdmin ? (

@@ -19,8 +19,6 @@ import { useNavigate } from "react-router-dom";
 import SignatureCanvas from "react-signature-canvas";
 import { useState, useEffect, useRef } from "react";
 
-import Splash from "../../components/Splash";
-
 import AuthService from "../../utils/auth";
 
 import { useQuery, useMutation } from "@apollo/client";
@@ -42,7 +40,7 @@ export default function ProviderServiceAgreement() {
   const [userId, setUserId] = useState(
     AuthService?.getProfile()?.authenticatedPerson?._id || false
   );
-  const [splashVisible, setSplashVisible] = useState(true);
+
   //setup use State for customers
   const [agreementFormData, setAgreementFormData] = useState({
     endDate: dayjs().format("YYYY-MM-DD"),
@@ -51,14 +49,6 @@ export default function ProviderServiceAgreement() {
   const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setSplashVisible(false);
-    }, 1500); // 3 seconds
-
-    return () => clearTimeout(timer); // Cleanup the timer
-  }, [splashVisible]);
 
   //set query for customers
   const {
@@ -180,7 +170,6 @@ export default function ProviderServiceAgreement() {
   async function handleFormSubmit(event) {
     event.preventDefault();
 
-    setSplashVisible(true);
     try {
       const newServiceAgreement = await addServiceAgreement({
         variables: {
@@ -195,7 +184,7 @@ export default function ProviderServiceAgreement() {
 
       if (newServiceAgreement?.data?.addServiceAgreement?.agreementNumber) {
         navigate(
-          `/customer/agreement/${newServiceAgreement.data.addServiceAgreement.agreementNumber}`
+          `/agreement/${newServiceAgreement.data.addServiceAgreement.agreementNumber}`
         );
       } else navigate("/customer");
     } catch (error) {
@@ -257,9 +246,7 @@ export default function ProviderServiceAgreement() {
 
   return (
     <Container>
-      <div>
-        <Splash visible={splashVisible} />
-      </div>
+      <div></div>
       <Heading>Service Agreement</Heading>
       <Spacer />
       {/* the following are hidden but used for submission */}

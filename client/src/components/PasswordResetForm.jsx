@@ -27,7 +27,6 @@ import {
   Alert,
   InputGroup,
 } from "@chakra-ui/react";
-import Splash from "./Splash";
 
 export default function PasswordResetForm() {
   const { user, setUser } = useUser();
@@ -35,13 +34,7 @@ export default function PasswordResetForm() {
     password: "",
     confirmPassword: "",
   });
-  const [splashVisible, setSplashVisible] = useState(true);
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setSplashVisible(false);
-    }, 1500); // 1.5 seconds
-    return () => clearTimeout(timer); // Cleanup the timer
-  }, [splashVisible]);
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value }); //handle the change of for an input with useState
@@ -73,7 +66,6 @@ export default function PasswordResetForm() {
 
   return (
     <>
-      <Splash visible={splashVisible} />
       <Button
         {...ButtonStyles}
         {...ButtonHighlightStyle}

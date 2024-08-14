@@ -14,7 +14,7 @@ import { useState, useEffect, useRef } from "react";
 //import Select from "react-select";
 import { useQuery, useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
-import { QUERY_SERVICE_AGREEMENT } from "../../utils/queries";
+import { QUERY_USER_BY_ID, QUERY_SERVICE_AGREEMENT } from "../../utils/queries";
 import { useUser } from "../../contexts/UserContext";
 
 import SignatureCanvas from "react-signature-canvas";
@@ -37,6 +37,16 @@ import { InputStyles } from "../../components/styles/InputStyles";
 export default function CustomerServiceAgreement() {
   const navigate = useNavigate();
   let { agreementNumber } = useParams();
+
+  const { user, loading, error } = useUser();
+
+  const {
+    loading: userQueryLoading,
+    error: userQueryError,
+    data: userQueryData,
+  } = useQuery(QUERY_USER_BY_ID, {
+    variables: { id: user._id },
+  });
 
   const [
     signServiceAgreement,
@@ -66,16 +76,23 @@ export default function CustomerServiceAgreement() {
   const sigCanvas = useRef(null);
 
   useEffect(() => {
-    if (agreementQueryData) {
-      setAgreementFormData((prev) => ({
-        ...prev,
-        provider: agreementQueryData.getServiceAgreement.provider._id,
-        product: agreementQueryData.getServiceAgreement.product.name,
-        quantity: agreementQueryData.getServiceAgreement.quantity,
-        totalPrice: agreementQueryData.getServiceAgreement.totalPrice,
-      }));
+    if (user._id) {
+      if (agreementQueryData) {
+        setAgreementFormData((prev) => ({
+          ...prev,
+          provider: agreementQueryData.getServiceAgreement.provider._id,
+          product: agreementQueryData.getServiceAgreement.product.name,
+          quantity: agreementQueryData.getServiceAgreement.quantity,
+          totalPrice: agreementQueryData.getServiceAgreement.totalPrice,
+        }));
+      }
     }
-  }, [agreementQueryData, agreementQueryLoading]);
+  }, [
+    userQueryLoading,
+    userQueryData,
+    agreementQueryData,
+    agreementQueryLoading,
+  ]);
 
   const handleInputChange = (event) => {
     if (event.target.name) {
@@ -96,12 +113,15 @@ export default function CustomerServiceAgreement() {
     event.preventDefault();
     signServiceAgreement({
       variables: {
+        userId: user._id,
         agreementId: agreementQueryData.getServiceAgreement._id,
         customerSignature: agreementFormData.customerSignature,
       },
     });
 
-    navigate(`/`);
+    navigate(
+      `/signed?name=${agreementQueryData.getServiceAgreement.customer.user.first}`
+    );
     try {
     } catch (error) {
       console.log(error);
@@ -109,6 +129,13 @@ export default function CustomerServiceAgreement() {
     }
   }
 
+  if (userQueryLoading)
+    return (
+      <NotifyUser
+        component="Customer Service agreement"
+        message="user still loading..."
+      />
+    );
   if (agreementQueryLoading)
     return (
       <NotifyUser
@@ -117,11 +144,25 @@ export default function CustomerServiceAgreement() {
       />
     );
 
+  if (userQueryError)
+    return (
+      <Error
+        component="Customer Service Agreement"
+        message="user query error... are you logged in"
+      />
+    );
   if (agreementQueryError)
     return (
       <Error
         component="Customer Service Agreement"
-        message="agreement query error... try again, please ask your provider to try again"
+        message="agreement query error... try again"
+      />
+    );
+  if (!userQueryData.getMe.roleCustomer)
+    return (
+      <Error
+        component="Customer Service Agreement"
+        message="it doesent look like you are a customer on this agreement..."
       />
     );
 
@@ -165,6 +206,7 @@ export default function CustomerServiceAgreement() {
             onChange={handleInputChange}
           />
         </FormControl>
+        {/* end invisible inputs */}
         <DateDisplay
           date={
             !agreementQueryLoading

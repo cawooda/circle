@@ -40,8 +40,8 @@ export const QUERY_ALL_USERS = gql`
 `;
 
 export const QUERY_USER_BY_ID = gql`
-  query getMe {
-    getMe {
+  query GetMe($id: ID!) {
+    getMe(id: $id) {
       _id
       first
       last
@@ -49,23 +49,9 @@ export const QUERY_USER_BY_ID = gql`
       email
       date_of_birth
       fullName
-      roleSuperAdmin
-      roleAdmin {
-        _id
-        createdAt
-        updatedAt
-      }
       roleProvider {
         _id
         abn
-        address
-        providerName
-        termsAndConditions {
-          heading
-          paragraph
-        }
-        createdAt
-        updatedAt
       }
       roleCustomer {
         _id
@@ -74,6 +60,7 @@ export const QUERY_USER_BY_ID = gql`
         dateOfBirth
         customerSpecificField
       }
+      roleSuperAdmin
     }
   }
 `;

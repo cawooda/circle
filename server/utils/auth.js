@@ -12,6 +12,22 @@ module.exports = {
   }),
 
   authMiddleware: async function ({ req }) {
+    // List of operation names that do not require authentication
+    const openOperations = [
+      "getServiceAgreement",
+      "signServiceAgreement", // Example operation name
+    ];
+
+    // Parse the request body to get the operation name
+    const operationName = req.body.operationName;
+    console.log(operationName);
+
+    // Check if the current request matches any open operation names
+    if (openOperations.includes(operationName)) {
+      console.log(operationName);
+      return { user: null };
+    }
+    console.log("Still going");
     let token = req.body.token || req.query.token || req.headers.authorization;
     if (req.headers.authorization) {
       token = token.split(" ").pop().trim();
@@ -41,7 +57,7 @@ module.exports = {
         await registeredUser.populate("roleProvider");
         await registeredUser.toObject();
         return { user: registeredUser };
-      }
+      } else return { user: null };
       throw new GraphQLError("Authentication failed", {
         extensions: { code: "UNAUTHENTICATED" },
       });

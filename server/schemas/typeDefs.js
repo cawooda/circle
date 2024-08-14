@@ -97,7 +97,7 @@ union RoleModel = Admin | Provider | Customer
 type Query {
     getAllUsers(id: ID!): [User]
     getUserByToken(token: String!): User
-    getMe: User!
+    getMe(id: ID!): User!
     getUserRoles(id: ID!): [String]
     getCustomers: [Customer]
     getProducts: [Product]
@@ -108,7 +108,7 @@ type Query {
 
 type Mutation {
     addServiceAgreement(provider:ID!,customer:ID!,endDate:String!,product:String!,quantity:Int!,providerSignature:String!): ServiceAgreement
-    signServiceAgreement(userId:ID!,agreementId:ID!,customerSignature:String!):ServiceAgreement    
+    signServiceAgreement(agreementId:ID!,customerSignature:String!):ServiceAgreement    
     toggleUserRole(userId: ID!,role: String!): User!  
     updateProfile( userId:ID!, first: String, last: String, mobile: String,email: String):User  
     updateUserPassword(userId:ID!,password:String):User

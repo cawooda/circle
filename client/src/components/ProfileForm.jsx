@@ -26,7 +26,7 @@ import AuthService from "../utils/auth";
 import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
 
 import { InputStyles } from "./styles/InputStyles";
-import Splash from "./Splash";
+
 import logo from "/logo.png";
 import { useUser } from "../contexts/UserContext";
 
@@ -59,15 +59,6 @@ const ProfileForm = () => {
     mobile: user.mobile,
     email: user.email,
   });
-  const [splashVisible, setSplashVisible] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setSplashVisible(false);
-    }, 1500); // 1.5 seconds
-
-    return () => clearTimeout(timer); // Cleanup the timer
-  }, [splashVisible]);
 
   useEffect(() => {
     if (!user) {
@@ -91,7 +82,6 @@ const ProfileForm = () => {
 
   return (
     <>
-      <Splash visible={splashVisible} />
       <Button
         {...ButtonStyles}
         onClick={() => {
