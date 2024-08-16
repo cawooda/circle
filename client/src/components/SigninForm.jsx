@@ -37,13 +37,12 @@ const SigninForm = () => {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
   const { user, setUser, loading, error } = useUser();
+  const [signup, setSignup] = useState(false);
   const [message, setMessage] = useState("");
   const [userFormData, setUserFormData] = useState({
     mobile: "",
     password: "",
   });
-
-  useEffect(() => {}, [message]);
 
   useEffect(() => {
     if (!user) {
@@ -64,7 +63,7 @@ const SigninForm = () => {
       try {
         const response = await AuthService.resetPassword(userFormData);
 
-        if (!response.user === undefined) {
+        if (!response.user) {
           setMessage(response.message); // Set the error message
         } else {
           setUser(response.user);
@@ -83,13 +82,23 @@ const SigninForm = () => {
     onClose();
     event.preventDefault();
     try {
-      const response = await AuthService.loginOrCreateUser(userFormData);
-
-      if (!response.user === undefined) {
-        setMessage(response.message); // Set the error message
+      if (!signup) {
+        const response = await AuthService.loginUser(userFormData);
+        if (!response.user) {
+          setMessage(response.message); // Set the error message
+        } else {
+          setUser(response.user);
+          onClose();
+        }
       } else {
-        setUser(response.user);
-        onClose();
+        const response = await AuthService.signUpUser(userFormData);
+        console.log(userFormData);
+        if (!response.user) {
+          setMessage(response.message); // Set the error message
+        } else {
+          setUser(response.user);
+          onClose();
+        }
       }
     } catch (error) {
       console.log("Error received trying to create new userAuth", error);
@@ -110,6 +119,10 @@ const SigninForm = () => {
         onClick={() => {
           if (!user) {
             onOpen();
+          } else {
+            AuthService.logout();
+            setUser(null);
+            navigate("/");
           }
         }}
       >
@@ -128,10 +141,50 @@ const SigninForm = () => {
             </Center>
           </ModalHeader>
           <ModalCloseButton />
-          <ModalHeader>New? Use this to create an account</ModalHeader>
+          <Button onClick={() => setSignup(!signup)}>
+            {signup ? "Login" : "Signup"}
+          </Button>
           <ModalBody>
             <Flex direction="column" align="center" justify="center">
               <FormControl as="form" onSubmit={handleFormSubmit}>
+                {signup ? (
+                  <>
+                    <FormLabel htmlFor="first">First Name</FormLabel>
+                    <Input
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleFormSubmit(e);
+                        }
+                      }}
+                      id="firstInput"
+                      {...InputStyles}
+                      type="text"
+                      placeholder="first name..."
+                      name="first"
+                      onChange={handleInputChange}
+                      value={userFormData.first}
+                      required
+                    />
+                    <FormLabel htmlFor="last">Last Name</FormLabel>
+                    <Input
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleFormSubmit(e);
+                        }
+                      }}
+                      id="lastInput"
+                      {...InputStyles}
+                      type="text"
+                      placeholder="last name..."
+                      name="last"
+                      onChange={handleInputChange}
+                      value={userFormData.last}
+                      required
+                    />
+                  </>
+                ) : (
+                  <></>
+                )}
                 <FormLabel htmlFor="phone">Mobile</FormLabel>
                 <Input
                   onKeyDown={(e) => {
@@ -148,7 +201,6 @@ const SigninForm = () => {
                   value={userFormData.mobile}
                   required
                 />
-
                 <FormLabel htmlFor="password">Password</FormLabel>
                 <InputGroup>
                   <InputRightElement width="4.5rem">
@@ -172,7 +224,7 @@ const SigninForm = () => {
                     required
                   />
                 </InputGroup>
-                {message ? <Alert status="error">{message}</Alert> : null}
+                {message ? <Alert status="error">{message}</Alert> : <></>}
                 <Container centerContent>
                   <Button
                     {...ButtonStyles}

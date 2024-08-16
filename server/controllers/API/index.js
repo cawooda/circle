@@ -28,12 +28,30 @@ router.put("/users", async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    throw error;
+    throw new Error();
   }
 });
 
 router.post("/users", async (req, res) => {
   const user = req.body;
+  if (user.mobile.length != 10) {
+    res.status(400).json({
+      userExists: false,
+      userCreated: false,
+      user: null,
+      message: "mobile not required length",
+    });
+    return;
+  }
+  if (user.password.length < 8) {
+    res.status(400).json({
+      userExists: false,
+      userCreated: false,
+      user: null,
+      message: "password not required length",
+    });
+    return;
+  }
   try {
     const userExists = await User.findOne({ mobile: req.body.mobile });
     if (userExists) {
@@ -65,7 +83,7 @@ router.post("/users", async (req, res) => {
       });
       userCreated.save();
       await userCreated.generateAuthToken();
-      userCreated.message(
+      userCreated.sendMessage(
         `Great News, We've just given you a Circle Account ;)
         `,
         "/"
@@ -75,7 +93,7 @@ router.post("/users", async (req, res) => {
         .json({ userExists: true, userCreated: true, user: userCreated });
     }
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 });
 

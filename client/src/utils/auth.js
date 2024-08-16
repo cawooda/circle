@@ -50,14 +50,32 @@ class AuthService {
         const res = await response.json();
         return res;
       }
-      return response;
     } else {
       return null;
     }
   }
-  async loginOrCreateUser(userData) {
-    // Saves user token to localStorage
+  async signUpUser(userData) {
+    try {
+      const response = await fetch("/api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
+      if (response.ok) {
+        console.log("response OK");
+        const res = await response.json();
+        localStorage.setItem("id_token", res.user.token);
+        return res;
+      }
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
 
+  async loginUser(userData) {
     const response = await fetch("/api/users", {
       method: "POST",
       headers: {

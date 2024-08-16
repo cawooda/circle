@@ -19,7 +19,19 @@ const logoStyle = { paddingBottom: "15px" };
 
 export default function RootLayout() {
   const { user, loading, error } = useUser();
-  const [slideShow, setSlideShow] = useState(true);
+  const [slideShow, setSlideShow] = useState();
+  const [returnVisitor, setReturnVisitor] = useState(
+    localStorage.getItem("returnVisitor")
+  );
+
+  useEffect(() => {
+    if (returnVisitor) {
+      setSlideShow(false);
+    } else {
+      setSlideShow(true);
+      localStorage.setItem("returnVisitor", true);
+    }
+  }, [returnVisitor]);
 
   if (loading) return <p>Loading...</p>;
   if (slideShow)
