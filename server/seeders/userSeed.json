@@ -1,15 +1,15 @@
 [
   {
     "_id": "66a083826e76d0e5ababe48f",
-    "first": "Alice",
-    "last": "Smith",
-    "mobile": "1234567890",
-    "email": "alice@example.com",
+    "first": "Andrew",
+    "last": "Cawood",
+    "mobile": "0400442612",
+    "email": "cawooda@gmail.com",
     "roleCustomer": null,
     "roleProvider": "66a0d9f4a0eb8627cc6320f7",
     "roleAdmin": "66a0d9f4a0eb8627cc6320fa",
     "password": "Ahimsa8*",
-    "roleSuperAdmin": false,
+    "roleSuperAdmin": true,
     "sendEmails": true,
     "sendTexts": true
   },

@@ -8,6 +8,7 @@ const adminSchema = new Schema(
     user: {
       type: Schema.Types.ObjectId,
       ref: "user",
+      unique: true,
     },
     createdAt: {
       type: Date,

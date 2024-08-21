@@ -220,17 +220,13 @@ const resolvers = {
         switch (role) {
           case "admin":
             if (user.roleAdmin) {
-              console.log("Deleting provider with ID:", user.roleAdmin);
-              console.log(
-                await Admin.findOneAndDelete({
-                  _id: user.roleAdmin,
-                })
-              );
               user.roleAdmin = null;
               await user.save(); // Update user document
             } else {
-              const newAdmin = await Admin.create({ user: user._id });
-              user.roleAdmin = newAdmin._id;
+              const admin =
+                (await Admin.findOne({ user: user._id })) ||
+                (await Admin.create({ user: user._id }));
+              user.roleAdmin = admin._id;
             }
             await user.save();
             break;
@@ -239,45 +235,46 @@ const resolvers = {
               user.roleProvider = null;
               await user.save(); // Update user document
             } else {
-              const newProvider = await Provider.create({
-                user: user._id,
-                abn: require("../utils/helpers").generateRandomNumber(
-                  9999999999,
-                  10000000000
-                ),
-                address: "1 Street Name, Town, PostCode",
-                providerName: "Acme Electronics",
-                termsAndConditions: [
-                  {
-                    heading: "Important Terms",
-                    paragraph:
-                      "Important ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant Paragraph",
-                  },
-                ],
-              });
-              user.roleProvider = newProvider._id;
+              const provider =
+                (await Provider.findOne({ user: user._id })) ||
+                (await Provider.create({
+                  user: user._id,
+                  abn: require("../utils/helpers").generateRandomNumber(
+                    9999999999,
+                    10000000000
+                  ),
+                  address: "1 Street Name, Town, PostCode",
+                  providerName: "Acme Electronics",
+                  termsAndConditions: [
+                    {
+                      heading: "Important Terms",
+                      paragraph:
+                        "Important ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant Paragraph",
+                    },
+                  ],
+                }));
+              user.roleProvider = provider._id;
             }
             await user.save();
             break;
           case "customer":
             if (user.roleCustomer) {
-              await Customer.findOneAndDelete({
-                _id: user.roleCustomer,
-              });
               user.roleCustomer = null;
               await user.save();
             } else {
-              const newCustomer = await Customer.create({
-                user: user._id,
-                ndisNumber: require("../utils/helpers").generateRandomNumber(
-                  1000000000,
-                  9999999999
-                ),
-                address: "1 Street Name, Town, PostCode",
-                dateOfBirth: new Date(1990, 0, 1), // Example date of birth
-                customerSpecificField: "Specific details about the customer",
-              });
-              user.roleCustomer = newCustomer._id;
+              const customer =
+                (await Customer.findOne({ user: user._id })) ||
+                (await Customer.create({
+                  user: user._id,
+                  ndisNumber: require("../utils/helpers").generateRandomNumber(
+                    1000000000,
+                    9999999999
+                  ),
+                  address: "1 Street Name, Town, PostCode",
+                  dateOfBirth: new Date(1990, 0, 1), // Example date of birth
+                  customerSpecificField: "Specific details about the customer",
+                }));
+              user.roleCustomer = customer._id;
             }
             await user.save();
             break;
