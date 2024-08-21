@@ -1,9 +1,15 @@
 require("dotenv").config();
 const path = require("path");
 const PORT = process.env.PORT || 3001;
+const fs = require("fs");
 
 const express = require("express");
 const app = express();
+
+const morgan = require("morgan");
+var accessLogStream = fs.createWriteStream(path.join(__dirname, "access.log"), {
+  flags: "a",
+});
 
 const { authMiddleware } = require("./utils/auth");
 
@@ -24,7 +30,7 @@ const apiRoutes = require("./controllers/API");
 
 const startApolloServer = async () => {
   await server.start();
-
+  app.use(morgan("combined", { stream: accessLogStream }));
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
 
