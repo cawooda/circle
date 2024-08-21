@@ -3,16 +3,18 @@ const Admin = require("../models/Admin");
 const User = require("../models/User");
 const Customer = require("../models/Customer");
 const Provider = require("../models/Provider");
-const Plan = require("../models/Plan");
+const Shift = require("./Shift");
 const ServiceAgreement = require("./ServiceAgreement");
 const Product = require("../models/Product");
+const Service = require("../models/Service");
 
 module.exports = {
   User,
   Customer,
   Admin,
+  Service,
   Provider,
-  Plan,
+  Shift,
   ServiceAgreement,
   Product,
 };

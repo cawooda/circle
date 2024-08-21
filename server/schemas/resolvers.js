@@ -8,47 +8,30 @@ const {
   Product,
   ServiceAgreement,
 } = require("../models");
-const { roles } = require("../utils/roles");
-const jwt = require("jsonwebtoken");
 
 const { renderTemplate } = require("../templates/renderTemplate");
 const { convertToPdf } = require(".././utils/pdfUtility");
 
 //handling SMS for this resolver
-const { SMSService } = require("../utils/smsService");
-const { generateRandomNumber } = require("../utils/helpers");
-const controllerSmsService = new SMSService();
 
-const smsService = new SMSService();
+const { generateRandomNumber } = require("../utils/helpers");
+
+const {
+  getAllUsers,
+  getMe,
+  getUserByToken,
+  getUserRoles,
+} = require("./resolvers.user");
+const {
+  addService,
+  deleteService,
+  updateServicePrice,
+} = require("./resolvers.service");
 
 const resolvers = {
   Query: {
-    getAllUsers: async (_parent, {}, context) => {
-      const user = await User.findById(context.user._id);
-      const admin = await User.findById(context.user.roleAdmin);
-      if (admin || user.roleSuperAdmin) {
-        try {
-          const users = await User.find({}).populate();
-          return users;
-        } catch (error) {
-          console.log(error);
-          return error;
-        }
-      } else
-        return { message: "user needs to be admin to perform this action" };
-    },
-    getMe: async (_parent, {}, context) => {
-      const user = await User.findById(context.user._id)
-        .populate("roleCustomer")
-        .populate("roleProvider")
-        .populate("roleAdmin");
-
-      if (user) {
-        return user;
-      } else {
-        return { message: "user not found" };
-      }
-    },
+    getAllUsers,
+    getMe,
     getCustomers: async (_parent, { id }, context) => {
       //check what users the context user can get.
 
@@ -60,7 +43,7 @@ const resolvers = {
         console.error(error);
       }
     },
-    getProducts: async () => {
+    getProducts: async (_parent, {}, context) => {
       try {
         const productList = Product.find({});
 
@@ -68,6 +51,11 @@ const resolvers = {
       } catch (error) {
         console.error(error);
       }
+    },
+    getUserByToken,
+    getUserRoles,
+    getServices: async (_parent, { providerId }, context) => {
+      return providerServices;
     },
     getServiceAgreement: async (__parent, { agreementNumber }, context) => {
       try {
@@ -109,27 +97,6 @@ const resolvers = {
         console.error(error);
         throw error;
       }
-    },
-    getUserByToken: async (_parent, { token }) => {
-      try {
-        const { authenticatedPerson } = jwt.verify(
-          token,
-          process.env.SECRET_KEY,
-          {
-            maxAge: process.env.TOKEN_EXPIRES_IN,
-          }
-        );
-
-        const user = await User.findById(authenticatedPerson._id).populate();
-
-        return user;
-      } catch (error) {
-        throw new Error("Invalid or expired token");
-      }
-    },
-
-    getUserRoles: async (_parent, { id }) => {
-      const user = await User.findById(id);
     },
   },
   Mutation: {
@@ -372,6 +339,9 @@ const resolvers = {
         throw new Error(error.message);
       }
     },
+    addService,
+    deleteService,
+    updateServicePrice,
   },
 };
 

@@ -14,13 +14,6 @@ type User {
     roleSuperAdmin: Boolean
 }
 
-enum RoleType {
-    CUSTOMER
-    PROVIDER
-    ADMIN
-    SUPERADMIN
-}
-
 type Customer {
     _id: ID!
     user: User!
@@ -75,17 +68,23 @@ type Provider {
   }
 
 type Product {
-  _id: ID
-  name: String
-  price: Float
+  _id: ID!
+  name: String!
+  price: Float!
 }
 
-input ProductInput {
-  product: ID!
-  quantity: Int!
+type Service {
+ _id: ID!
+ product: Product!
+ price: Float!
+ provider: Provider
 }
 
-
+type AddServiceResponse {
+  success: Boolean!
+  message: String!
+  service: Service
+}
 
 type TermsAndConditions {
     heading: String
@@ -99,8 +98,12 @@ type Query {
     getUserByToken(token: String!): User
     getMe(id: ID!): User!
     getUserRoles(id: ID!): [String]
+    
     getCustomers: [Customer]
     getProducts: [Product]
+
+    getServices(providerId: ID!): [Service]
+    
     getServiceAgreements: [ServiceAgreement!]
     getServiceAgreement(agreementNumber: String!): ServiceAgreement
 }
@@ -112,6 +115,10 @@ type Mutation {
     toggleUserRole(userId: ID!,role: String!): User!  
     updateProfile( userId:ID!, first: String, last: String, mobile: String,email: String):User  
     updateUserPassword(userId:ID!,password:String):User
+    
+    addService(providerId: ID!, productId: ID!, price: Float!):AddServiceResponse
+    deleteService(serviceId:ID!):Service
+    updateServicePrice(serviceId:ID!,price: Float!):Service
 }
 
 `;

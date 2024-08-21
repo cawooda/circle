@@ -1,16 +1,24 @@
-//import the Schema and model from mongoose.
+//import the Schema and model from mongoose
+//A service is a combination of a product and a custom price set by the provider.
+
 const { Schema, model } = require("mongoose");
 
 //definde the user model schema
-const planSchema = new Schema(
+const serviceSchema = new Schema(
   //first come the paths, like properties
   {
-    customer: {
+    provider: {
       type: Schema.Types.ObjectId,
-      ref: "customer",
+      ref: "provider",
     },
-    start_date: Date,
-    end_date: Date,
+    product: {
+      type: Schema.Types.ObjectId,
+      ref: "product",
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
     createdAt: {
       type: Date,
       immutable: true, //this prevents changes to the date once created
@@ -30,7 +38,14 @@ const planSchema = new Schema(
   }
 );
 
-//initialise User Model. creates a collection called user based on the defined user schema
-const Plan = model("plan", planSchema);
+serviceSchema.index({ provider: 1, product: 1 }, { unique: true });
 
-module.exports = Plan;
+serviceSchema.pre("save", function (next) {
+  if (!this.created) this.created = new Date();
+  next();
+});
+
+//initialise User Model. creates a collection called user based on the defined user schema
+const Service = model("service", serviceSchema);
+
+module.exports = Service;

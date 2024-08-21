@@ -163,9 +163,3 @@ export const QUERY_USER_BY_TOKEN = gql`
     }
   }
 `;
-
-// export const QUERY_LINKED_PROVIDERS = gql`
-//   query getLinkedProvideres($userId: ID!) {
-
-//   }
-// `;

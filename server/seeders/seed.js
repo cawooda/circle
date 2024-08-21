@@ -2,11 +2,20 @@
 const connection = require("../config/connection");
 
 // setup user, customer, provider, and product models
-const { User, Customer, Provider, Product } = require("../models");
+const {
+  User,
+  Customer,
+  Provider,
+  Product,
+  Service,
+  Shift,
+} = require("../models");
 const userSeed = require("./userSeed.json");
 const customerSeed = require("./customerSeed.json");
 const providerSeed = require("./provderSeed.json");
 const productSeed = require("./productSeed.json"); // Include product seed
+const serviceSeed = require("./serviceSeed.json");
+const shiftSeed = require("./shiftSeed.json");
 
 // require bcrypt for password hashing
 const bcrypt = require("bcrypt");
@@ -32,7 +41,6 @@ connection.once("open", async () => {
     for (let user of userSeed) {
       user.password = await hashPassword(user.password);
     }
-
     // Insert user data into the database
     const users = await User.insertMany(userSeed);
 
@@ -66,10 +74,32 @@ connection.once("open", async () => {
     // Insert product data into the database
     const products = await Product.insertMany(productSeed);
 
+    // Check if the services collection exists
+    let serviceCheck = await connection.db
+      .listCollections({ name: "services" })
+      .toArray();
+    if (serviceCheck.length) {
+      await connection.dropCollection("services");
+    }
+    // Insert service data into the database
+    const services = await Service.insertMany(serviceSeed);
+
+    // Check if the shifts collection exists
+    let shiftCheck = await connection.db
+      .listCollections({ name: "shifts" })
+      .toArray();
+    if (shiftCheck.length) {
+      await connection.dropCollection("shifts");
+    }
+    // Insert shift data into the database
+    const shifts = await Shift.insertMany(shiftSeed);
+
     console.table(users);
     console.table(customers);
     console.table(providers);
     console.table(products);
+    console.table(services);
+    console.table(shifts);
   } catch (error) {
     console.error("Error seeding the database", error);
   } finally {
