@@ -5,11 +5,13 @@ import {
   Container,
   Heading,
   Image,
+  Button,
   Spacer,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import "../components/styles/slideShowStyles.css";
 import logo from "/logo.png";
+import { ButtonHighlightStyle, ButtonStyles } from "./styles/ButtonStyle";
 const Slideshow = ({ data, setSlideShow }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -27,7 +29,6 @@ const Slideshow = ({ data, setSlideShow }) => {
 
   return (
     <Flex
-      onClick={handleNext}
       style={{
         height: "100vh",
         display: "flex",
@@ -66,6 +67,15 @@ const Slideshow = ({ data, setSlideShow }) => {
               {data[currentIndex].description}
             </Box>
           </Flex>
+        </Center>
+        <Center gap={10} paddingTop="20px">
+          <Button
+            onClick={handleNext}
+            {...ButtonStyles}
+            {...ButtonHighlightStyle}
+          >
+            Next
+          </Button>
         </Center>
         {currentIndex !== 0 ? (
           <Center gap={10} marginTop="20vh">
