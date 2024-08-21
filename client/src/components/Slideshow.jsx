@@ -41,14 +41,25 @@ const Slideshow = ({ data, setSlideShow }) => {
     >
       <div>
         {currentIndex == 0 ? (
-          <Center gap={10} marginBottom="20vh">
-            <Image src={logo} width="25vw"></Image>
-            <Heading>Circle Independent</Heading>
-          </Center>
+          <>
+            <Center gap={10} marginBottom="20vh">
+              <Image src={logo} width="25vw"></Image>
+              <Heading>Circle Independent</Heading>
+            </Center>
+            <Center gap={10} paddingTop="20px">
+              <Button
+                onClick={handleNext}
+                {...ButtonStyles}
+                {...ButtonHighlightStyle}
+              >
+                Next
+              </Button>
+            </Center>
+          </>
         ) : (
           <></>
         )}
-        <Center padding={30} gap={10} marginBottom={`${currentIndex * 10}vh`}>
+        <Center padding={30} gap={10} marginBottom={`15vh`}>
           <Flex
             direction={{ base: "column", md: "row" }}
             alignItems={currentIndex % 2 ? "end" : "start"}
@@ -68,20 +79,23 @@ const Slideshow = ({ data, setSlideShow }) => {
             </Box>
           </Flex>
         </Center>
-        <Center gap={10} paddingTop="20px">
-          <Button
-            onClick={handleNext}
-            {...ButtonStyles}
-            {...ButtonHighlightStyle}
-          >
-            Next
-          </Button>
-        </Center>
+
         {currentIndex !== 0 ? (
-          <Center gap={10} marginTop="20vh">
-            <Image src={logo} width="10vw"></Image>
-            <Heading>Circle Independent</Heading>
-          </Center>
+          <>
+            <Center gap={10} marginTop="20vh">
+              <Image src={logo} width="10vw"></Image>
+              <Heading>Circle Independent</Heading>
+            </Center>
+            <Center gap={10} paddingTop="20px">
+              <Button
+                onClick={handleNext}
+                {...ButtonStyles}
+                {...ButtonHighlightStyle}
+              >
+                Next
+              </Button>
+            </Center>
+          </>
         ) : (
           <></>
         )}
