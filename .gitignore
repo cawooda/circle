@@ -1,5 +1,6 @@
 # Ignore the .env file in the server directory
 /server/.env
+/server/access.log
 /server/node_modules/
 /client/node_modules/
 
