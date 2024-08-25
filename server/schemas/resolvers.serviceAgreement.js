@@ -1,5 +1,33 @@
 const { User, Product, ServiceAgreement } = require("../models");
 module.exports = {
+  getServiceAgreements: async (_parent, { userId }, context) => {
+    try {
+      const user = await User.findById(context.user._id);
+      await user.populate("roleProvider", "roleCustomer");
+      const allServiceAgreements = await ServiceAgreement.find();
+      // console.log(allServiceAgreements);
+      const serviceAgreements = await ServiceAgreement.find({
+        $or: [{ provider: user.roleProvider }, { customer: user.roleCustomer }],
+      })
+        .populate("provider")
+        .populate("customer")
+        .populate("product");
+      const response = {
+        success: true,
+        message: "service agreements found successfully",
+        serviceAgreements: serviceAgreements,
+      };
+      return response;
+    } catch (error) {
+      console.error(error);
+      const errorResponse = {
+        success: false,
+        message: "service agreements find not successful",
+        error: error,
+      };
+      return errorResponse;
+    }
+  },
   addServiceAgreement: async (
     _parent,
     { provider, customer, startDate, quantity, product, endDate, signature },

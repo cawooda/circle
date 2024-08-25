@@ -127,17 +127,19 @@ export default function ProviderServiceAgreement() {
     }
 
     if (!customerQueryLoading && customerQueryData) {
-      const customerList = customerQueryData.getCustomers.map((customer) => {
-        return {
-          value: customer._id,
-          label: `${customer.user.first} ${customer.user.last}`,
-        };
-      });
-      customerList.unshift({
-        value: "00000--0000",
-        label: "...choose customer",
-      });
-      setCustomers(customerList);
+      if (customerQueryData.getCustomers) {
+        const customerList = customerQueryData.getCustomers.map((customer) => {
+          return {
+            value: customer._id,
+            label: `${customer.user.first} ${customer.user.last}`,
+          };
+        });
+        customerList.unshift({
+          value: "00000--0000",
+          label: "...choose customer",
+        });
+        setCustomers(customerList);
+      }
     }
     //try to set the default end date to 3 months from now
     const defaultEndDate = dayjs().add(3, "month").format("YYYY-MM-DD");

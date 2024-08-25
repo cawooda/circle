@@ -12,6 +12,7 @@ type User {
     roleProvider: Provider
     roleCustomer: Customer
     roleSuperAdmin: Boolean
+    serviceAgreements: [ServiceAgreement]
 }
 
 type Customer {
@@ -23,12 +24,30 @@ type Customer {
     customerSpecificField:String
 }
 
+type ServiceAgreement {
+    _id: ID!
+    provider: Provider
+    customer: Customer
+    agreementNumber:Int
+    startDate: String
+    product: Product
+    service: Service
+    quantity: Int
+    endDate: String
+    totalPrice:Float
+    approvedByCustomer:Boolean
+    createdAt:String
+    updatedAt:String
+    signature:String
+  }
+
 type Admin {
     _id: ID!
     user: User!
     createdAt: String
     updatedAt: String
 }
+
 
 type Provider {
     _id: ID!
@@ -48,6 +67,7 @@ type Provider {
     agreementNumber:Int
     startDate: String
     product: Product
+    service: Service
     quantity: Int
     endDate: String
     totalPrice:Float
@@ -86,6 +106,12 @@ type AddServiceResponse {
   service: Service
 }
 
+type ServiceAgreementResponse {
+  success: Boolean!
+  message: String!
+  serviceAgreements: [ServiceAgreement]!
+}
+
 type TermsAndConditions {
     heading: String
     paragraph: String
@@ -104,7 +130,7 @@ type Query {
 
     getServices(providerId: ID!): [Service]
     
-    getServiceAgreements: [ServiceAgreement!]
+    getServiceAgreements: ServiceAgreementResponse!
     getServiceAgreement(agreementNumber: String!): ServiceAgreement
 }
 

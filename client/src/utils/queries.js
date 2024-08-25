@@ -49,18 +49,85 @@ export const QUERY_USER_BY_ID = gql`
       email
       date_of_birth
       fullName
+      roleAdmin {
+        _id
+        createdAt
+        updatedAt
+      }
       roleProvider {
         _id
         abn
+        address
+        providerName
       }
       roleCustomer {
         _id
+        user {
+          _id
+          fullName
+        }
         ndisNumber
         address
         dateOfBirth
         customerSpecificField
       }
       roleSuperAdmin
+      serviceAgreements {
+        _id
+        provider {
+          _id
+          user {
+            _id
+            fullName
+          }
+          abn
+          address
+          providerName
+          termsAndConditions {
+            heading
+            paragraph
+          }
+          createdAt
+          updatedAt
+        }
+        customer {
+          _id
+          user {
+            _id
+            fullName
+          }
+          ndisNumber
+          address
+          dateOfBirth
+          customerSpecificField
+        }
+        agreementNumber
+        startDate
+        product {
+          _id
+          name
+          price
+        }
+        service {
+          _id
+          product {
+            name
+            _id
+            price
+          }
+          price
+          provider {
+            _id
+          }
+        }
+        quantity
+        endDate
+        totalPrice
+        approvedByCustomer
+        createdAt
+        updatedAt
+        signature
+      }
     }
   }
 `;
@@ -160,6 +227,54 @@ export const QUERY_USER_BY_TOKEN = gql`
       isAdmin
       isCustomer
       isProvider
+    }
+  }
+`;
+
+export const QUERY_SERVICE_AGREEMENTS = gql`
+  query GetServiceAgreements {
+    getServiceAgreements {
+      success
+      message
+      serviceAgreements {
+        _id
+        provider {
+          _id
+        }
+        customer {
+          _id
+          user {
+            _id
+            fullName
+          }
+          ndisNumber
+          address
+          dateOfBirth
+          customerSpecificField
+        }
+        agreementNumber
+        startDate
+        product {
+          _id
+          name
+          price
+        }
+        service {
+          _id
+          product {
+            name
+            _id
+          }
+          price
+        }
+        quantity
+        endDate
+        totalPrice
+        approvedByCustomer
+        createdAt
+        updatedAt
+        signature
+      }
     }
   }
 `;

@@ -1,13 +1,6 @@
 const path = require("path");
 const dayjs = require("dayjs");
-const {
-  User,
-  Admin,
-  Customer,
-  Provider,
-  Product,
-  ServiceAgreement,
-} = require("../models");
+const { ServiceAgreement } = require("../models");
 
 const { renderTemplate } = require("../templates/renderTemplate");
 const { convertToPdf } = require(".././utils/pdfUtility");
@@ -35,6 +28,7 @@ const {
 const {
   addServiceAgreement,
   signServiceAgreement,
+  getServiceAgreements,
 } = require("./resolvers.serviceAgreement");
 
 const resolvers = {
@@ -89,6 +83,7 @@ const resolvers = {
         throw error;
       }
     },
+    getServiceAgreements,
   },
   Mutation: {
     addServiceAgreement,

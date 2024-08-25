@@ -1,4 +1,11 @@
-const { User, Admin, Provider, Customer, Product } = require("../models");
+const {
+  User,
+  Admin,
+  Provider,
+  Customer,
+  Product,
+  ServiceAgreement,
+} = require("../models");
 module.exports = {
   getAllUsers: async (_parent, {}, context) => {
     const user = await User.findById(context.user._id);
@@ -20,6 +27,34 @@ module.exports = {
       .populate("roleAdmin");
 
     if (user) {
+      const serviceAgreements = await ServiceAgreement.find({
+        $or: [{ provider: user.roleProvider }, { customer: user.roleCustomer }],
+      })
+        .populate({
+          path: "provider",
+          populate: { path: "user" },
+        })
+        .populate({
+          path: "customer",
+          populate: { path: "user" },
+        })
+        .populate("product")
+        .lean({ virtuals: true });
+
+      // Manually set fullName for customer and provider
+      serviceAgreements.forEach((agreement) => {
+        if (agreement.provider && agreement.provider.user) {
+          agreement.provider.user.fullName = `${agreement.provider.user.first} ${agreement.provider.user.last}`;
+        }
+        if (agreement.customer && agreement.customer.user) {
+          agreement.customer.user.fullName = `${agreement.customer.user.first} ${agreement.customer.user.last}`;
+        }
+      });
+
+      user.serviceAgreements = serviceAgreements;
+
+      console.log(user.serviceAgreements[1]); // Ensure fullName is correct here
+
       return user;
     } else {
       return { message: "user not found" };
@@ -50,8 +85,8 @@ module.exports = {
 
     try {
       const customers = await Customer.find({}).populate("user");
-      const returnedCustomers = customers.filter((customer) => customer.user);
-      return returnedCustomers;
+
+      return customers;
     } catch (error) {
       console.error(error);
     }
