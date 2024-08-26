@@ -1,6 +1,8 @@
 # Ignore the .env file in the server directory
 /server/.env
+/server/access.log
 /server/node_modules/
+/server/cache
 /client/node_modules/
 
 # Other files and directories to ignore

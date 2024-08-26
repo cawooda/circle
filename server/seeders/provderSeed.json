@@ -1,42 +1,32 @@
 [
   {
     "_id": "66a0d9f4a0eb8627cc6320f7",
+    "user": "66a083826e76d0e5ababe48f",
     "abn": "12345678901",
-    "address": "123 Provider St, City, Country",
-    "providerName": "ProviderOne",
+    "address": "1 Street Name, Town, PostCode",
+    "providerName": "Acme Electronics",
     "termsAndConditions": [
       {
-        "heading": "Term 1",
-        "paragraph": "ProviderOne Term 1 details.",
-        "_id": "66a0d9f4a0eb8627cc6320f8"
-      },
-      {
-        "heading": "Term 2",
-        "paragraph": "ProviderOne Term 2 details.",
-        "_id": "66a0d9f4a0eb8627cc6320f9"
+        "heading": "Important Terms",
+        "paragraph": "Important information about the service."
       }
     ],
-    "createdAt": "2024-07-24T10:39:48.751Z",
-    "updatedAt": "2024-07-24T10:39:48.751Z"
+    "createdAt": "2024-08-20T00:00:00.000Z",
+    "updatedAt": "2024-08-20T00:00:00.000Z"
   },
   {
-    "_id": "66a0d9f4a0eb8627cc6320fa",
-    "abn": "12345678901",
-    "address": "153 Wayward St, City, Country",
-    "providerName": "We Love Work",
+    "_id": "66a0d9f4a0eb8627cc6320f8",
+    "user": "66a083826e76d0e5ababe490",
+    "abn": "09876543210",
+    "address": "2 Street Name, Town, PostCode",
+    "providerName": "Bright Health Services",
     "termsAndConditions": [
       {
-        "heading": "Term 1",
-        "paragraph": "ProviderOne Term 1 details.",
-        "_id": "66a0d9f4a0eb8627cc6320fb"
-      },
-      {
-        "heading": "Term 2",
-        "paragraph": "ProviderOne Term 2 details.",
-        "_id": "66a0d9f4a0eb8627cc6320fc"
+        "heading": "Service Agreement",
+        "paragraph": "Details of the service agreement."
       }
     ],
-    "createdAt": "2024-07-24T10:39:48.751Z",
-    "updatedAt": "2024-07-24T10:39:48.751Z"
+    "createdAt": "2024-08-20T00:00:00.000Z",
+    "updatedAt": "2024-08-20T00:00:00.000Z"
   }
 ]

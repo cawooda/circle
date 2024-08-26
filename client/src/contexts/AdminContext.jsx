@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import { useQuery } from "@apollo/client";
+
 import { QUERY_ALL_USERS } from "../utils/queries"; // Adjust the path as necessary
 import { useUser } from "./UserContext";
 

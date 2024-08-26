@@ -1,0 +1,18 @@
+[
+  {
+    "_id": "66a0d9f4a0eb8627cc6320f9",
+    "provider": "66a0d9f4a0eb8627cc6320f7",
+    "product": "66a0d9f4a0eb8627cc6321f1",
+    "price": 100.14,
+    "createdAt": "2024-08-20T00:00:00.000Z",
+    "updatedAt": "2024-08-20T00:00:00.000Z"
+  },
+  {
+    "_id": "66a0d9f4a0eb8627cc6321f0",
+    "provider": "66a0d9f4a0eb8627cc6320f8",
+    "product": "66a0d9f4a0eb8627cc6321f2",
+    "price": 156.16,
+    "createdAt": "2024-08-20T00:00:00.000Z",
+    "updatedAt": "2024-08-20T00:00:00.000Z"
+  }
+]

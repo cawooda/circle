@@ -6,7 +6,7 @@ export const ButtonStyles = {
   colorScheme: "yellow.500",
   borderColor: "black",
   color: "black",
-  _hover: { color: "white" },
+  _hover: { bgColor: "yellow.400" },
   borderRadius: "30px",
   borderWidth: "2px",
   padding: "5px",

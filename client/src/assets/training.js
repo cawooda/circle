@@ -7,12 +7,21 @@ export const firstVisitSlideShow = [
   {
     title: "For Business",
     description:
-      "Our instant service agreements create transparency and NDIS complience",
+      "Our instant service agreements, consent forms and incident reporting create transparency and NDIS complience",
+  },
+  {
+    title: "For Business",
+    description: "Invoicing hanldled effortlessly.",
   },
   {
     title: "For Participants",
     description:
       "We help you understand the cost and conditions of your NDIS services",
+  },
+  {
+    title: "For Participants",
+    description:
+      "Get access to records of your services such as shift notes, invoices and incidents",
   },
   {
     title: "Join Free",

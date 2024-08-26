@@ -2,6 +2,7 @@ const puppeteer = require("puppeteer");
 const puppeteerConfig = require("../puppeteer.config.cjs");
 const fs = require("fs").promises;
 const path = require("path");
+const { renderTemplate } = require("../templates/renderTemplate");
 
 async function convertToPdf(htmlContent, outputPath) {
   try {

@@ -1,14 +1,17 @@
 [
   {
     "_id": "66a083826e76d0e5ababe48f",
-    "first": "Alice",
-    "last": "Smith",
-    "mobile": "1234567890",
-    "email": "alice@example.com",
+    "first": "Andrew",
+    "last": "Cawood",
+    "mobile": "0400442612",
+    "email": "cawooda@gmail.com",
     "roleCustomer": null,
     "roleProvider": "66a0d9f4a0eb8627cc6320f7",
     "roleAdmin": "66a0d9f4a0eb8627cc6320fa",
-    "password": "$2b$10$lkw0oAwGFBXOgg9smarZTOyYuMh9uPo9Xx0/QEUoZSjri5nEXVn7a"
+    "password": "Ahimsa8*",
+    "roleSuperAdmin": true,
+    "sendEmails": true,
+    "sendTexts": true
   },
   {
     "_id": "66a083826e76d0e5ababe490",
@@ -17,9 +20,12 @@
     "mobile": "0987654321",
     "email": "bob@example.com",
     "roleCustomer": null,
-    "roleProvider": "66a0d9f4a0eb8627cc6320f7",
+    "roleProvider": "66a0d9f4a0eb8627cc6320f8",
     "roleAdmin": null,
-    "password": "$2b$10$h7x.laXNIDCJ.CORSk2Wxev./cA096/T77ZnE.maZf6voAbioaxS2"
+    "password": "$2b$10$h7x.laXNIDCJ.CORSk2Wxev./cA096/T77ZnE.maZf6voAbioaxS2",
+    "roleSuperAdmin": false,
+    "sendEmails": true,
+    "sendTexts": true
   },
   {
     "_id": "66a083826e76d0e5ababe491",
@@ -30,7 +36,10 @@
     "roleCustomer": "66a0d9f4a0eb8627cc6320f4",
     "roleProvider": null,
     "roleAdmin": null,
-    "password": "$2b$10$waiI48brvZfcMbl/7.UAF.7DnKIx1xptXaEMQl9taZ/7Kcwir4SMK"
+    "password": "$2b$10$waiI48brvZfcMbl/7.UAF.7DnKIx1xptXaEMQl9taZ/7Kcwir4SMK",
+    "roleSuperAdmin": false,
+    "sendEmails": true,
+    "sendTexts": true
   },
   {
     "_id": "66a083826e76d0e5ababe492",
@@ -41,7 +50,10 @@
     "roleCustomer": null,
     "roleProvider": null,
     "roleAdmin": null,
-    "password": "$2b$10$idCRP0uWjUvmDqkefFeOX.JLzHmJE7Ta4D/tfiZs.USlaowkPDiki"
+    "password": "$2b$10$idCRP0uWjUvmDqkefFeOX.JLzHmJE7Ta4D/tfiZs.USlaowkPDiki",
+    "roleSuperAdmin": false,
+    "sendEmails": true,
+    "sendTexts": true
   },
   {
     "_id": "66a083826e76d0e5ababe493",
@@ -52,7 +64,10 @@
     "roleCustomer": "66a0d9f4a0eb8627cc6320f4",
     "roleProvider": null,
     "roleAdmin": null,
-    "password": "$2b$10$fQetbx8DJnQEO1lF3XW/vuQHcvKeKAKaihfkK0glPGSdn6HryJp.i"
+    "password": "$2b$10$fQetbx8DJnQEO1lF3XW/vuQHcvKeKAKaihfkK0glPGSdn6HryJp.i",
+    "roleSuperAdmin": false,
+    "sendEmails": true,
+    "sendTexts": true
   },
   {
     "_id": "66a083826e76d0e5ababe494",
@@ -63,6 +78,9 @@
     "roleCustomer": "66a0d9f4a0eb8627cc6320f5",
     "roleProvider": null,
     "roleAdmin": null,
-    "password": "$2b$10$99yNJO0iNNrBQQ0iitLdfeyP1FJEGJZHcPjgkM5mTlSPZWxGYhGUi"
+    "password": "Ahimsa8*",
+    "roleSuperAdmin": false,
+    "sendEmails": true,
+    "sendTexts": true
   }
 ]

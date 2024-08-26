@@ -264,3 +264,33 @@ export const SIGN_SERVICE_AGREEMENT = gql`
     }
   }
 `;
+
+export const ADD_SERVICE = gql`
+  mutation AddService($providerId: ID!, $productId: ID!, $price: Float!) {
+    addService(providerId: $providerId, productId: $productId, price: $price) {
+      message
+      service {
+        _id
+        product {
+          _id
+          name
+          price
+        }
+        price
+        provider {
+          _id
+          user {
+            _id
+            fullName
+          }
+          abn
+          address
+          providerName
+          createdAt
+          updatedAt
+        }
+      }
+      success
+    }
+  }
+`;

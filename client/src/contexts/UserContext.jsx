@@ -12,7 +12,7 @@ export const UserProvider = ({ children }) => {
   const profile = AuthService.getProfile();
 
   const userId = profile?.authenticatedPerson?._id || null;
-  console.log("userId", userId);
+
   const { loading, error, data } = useQuery(QUERY_USER_BY_ID, {
     variables: { id: userId },
     skip: !userId, // Skip query if no userId is available
