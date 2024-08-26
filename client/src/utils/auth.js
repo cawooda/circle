@@ -36,6 +36,23 @@ class AuthService {
     // Retrieves the user token from localStorage
     return localStorage.getItem("id_token");
   }
+  async smsLinkLogin(userData) {
+    if (userData.mobile) {
+      const response = await fetch("/api/users", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...userData, link: true }),
+      });
+      if (response.ok) {
+        const res = await response.json();
+        return res;
+      }
+    } else {
+      return null;
+    }
+  }
 
   async resetPassword(userData) {
     if (userData.mobile) {
@@ -44,7 +61,7 @@ class AuthService {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(userData),
+        body: JSON.stringify({ ...userData, link: true }),
       });
       if (response.ok) {
         const res = await response.json();
@@ -75,13 +92,13 @@ class AuthService {
     }
   }
 
-  async loginUser(userData) {
+  async loginUser(userData, authLink) {
     const response = await fetch("/api/users", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(userData),
+      body: JSON.stringify({ ...userData, authLink: true }),
     });
 
     if (response.ok) {
@@ -92,6 +109,22 @@ class AuthService {
     return response;
   }
 
+  async verifySmsCode(code) {
+    const response = await fetch("/api/users", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ authLinkNumber: code }),
+    });
+
+    if (response.ok) {
+      const res = await response.json();
+      localStorage.setItem("id_token", res.user.token);
+      return res;
+    }
+    return response;
+  }
   logout() {
     // Clear user token and profile data from localStorage
     localStorage.removeItem("id_token");

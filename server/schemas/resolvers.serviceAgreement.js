@@ -1,4 +1,13 @@
+const path = require("path");
+const dayjs = require("dayjs");
+const { generateRandomNumber } = require("../utils/helpers");
+const { convertToPdf } = require("../utils/pdfUtility");
+const { EMAILService } = require("../utils/mailer");
+const userEmailService = new EMAILService();
+
 const { User, Product, ServiceAgreement } = require("../models");
+
+const { renderTemplate } = require("../templates/renderTemplate");
 module.exports = {
   getServiceAgreements: async (_parent, { userId }, context) => {
     try {
@@ -96,20 +105,21 @@ module.exports = {
       const product = signedServiceAgreement?.product;
       const startDate = signedServiceAgreement?.startDate;
 
+      //makes use of the renderTemlate function to use a template to display the signedServiceagreement
       const renderedHtml = renderTemplate(
         signedServiceAgreement.toObject(),
         "template"
-      ); // Ensure the template file name matches
-
+      );
+      //set the outputPath for the service agreement to be saved and then sent
       const outputPath = path.join(
         __dirname,
         `../customerData/agreements/${providerName}-${first}-${last}/ServiceAgreement-${providerName}-${first}-${last}-${dayjs(
           startDate
         ).format("DD-MM-YYYY")}-${generateRandomNumber(1, 3000000)}.pdf`
       );
-
+      //convert it to pdf, saving at the outputPath
       const pdfPath = await convertToPdf(renderedHtml, outputPath);
-
+      //find the customer to email to them.
       const customerUser = await User.findById(
         signedServiceAgreement.customer.user._id
       );
@@ -118,13 +128,20 @@ module.exports = {
         { subject: "New Service Agreement", first, providerName, product },
         "emailTemplate"
       );
-      customerUser.sendEmail(
+      userEmailService.sendEmail(
         "A new Service Agreement has Arrived",
         ``,
         renderedEmail,
         "/",
         outputPath
       );
+      // customerUser.sendEmail(
+      //   "A new Service Agreement has Arrived",
+      //   ``,
+      //   renderedEmail,
+      //   "/",
+      //   outputPath
+      // );
 
       signedServiceAgreement.agreementPath = pdfPath;
       await signedServiceAgreement.save();

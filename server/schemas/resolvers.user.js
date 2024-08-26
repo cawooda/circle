@@ -1,3 +1,5 @@
+const { EMAILService } = require("../utils/mailer");
+const userEmailService = new EMAILService();
 const {
   User,
   Admin,
@@ -21,6 +23,7 @@ module.exports = {
     } else return { message: "user needs to be admin to perform this action" };
   },
   getMe: async (_parent, {}, context) => {
+    console.log("get me");
     const user = await User.findById(context.user._id)
       .populate("roleCustomer")
       .populate("roleProvider")
@@ -195,18 +198,23 @@ module.exports = {
           email: email,
         });
         await updatedUser.save();
-        await updatedUser.sendEmail(
+
+        await userEmailService.sendEmail(
+          updatedUser.email,
           "Profile updated",
+          `Hi ${first}, we have updated your profile. Have a great day :)
+            `,
           `Hi ${first}, we have updated your profile`,
           `<p>Hi ${first}, we have updated your profile</p>
-            <h2>firstName:</h2>
-            <h3>${first}</h2>
-            <h2>Last Name:</h2>
-            <h3> ${last}</h2>
-            <h2>mobile:</h2><h3> ${mobile}</h2>
-            <h2>email:</h2><h3> ${email}</h2>            
-            `,
-          `/`
+            <h3>firstName:</h3>
+            <h4>${first}</h4>
+            <h3>Last Name:</h3>
+            <h4> ${last}</h4>
+            <h3>mobile:</h3>
+            <h4> ${mobile}</h4>
+            <h3>email:</h3>
+            <h4> ${email}</h4>            
+            `
         );
       }
 
