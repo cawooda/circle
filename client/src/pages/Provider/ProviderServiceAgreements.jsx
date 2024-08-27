@@ -6,11 +6,6 @@ import { useUser } from "../../contexts/UserContext";
 export default function ProviderServiceAgreements() {
   const { user, loading, error } = useUser();
 
-  useEffect(() => {
-    console.log("user", user);
-    console.log("user.serviceagreements", user.serviceAgreements[1]);
-  }, [user]);
-
   return (
     <div>
       {user?.serviceAgreements?.length > 0 ? (

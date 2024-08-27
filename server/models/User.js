@@ -153,7 +153,7 @@ userSchema.pre("save", async function (next) {
 
 userSchema.methods.sendAuthLink = async function () {
   this.authLinkNumber = generateRandomNumber(1000, 9999);
-  const host = process.env.HOST || `http://localhost:${process.env.PORT}`; // Get the host (hostname:port)
+  const host = process.env.HOST || `http://localhost:3000`; // Get the host (hostname:port)
   const fullUrl = `${host}/auth/${this.authLinkNumber}`;
 
   await this.sendMessage(
@@ -166,7 +166,7 @@ userSchema.methods.sendAuthLink = async function () {
 
 userSchema.methods.sendMessage = async function (subject, body, html) {
   try {
-    await userSmsService.sendText(this.mobile, body);
+    if (this.sendTexts) await userSmsService.sendText(this.mobile, body);
   } catch (error) {
     throw new Error("sms service in user schema send message errorred", error);
   }
@@ -195,7 +195,6 @@ userSchema.methods.sendEmail = async function (
         html,
         attachment || null
       );
-      console.log("Email sent successfully:", messageSent);
       return { message: messageSent };
     } catch (error) {
       console.error("Error sending email:", error);

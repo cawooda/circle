@@ -81,7 +81,6 @@ class AuthService {
         body: JSON.stringify(userData),
       });
       if (response.ok) {
-        console.log("response OK");
         const res = await response.json();
         localStorage.setItem("id_token", res.user.token);
         return res;

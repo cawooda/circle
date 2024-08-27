@@ -23,7 +23,6 @@ module.exports = {
     } else return { message: "user needs to be admin to perform this action" };
   },
   getMe: async (_parent, {}, context) => {
-    console.log("get me");
     const user = await User.findById(context.user._id)
       .populate("roleCustomer")
       .populate("roleProvider")
@@ -55,8 +54,6 @@ module.exports = {
       });
 
       user.serviceAgreements = serviceAgreements;
-
-      console.log(user.serviceAgreements[1]); // Ensure fullName is correct here
 
       return user;
     } else {
@@ -177,7 +174,6 @@ module.exports = {
           throw new Error("Invalid role");
       }
 
-      console.log("Updated user:", user);
       return user;
     } catch (error) {
       console.error("Error in toggleUserRole:", error);
@@ -185,7 +181,6 @@ module.exports = {
     }
   },
   updateProfile: async (_parent, { userId, first, last, mobile, email }) => {
-    console.log("update user resolver reached");
     try {
       const updatedUser = await User.findById(userId);
       if (!updatedUser) {

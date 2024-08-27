@@ -31,7 +31,7 @@ class SMSService {
       body: raw,
       redirect: "follow",
     };
-    console.log(process.env.TESTING_AVOID_SMS);
+
     if (!process.env.TESTING_AVOID_SMS) {
       fetch(process.env.CLICK_SEND_URL_SEND_ENDPOINT, requestOptions)
         .then((response) => response.text())

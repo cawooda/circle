@@ -82,11 +82,9 @@ const SigninForm = () => {
   };
 
   const handleCodeSubmit = async (code) => {
-    console.log("handleCode");
     try {
-      console.log("handleCode");
       const response = await AuthService.verifySmsCode(code);
-      console.log(response);
+
       if (response.user) {
         setUser(response.user);
         navigate("/");
@@ -115,7 +113,7 @@ const SigninForm = () => {
         }
       } else {
         const response = await AuthService.signUpUser(userFormData);
-        console.log(userFormData);
+
         if (!response.user) {
           setMessage(response.message); // Set the error message
         } else {

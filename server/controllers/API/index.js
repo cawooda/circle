@@ -7,13 +7,21 @@ const controllerSmsService = new SMSService();
 
 async function setupUserLink(req, res, mobile, link) {
   try {
-    userExists = await User.findOne({ mobile: mobile })
-      .populate("roleCustomer")
-      .populate("roleProvider")
-      .populate("roleAdmin");
-
+    userExists = await User.findOne({ mobile: mobile }).populate([
+      { path: "roleCustomer" },
+      { path: "roleProvider" },
+      { path: "roleAdmin" },
+    ]);
+    if (!userExists) {
+      res.status(400).json({
+        userExists: false,
+        userCreated: false,
+        linkSent: false,
+        message: "We cant find that phone number. Did you sign up?",
+      });
+      return;
+    }
     userExists.generateAuthToken(`30s`);
-
     const authNumber = await userExists.sendAuthLink();
     userExists.save();
 
@@ -22,7 +30,7 @@ async function setupUserLink(req, res, mobile, link) {
       userCreated: false,
       linkSent: true,
       authNumber: authNumber,
-      message: "We sent a login link and auth number to the user",
+      message: "We sent a login link and auth number to log in with",
     });
   } catch (error) {
     console.log(error);
@@ -38,7 +46,7 @@ router.put("/users", async (req, res) => {
     const userExists = await User.findOne({ authLinkNumber: authLinkNumber });
     if (userExists) {
       await userExists.generateAuthToken();
-      console.log(userExists);
+
       await userExists.populate([
         { path: "roleCustomer" },
         { path: "roleProvider" },
@@ -48,15 +56,18 @@ router.put("/users", async (req, res) => {
       res
         .status(200)
         .json({ userExists: true, userCreated: false, user: userExists });
-      return;
     } else {
       res.status(401).json({
         userExists: false,
         userCreated: false,
         message: "that code didnt match any user or auth code",
       });
-      return;
     }
+    await User.updateMany(
+      { authLinkNumber: { $ne: null } },
+      { authLinkNumber: null }
+    );
+    return;
   }
   if (link) {
     setupUserLink(req, res, mobile, link);
@@ -82,6 +93,7 @@ router.put("/users", async (req, res) => {
           userCreated: false,
           message: "We think the password wasnt right... sorry",
         });
+        return;
       }
     } else {
       res.status(401).json({

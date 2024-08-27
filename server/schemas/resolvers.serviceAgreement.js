@@ -14,7 +14,7 @@ module.exports = {
       const user = await User.findById(context.user._id);
       await user.populate("roleProvider", "roleCustomer");
       const allServiceAgreements = await ServiceAgreement.find();
-      // console.log(allServiceAgreements);
+
       const serviceAgreements = await ServiceAgreement.find({
         $or: [{ provider: user.roleProvider }, { customer: user.roleCustomer }],
       })
