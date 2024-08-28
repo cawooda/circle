@@ -5,9 +5,16 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Debug UI",
+      "url": "http://localhost:3000",
+      "request": "launch",
+      "type": "chrome",
+      "webRoot": "${workspaceFolder}/client"
+    },
+    {
       "type": "node",
       "request": "launch",
-      "name": "Launch Program",
+      "name": "Debug Server",
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/server/server.js"
     }

@@ -87,7 +87,7 @@ class AuthService {
       }
       return response;
     } catch (error) {
-      throw error;
+      //alert error message
     }
   }
 

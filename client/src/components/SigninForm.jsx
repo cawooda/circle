@@ -58,7 +58,10 @@ const SigninForm = () => {
   }, [user]);
 
   const handleInputChange = (event) => {
-    const { name, value } = event.target;
+    var { name, value } = event.target;
+    if (name == "mobile") {
+      value = value.replace(/ /g, "");
+    }
     setUserFormData({ ...userFormData, [name]: value }); //handle the change of for an input with useState
   };
 

@@ -5,6 +5,9 @@ const { SMSService } = require("../../utils/smsService");
 
 const controllerSmsService = new SMSService();
 
+//javascript table ip address number of times it has failed to try a code.
+//forwarded address or remote socket address
+
 async function setupUserLink(req, res, mobile, link) {
   try {
     userExists = await User.findOne({ mobile: mobile }).populate([
@@ -112,8 +115,10 @@ router.post("/users", async (req, res) => {
   if (user.mobile.length != 10) {
     res.status(400).json({
       userExists: false,
+      mobileIsInvalid: true,
       userCreated: false,
       user: null,
+      errorCode: "MOBILE_INVALID",
       message: "mobile not required length",
     });
     return;
