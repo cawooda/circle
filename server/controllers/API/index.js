@@ -8,7 +8,7 @@ const controllerSmsService = new SMSService();
 //javascript table ip address number of times it has failed to try a code.
 //forwarded address or remote socket address
 
-async function setupUserLink(req, res, mobile, link) {
+async function setupUserLink(req, res, mobile) {
   try {
     userExists = await User.findOne({ mobile: mobile }).populate([
       { path: "roleCustomer" },
@@ -42,7 +42,7 @@ async function setupUserLink(req, res, mobile, link) {
 }
 
 router.put("/users", async (req, res) => {
-  const { mobile, link, authLinkNumber } = req.body;
+  const { mobile, linkRequest, authLinkNumber } = req.body;
   //this needs to manage a request that has link:true. This would be a case where the user shouldnt be logged in but a working
   //route configured that would sign the user in without password.
   if (authLinkNumber) {
@@ -72,8 +72,8 @@ router.put("/users", async (req, res) => {
     );
     return;
   }
-  if (link) {
-    setupUserLink(req, res, mobile, link);
+  if (linkRequest) {
+    setupUserLink(req, res, mobile);
     return;
   }
   try {

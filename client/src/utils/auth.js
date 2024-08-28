@@ -43,7 +43,7 @@ class AuthService {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...userData, link: true }),
+        body: JSON.stringify({ ...userData, linkRequest: true }),
       });
       if (response.ok) {
         const res = await response.json();
@@ -91,13 +91,13 @@ class AuthService {
     }
   }
 
-  async loginUser(userData, authLink) {
+  async loginUser(userData) {
     const response = await fetch("/api/users", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ ...userData, authLink: true }),
+      body: JSON.stringify({ ...userData }),
     });
 
     if (response.ok) {

@@ -106,7 +106,6 @@ const SigninForm = () => {
       if (!signup) {
         const response = await AuthService.loginUser({
           ...userFormData,
-          authLink: true,
         });
         if (!response.user) {
           setMessage(response.message); // Set the error message
