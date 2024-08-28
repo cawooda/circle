@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import {
   Button,
+  Text,
   Flex,
   Input,
   FormLabel,
@@ -27,7 +28,7 @@ import {
   ButtonStyles,
   ButtonHighlightStyle,
 } from "../components/styles/ButtonStyle";
-
+import SmsCodeModal from "./SmsCodeModal"; // Import the new modal component
 import { InputStyles } from "./styles/InputStyles";
 
 import logo from "/logo.png";
@@ -44,6 +45,12 @@ const SigninForm = () => {
     password: "",
   });
 
+  const {
+    isOpen: isSmsModalOpen,
+    onOpen: onSmsModalOpen,
+    onClose: onSmsModalClose,
+  } = useDisclosure();
+
   useEffect(() => {
     if (!user) {
       onOpen();
@@ -55,26 +62,37 @@ const SigninForm = () => {
     setUserFormData({ ...userFormData, [name]: value }); //handle the change of for an input with useState
   };
 
-  const handlePasswordHelp = async (event) => {
-    console.log("handlepasswordhelp");
+  const handleSMSlinkLogin = async (event) => {
     event.preventDefault();
-
-    if (userFormData.mobile.length == 10) {
+    if (userFormData.mobile.length === 10) {
       try {
-        const response = await AuthService.resetPassword(userFormData);
-
-        if (!response.user) {
-          setMessage(response.message); // Set the error message
+        const response = await AuthService.smsLinkLogin(userFormData);
+        if (response.linkSent) {
+          setMessage("We sent you a link to login with.");
+          onSmsModalOpen(); // Open the SMS code modal
         } else {
-          setUser(response.user);
-          onClose();
+          setMessage("Failed to send the link. Please try again.");
         }
       } catch (error) {
-        console.error("Error received trying to create new userAuth", error);
-        throw error;
+        setMessage("An error occurred. Please try again.");
       }
     } else {
-      setMessage("add your mobile to reset password");
+      setMessage("Please enter a valid mobile number.");
+    }
+  };
+
+  const handleCodeSubmit = async (code) => {
+    try {
+      const response = await AuthService.verifySmsCode(code);
+
+      if (response.user) {
+        setUser(response.user);
+        navigate("/");
+      } else {
+        throw new Error("Invalid code");
+      }
+    } catch (error) {
+      throw error;
     }
   };
 
@@ -83,7 +101,10 @@ const SigninForm = () => {
     event.preventDefault();
     try {
       if (!signup) {
-        const response = await AuthService.loginUser(userFormData);
+        const response = await AuthService.loginUser({
+          ...userFormData,
+          authLink: true,
+        });
         if (!response.user) {
           setMessage(response.message); // Set the error message
         } else {
@@ -92,7 +113,7 @@ const SigninForm = () => {
         }
       } else {
         const response = await AuthService.signUpUser(userFormData);
-        console.log(userFormData);
+
         if (!response.user) {
           setMessage(response.message); // Set the error message
         } else {
@@ -135,15 +156,14 @@ const SigninForm = () => {
           <ModalHeader>
             <Center>
               <VStack>
-                <Heading>Signup</Heading>
                 <Image src={logo} boxSize="100px" />
+                <Center>
+                  <Heading>{signup ? "Signup" : "Login"}</Heading>
+                </Center>
               </VStack>
             </Center>
           </ModalHeader>
           <ModalCloseButton />
-          <Button onClick={() => setSignup(!signup)}>
-            {signup ? "Login" : "Signup"}
-          </Button>
           <ModalBody>
             <Flex direction="column" align="center" justify="center">
               <FormControl as="form" onSubmit={handleFormSubmit}>
@@ -204,8 +224,8 @@ const SigninForm = () => {
                 <FormLabel htmlFor="password">Password</FormLabel>
                 <InputGroup>
                   <InputRightElement width="4.5rem">
-                    <Button h="1.75rem" size="sm" onClick={handlePasswordHelp}>
-                      Help
+                    <Button h="1.75rem" size="sm" onClick={handleSMSlinkLogin}>
+                      SMS
                     </Button>
                   </InputRightElement>
                   <Input
@@ -237,11 +257,22 @@ const SigninForm = () => {
                     Go
                   </Button>
                 </Container>
+                <Center>
+                  <Text>{signup ? "Already Signed Up?" : "No Account?"}</Text>
+                  <Button width="20%" onClick={() => setSignup(!signup)}>
+                    {signup ? "Login" : "Signup"}
+                  </Button>
+                </Center>
               </FormControl>
             </Flex>
           </ModalBody>
         </ModalContent>
       </Modal>
+      <SmsCodeModal
+        isOpen={isSmsModalOpen}
+        onClose={onSmsModalClose}
+        onSubmit={handleCodeSubmit}
+      />
     </>
   );
 };

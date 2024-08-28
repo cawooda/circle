@@ -12,7 +12,7 @@ const menu = [
 
 export default function CustomerLayout() {
   const { user, setUser, loading, error } = useUser();
-  console.log("user", user);
+
   return (
     <>
       <SubMenu items={menu} />

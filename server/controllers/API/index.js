@@ -5,29 +5,104 @@ const { SMSService } = require("../../utils/smsService");
 
 const controllerSmsService = new SMSService();
 
-router.put("/users", async (req, res) => {
-  const { mobile } = req.body;
-
+async function setupUserLink(req, res, mobile, link) {
   try {
-    const userExists = await User.findOne({ mobile: req.body.mobile });
-
-    if (userExists) {
-      await userExists.sendAuthLink();
-      res.status(401).json({
-        userExists: true,
+    userExists = await User.findOne({ mobile: mobile }).populate([
+      { path: "roleCustomer" },
+      { path: "roleProvider" },
+      { path: "roleAdmin" },
+    ]);
+    if (!userExists) {
+      res.status(400).json({
+        userExists: false,
         userCreated: false,
-        authLinkSent: true,
-        message: "auth link Sent",
+        linkSent: false,
+        message: "We cant find that phone number. Did you sign up?",
       });
+      return;
+    }
+    userExists.generateAuthToken(`30s`);
+    const authNumber = await userExists.sendAuthLink();
+    userExists.save();
+
+    res.status(200).json({
+      userExists: true,
+      userCreated: false,
+      linkSent: true,
+      authNumber: authNumber,
+      message: "We sent a login link and auth number to log in with",
+    });
+  } catch (error) {
+    console.log(error);
+    throw new Error(error);
+  }
+}
+
+router.put("/users", async (req, res) => {
+  const { mobile, link, authLinkNumber } = req.body;
+  //this needs to manage a request that has link:true. This would be a case where the user shouldnt be logged in but a working
+  //route configured that would sign the user in without password.
+  if (authLinkNumber) {
+    const userExists = await User.findOne({ authLinkNumber: authLinkNumber });
+    if (userExists) {
+      await userExists.generateAuthToken();
+
+      await userExists.populate([
+        { path: "roleCustomer" },
+        { path: "roleProvider" },
+        { path: "roleAdmin" },
+      ]);
+      await userExists.save();
+      res
+        .status(200)
+        .json({ userExists: true, userCreated: false, user: userExists });
     } else {
       res.status(401).json({
         userExists: false,
         userCreated: false,
-        message: "user doesent exist",
+        message: "that code didnt match any user or auth code",
+      });
+    }
+    await User.updateMany(
+      { authLinkNumber: { $ne: null } },
+      { authLinkNumber: null }
+    );
+    return;
+  }
+  if (link) {
+    setupUserLink(req, res, mobile, link);
+    return;
+  }
+  try {
+    const userExists = await User.findOne({ mobile: req.body.mobile });
+
+    if (userExists) {
+      if (await userExists.isCorrectPassword(req.body.password)) {
+        await userExists.generateAuthToken();
+        await userExists
+          .populate("roleCustomer")
+          .populate("roleProvider")
+          .populate("roleAdmin");
+        await userExists.save();
+        res
+          .status(200)
+          .json({ userExists: true, userCreated: false, user: userExists });
+      } else {
+        res.status(401).json({
+          userExists: true,
+          userCreated: false,
+          message: "We think the password wasnt right... sorry",
+        });
+        return;
+      }
+    } else {
+      res.status(401).json({
+        userExists: false,
+        userCreated: false,
+        message: "We think the user doesent yet exist. Have you signed up?",
       });
     }
   } catch (error) {
-    console.log(error);
     throw new Error();
   }
 });

@@ -2,9 +2,6 @@ const path = require("path");
 const dayjs = require("dayjs");
 const { ServiceAgreement } = require("../models");
 
-const { renderTemplate } = require("../templates/renderTemplate");
-const { convertToPdf } = require(".././utils/pdfUtility");
-
 //handling SMS for this resolver
 
 const { generateRandomNumber } = require("../utils/helpers");

@@ -33,6 +33,8 @@ import {
   ProviderShifts,
   ProviderInvoices,
 } from "./pages/Provider";
+import AuthLink from "./AuthLink";
+import UserVerify from "./pages/UserVerify";
 import AuthReset from "./pages/AuthReset";
 <pages></pages>;
 
@@ -47,6 +49,11 @@ const router = createBrowserRouter([
     children: [
       { path: ":agreementNumber", element: <CustomerServiceAgreement /> },
     ],
+  },
+  {
+    path: "auth",
+    element: <AuthLink />,
+    children: [{ path: ":authLinkNumber", element: <UserVerify /> }],
   },
   {
     path: "/",

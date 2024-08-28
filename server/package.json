@@ -5,8 +5,9 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "watch": "nodemon server.js",
-    "seed": "node seeders/seed.js"
+    "watch": "nodemon server.js && npm test",
+    "seed": "node seeders/seed.js",
+    "test": "jest --watch"
   },
   "dependencies": {
     "@apollo/server": "^4.10.4",
@@ -23,12 +24,13 @@
     "morgan": "^1.10.0",
     "node-fetch": "^3.3.2",
     "nodemailer": "^6.9.14",
-    "puppeteer": "^23.0.1",
     "puppeteer-core": "23.0.1",
     "validator": "^13.12.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.9"
+    "jest-puppeteer": "^10.1.0",
+    "nodemon": "^2.0.9",
+    "puppeteer": "^23.1.1"
   },
   "repository": {
     "type": "git",

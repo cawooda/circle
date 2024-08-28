@@ -1,3 +1,5 @@
+const { EMAILService } = require("../utils/mailer");
+const userEmailService = new EMAILService();
 const {
   User,
   Admin,
@@ -52,8 +54,6 @@ module.exports = {
       });
 
       user.serviceAgreements = serviceAgreements;
-
-      console.log(user.serviceAgreements[1]); // Ensure fullName is correct here
 
       return user;
     } else {
@@ -174,7 +174,6 @@ module.exports = {
           throw new Error("Invalid role");
       }
 
-      console.log("Updated user:", user);
       return user;
     } catch (error) {
       console.error("Error in toggleUserRole:", error);
@@ -182,7 +181,6 @@ module.exports = {
     }
   },
   updateProfile: async (_parent, { userId, first, last, mobile, email }) => {
-    console.log("update user resolver reached");
     try {
       const updatedUser = await User.findById(userId);
       if (!updatedUser) {
@@ -195,18 +193,23 @@ module.exports = {
           email: email,
         });
         await updatedUser.save();
-        await updatedUser.sendEmail(
+
+        await userEmailService.sendEmail(
+          updatedUser.email,
           "Profile updated",
+          `Hi ${first}, we have updated your profile. Have a great day :)
+            `,
           `Hi ${first}, we have updated your profile`,
           `<p>Hi ${first}, we have updated your profile</p>
-            <h2>firstName:</h2>
-            <h3>${first}</h2>
-            <h2>Last Name:</h2>
-            <h3> ${last}</h2>
-            <h2>mobile:</h2><h3> ${mobile}</h2>
-            <h2>email:</h2><h3> ${email}</h2>            
-            `,
-          `/`
+            <h3>firstName:</h3>
+            <h4>${first}</h4>
+            <h3>Last Name:</h3>
+            <h4> ${last}</h4>
+            <h3>mobile:</h3>
+            <h4> ${mobile}</h4>
+            <h3>email:</h3>
+            <h4> ${email}</h4>            
+            `
         );
       }
 

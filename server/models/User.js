@@ -151,15 +151,27 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.methods.sendMessage = async function (body, endpoint) {
+userSchema.methods.sendAuthLink = async function () {
+  this.authLinkNumber = generateRandomNumber(1000, 9999);
+  const host = process.env.HOST || `http://localhost:3000`; // Get the host (hostname:port)
+  const fullUrl = `${host}/auth/${this.authLinkNumber}`;
+
+  await this.sendMessage(
+    `Circle Login Link`,
+    `<p>Logging in is easy with the following link: ${fullUrl} CODE: ${this.authLinkNumber}  :)`,
+    `<p>Logging in is easy with the following link. </p><p>${fullUrl}</p> <p>Your Temporary Access Code is :</p> <h3>${this.authLinkNumber} </h3>  :)`
+  );
+  return this.authLinkNumber;
+};
+
+userSchema.methods.sendMessage = async function (subject, body, html) {
   try {
-    await userSmsService.sendText(this.mobile, body, endpoint || "");
+    if (this.sendTexts) await userSmsService.sendText(this.mobile, body);
   } catch (error) {
     throw new Error("sms service in user schema send message errorred", error);
   }
   try {
-    if (this.email)
-      await this.sendEmail("subject", body, `<p>text</p>`, endpoint);
+    if (this.email) await this.sendEmail(subject, body, html);
   } catch (error) {
     throw new Error(
       "email service in user schema send message errorred",
@@ -172,7 +184,6 @@ userSchema.methods.sendEmail = async function (
   subject,
   text,
   html,
-  endpoint,
   attachment
 ) {
   if (this.email) {
@@ -184,7 +195,6 @@ userSchema.methods.sendEmail = async function (
         html,
         attachment || null
       );
-      console.log("Email sent successfully:", messageSent);
       return { message: messageSent };
     } catch (error) {
       console.error("Error sending email:", error);
@@ -193,16 +203,6 @@ userSchema.methods.sendEmail = async function (
   } else {
     throw new Error("No email found for user");
   }
-};
-
-userSchema.methods.sendAuthLink = async function () {
-  this.authLinkNumber = generateRandomNumber(100, 4000);
-  await userSmsService.sendText(
-    this.mobile,
-    `Resetting your login is as easy as clicking a link :)
-        `,
-    `/reset/${this.authLinkNumber}`
-  );
 };
 
 userSchema.methods.isCorrectPassword = async function (password) {
@@ -214,7 +214,9 @@ userSchema.methods.isCorrectPassword = async function (password) {
 };
 
 // Method to generate JWT token
-userSchema.methods.generateAuthToken = function () {
+userSchema.methods.generateAuthToken = function (
+  expiresIn = process.env.TOKEN_EXPIRES_IN
+) {
   const user = {
     authenticatedPerson: {
       _id: this._id,

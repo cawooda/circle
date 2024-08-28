@@ -15,7 +15,6 @@ export default function UsersAdmin() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    console.log(e);
   }
 
   return (

@@ -15,5 +15,8 @@
   "dependencies": {
     "concurrently": "^8.2.2",
     "puppeteer": "^23.0.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }
