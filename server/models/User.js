@@ -110,7 +110,7 @@ userSchema.pre("save", async function (next) {
 
   if (!this.roleProvider && process.env.TESTING) {
     try {
-      const newProvider = Provider.create({
+      const newProvider = new Provider({
         abn: process.env.TESTING
           ? require("../utils/helpers").generateRandomNumber(
               9999999999,
