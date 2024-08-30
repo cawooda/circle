@@ -10,22 +10,43 @@ import {
 } from "@chakra-ui/react";
 import { DisplayStyles, InputStyles } from "./styles/InputStyles";
 import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
-import { useMutation } from "@apollo/client";
-import { TOGGLE_USER_ROLE, UPDATE_USER_PROFILE } from "../utils/mutations";
+import { useUser } from "../contexts/UserContext";
+// import { useMutation } from "@apollo/client";
+// import { TOGGLE_USER_ROLE, UPDATE_USER_PROFILE } from "../utils/mutations";
 
-export default function ServiceAgreementRow({ agreement, index, userId }) {
-  //variables to manage state
+export default function ServiceAgreementRow({ agreement, index }) {
+  const { user, loading, error } = useUser();
+  if (!user) {
+    return null; // Don't render anything if user is not available
+  }
+
+  console.log("Received user:", user); // Ensure user is received correctly
+  console.log("Received agreement:", agreement); // Ensure agreement is received correctly
+
+  // Safely destructure agreement properties
+  const provider = agreement.provider || {};
+  const customer = agreement.customer || {};
+  const customerUser = customer.user || {};
+  const fullName = customerUser.fullName || "N/A"; // Fallback if fullName is undefined
+
+  const product = agreement.product || {};
+  const service = agreement.service || {};
+
+  // Provide default text if product is null
+  const productName = product ? product.name : "No product name";
+  const serviceName = service ? service.name : "No service name";
+
   const [formData, setFormData] = useState({
-    _id: userId,
-    provider: agreement.provider,
-    customer: agreement.customer.user.fullName,
-    startDate: agreement.startDate,
-    product: agreement.product?.name,
-    service: agreement?.service?.product?.name,
-    quantity: agreement.quantity,
-    endDate: agreement.endDate,
-    totaPrice: agreement.totalPrice,
-    approvedByCustomer: agreement.approvedByCustomer,
+    _id: user._id || "", // Ensure a safe fallback
+    provider: provider.providerName || "",
+    customer: fullName || "",
+    startDate: agreement.startDate || "",
+    product: productName,
+    service: serviceName,
+    quantity: agreement.quantity || 0,
+    endDate: agreement.endDate || "",
+    totalPrice: agreement.totalPrice || 0,
+    approvedByCustomer: agreement.approvedByCustomer || false,
   });
 
   //Change handler
@@ -47,100 +68,61 @@ export default function ServiceAgreementRow({ agreement, index, userId }) {
     });
   };
 
+  //Form Fields
+  const fields = [
+    { label: "ID", name: "_id", readOnly: true },
+    { label: "Customer", name: "customer" },
+    { label: "Product", name: "product" },
+    { label: "Service", name: "service" },
+    { label: "Quantity", name: "quantity" },
+    { label: "Total Price", name: "totalPrice" },
+  ];
+
   return (
-    <>
-      <form onSubmit={handleSubmit}>
-        <FormControl wrap="wrap">
-          <Flex
-            key={index}
-            p={2}
-            gap={2}
-            borderWidth={2}
-            borderRadius="lg"
-            boxShadow="sm"
-            wrap="wrap"
-            m={2}
-          >
-            <Box>
-              <FormLabel>ID</FormLabel>
+    <form onSubmit={handleSubmit}>
+      <FormControl wrap="wrap">
+        <Flex
+          key={index}
+          p={2}
+          gap={2}
+          borderWidth={2}
+          borderRadius="lg"
+          boxShadow="sm"
+          wrap="wrap"
+          m={2}
+        >
+          {fields.map((field, index) => (
+            <Box key={index}>
+              <FormLabel>{field.label}</FormLabel>
               <Input
-                {...DisplayStyles}
-                name="_id"
-                readOnly
-                value={formData._id}
-                onInput={handleChange}
-              ></Input>
-            </Box>
-            <Box>
-              <FormLabel>Customer</FormLabel>
-              <Input
-                {...InputStyles}
-                name="customer"
-                value={formData.customer}
+                {...(field.readOnly ? DisplayStyles : InputStyles)}
+                name={field.name}
+                value={formData[field.name]}
                 onChange={handleChange}
-              ></Input>
+                readOnly={field.readOnly}
+              />
             </Box>
+          ))}
+          <Flex borderRadius={1} borderWidth={1} padding={3}>
             <Box>
-              <FormLabel>Product</FormLabel>
-              <Input
-                {...InputStyles}
-                name="product"
-                value={formData.product}
+              <FormLabel htmlFor={`approved-switch-${index}`} mb="0">
+                Approved By Customer
+              </FormLabel>
+              <Switch
+                id={`approved-switch-${index}`}
+                name="approvedByCustomer"
+                isChecked={formData.approvedByCustomer}
                 onChange={handleChange}
-              ></Input>
-            </Box>
-            <Box>
-              <FormLabel>Service</FormLabel>
-              <Input
-                {...InputStyles}
-                name="service"
-                value={formData.service}
-                onChange={handleChange}
-              ></Input>
-            </Box>
-            <Box>
-              <FormLabel>Quantity</FormLabel>
-              <Input
-                {...InputStyles}
-                name="quantity"
-                value={formData.quantity}
-                onChange={handleChange}
-              ></Input>
-            </Box>
-            <Box>
-              <FormLabel>Total Price</FormLabel>
-              <Input
-                {...InputStyles}
-                name="quantity"
-                value={formData.quantity}
-                onChange={handleChange}
-              ></Input>
-            </Box>
-            <Flex borderRadius={1} borderWidth={1} padding={3}>
-              <Box>
-                <FormLabel htmlFor={`approvded-switch-${index}`} mb="0">
-                  Approved By Customer
-                </FormLabel>
-                <Switch
-                  id={`approvded-switch-${index}`}
-                  name="approvedByCustomer"
-                  isChecked={formData.approvedByCustomer}
-                />
-              </Box>
-            </Flex>
-            <Box alignSelf={"end"}>
-              <Button
-                type="submit"
-                onClick={handleSubmit}
-                {...ButtonStyles}
-                {...ButtonHighlightStyle}
-              >
-                Update
-              </Button>
+              />
             </Box>
           </Flex>
-        </FormControl>
-      </form>
-    </>
+          <Box alignSelf={"end"}>
+            <Button type="submit" {...ButtonStyles} {...ButtonHighlightStyle}>
+              Update
+            </Button>
+          </Box>
+        </Flex>
+      </FormControl>
+    </form>
   );
 }

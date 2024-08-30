@@ -10,6 +10,7 @@ export const useUser = () => useContext(UserContext);
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const profile = AuthService.getProfile();
+  console.log(profile);
 
   const userId = profile?.authenticatedPerson?._id || null;
 
@@ -19,6 +20,7 @@ export const UserProvider = ({ children }) => {
   });
 
   useEffect(() => {
+    console.log(data);
     if (data && data.getMe) {
       setUser(data.getMe);
     }

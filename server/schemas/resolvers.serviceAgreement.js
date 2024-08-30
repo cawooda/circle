@@ -128,20 +128,13 @@ module.exports = {
         { subject: "New Service Agreement", first, providerName, product },
         "emailTemplate"
       );
-      userEmailService.sendEmail(
+      to, subject, (text = ""), (html = ""), (attachment = "");
+      userEmailService.sendMail(
+        customerUser.email,
         "A new Service Agreement has Arrived",
-        ``,
         renderedEmail,
-        "/",
         outputPath
       );
-      // customerUser.sendEmail(
-      //   "A new Service Agreement has Arrived",
-      //   ``,
-      //   renderedEmail,
-      //   "/",
-      //   outputPath
-      // );
 
       signedServiceAgreement.agreementPath = pdfPath;
       await signedServiceAgreement.save();
@@ -151,6 +144,34 @@ module.exports = {
         `Error in signServiceAgreementsigned Service Agreement: `,
         error
       );
+      throw error;
+    }
+  },
+  getServiceAgreement: async (__parent, { agreementNumber }, context) => {
+    try {
+      const serviceAgreement = await ServiceAgreement.findOne({
+        agreementNumber: agreementNumber,
+      });
+      await serviceAgreement.populate({
+        path: "customer",
+        populate: { path: "user" },
+      });
+
+      await serviceAgreement.populate({
+        path: "provider",
+        populate: { path: "user" },
+      });
+      await serviceAgreement.populate("product");
+      // await serviceAgreement.populate({
+      //   path: "product",
+      //   populate: { path: "name price" },
+      // });
+
+      await serviceAgreement.toObject();
+
+      return serviceAgreement;
+    } catch (error) {
+      console.error(error);
       throw error;
     }
   },

@@ -187,7 +187,8 @@ export const QUERY_SERVICE_AGREEMENT = gql`
       customer {
         _id
         address
-        ndisNumber
+        referenceNumber
+        referenceName
         user {
           first
           last

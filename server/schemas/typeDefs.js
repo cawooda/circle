@@ -18,7 +18,8 @@ type User {
 type Customer {
     _id: ID!
     user: User!
-    ndisNumber: String
+    referenceNumber: String
+    referenceName: String
     address: String
     dateOfBirth: String
     customerSpecificField:String

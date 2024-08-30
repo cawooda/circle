@@ -21,7 +21,7 @@ export default function CustomerDisplay({ customer }) {
           {...DisplayStyles}
           name="ndisNumber"
           readOnly
-          value={customer.ndisNumber}
+          value={customer.referenceNumber}
         ></Input>
       </FormControl>
     </>

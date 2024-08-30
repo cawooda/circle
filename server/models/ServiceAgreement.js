@@ -48,7 +48,11 @@ const serviceAgreementSchema = new Schema(
 serviceAgreementSchema.pre("save", async function (next) {
   const serviceAgreement = this;
   serviceAgreement.populate("product");
-
+  setTimeout(() => {
+    console.log(`${this.agreementNumber} is now expired`);
+    this.agreementNumber = "expired";
+  }, 30 * 60 * 1000);
+  //expecting to set the time to expire in 30 minutes
   serviceAgreement.totalPrice = this.product.price * this.quantity;
   // Populate product details
 

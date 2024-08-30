@@ -15,12 +15,11 @@ import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
 import { QUERY_SERVICE_AGREEMENT } from "../../utils/queries";
-import { useUser } from "../../contexts/UserContext";
 
 import SignatureCanvas from "react-signature-canvas";
 
 import { SIGN_SERVICE_AGREEMENT } from "../../utils/mutations";
-import AuthService from "../../utils/auth";
+
 import {
   ButtonStyles,
   ButtonHighlightStyle,
@@ -117,13 +116,22 @@ export default function CustomerServiceAgreement() {
       />
     );
 
-  if (agreementQueryError)
+  if (agreementQueryError || agreementNumber === "expired") {
+    if (agreementNumber === "expired") {
+      return (
+        <Error
+          component="Customer Service Agreement"
+          message="agreement expired, sorry. For security we expire after 30 minutes... try again, please ask your provider to try again"
+        />
+      );
+    }
     return (
       <Error
         component="Customer Service Agreement"
         message="agreement query error... try again, please ask your provider to try again"
       />
     );
+  }
 
   return (
     <Container

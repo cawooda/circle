@@ -26,6 +26,7 @@ const {
   addServiceAgreement,
   signServiceAgreement,
   getServiceAgreements,
+  getServiceAgreement,
 } = require("./resolvers.serviceAgreement");
 
 const resolvers = {
@@ -39,47 +40,7 @@ const resolvers = {
     getServices: async (_parent, { providerId }, context) => {
       return providerServices;
     },
-    getServiceAgreement: async (__parent, { agreementNumber }, context) => {
-      try {
-        const serviceAgreement = await ServiceAgreement.findOne({
-          agreementNumber: agreementNumber,
-        });
-        await serviceAgreement.populate({
-          path: "customer",
-          populate: { path: "user" },
-        });
-        await serviceAgreement.populate({
-          path: "provider",
-          populate: { path: "user" },
-        });
-        await serviceAgreement.populate({
-          path: "product",
-          populate: { path: "name price" },
-        });
-
-        await serviceAgreement.toObject();
-        const stringedContextId = String(serviceAgreement?.customer?.user?._id);
-        const stringedCustomerUserId = String(
-          serviceAgreement.customer.user._id
-        );
-        const stringedProviderUserId = String(
-          serviceAgreement.provider.user._id
-        );
-
-        if (stringedCustomerUserId !== stringedContextId) {
-          if (stringedProviderUserId !== String(context.user._id)) {
-            throw new Error(
-              "user does not match the customer or provider of the agreement"
-            );
-          }
-        }
-
-        return serviceAgreement;
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
-    },
+    getServiceAgreement,
     getServiceAgreements,
   },
   Mutation: {
