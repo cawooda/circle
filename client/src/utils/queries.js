@@ -29,7 +29,8 @@ export const QUERY_ALL_USERS = gql`
       }
       roleCustomer {
         _id
-        ndisNumber
+        referenceNumber
+        referenceName
         address
         dateOfBirth
         customerSpecificField
@@ -66,7 +67,8 @@ export const QUERY_USER_BY_ID = gql`
           _id
           fullName
         }
-        ndisNumber
+        referenceNumber
+        referenceName
         address
         dateOfBirth
         customerSpecificField
@@ -96,7 +98,8 @@ export const QUERY_USER_BY_ID = gql`
             _id
             fullName
           }
-          ndisNumber
+          referenceNumber
+          referenceName
           address
           dateOfBirth
           customerSpecificField
@@ -136,7 +139,8 @@ export const QUERY_CUSTOMERS = gql`
   query Query {
     getCustomers {
       _id
-      ndisNumber
+      referenceNumber
+      referenceName
       address
       dateOfBirth
       customerSpecificField
@@ -248,7 +252,8 @@ export const QUERY_SERVICE_AGREEMENTS = gql`
             _id
             fullName
           }
-          ndisNumber
+          referenceNumber
+          referenceName
           address
           dateOfBirth
           customerSpecificField
