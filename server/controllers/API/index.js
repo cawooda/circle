@@ -155,7 +155,7 @@ router.post("/users", async (req, res) => {
       }
     } else {
       //wishing not to take more information than required from a user, this app allows registration with only mobile, however we use the below code to
-      //create dummy data for some fields
+
       const userCreated = await User.create({
         first: "firstName",
         last: "lastName",

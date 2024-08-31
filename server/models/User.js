@@ -30,10 +30,6 @@ const userSchema = new Schema(
     email: {
       type: String,
       toLowerCase: true,
-      // validate: {
-      //   validator: validator.isEmail,
-      //   message: "email did not pass validation",
-      // },
     },
     token: String,
     roleCustomer: {
@@ -93,11 +89,12 @@ userSchema
   });
 
 userSchema.pre("save", async function (next) {
-  if (!this.roleCustomer && process.env.TESTING) {
+  if (!this.roleCustomer) {
     try {
       const newCustomer = new Customer({
         user: this._id,
         ndisNumber: `${generateRandomNumber(9999999999, 10000000000)}`,
+        invoiceEmail: "default@default.com",
         address: "1 Street Name, Town, PostCode",
         dateOfBirth: "1999-07-07",
       });
