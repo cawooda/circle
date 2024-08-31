@@ -1,0 +1,30 @@
+[
+  {
+    "agreementNumber": "1001",
+    "provider": "66a0d9f4a0eb8627cc6320f7",
+    "customer": "66a0d9f4a0eb8627cc6320f4",
+    "startDate": "2024-08-20T00:00:00.000Z",
+    "endDate": "2025-08-20T00:00:00.000Z",
+    "customerSignature": null,
+    "providerSignature": null,
+    "product": "Product ID Here",
+    "service": null,
+    "quantity": 1,
+    "approvedByCustomer": false,
+    "agreementPath": null
+  },
+  {
+    "agreementNumber": "1002",
+    "provider": "66a0d9f4a0eb8627cc6320f8",
+    "customer": "66a0d9f4a0eb8627cc6320f5",
+    "startDate": "2024-08-20T00:00:00.000Z",
+    "endDate": "2025-08-20T00:00:00.000Z",
+    "customerSignature": null,
+    "providerSignature": null,
+    "product": "Product ID Here",
+    "service": null,
+    "quantity": 2,
+    "approvedByCustomer": false,
+    "agreementPath": null
+  }
+]

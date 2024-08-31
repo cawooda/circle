@@ -18,6 +18,9 @@ type User {
 type Customer {
     _id: ID!
     user: User!
+    fullName: String
+    first: String
+    last: String
     referenceNumber: String
     referenceName: String
     address: String

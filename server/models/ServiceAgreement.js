@@ -29,6 +29,10 @@ const serviceAgreementSchema = new Schema(
       ref: "product", //linking to the Product object
       required: true,
     },
+    service: {
+      type: Schema.Types.ObjectId,
+      ref: "service", //linking to the Product object
+    },
     quantity: { type: Number, required: true, default: 0 },
     totalPrice: { type: Number, required: true, default: 0 },
     approvedByCustomer: { type: Boolean, default: false },

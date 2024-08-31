@@ -66,6 +66,8 @@ export const QUERY_USER_BY_ID = gql`
         user {
           _id
           fullName
+          first
+          last
         }
         referenceNumber
         referenceName
@@ -80,7 +82,8 @@ export const QUERY_USER_BY_ID = gql`
           _id
           user {
             _id
-            fullName
+            first
+            last
           }
           abn
           address
@@ -96,7 +99,8 @@ export const QUERY_USER_BY_ID = gql`
           _id
           user {
             _id
-            fullName
+            first
+            last
           }
           referenceNumber
           referenceName

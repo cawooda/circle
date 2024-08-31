@@ -16,6 +16,7 @@ module.exports = {
     const openOperations = [
       "getServiceAgreement",
       "signServiceAgreement",
+      "getMe",
       "IntrospectionQuery", // Example operation name
     ];
 

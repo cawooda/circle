@@ -49,7 +49,8 @@ export const UPDATE_USER_PASSWORD = gql`
       }
       roleCustomer {
         _id
-        ndisNumber
+        referenceNumber
+        referenceName
         address
         dateOfBirth
         customerSpecificField
@@ -100,7 +101,8 @@ export const UPDATE_USER_PROFILE = gql`
       }
       roleCustomer {
         _id
-        ndisNumber
+        referenceNumber
+        referenceName
         address
         dateOfBirth
         customerSpecificField
@@ -139,7 +141,8 @@ export const TOGGLE_USER_ROLE = gql`
       }
       roleCustomer {
         _id
-        ndisNumber
+        referenceNumber
+        referenceName
         address
         dateOfBirth
         customerSpecificField
@@ -180,7 +183,8 @@ export const ADD_SERVICE_AGREEMENT = gql`
           mobile
           __typename
         }
-        ndisNumber
+        referenceNumber
+        referenceName
         address
         dateOfBirth
         customerSpecificField
@@ -243,7 +247,8 @@ export const SIGN_SERVICE_AGREEMENT = gql`
           email
           mobile
         }
-        ndisNumber
+        referenceNumber
+        referenceName
         address
         dateOfBirth
         customerSpecificField

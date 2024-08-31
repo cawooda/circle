@@ -27,7 +27,7 @@ export default function ServiceAgreementRow({ agreement, index }) {
   const provider = agreement.provider || {};
   const customer = agreement.customer || {};
   const customerUser = customer.user || {};
-  const fullName = customerUser.fullName || "N/A"; // Fallback if fullName is undefined
+  const fullName = `${customerUser.first} ${customerUser.last}` || "N/A"; // Fallback if fullName is undefined
 
   const product = agreement.product || {};
   const service = agreement.service || {};

@@ -16,6 +16,7 @@ const providerSeed = require("./provderSeed.json");
 const productSeed = require("./productSeed.json"); // Include product seed
 const serviceSeed = require("./serviceSeed.json");
 const shiftSeed = require("./shiftSeed.json");
+const agreementsSeed = require("./agreementSeed.json");
 
 // require bcrypt for password hashing
 const bcrypt = require("bcrypt");
@@ -93,6 +94,16 @@ connection.once("open", async () => {
     }
     // Insert shift data into the database
     const shifts = await Shift.insertMany(shiftSeed);
+
+    // Check if the shifts collection exists
+    let agreementsCheck = await connection.db
+      .listCollections({ name: "agreements" })
+      .toArray();
+    if (agreementsCheck.length) {
+      await connection.dropCollection("agreements");
+    }
+    // Insert shift data into the database
+    const agreements = await Shift.insertMany(agreementsSeed);
 
     console.table(users);
     console.table(customers);

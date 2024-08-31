@@ -15,6 +15,7 @@ const providerSchema = new Schema(
         paragraph: { type: String },
       },
     ],
+    serviceAgreements: [{ type: Schema.Types.ObjectId, ref: "agreement" }],
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
   },

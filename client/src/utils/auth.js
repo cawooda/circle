@@ -11,7 +11,9 @@ class AuthService {
     try {
       const profile = jwtDecode(this.getToken());
       return profile;
-    } catch (error) {}
+    } catch (error) {
+      return null;
+    }
   }
 
   // check if user's logged in

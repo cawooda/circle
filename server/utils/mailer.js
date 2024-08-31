@@ -16,7 +16,7 @@ class EMAILService {
     });
   }
 
-  async sendMail(to, subject, text = "", html = "", attachment = "") {
+  async sendMail(to, subject, text, html, attachment) {
     try {
       if (attachment) {
         const info = await this.transporter.sendMail({

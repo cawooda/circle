@@ -34,23 +34,22 @@ module.exports = {
       })
         .populate({
           path: "provider",
-          populate: { path: "user" },
+          model: "provider",
+          populate: { path: "user", model: "user" },
         })
         .populate({
           path: "customer",
-          populate: { path: "user" },
+          model: "customer",
+          populate: { path: "user", model: "user" },
         })
         .populate("product")
-        .lean({ virtuals: true });
+        .populate("service")
+        .lean({ virtuals: true })
+        .exec();
 
-      // Manually set fullName for customer and provider
       serviceAgreements.forEach((agreement) => {
-        if (agreement.provider && agreement.provider.user) {
-          agreement.provider.user.fullName = `${agreement.provider.user.first} ${agreement.provider.user.last}`;
-        }
-        if (agreement.customer && agreement.customer.user) {
-          agreement.customer.user.fullName = `${agreement.customer.user.first} ${agreement.customer.user.last}`;
-        }
+        console.log("agreement.customer.user", agreement.customer.user);
+        console.log("agreement.provider.user", agreement.provider.user);
       });
 
       user.serviceAgreements = serviceAgreements;

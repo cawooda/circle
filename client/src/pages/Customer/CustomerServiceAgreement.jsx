@@ -61,6 +61,14 @@ export default function CustomerServiceAgreement() {
     variables: { agreementNumber },
   });
 
+  if (AddServiceAgreementError) {
+    console.error("Add Service Agreement Error:", AddServiceAgreementError);
+  }
+
+  if (agreementQueryError) {
+    console.error("Agreement Query Error:", agreementQueryError);
+  }
+
   const [agreementFormData, setAgreementFormData] = useState({});
   const sigCanvas = useRef(null);
 
@@ -93,6 +101,10 @@ export default function CustomerServiceAgreement() {
 
   function handleFormSubmit(event) {
     event.preventDefault();
+    console.log(
+      "agreementFormData.customerSignature",
+      agreementFormData.customerSignature
+    );
     signServiceAgreement({
       variables: {
         agreementId: agreementQueryData.getServiceAgreement._id,
@@ -228,10 +240,12 @@ export default function CustomerServiceAgreement() {
         <Container paddingTop="20px">
           <Heading>Terms and Conditions</Heading>
           {agreementQueryData.getServiceAgreement.provider.termsAndConditions.map(
-            (item) => (
+            (item, index) => (
               <>
-                <Heading size="md">{item.heading}</Heading>
-                <Text>{item.paragraph}</Text>
+                <Heading key={`heading-${index}`} size="md">
+                  {item.heading}
+                </Heading>
+                <Text key={`term-${index}`}>{item.paragraph}</Text>
               </>
             )
           )}

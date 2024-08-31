@@ -157,21 +157,27 @@ userSchema.methods.sendAuthLink = async function () {
   const fullUrl = `${host}/auth/${this.authLinkNumber}`;
 
   await this.sendMessage(
-    `Circle Login Link`,
-    `<p>Logging in is easy with the following link: ${fullUrl} CODE: ${this.authLinkNumber}  :)`,
-    `<p>Logging in is easy with the following link. </p><p>${fullUrl}</p> <p>Your Temporary Access Code is :</p> <h3>${this.authLinkNumber} </h3>  :)`
+    `Circle Login`,
+    `Logging in is easy with the following link: ${fullUrl} CODE: ${this.authLinkNumber}  :)`,
+    `<p>Logging in is easy with the following link. </p><p>${fullUrl}</p> <p>Your Temporary Access Code is :</p> <h3>${this.authLinkNumber} </h3>  :)`,
+    null
   );
   return this.authLinkNumber;
 };
 
-userSchema.methods.sendMessage = async function (subject, body, html) {
+userSchema.methods.sendMessage = async function (
+  subject,
+  body,
+  html,
+  attachment
+) {
   try {
     if (this.sendTexts) await userSmsService.sendText(this.mobile, body);
   } catch (error) {
     throw new Error("sms service in user schema send message errorred", error);
   }
   try {
-    if (this.email) await this.sendEmail(subject, body, html);
+    if (this.email) await this.sendEmail(subject, body, html, attachment);
   } catch (error) {
     throw new Error(
       "email service in user schema send message errorred",
@@ -182,7 +188,7 @@ userSchema.methods.sendMessage = async function (subject, body, html) {
 
 userSchema.methods.sendEmail = async function (
   subject,
-  text,
+  body,
   html,
   attachment
 ) {
@@ -191,7 +197,7 @@ userSchema.methods.sendEmail = async function (
       const messageSent = await userEmailService.sendMail(
         [this.email, "hello@circleindependent.com"],
         subject,
-        text,
+        null,
         html,
         attachment || null
       );

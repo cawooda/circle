@@ -1,3 +1,4 @@
+require("dotenv").config();
 const path = require("path");
 const dayjs = require("dayjs");
 const { generateRandomNumber } = require("../utils/helpers");
@@ -61,11 +62,18 @@ module.exports = {
       await newServiceAgreement.populate("customer.user");
       await newServiceAgreement.populate("provider.user");
       newServiceAgreement.save();
+      const link =
+        process.env.NODE_ENV == "development"
+          ? `${process.env.HOST}${":"}${process.env.CLIENT_PORT}/agreement/${
+              newServiceAgreement.agreementNumber
+            }`
+          : `${process.env.HOST}/agreement/${newServiceAgreement.agreementNumber}`;
+
       newServiceAgreement.customer.user.sendMessage(
-        `Hi ${newServiceAgreement.customer.user.first}, a new service agreement with ${newServiceAgreement.provider.providerName} agreement is ready. Use the link to securely review and sign ;)
-        `,
-        `/agreement/${newServiceAgreement.agreementNumber}`,
-        ""
+        `New Service Agreement`,
+        `Hi ${newServiceAgreement.customer.user.first}, a new service agreement with ${newServiceAgreement.provider.providerName} agreement is ready. ${link}`,
+        `<p>Hi ${newServiceAgreement.customer.user.first},</p> <p>a new service agreement with ${newServiceAgreement.provider.providerName} agreement is ready.</p><p> Use the link <a href="${link}">Sign Now</a> to securely review and sign ;)`,
+        null
       );
 
       return newServiceAgreement;
@@ -128,10 +136,17 @@ module.exports = {
         { subject: "New Service Agreement", first, providerName, product },
         "emailTemplate"
       );
-      to, subject, (text = ""), (html = ""), (attachment = "");
+      console.log("outputPath", outputPath);
+      console.log("renderedEmail", renderedEmail);
       userEmailService.sendMail(
         customerUser.email,
         "A new Service Agreement has Arrived",
+        `Hi ${signedServiceAgreement.customer.user.first}, 
+          you just signed a new service agreement with ${signedServiceAgreement.provider.providerName} for
+          ${signedServiceAgreement?.product.name}. We've attached a copy for your reccords and included
+          your plan manager for reference.
+          Have a great day.
+        `,
         renderedEmail,
         outputPath
       );

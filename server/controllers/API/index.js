@@ -163,10 +163,12 @@ router.post("/users", async (req, res) => {
       });
       userCreated.save();
       await userCreated.generateAuthToken();
+      const host = process.env.HOST || `http://localhost:3000`; // Get the host (hostname:port)
       userCreated.sendMessage(
-        `Great News, We've just given you a Circle Account ;)
-        `,
-        "/"
+        `Welcome to Circle`,
+        `Hi ${this.first}, We created you a new Circle Account. You can log in at any time using your password or SMS login at ${host}`,
+        `<p>Hi ${this.first},</p> <p>We created you a new Circle Account. You can log in at any time using your password or SMS login</p><p>Circle helps custoemrs and businesses connect through service agreements and ensures work done is accurately recorded for payment and to secure records for future reference.</p><p>To find out more visit <a href="http://circleindependent.com">Cirlcle Independent</a></p><p>Have a great day :)</p>`,
+        null
       );
       res
         .status(200)
