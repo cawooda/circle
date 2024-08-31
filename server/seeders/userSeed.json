@@ -25,7 +25,7 @@
     "password": "$2b$10$h7x.laXNIDCJ.CORSk2Wxev./cA096/T77ZnE.maZf6voAbioaxS2",
     "roleSuperAdmin": false,
     "sendEmails": true,
-    "sendTexts": true
+    "sendTexts": false
   },
   {
     "_id": "66a083826e76d0e5ababe491",
@@ -39,7 +39,7 @@
     "password": "$2b$10$waiI48brvZfcMbl/7.UAF.7DnKIx1xptXaEMQl9taZ/7Kcwir4SMK",
     "roleSuperAdmin": false,
     "sendEmails": true,
-    "sendTexts": true
+    "sendTexts": false
   },
   {
     "_id": "66a083826e76d0e5ababe492",
@@ -53,7 +53,7 @@
     "password": "$2b$10$idCRP0uWjUvmDqkefFeOX.JLzHmJE7Ta4D/tfiZs.USlaowkPDiki",
     "roleSuperAdmin": false,
     "sendEmails": true,
-    "sendTexts": true
+    "sendTexts": false
   },
   {
     "_id": "66a083826e76d0e5ababe493",
@@ -67,7 +67,7 @@
     "password": "$2b$10$fQetbx8DJnQEO1lF3XW/vuQHcvKeKAKaihfkK0glPGSdn6HryJp.i",
     "roleSuperAdmin": false,
     "sendEmails": true,
-    "sendTexts": true
+    "sendTexts": false
   },
   {
     "_id": "66a083826e76d0e5ababe494",
@@ -81,6 +81,6 @@
     "password": "Ahimsa8*",
     "roleSuperAdmin": false,
     "sendEmails": true,
-    "sendTexts": true
+    "sendTexts": false
   }
 ]
