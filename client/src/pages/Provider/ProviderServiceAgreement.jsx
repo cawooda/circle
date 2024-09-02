@@ -177,6 +177,7 @@ export default function ProviderServiceAgreement() {
         variables: {
           provider: agreementFormData.provider,
           customer: agreementFormData.customer,
+          startDate: new Date(),
           endDate: new Date(agreementFormData.endDate),
           product: agreementFormData.product,
           quantity: parseInt(agreementFormData.quantity),
