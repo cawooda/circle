@@ -9,9 +9,13 @@ class AuthService {
   // get user data
   getProfile() {
     try {
-      const profile = jwtDecode(this.getToken());
+      const token = this.getToken();
+      console.log("Token inside getProfile:", token); // Debugging token
+      const profile = jwtDecode(token);
+      console.log("Decoded profile inside getProfile:", profile); // Debugging decoded profile
       return profile;
     } catch (error) {
+      console.log("Error in getProfile:", error); // Catch any errors
       return null;
     }
   }
