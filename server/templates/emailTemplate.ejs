@@ -17,58 +17,39 @@
         color: #333;
         margin: 0;
         padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
       }
+
       .container {
-        width: 90%;
-        max-width: 1200px;
+        width: 100%;
+        max-width: 600px; /* Ensure it's not too wide */
         margin: 20px auto;
         padding: 20px;
         background-color: #fff;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         border-radius: 8px;
       }
+
       header {
         text-align: center;
         margin-bottom: 30px;
       }
-      header img {
-        max-width: 150px;
-        display: block;
-        margin: 0 auto 20px;
-      }
+
       h1,
       h2 {
         color: #000000;
         margin-bottom: 20px;
       }
-      h1 {
-        font-size: 2.5rem;
-      }
-      h2 {
-        font-size: 1.75rem;
-      }
+
       .details,
       .terms,
       .signature {
         margin-bottom: 30px;
         padding: 20px;
-        border: 2px solid black;
-        border-radius: 30px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
         background-color: #fbce44;
       }
-      .details p,
-      .terms p,
-      .signature p {
-        margin: 10px 0;
-        font-size: 1.1rem;
-      }
-      .service {
-        text-align: center;
-      }
+
       .footer {
         text-align: center;
         margin-top: 30px;
@@ -88,8 +69,8 @@
         <h4>Hi <%= first %></h4>
         <p>
           you just signed a new service agreement with <%+ providerName %> for
-          <%= product %>. We've attached a copy for your reccords and included
-          your plan manager for reference.
+          <%= product.name %>. We've attached a copy for your reccords and
+          included your plan manager for reference.
           <br />
           Have a great day.
         </p>
@@ -99,7 +80,7 @@
         <br />
         <h3>
           <a href="http://circleindependent.com">circleindependent.com</a>
-          <h3><br /></h3>
+          <br />
         </h3>
       </div>
 

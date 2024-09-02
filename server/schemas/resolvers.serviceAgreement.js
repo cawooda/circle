@@ -40,7 +40,15 @@ module.exports = {
   },
   addServiceAgreement: async (
     _parent,
-    { provider, customer, startDate, quantity, product, endDate, signature },
+    {
+      provider,
+      customer,
+      startDate,
+      endDate,
+      quantity,
+      product,
+      providerSignature,
+    },
     context
   ) => {
     if (!(context.user.roleProvider._id == provider))
@@ -54,7 +62,7 @@ module.exports = {
         product: productPopulated || null,
         quantity: quantity || null,
         endDate: endDate || null,
-        providerSignature: signature || null,
+        providerSignature: providerSignature || null,
       });
       // Populate paths individually to fix an issue I cant trace
       await newServiceAgreement.populate("customer");
@@ -116,7 +124,7 @@ module.exports = {
       //makes use of the renderTemlate function to use a template to display the signedServiceagreement
       const renderedHtml = renderTemplate(
         signedServiceAgreement.toObject(),
-        "template"
+        "serviceAgreementTemplate"
       );
       //set the outputPath for the service agreement to be saved and then sent
       const outputPath = path.join(
