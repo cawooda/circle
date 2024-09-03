@@ -54,11 +54,6 @@ module.exports = {
         .lean({ virtuals: true })
         .exec();
 
-      serviceAgreements.forEach((agreement) => {
-        console.log("agreement.customer.user", agreement.customer.user);
-        console.log("agreement.provider.user", agreement.provider.user);
-      });
-
       user.serviceAgreements = serviceAgreements;
 
       return user;

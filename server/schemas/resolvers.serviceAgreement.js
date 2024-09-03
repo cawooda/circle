@@ -119,11 +119,23 @@ module.exports = {
       const last = signedServiceAgreement.customer.user?.last;
       const providerName = signedServiceAgreement.provider?.providerName;
       const product = signedServiceAgreement?.product;
-      const startDate = signedServiceAgreement?.startDate;
+      const startDate = dayjs(
+        new Date(signedServiceAgreement?.startDate)
+      ).format("DD-MM-YYYY");
+      const endDate = dayjs(new Date(signedServiceAgreement?.endDate)).format(
+        "DD-MM-YYYY"
+      );
 
       //makes use of the renderTemlate function to use a template to display the signedServiceagreement
+      const signedServiceAgreementObject = signedServiceAgreement.toObject();
+      const renderPreparedServiceAgreement = {
+        ...signedServiceAgreementObject,
+        startDate: startDate,
+        endDate: endDate,
+      };
+
       const renderedHtml = renderTemplate(
-        signedServiceAgreement.toObject(),
+        renderPreparedServiceAgreement,
         "serviceAgreementTemplate"
       );
       //set the outputPath for the service agreement to be saved and then sent
@@ -141,7 +153,14 @@ module.exports = {
       );
 
       const renderedEmail = renderTemplate(
-        { subject: "New Service Agreement", first, providerName, product },
+        {
+          subject: "New Service Agreement",
+          first,
+          providerName,
+          product,
+          startDate,
+          endDate,
+        },
         "emailTemplate"
       );
       console.log("outputPath", outputPath);
