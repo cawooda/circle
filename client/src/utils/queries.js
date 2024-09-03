@@ -68,6 +68,10 @@ export const QUERY_USER_BY_ID = gql`
       roleProvider {
         _id
         abn
+        termsAndConditions {
+          heading
+          paragraph
+        }
         address {
           street
           city

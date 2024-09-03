@@ -17,6 +17,7 @@ const {
   updateProfile,
   updateUserPassword,
 } = require("./resolvers.user");
+const { updateProviderProfile } = require("./resolvers.provider");
 const {
   addService,
   deleteService,
@@ -46,6 +47,7 @@ const resolvers = {
   Mutation: {
     addServiceAgreement,
     signServiceAgreement,
+    updateProviderProfile,
     toggleUserRole,
     updateProfile,
     updateUserPassword,

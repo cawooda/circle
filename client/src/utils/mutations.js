@@ -132,6 +132,29 @@ export const UPDATE_USER_PROFILE = gql`
   }
 `;
 
+export const UPDATE_PROVIDER_PROFILE = gql`
+  mutation UpdateProviderProfile(
+    $userId: ID!
+    $providerId: ID!
+    $providerName: String
+    $abn: String
+    $termsAndConditions: [TermsAndConditionsInput]
+    $address: AddressInput
+  ) {
+    updateProviderProfile(
+      userId: $userId
+      providerId: $providerId
+      providerName: $providerName
+      abn: $abn
+      termsAndConditions: $termsAndConditions
+      address: $address
+    ) {
+      _id
+      updatedAt
+    }
+  }
+`;
+
 export const TOGGLE_USER_ROLE = gql`
   mutation Mutation($userId: ID!, $role: String!) {
     toggleUserRole(userId: $userId, role: $role) {

@@ -34,6 +34,8 @@ import { useMutation } from "@apollo/client";
 import { UPDATE_USER_PROFILE } from "../utils/mutations";
 import PasswordResetForm from "./PasswordResetForm";
 
+import ProviderProfileForm from "./ProviderProfileForm";
+
 const ProfileForm = () => {
   const [
     updateUserProfile,
@@ -104,6 +106,7 @@ const ProfileForm = () => {
                 <Image src={logo} boxSize="70" />
                 <Heading size="sm">My Profile</Heading>
               </VStack>
+              <ProviderProfileForm />
             </Center>
           </ModalHeader>
           <ModalCloseButton />

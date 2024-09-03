@@ -26,6 +26,13 @@ module.exports = {
     const user = await User.findById(context.user._id)
       .populate("roleCustomer")
       .populate("roleProvider")
+      .populate({
+        path: "roleProvider",
+        populate: {
+          path: "termsAndConditions",
+          model: "TermsAndConditions",
+        },
+      })
       .populate("roleAdmin");
 
     if (user) {

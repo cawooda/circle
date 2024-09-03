@@ -56,12 +56,14 @@ type Admin {
 type Provider {
     _id: ID!
     user: User!
+    providerName: String
     abn: String
     address: Address
-    providerName: String
     termsAndConditions: [TermsAndConditions]
     createdAt: String
     updatedAt: String
+    notes:String
+    serviceAgreements: [ServiceAgreement]
 }
 
  type ServiceAgreement {
@@ -82,6 +84,13 @@ type Provider {
   }
   
   type Address {
+    street: String
+    city: String
+    state: String
+    postalCode: String
+}
+
+input AddressInput {
     street: String
     city: String
     state: String
@@ -128,6 +137,11 @@ type TermsAndConditions {
     paragraph: String
 }
 
+input TermsAndConditionsInput {
+    heading: String
+    paragraph: String
+}
+
 union RoleModel = Admin | Provider | Customer
 
 type Query {
@@ -148,6 +162,14 @@ type Mutation {
     signServiceAgreement(agreementId:ID!,customerSignature:String!):ServiceAgreement    
     toggleUserRole(userId: ID!,role: String!): User!  
     updateProfile( userId:ID!, first: String, last: String, mobile: String,email: String):User  
+    updateProviderProfile(
+        userId: ID!,
+        providerId: ID!,
+        providerName: String,
+        abn: String,
+        termsAndConditions: [TermsAndConditionsInput],
+        address: AddressInput
+    ): Provider
     updateUserPassword(userId:ID!,password:String):User
     
     addService(providerId: ID!, productId: ID!, price: Float!):AddServiceResponse
