@@ -6,7 +6,11 @@ const { generateRandomNumber } = require("../utils/helpers");
 const customerSchema = new Schema(
   {
     user: { type: Schema.Types.ObjectId, ref: "user", required: true },
-    invoiceEmail: { type: String, required: true },
+    invoiceEmail: {
+      type: String,
+      required: true,
+      default: "default@default.com",
+    },
     serviceAgreementEmail: {
       type: String,
       required: true,
@@ -18,8 +22,13 @@ const customerSchema = new Schema(
       default: generateRandomNumber(1000000000, 9999999999),
     },
     referenceName: { type: String, required: true, default: "NDIS Number" },
-    address: { type: String, required: true },
-    dateOfBirth: { type: Date, required: true },
+    address: {
+      street: { type: String, required: true, default: "123 Default St" },
+      city: { type: String, required: true, default: "Default City" },
+      state: { type: String, required: true, default: "Default State" },
+      postalCode: { type: String, required: true, default: "00000" },
+    },
+    dateOfBirth: { type: Date, required: true, default: "1999-07-07" },
     customerSpecificField: { type: String },
     serviceAgreements: [{ type: Schema.Types.ObjectId, ref: "agreement" }],
     createdAt: { type: Date, default: Date.now },

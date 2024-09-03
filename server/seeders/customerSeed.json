@@ -2,27 +2,11 @@
   {
     "_id": "66a0d9f4a0eb8627cc6320f4",
     "user": "66a083826e76d0e5ababe491",
-    "invoiceEmail": "charlie.invoice@example.com",
-    "serviceAgreementEmail": "charlie.agreement@example.com",
-    "referenceNumber": "9876543210",
-    "referenceName": "NDIS Number",
-    "address": "3 Street Name, Town, PostCode",
-    "dateOfBirth": "1999-07-07T00:00:00.000Z",
-    "customerSpecificField": "Specific Information",
-    "createdAt": "2024-08-20T00:00:00.000Z",
-    "updatedAt": "2024-08-20T00:00:00.000Z"
+    "serviceAgreementEmail": "charlie.agreement@example.com"
   },
   {
     "_id": "66a0d9f4a0eb8627cc6320f5",
     "user": "66a083826e76d0e5ababe494",
-    "invoiceEmail": "frank.invoice@example.com",
-    "serviceAgreementEmail": "frank.agreement@example.com",
-    "referenceNumber": "0123456789",
-    "referenceName": "NDIS Number",
-    "address": "4 Street Name, Town, PostCode",
-    "dateOfBirth": "1990-06-15T00:00:00.000Z",
-    "customerSpecificField": "Additional Data",
-    "createdAt": "2024-08-20T00:00:00.000Z",
-    "updatedAt": "2024-08-20T00:00:00.000Z"
+    "serviceAgreementEmail": "frank.agreement@example.com"
   }
 ]

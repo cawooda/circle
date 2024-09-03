@@ -90,7 +90,11 @@
             <h2>Provider Details</h2>
             <p><strong>Provider Name:</strong> <%= provider.providerName %></p>
             <p><strong>ABN:</strong> <%= provider.abn %></p>
-            <p><strong>Address:</strong> <%= provider.address %></p>
+            <p>
+              <strong>Address:</strong> <%= provider.address.street %>, <%=
+              provider.address.city %>, <%= provider.address.state %> <%=
+              provider.address.postalCode %>
+            </p>
             <p><strong>Phone:</strong> <%= provider.phone %></p>
           </section>
         </div>
@@ -101,8 +105,15 @@
               <strong>Name:</strong> <%= customer.user.first %> <%=
               customer.user.last %>
             </p>
-            <p><strong>NDIS Number:</strong> <%= customer.ndisNumber %></p>
-            <p><strong>Address:</strong> <%= customer.customerAddress %></p>
+            <p>
+              <strong><%= customer.referenceName %></strong> <%=
+              customer.referenceNumber %>
+            </p>
+            <p>
+              <strong>Address:</strong> <%= customer.address.street %>, <%=
+              customer.address.city %>, <%= customer.address.state %> <%=
+              customer.address.postalCode %>
+            </p>
             <p><strong>Contact:</strong> <%= customer.mobile %></p>
           </section>
         </div>

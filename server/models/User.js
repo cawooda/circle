@@ -93,10 +93,6 @@ userSchema.pre("save", async function (next) {
     try {
       const newCustomer = new Customer({
         user: this._id,
-        ndisNumber: `${generateRandomNumber(9999999999, 10000000000)}`,
-        invoiceEmail: "default@default.com",
-        address: "1 Street Name, Town, PostCode",
-        dateOfBirth: "1999-07-07",
       });
       await newCustomer.save();
       this.roleCustomer = newCustomer._id;
@@ -107,23 +103,7 @@ userSchema.pre("save", async function (next) {
 
   if (!this.roleProvider && process.env.TESTING) {
     try {
-      const newProvider = new Provider({
-        abn: process.env.TESTING
-          ? require("../utils/helpers").generateRandomNumber(
-              9999999999,
-              10000000000
-            )
-          : "",
-        address: "1 Street Name, Town, PostCode",
-        providerName: "Acme Electronics",
-        termsAndConditions: [
-          {
-            heading: "Important Terms",
-            paragraph:
-              "Important ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant Paragraph",
-          },
-        ],
-      });
+      const newProvider = new Provider({});
       await newProvider.save();
       newProvider.user = this._id;
       this.roleProvider = newProvider._id;

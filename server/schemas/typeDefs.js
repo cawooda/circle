@@ -23,7 +23,7 @@ type Customer {
     last: String
     referenceNumber: String
     referenceName: String
-    address: String
+    address: Address
     dateOfBirth: String
     customerSpecificField:String
 }
@@ -57,7 +57,7 @@ type Provider {
     _id: ID!
     user: User!
     abn: String
-    address: String
+    address: Address
     providerName: String
     termsAndConditions: [TermsAndConditions]
     createdAt: String
@@ -81,7 +81,14 @@ type Provider {
     signature:String
   }
   
+  type Address {
+    street: String
+    city: String
+    state: String
+    postalCode: String
+}
 
+  
  input ServiceAgreementInput {
     provider: ID!
     customer: ID!
@@ -128,12 +135,9 @@ type Query {
     getUserByToken(token: String!): User
     getMe(id: ID!): User!
     getUserRoles(id: ID!): [String]
-    
     getCustomers: [Customer]
     getProducts: [Product]
-
     getServices(providerId: ID!): [Service]
-    
     getServiceAgreements: ServiceAgreementResponse!
     getServiceAgreement(agreementNumber: String!): ServiceAgreement
 }

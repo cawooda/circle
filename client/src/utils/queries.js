@@ -18,7 +18,12 @@ export const QUERY_ALL_USERS = gql`
       roleProvider {
         _id
         abn
-        address
+        address {
+          street
+          city
+          state
+          postalCode
+        }
         providerName
         termsAndConditions {
           heading
@@ -31,7 +36,12 @@ export const QUERY_ALL_USERS = gql`
         _id
         referenceNumber
         referenceName
-        address
+        address {
+          street
+          city
+          state
+          postalCode
+        }
         dateOfBirth
         customerSpecificField
       }
@@ -58,7 +68,12 @@ export const QUERY_USER_BY_ID = gql`
       roleProvider {
         _id
         abn
-        address
+        address {
+          street
+          city
+          state
+          postalCode
+        }
         providerName
       }
       roleCustomer {
@@ -71,7 +86,12 @@ export const QUERY_USER_BY_ID = gql`
         }
         referenceNumber
         referenceName
-        address
+        address {
+          street
+          city
+          state
+          postalCode
+        }
         dateOfBirth
         customerSpecificField
       }
@@ -86,7 +106,12 @@ export const QUERY_USER_BY_ID = gql`
             last
           }
           abn
-          address
+          address {
+            street
+            city
+            state
+            postalCode
+          }
           providerName
           termsAndConditions {
             heading
@@ -104,7 +129,12 @@ export const QUERY_USER_BY_ID = gql`
           }
           referenceNumber
           referenceName
-          address
+          address {
+            street
+            city
+            state
+            postalCode
+          }
           dateOfBirth
           customerSpecificField
         }
@@ -145,7 +175,12 @@ export const QUERY_CUSTOMERS = gql`
       _id
       referenceNumber
       referenceName
-      address
+      address {
+        street
+        city
+        state
+        postalCode
+      }
       dateOfBirth
       customerSpecificField
       user {
@@ -183,7 +218,12 @@ export const QUERY_SERVICE_AGREEMENT = gql`
           last
         }
         abn
-        address
+        address {
+          street
+          city
+          state
+          postalCode
+        }
         providerName
         termsAndConditions {
           heading
@@ -194,7 +234,12 @@ export const QUERY_SERVICE_AGREEMENT = gql`
       }
       customer {
         _id
-        address
+        address {
+          street
+          city
+          state
+          postalCode
+        }
         referenceNumber
         referenceName
         user {
@@ -258,7 +303,12 @@ export const QUERY_SERVICE_AGREEMENTS = gql`
           }
           referenceNumber
           referenceName
-          address
+          address {
+            street
+            city
+            state
+            postalCode
+          }
           dateOfBirth
           customerSpecificField
         }

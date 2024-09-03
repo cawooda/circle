@@ -1,20 +1,35 @@
 //import the Schema and model from mongoose.
 const { Schema, model } = require("mongoose");
+const defaultTermsAndConditions = require("../seeders/defaultTerms");
+const { generateRandomNumber } = require("../utils/helpers");
 
 const providerSchema = new Schema(
   {
     user: { type: Schema.Types.ObjectId, ref: "user" },
-    abn: { type: String, required: true },
-    address: { type: String, required: true },
-    providerName: { type: String, required: true },
-    termsAndConditions: [
-      {
-        heading: {
-          type: String,
+    abn: {
+      type: String,
+      required: true,
+      default: generateRandomNumber(1000000000, 9999999999),
+    },
+    address: {
+      street: { type: String, required: true, default: "123 Default St" },
+      city: { type: String, required: true, default: "Default City" },
+      state: { type: String, required: true, default: "Default State" },
+      postalCode: { type: String, required: true, default: "00000" },
+    },
+    providerName: { type: String, required: true, default: "Acme Electronics" },
+    termsAndConditions: {
+      type: [
+        {
+          heading: {
+            type: String,
+          },
+          paragraph: { type: String },
         },
-        paragraph: { type: String },
-      },
-    ],
+      ],
+      default: defaultTermsAndConditions,
+    },
+    notes: { type: String },
     serviceAgreements: [{ type: Schema.Types.ObjectId, ref: "agreement" }],
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
