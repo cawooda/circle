@@ -97,23 +97,23 @@ const ProfileForm = () => {
         Profile
       </Button>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} width={"80%"}>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent maxWidth="900px" width="90%">
           <ModalHeader>
             <Center>
               <VStack>
                 <Image src={logo} boxSize="70" />
                 <Heading size="sm">My Profile</Heading>
               </VStack>
-              <ProviderProfileForm />
             </Center>
           </ModalHeader>
           <ModalCloseButton />
           <ModalHeader size="md">Update your details here</ModalHeader>
           <ModalBody>
-            <Flex direction="row" wrap="wrap">
+            <Flex direction="row" gap="5  " wrap="wrap" paddingBottom={5}>
               <PasswordResetForm />
+              <ProviderProfileForm />
             </Flex>
             <Flex direction="column" align="center" justify="center">
               <FormControl as="form" onSubmit={handleFormSubmit}>

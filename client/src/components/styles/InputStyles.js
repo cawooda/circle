@@ -10,3 +10,7 @@ export const DisplayStyles = {
   borderColor: "black",
   bgColor: "blue.100",
 };
+
+export const InputTextareaStyles = {
+  borderRadius: "20px",
+};

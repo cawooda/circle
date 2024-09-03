@@ -68,7 +68,6 @@ export default function PasswordResetForm() {
     <>
       <Button
         {...ButtonStyles}
-        {...ButtonHighlightStyle}
         onClick={() => {
           if (!user) {
             onClose();
