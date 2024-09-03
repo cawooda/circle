@@ -4,6 +4,7 @@ class SMSService {
   constructor() {
     this.apiUrl = process.env.CLICK_SEND_URL_SEND_ENDPOINT;
     this.headers = new Headers();
+    console.log(process.env.CLICKTOKEN);
     const clickToken = Buffer.from(process.env.CLICKTOKEN).toString("base64");
     this.headers.append("Content-Type", "application/json");
     this.headers.append("Authorization", `Basic ${clickToken}`);

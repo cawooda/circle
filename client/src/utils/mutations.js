@@ -38,7 +38,12 @@ export const UPDATE_USER_PASSWORD = gql`
       roleProvider {
         _id
         abn
-        address
+        address {
+          street
+          city
+          state
+          postalCode
+        }
         providerName
         termsAndConditions {
           heading
@@ -51,7 +56,12 @@ export const UPDATE_USER_PASSWORD = gql`
         _id
         referenceNumber
         referenceName
-        address
+        address {
+          street
+          city
+          state
+          postalCode
+        }
         dateOfBirth
         customerSpecificField
       }
@@ -90,7 +100,12 @@ export const UPDATE_USER_PROFILE = gql`
       roleProvider {
         _id
         abn
-        address
+        address {
+          street
+          city
+          state
+          postalCode
+        }
         providerName
         termsAndConditions {
           heading
@@ -103,7 +118,12 @@ export const UPDATE_USER_PROFILE = gql`
         _id
         referenceNumber
         referenceName
-        address
+        address {
+          street
+          city
+          state
+          postalCode
+        }
         dateOfBirth
         customerSpecificField
       }
@@ -130,7 +150,12 @@ export const TOGGLE_USER_ROLE = gql`
       roleProvider {
         _id
         abn
-        address
+        address {
+          street
+          city
+          state
+          postalCode
+        }
         providerName
         termsAndConditions {
           heading
@@ -143,7 +168,12 @@ export const TOGGLE_USER_ROLE = gql`
         _id
         referenceNumber
         referenceName
-        address
+        address {
+          street
+          city
+          state
+          postalCode
+        }
         dateOfBirth
         customerSpecificField
       }
@@ -175,7 +205,12 @@ export const ADD_SERVICE_AGREEMENT = gql`
       provider {
         _id
         providerName
-        address
+        address {
+          street
+          city
+          state
+          postalCode
+        }
       }
       customer {
         _id
@@ -187,7 +222,12 @@ export const ADD_SERVICE_AGREEMENT = gql`
         }
         referenceNumber
         referenceName
-        address
+        address {
+          street
+          city
+          state
+          postalCode
+        }
         dateOfBirth
         customerSpecificField
         __typename
@@ -232,7 +272,12 @@ export const SIGN_SERVICE_AGREEMENT = gql`
           fullName
         }
         abn
-        address
+        address {
+          street
+          city
+          state
+          postalCode
+        }
         providerName
         termsAndConditions {
           heading
@@ -251,7 +296,12 @@ export const SIGN_SERVICE_AGREEMENT = gql`
         }
         referenceNumber
         referenceName
-        address
+        address {
+          street
+          city
+          state
+          postalCode
+        }
         dateOfBirth
         customerSpecificField
       }
@@ -291,7 +341,12 @@ export const ADD_SERVICE = gql`
             fullName
           }
           abn
-          address
+          address {
+            street
+            city
+            state
+            postalCode
+          }
           providerName
           createdAt
           updatedAt

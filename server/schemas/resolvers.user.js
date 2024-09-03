@@ -129,19 +129,6 @@ module.exports = {
               (await Provider.findOne({ user: user._id })) ||
               (await Provider.create({
                 user: user._id,
-                abn: require("../utils/helpers").generateRandomNumber(
-                  9999999999,
-                  10000000000
-                ),
-                address: "1 Street Name, Town, PostCode",
-                providerName: "Acme Electronics",
-                termsAndConditions: [
-                  {
-                    heading: "Important Terms",
-                    paragraph:
-                      "Important ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant ParagraphImportant Paragraph",
-                  },
-                ],
               }));
             user.roleProvider = provider._id;
           }
@@ -156,13 +143,6 @@ module.exports = {
               (await Customer.findOne({ user: user._id })) ||
               (await Customer.create({
                 user: user._id,
-                ndisNumber: require("../utils/helpers").generateRandomNumber(
-                  1000000000,
-                  9999999999
-                ),
-                address: "1 Street Name, Town, PostCode",
-                dateOfBirth: new Date(1990, 0, 1), // Example date of birth
-                customerSpecificField: "Specific details about the customer",
               }));
             user.roleCustomer = customer._id;
           }
