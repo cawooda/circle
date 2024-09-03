@@ -55,7 +55,7 @@ type Admin {
 
 type Provider {
     _id: ID!
-    user: User!
+    user: User
     providerName: String
     abn: String
     address: Address

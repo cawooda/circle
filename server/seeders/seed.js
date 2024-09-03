@@ -9,14 +9,17 @@ const {
   Product,
   Service,
   Shift,
+  ServiceAgreement,
+  // Use the correct model name here
 } = require("../models");
+
 const userSeed = require("./userSeed.json");
 const customerSeed = require("./customerSeed.json");
 const providerSeed = require("./provderSeed.json");
-const productSeed = require("./productSeed.json"); // Include product seed
+const productSeed = require("./productSeed.json");
 const serviceSeed = require("./serviceSeed.json");
 const shiftSeed = require("./shiftSeed.json");
-const agreementsSeed = require("./agreementSeed.json");
+const agreementSeed = require("./agreementSeed.json");
 
 // require bcrypt for password hashing
 const bcrypt = require("bcrypt");
@@ -30,87 +33,78 @@ const hashPassword = async (password) => {
 // Set the callback to occur once the connection opens
 connection.once("open", async () => {
   try {
-    // Check if the users collection exists
+    // Seed Users
     let userCheck = await connection.db
       .listCollections({ name: "users" })
       .toArray();
-    if (userCheck.length) {
+    if (userCheck.length && process.env.DEVELOPMENT) {
       await connection.dropCollection("users");
+      for (let user of userSeed) {
+        user.password = await hashPassword(user.password);
+      }
+      const users = await User.insertMany(userSeed);
+      console.table(users);
     }
 
-    // Hash passwords in userSeed
-    for (let user of userSeed) {
-      user.password = await hashPassword(user.password);
-    }
-    // Insert user data into the database
-    const users = await User.insertMany(userSeed);
-
-    // Check if the customers collection exists
+    // Seed Customers
     let customerCheck = await connection.db
       .listCollections({ name: "customers" })
       .toArray();
-    if (customerCheck.length) {
+    if (customerCheck.length && process.env.DEVELOPMENT) {
       await connection.dropCollection("customers");
     }
-    // Insert customer data into the database
     const customers = await Customer.insertMany(customerSeed);
+    console.table(customers);
 
-    // Check if the providers collection exists
+    // Seed Providers
     let providerCheck = await connection.db
       .listCollections({ name: "providers" })
       .toArray();
-    if (providerCheck.length) {
+    if (providerCheck.length && process.env.DEVELOPMENT) {
       await connection.dropCollection("providers");
     }
-    // Insert provider data into the database
     const providers = await Provider.insertMany(providerSeed);
+    console.table(providers);
 
-    // Check if the products collection exists
+    // Seed Products
     let productCheck = await connection.db
       .listCollections({ name: "products" })
       .toArray();
-    if (productCheck.length) {
+    if (productCheck.length && process.env.DEVELOPMENT) {
       await connection.dropCollection("products");
     }
-    // Insert product data into the database
     const products = await Product.insertMany(productSeed);
+    console.table(products);
 
-    // Check if the services collection exists
+    // Seed Services
     let serviceCheck = await connection.db
       .listCollections({ name: "services" })
       .toArray();
-    if (serviceCheck.length) {
+    if (serviceCheck.length && process.env.DEVELOPMENT) {
       await connection.dropCollection("services");
     }
-    // Insert service data into the database
     const services = await Service.insertMany(serviceSeed);
+    console.table(services);
 
-    // Check if the shifts collection exists
+    // Seed Shifts
     let shiftCheck = await connection.db
       .listCollections({ name: "shifts" })
       .toArray();
-    if (shiftCheck.length) {
+    if (shiftCheck.length && process.env.DEVELOPMENT) {
       await connection.dropCollection("shifts");
     }
-    // Insert shift data into the database
     const shifts = await Shift.insertMany(shiftSeed);
+    console.table(shifts);
 
-    // Check if the shifts collection exists
+    // Seed Agreements
     let agreementsCheck = await connection.db
       .listCollections({ name: "agreements" })
       .toArray();
-    if (agreementsCheck.length) {
+    if (agreementsCheck.length && process.env.DEVELOPMENT) {
       await connection.dropCollection("agreements");
     }
-    // Insert shift data into the database
-    const agreements = await Shift.insertMany(agreementsSeed);
-
-    console.table(users);
-    console.table(customers);
-    console.table(providers);
-    console.table(products);
-    console.table(services);
-    console.table(shifts);
+    const agreements = await ServiceAgreement.insertMany(agreementSeed);
+    console.table(agreements);
   } catch (error) {
     console.error("Error seeding the database", error);
   } finally {
