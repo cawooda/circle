@@ -229,7 +229,7 @@ export default (ProviderProfileForm) => {
                   {formData.termsAndConditions.map((tc, index) => (
                     <div key={index}>
                       <FormLabel
-                        fontSize={"1.5rem"}
+                        fontSize={"1.2rem"}
                         htmlFor={`termsAndConditions-heading-${index}`}
                       >
                         Terms and Conditions Heading {index + 1}
@@ -245,7 +245,7 @@ export default (ProviderProfileForm) => {
                       />
 
                       <FormLabel
-                        fontSize={"1.5rem"}
+                        fontSize={"1.2rem"}
                         htmlFor={`termsAndConditions-paragraph-${index}`}
                       >
                         Terms and Conditions Paragraph {index + 1}
