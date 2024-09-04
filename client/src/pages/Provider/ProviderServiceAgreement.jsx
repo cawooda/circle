@@ -19,27 +19,42 @@ import { useNavigate } from "react-router-dom";
 import SignatureCanvas from "react-signature-canvas";
 import { useState, useEffect, useRef } from "react";
 
+import { useUser } from "../../contexts/UserContext";
+
 import AuthService from "../../utils/auth";
 
 import { useQuery, useMutation } from "@apollo/client";
-import {
-  QUERY_USER_BY_ID,
-  QUERY_CUSTOMERS,
-  QUERY_PRODUCTS,
-} from "../../utils/queries";
+import { QUERY_CUSTOMERS, QUERY_PRODUCTS } from "../../utils/queries";
 import { ADD_SERVICE_AGREEMENT } from "../../utils/mutations";
 
 import { ButtonStyles } from "../../components/styles/ButtonStyle";
 import { InputStyles } from "../../components/styles/InputStyles";
 import CustomerControl from "../../components/CustomerControl";
 import ProductControl from "../../components/ProductControl";
+import ServiceControl from "../../components/ServiceControl";
 
 export default function ProviderServiceAgreement() {
+  const { user, loading, error } = useUser();
+  const [returnServiceAgreementVisitor, setReturnServiceAgreementVisitor] =
+    useState(
+      localStorage.getItem(
+        "CreateServiceAgreementReturnServiceAgreementVisitor"
+      )
+    );
+  const [slideShow, setSlideShow] = useState();
+
+  useEffect(() => {
+    if (returnServiceAgreementVisitor) {
+      setSlideShow(false);
+    } else {
+      setSlideShow(true);
+      localStorage.setItem("ReturnServiceAgreementVisitor", true);
+    }
+  }, [returnServiceAgreementVisitor]);
+
   const navigate = useNavigate();
   //use States
-  const [userId, setUserId] = useState(
-    AuthService?.getProfile()?.authenticatedPerson?._id || false
-  );
+  const [userId, setUserId] = useState(user._id || false);
 
   //setup use State for customers
   const [agreementFormData, setAgreementFormData] = useState({
@@ -48,6 +63,7 @@ export default function ProviderServiceAgreement() {
   const sigCanvas = useRef(null);
   const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);
+  const [services, setServices] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
 
   //set query for customers
@@ -56,15 +72,6 @@ export default function ProviderServiceAgreement() {
     error: customerQueryError,
     data: customerQueryData,
   } = useQuery(QUERY_CUSTOMERS);
-
-  //set query for user information
-  const {
-    loading: userQueryLoading,
-    error: userQueryError,
-    data: userQueryData,
-  } = useQuery(QUERY_USER_BY_ID, {
-    variables: { id: userId },
-  });
 
   //product list query
   const {
@@ -100,13 +107,13 @@ export default function ProviderServiceAgreement() {
       AuthService.logout();
       navigate("/");
     }
-  }, [userId, userQueryLoading]);
+  }, [userId]);
 
   useEffect(() => {
     setAgreementFormData({
-      provider: !userQueryLoading ? userQueryData?.getMe.roleProvider?._id : "",
+      provider: user.roleProvider._id,
     });
-  }, [userQueryLoading, userQueryData]);
+  }, [user]);
 
   //use effects for queries
   useEffect(() => {
@@ -122,37 +129,43 @@ export default function ProviderServiceAgreement() {
   }, [productQueryLoading, productQueryData]);
 
   useEffect(() => {
-    if (!userQueryLoading && !userQueryError && userQueryData.roleCustomer) {
-      setCurrentUser(userQueryData.getMe);
+    if (user) {
+      setCurrentUser(user);
     }
+  });
 
-    if (!customerQueryLoading && customerQueryData) {
-      if (customerQueryData.getCustomers) {
-        const customerList = customerQueryData.getCustomers.map((customer) => {
-          return {
-            value: customer._id,
-            label: `${customer.user.first} ${customer.user.last}`,
-          };
-        });
-        customerList.unshift({
-          value: "00000--0000",
-          label: "...choose customer",
-        });
-        setCustomers(customerList);
-      }
-    }
-    //try to set the default end date to 3 months from now
-    const defaultEndDate = dayjs().add(3, "month").format("YYYY-MM-DD");
-    setAgreementFormData((prevState) => ({
-      ...prevState,
-      endDate: defaultEndDate,
-    }));
-  }, [
-    userQueryLoading,
-    userQueryData,
-    customerQueryLoading,
-    customerQueryData,
-  ]);
+  // useEffect(() => {
+  //   if (!userQueryLoading && !userQueryError && userQueryData.roleCustomer) {
+  //     setCurrentUser(userQueryData.getMe);
+  //   }
+  // });
+  // if (!customerQueryLoading && customerQueryData) {
+  //   if (customerQueryData.getCustomers) {
+  //     const customerList = customerQueryData.getCustomers.map((customer) => {
+  //       return {
+  //         value: customer._id,
+  //         label: `${customer.user.first} ${customer.user.last}`,
+  //       };
+  //     });
+  //     customerList.unshift({
+  //       value: "00000--0000",
+  //       label: "...choose customer",
+  //     });
+  //     setCustomers(customerList);
+  //   }
+  // }
+  //try to set the default end date to 3 months from now
+  //   const defaultEndDate = dayjs().add(3, "month").format("YYYY-MM-DD");
+  //   setAgreementFormData((prevState) => ({
+  //     ...prevState,
+  //     endDate: defaultEndDate,
+  //   }));
+  // }, [
+  //   userQueryLoading,
+  //   userQueryData,
+  //   customerQueryLoading,
+  //   customerQueryData,
+  // ]);
 
   const handleInputChange = (event) => {
     if (event.target.name) {
@@ -196,45 +209,19 @@ export default function ProviderServiceAgreement() {
     }
   }
 
-  if (userQueryLoading || customerQueryLoading || !userId) {
+  if (!user) {
     return (
       <Container paddingTop={10}>
         <Alert status="info">
           <AlertIcon />
           <AlertTitle>Loading Info about Your Service</AlertTitle>
-          <AlertDescription>
-            {userQueryLoading ? "loading user data... " : ""}
-            {customerQueryLoading ? "loading user data... " : ""}
-            {!userId ? "You need to be signed in..." : ""}
-          </AlertDescription>
+          <AlertDescription>No user, have you logged in?</AlertDescription>
         </Alert>
       </Container>
     );
   }
-  if (userQueryError)
-    return (
-      <Container paddingTop={10}>
-        <Alert status="error">
-          <AlertIcon />
-          <AlertTitle>
-            We recieved an error loading your data. try refresh and make sure
-            you are logged in. {userQueryError.message}
-          </AlertTitle>
-          <AlertDescription>
-            {userQueryError
-              ? "Error loading user data...are you logged in? "
-              : ""}
-            {customerQueryError
-              ? "loading customer data... please notify Admin "
-              : ""}
-            {!userQueryData
-              ? "It doesent look like you have a provider account "
-              : ""}
-          </AlertDescription>
-        </Alert>
-      </Container>
-    );
-  if (!userQueryData.getMe.roleProvider)
+
+  if (!user.roleProvider)
     return (
       <Container paddingTop={10}>
         <Alert status="error">
@@ -258,9 +245,7 @@ export default function ProviderServiceAgreement() {
         <Input
           name="provider"
           {...InputStyles}
-          defaultValue={
-            !userQueryLoading ? userQueryData?.getMe.roleProvider?._id : ""
-          }
+          defaultValue={user.roleProvider?._id}
           onChange={handleInputChange}
         />
       </FormControl>
@@ -284,6 +269,10 @@ export default function ProviderServiceAgreement() {
       <ProductControl
         handleInputChange={handleInputChange}
         products={products}
+      />
+      <ServiceControl
+        handleInputChange={handleInputChange}
+        products={services}
       />
       <Heading>Please Sign</Heading>
       <div
