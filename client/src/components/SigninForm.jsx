@@ -70,6 +70,7 @@ const SigninForm = () => {
     if (userFormData.mobile.length === 10) {
       try {
         const response = await AuthService.smsLinkLogin(userFormData);
+
         if (response.linkSent) {
           setMessage("We sent you a link to login with.");
           onSmsModalOpen(); // Open the SMS code modal

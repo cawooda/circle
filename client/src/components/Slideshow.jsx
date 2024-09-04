@@ -33,8 +33,10 @@ const Slideshow = ({ data, setSlideShow }) => {
         height: "100vh",
         display: "flex",
         justifyContent: "space-around",
-        alignItems: "center",
+        alignItems: "space-between",
         textAlign: "center",
+        padding: "50px",
+        gap: "30",
         backgroundColor: "rgba(255, 223, 89, 0.6)",
       }}
       direction="column"
@@ -64,12 +66,16 @@ const Slideshow = ({ data, setSlideShow }) => {
             direction={{ base: "column", md: "row" }}
             alignItems={currentIndex % 2 ? "end" : "start"}
           >
-            <Heading key={data[currentIndex].title} className="fade-in">
+            <Heading
+              key={data[currentIndex].title}
+              className="fade-in"
+              padding="20px"
+            >
               {data[currentIndex].title}
             </Heading>
 
             <Box
-              paddingTop="20px"
+              padding="20px"
               alignSelf="right"
               width="50%"
               key={data[currentIndex].description}

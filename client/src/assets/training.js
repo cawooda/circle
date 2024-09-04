@@ -2,16 +2,12 @@ export const firstVisitSlideShow = [
   {
     title: "Welcome to Circle",
     description:
-      "We take care of the hard stuff so you can get on with making a real difference",
+      "We take care of the paperwork while you get on with things that make a real difference",
   },
   {
     title: "For Business",
     description:
-      "Our instant service agreements, consent forms and incident reporting create transparency and NDIS complience",
-  },
-  {
-    title: "For Business",
-    description: "Invoicing hanldled effortlessly.",
+      "For existing Circle Independents, we hanlde invoicing effortlessly and our instant service agreements, consent forms and incident reporting create transparency and NDIS complience",
   },
   {
     title: "For Participants",
@@ -21,7 +17,7 @@ export const firstVisitSlideShow = [
   {
     title: "For Participants",
     description:
-      "Get access to records of your services such as shift notes, invoices and incidents",
+      "Secure records of your services including service agreements, support logs and invoicing through your choice of NDIS provider",
   },
   {
     title: "Join Free",

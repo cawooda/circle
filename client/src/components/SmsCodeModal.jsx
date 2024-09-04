@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -52,6 +52,7 @@ const SmsCodeModal = ({ isOpen, onClose, onSubmit }) => {
               <Input
                 id="code"
                 type="text"
+                autofocus="true"
                 value={code}
                 onChange={handleCodeChange}
                 placeholder="Enter the 6-digit code"
