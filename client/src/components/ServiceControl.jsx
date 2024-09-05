@@ -19,11 +19,11 @@ export default function ServiceControl({
         <FormLabel>Service</FormLabel>
         <Select
           readOnly={locked || false}
-          name="product"
+          name="service"
           onClick={handleInputChange}
           onChange={handleInputChange}
         >
-          {services?.length()
+          {services.length
             ? services.map((service, index) => {
                 return (
                   <option
@@ -44,7 +44,7 @@ export default function ServiceControl({
           <NumberInputField
             {...InputStyles}
             readOnly={locked || false}
-            name="quantity"
+            name="serviceQuantity"
             onInput={handleInputChange}
           />
         </NumberInput>

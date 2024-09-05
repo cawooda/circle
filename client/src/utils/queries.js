@@ -72,6 +72,14 @@ export const QUERY_USER_BY_ID = gql`
           heading
           paragraph
         }
+        linkedCustomers {
+          _id
+          user {
+            _id
+            first
+            last
+          }
+        }
         address {
           street
           city

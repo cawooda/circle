@@ -35,6 +35,31 @@ import ServiceControl from "../../components/ServiceControl";
 
 export default function ProviderServiceAgreement() {
   const { user, loading, error } = useUser();
+  if (!user) {
+    return (
+      <Container paddingTop={10}>
+        <Alert status="info">
+          <AlertIcon />
+          <AlertTitle>Loading Info about Your Service</AlertTitle>
+          <AlertDescription>No user, have you logged in?</AlertDescription>
+        </Alert>
+      </Container>
+    );
+  }
+
+  if (!user.roleProvider)
+    return (
+      <Container paddingTop={10}>
+        <Alert status="error">
+          <AlertIcon />
+          <AlertTitle>
+            Your current role is not provider. You will need to gain provider
+            access.
+          </AlertTitle>
+        </Alert>
+      </Container>
+    );
+
   const [returnServiceAgreementVisitor, setReturnServiceAgreementVisitor] =
     useState(
       localStorage.getItem(
@@ -65,20 +90,6 @@ export default function ProviderServiceAgreement() {
   const [products, setProducts] = useState([]);
   const [services, setServices] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
-
-  //set query for customers
-  const {
-    loading: customerQueryLoading,
-    error: customerQueryError,
-    data: customerQueryData,
-  } = useQuery(QUERY_CUSTOMERS);
-
-  //product list query
-  const {
-    loading: productQueryLoading,
-    error: productQueryError,
-    data: productQueryData,
-  } = useQuery(QUERY_PRODUCTS);
 
   const [
     addServiceAgreement,
@@ -115,61 +126,35 @@ export default function ProviderServiceAgreement() {
     });
   }, [user]);
 
-  //use effects for queries
-  useEffect(() => {
-    if (!productQueryLoading && productQueryData) {
-      const productList = productQueryData.getProducts.map((product) => ({
-        value: product._id,
-        label: product.name,
-      }));
-      productList.unshift({ value: "00000--0000", label: "...choose product" });
-
-      setProducts(productList);
-    }
-  }, [productQueryLoading, productQueryData]);
-
   useEffect(() => {
     if (user) {
       setCurrentUser(user);
+      const defaultEndDate = dayjs().add(3, "month").format("YYYY-MM-DD");
+      setAgreementFormData((prevState) => ({
+        ...prevState,
+        endDate: defaultEndDate,
+      }));
+
+      const customerList = user.roleProvider.linkedCustomers.map((customer) => {
+        return {
+          value: customer._id,
+          label: `${customer.user.first} ${customer.user.last}`,
+        };
+      });
+      customerList.unshift({
+        value: "00000--0000",
+        label: "...choose customer",
+      });
+      setCustomers(customerList);
     }
   });
-
-  // useEffect(() => {
-  //   if (!userQueryLoading && !userQueryError && userQueryData.roleCustomer) {
-  //     setCurrentUser(userQueryData.getMe);
-  //   }
-  // });
-  // if (!customerQueryLoading && customerQueryData) {
-  //   if (customerQueryData.getCustomers) {
-  //     const customerList = customerQueryData.getCustomers.map((customer) => {
-  //       return {
-  //         value: customer._id,
-  //         label: `${customer.user.first} ${customer.user.last}`,
-  //       };
-  //     });
-  //     customerList.unshift({
-  //       value: "00000--0000",
-  //       label: "...choose customer",
-  //     });
-  //     setCustomers(customerList);
-  //   }
-  // }
-  //try to set the default end date to 3 months from now
-  //   const defaultEndDate = dayjs().add(3, "month").format("YYYY-MM-DD");
-  //   setAgreementFormData((prevState) => ({
-  //     ...prevState,
-  //     endDate: defaultEndDate,
-  //   }));
-  // }, [
-  //   userQueryLoading,
-  //   userQueryData,
-  //   customerQueryLoading,
-  //   customerQueryData,
-  // ]);
 
   const handleInputChange = (event) => {
     if (event.target.name) {
       const { name, value } = event.target;
+      console.log(name);
+      console.log(value);
+
       setAgreementFormData((prevState) => ({ ...prevState, [name]: value })); //handle the change of for an input with useState
     } else {
     }
@@ -184,55 +169,35 @@ export default function ProviderServiceAgreement() {
 
   async function handleFormSubmit(event) {
     event.preventDefault();
+    if (
+      agreementFormData.customer ||
+      agreementFormData.provider ||
+      agreementFormData.service ||
+      agreementFormData.serviceQuantity
+    )
+      try {
+        const newServiceAgreement = await addServiceAgreement({
+          variables: {
+            provider: agreementFormData.provider,
+            customer: agreementFormData.customer,
+            startDate: new Date(),
+            endDate: new Date(agreementFormData.endDate),
+            service: agreementFormData.service,
+            quantity: parseInt(agreementFormData.serviceQuantity),
+            providerSignature: agreementFormData.providerSignature,
+          },
+        });
 
-    try {
-      const newServiceAgreement = await addServiceAgreement({
-        variables: {
-          provider: agreementFormData.provider,
-          customer: agreementFormData.customer,
-          startDate: new Date(),
-          endDate: new Date(agreementFormData.endDate),
-          product: agreementFormData.product,
-          quantity: parseInt(agreementFormData.quantity),
-          providerSignature: agreementFormData.providerSignature,
-        },
-      });
-
-      if (newServiceAgreement?.data?.addServiceAgreement?.agreementNumber) {
-        navigate(
-          `/agreement/${newServiceAgreement.data.addServiceAgreement.agreementNumber}`
-        );
-      } else navigate("/customer");
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
+        if (newServiceAgreement?.data?.addServiceAgreement?.agreementNumber) {
+          navigate(
+            `/agreement/${newServiceAgreement.data.addServiceAgreement.agreementNumber}`
+          );
+        } else navigate("/");
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
   }
-
-  if (!user) {
-    return (
-      <Container paddingTop={10}>
-        <Alert status="info">
-          <AlertIcon />
-          <AlertTitle>Loading Info about Your Service</AlertTitle>
-          <AlertDescription>No user, have you logged in?</AlertDescription>
-        </Alert>
-      </Container>
-    );
-  }
-
-  if (!user.roleProvider)
-    return (
-      <Container paddingTop={10}>
-        <Alert status="error">
-          <AlertIcon />
-          <AlertTitle>
-            Your current role is not provider. You will need to gain provider
-            access.
-          </AlertTitle>
-        </Alert>
-      </Container>
-    );
 
   return (
     <Container>
@@ -266,14 +231,11 @@ export default function ProviderServiceAgreement() {
       />
 
       <Spacer />
-      <ProductControl
-        handleInputChange={handleInputChange}
-        products={products}
-      />
       <ServiceControl
         handleInputChange={handleInputChange}
-        products={services}
+        services={services}
       />
+
       <Heading>Please Sign</Heading>
       <div
         style={{
