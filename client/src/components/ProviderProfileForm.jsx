@@ -29,12 +29,11 @@ import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
 import { InputStyles, InputTextareaStyles } from "./styles/InputStyles";
 
 import logo from "/logo.png";
-import { useUser } from "../contexts/UserContext";
 
 import { useMutation } from "@apollo/client";
 import { UPDATE_PROVIDER_PROFILE } from "../utils/mutations";
 
-export default (ProviderProfileForm) => {
+export default ProviderProfileForm = ({ user }) => {
   const [
     updateProviderProfile,
     {
@@ -51,7 +50,6 @@ export default (ProviderProfileForm) => {
   });
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
-  const { user, setUser } = useUser();
 
   const [formData, setFormData] = useState({
     providerId: user.roleProvider._id,

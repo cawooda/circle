@@ -46,11 +46,8 @@ module.exports = {
           },
         ],
       })
-      .populate("roleAdmin")
-      .exec();
+      .populate("roleAdmin");
 
-    console.log(user);
-    console.log(user.roleProvider.linkedCustomers);
     if (user) {
       const serviceAgreements = await ServiceAgreement.find({
         $or: [{ provider: user.roleProvider }, { customer: user.roleCustomer }],
