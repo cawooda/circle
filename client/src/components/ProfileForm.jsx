@@ -113,7 +113,7 @@ const ProfileForm = () => {
           <ModalBody>
             <Flex direction="row" gap="5  " wrap="wrap" paddingBottom={5}>
               <PasswordResetForm />
-              <ProviderProfileForm />
+              {user.roleProvider ? <ProviderProfileForm user={user} /> : <></>}
             </Flex>
             <Flex direction="column" align="center" justify="center">
               <FormControl as="form" onSubmit={handleFormSubmit}>
