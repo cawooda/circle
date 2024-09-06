@@ -33,8 +33,7 @@ import logo from "/logo.png";
 import { useMutation } from "@apollo/client";
 import { UPDATE_PROVIDER_PROFILE } from "../utils/mutations";
 
-
-export default ProviderProfileForm = ({ user }) => {
+const ProviderProfileForm = ({ user }) => {
   console.log("user", user);
 
   const [
