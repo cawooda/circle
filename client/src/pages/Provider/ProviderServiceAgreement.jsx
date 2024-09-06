@@ -19,27 +19,67 @@ import { useNavigate } from "react-router-dom";
 import SignatureCanvas from "react-signature-canvas";
 import { useState, useEffect, useRef } from "react";
 
+import { useUser } from "../../contexts/UserContext";
+
 import AuthService from "../../utils/auth";
 
 import { useQuery, useMutation } from "@apollo/client";
-import {
-  QUERY_USER_BY_ID,
-  QUERY_CUSTOMERS,
-  QUERY_PRODUCTS,
-} from "../../utils/queries";
+import { QUERY_CUSTOMERS, QUERY_PRODUCTS } from "../../utils/queries";
 import { ADD_SERVICE_AGREEMENT } from "../../utils/mutations";
 
 import { ButtonStyles } from "../../components/styles/ButtonStyle";
 import { InputStyles } from "../../components/styles/InputStyles";
 import CustomerControl from "../../components/CustomerControl";
 import ProductControl from "../../components/ProductControl";
+import ServiceControl from "../../components/ServiceControl";
 
 export default function ProviderServiceAgreement() {
+  const { user, loading, error } = useUser();
+  if (!user) {
+    return (
+      <Container paddingTop={10}>
+        <Alert status="info">
+          <AlertIcon />
+          <AlertTitle>Loading Info about Your Service</AlertTitle>
+          <AlertDescription>No user, have you logged in?</AlertDescription>
+        </Alert>
+      </Container>
+    );
+  }
+
+  if (!user.roleProvider)
+    return (
+      <Container paddingTop={10}>
+        <Alert status="error">
+          <AlertIcon />
+          <AlertTitle>
+            Your current role is not provider. You will need to gain provider
+            access.
+          </AlertTitle>
+        </Alert>
+      </Container>
+    );
+
+  const [returnServiceAgreementVisitor, setReturnServiceAgreementVisitor] =
+    useState(
+      localStorage.getItem(
+        "CreateServiceAgreementReturnServiceAgreementVisitor"
+      )
+    );
+  const [slideShow, setSlideShow] = useState();
+
+  useEffect(() => {
+    if (returnServiceAgreementVisitor) {
+      setSlideShow(false);
+    } else {
+      setSlideShow(true);
+      localStorage.setItem("ReturnServiceAgreementVisitor", true);
+    }
+  }, [returnServiceAgreementVisitor]);
+
   const navigate = useNavigate();
   //use States
-  const [userId, setUserId] = useState(
-    AuthService?.getProfile()?.authenticatedPerson?._id || false
-  );
+  const [userId, setUserId] = useState(user._id || false);
 
   //setup use State for customers
   const [agreementFormData, setAgreementFormData] = useState({
@@ -48,30 +88,8 @@ export default function ProviderServiceAgreement() {
   const sigCanvas = useRef(null);
   const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);
+  const [services, setServices] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
-
-  //set query for customers
-  const {
-    loading: customerQueryLoading,
-    error: customerQueryError,
-    data: customerQueryData,
-  } = useQuery(QUERY_CUSTOMERS);
-
-  //set query for user information
-  const {
-    loading: userQueryLoading,
-    error: userQueryError,
-    data: userQueryData,
-  } = useQuery(QUERY_USER_BY_ID, {
-    variables: { id: userId },
-  });
-
-  //product list query
-  const {
-    loading: productQueryLoading,
-    error: productQueryError,
-    data: productQueryData,
-  } = useQuery(QUERY_PRODUCTS);
 
   const [
     addServiceAgreement,
@@ -100,63 +118,43 @@ export default function ProviderServiceAgreement() {
       AuthService.logout();
       navigate("/");
     }
-  }, [userId, userQueryLoading]);
+  }, [userId]);
 
   useEffect(() => {
     setAgreementFormData({
-      provider: !userQueryLoading ? userQueryData?.getMe.roleProvider?._id : "",
+      provider: user.roleProvider._id,
     });
-  }, [userQueryLoading, userQueryData]);
+  }, [user]);
 
-  //use effects for queries
   useEffect(() => {
-    if (!productQueryLoading && productQueryData) {
-      const productList = productQueryData.getProducts.map((product) => ({
-        value: product._id,
-        label: product.name,
+    if (user) {
+      setCurrentUser(user);
+      const defaultEndDate = dayjs().add(3, "month").format("YYYY-MM-DD");
+      setAgreementFormData((prevState) => ({
+        ...prevState,
+        endDate: defaultEndDate,
       }));
-      productList.unshift({ value: "00000--0000", label: "...choose product" });
 
-      setProducts(productList);
+      const customerList = user.roleProvider.linkedCustomers.map((customer) => {
+        return {
+          value: customer._id,
+          label: `${customer.user.first} ${customer.user.last}`,
+        };
+      });
+      customerList.unshift({
+        value: "00000--0000",
+        label: "...choose customer",
+      });
+      setCustomers(customerList);
     }
-  }, [productQueryLoading, productQueryData]);
-
-  useEffect(() => {
-    if (!userQueryLoading && !userQueryError && userQueryData.roleCustomer) {
-      setCurrentUser(userQueryData.getMe);
-    }
-
-    if (!customerQueryLoading && customerQueryData) {
-      if (customerQueryData.getCustomers) {
-        const customerList = customerQueryData.getCustomers.map((customer) => {
-          return {
-            value: customer._id,
-            label: `${customer.user.first} ${customer.user.last}`,
-          };
-        });
-        customerList.unshift({
-          value: "00000--0000",
-          label: "...choose customer",
-        });
-        setCustomers(customerList);
-      }
-    }
-    //try to set the default end date to 3 months from now
-    const defaultEndDate = dayjs().add(3, "month").format("YYYY-MM-DD");
-    setAgreementFormData((prevState) => ({
-      ...prevState,
-      endDate: defaultEndDate,
-    }));
-  }, [
-    userQueryLoading,
-    userQueryData,
-    customerQueryLoading,
-    customerQueryData,
-  ]);
+  });
 
   const handleInputChange = (event) => {
     if (event.target.name) {
       const { name, value } = event.target;
+      console.log(name);
+      console.log(value);
+
       setAgreementFormData((prevState) => ({ ...prevState, [name]: value })); //handle the change of for an input with useState
     } else {
     }
@@ -171,81 +169,35 @@ export default function ProviderServiceAgreement() {
 
   async function handleFormSubmit(event) {
     event.preventDefault();
+    if (
+      agreementFormData.customer ||
+      agreementFormData.provider ||
+      agreementFormData.service ||
+      agreementFormData.serviceQuantity
+    )
+      try {
+        const newServiceAgreement = await addServiceAgreement({
+          variables: {
+            provider: agreementFormData.provider,
+            customer: agreementFormData.customer,
+            startDate: new Date(),
+            endDate: new Date(agreementFormData.endDate),
+            service: agreementFormData.service,
+            quantity: parseInt(agreementFormData.serviceQuantity),
+            providerSignature: agreementFormData.providerSignature,
+          },
+        });
 
-    try {
-      const newServiceAgreement = await addServiceAgreement({
-        variables: {
-          provider: agreementFormData.provider,
-          customer: agreementFormData.customer,
-          startDate: new Date(),
-          endDate: new Date(agreementFormData.endDate),
-          product: agreementFormData.product,
-          quantity: parseInt(agreementFormData.quantity),
-          providerSignature: agreementFormData.providerSignature,
-        },
-      });
-
-      if (newServiceAgreement?.data?.addServiceAgreement?.agreementNumber) {
-        navigate(
-          `/agreement/${newServiceAgreement.data.addServiceAgreement.agreementNumber}`
-        );
-      } else navigate("/customer");
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
+        if (newServiceAgreement?.data?.addServiceAgreement?.agreementNumber) {
+          navigate(
+            `/agreement/${newServiceAgreement.data.addServiceAgreement.agreementNumber}`
+          );
+        } else navigate("/");
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
   }
-
-  if (userQueryLoading || customerQueryLoading || !userId) {
-    return (
-      <Container paddingTop={10}>
-        <Alert status="info">
-          <AlertIcon />
-          <AlertTitle>Loading Info about Your Service</AlertTitle>
-          <AlertDescription>
-            {userQueryLoading ? "loading user data... " : ""}
-            {customerQueryLoading ? "loading user data... " : ""}
-            {!userId ? "You need to be signed in..." : ""}
-          </AlertDescription>
-        </Alert>
-      </Container>
-    );
-  }
-  if (userQueryError)
-    return (
-      <Container paddingTop={10}>
-        <Alert status="error">
-          <AlertIcon />
-          <AlertTitle>
-            We recieved an error loading your data. try refresh and make sure
-            you are logged in. {userQueryError.message}
-          </AlertTitle>
-          <AlertDescription>
-            {userQueryError
-              ? "Error loading user data...are you logged in? "
-              : ""}
-            {customerQueryError
-              ? "loading customer data... please notify Admin "
-              : ""}
-            {!userQueryData
-              ? "It doesent look like you have a provider account "
-              : ""}
-          </AlertDescription>
-        </Alert>
-      </Container>
-    );
-  if (!userQueryData.getMe.roleProvider)
-    return (
-      <Container paddingTop={10}>
-        <Alert status="error">
-          <AlertIcon />
-          <AlertTitle>
-            Your current role is not provider. You will need to gain provider
-            access.
-          </AlertTitle>
-        </Alert>
-      </Container>
-    );
 
   return (
     <Container>
@@ -258,9 +210,7 @@ export default function ProviderServiceAgreement() {
         <Input
           name="provider"
           {...InputStyles}
-          defaultValue={
-            !userQueryLoading ? userQueryData?.getMe.roleProvider?._id : ""
-          }
+          defaultValue={user.roleProvider?._id}
           onChange={handleInputChange}
         />
       </FormControl>
@@ -281,10 +231,11 @@ export default function ProviderServiceAgreement() {
       />
 
       <Spacer />
-      <ProductControl
+      <ServiceControl
         handleInputChange={handleInputChange}
-        products={products}
+        services={services}
       />
+
       <Heading>Please Sign</Heading>
       <div
         style={{

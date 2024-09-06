@@ -63,6 +63,8 @@ type Provider {
     createdAt: String
     updatedAt: String
     notes:String
+    linkedCustomers: [Customer]
+    services: [Service]
     serviceAgreements: [ServiceAgreement]
 }
 

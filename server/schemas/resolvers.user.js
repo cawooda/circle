@@ -28,12 +28,27 @@ module.exports = {
       .populate("roleProvider")
       .populate({
         path: "roleProvider",
-        populate: {
-          path: "termsAndConditions",
-          model: "TermsAndConditions",
-        },
+        populate: [
+          {
+            path: "termsAndConditions",
+            model: "TermsAndConditions",
+          },
+          {
+            path: "services",
+            model: "service",
+          },
+          {
+            path: "linkedCustomers",
+            model: "customer",
+            populate: {
+              path: "user", // Nested population of linkedCustomers' user
+              model: "user",
+            },
+          },
+        ],
       })
-      .populate("roleAdmin");
+      .populate("roleAdmin")
+      .exec();
     console.log(user);
     if (user) {
       const serviceAgreements = await ServiceAgreement.find({

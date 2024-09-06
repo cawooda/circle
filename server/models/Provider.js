@@ -30,6 +30,8 @@ const providerSchema = new Schema(
       default: defaultTermsAndConditions,
     },
     notes: { type: String },
+    linkedCustomers: [{ type: Schema.Types.ObjectId, ref: "customer" }],
+    services: [{ type: Schema.Types.ObjectId, ref: "service" }],
     serviceAgreements: [{ type: Schema.Types.ObjectId, ref: "agreement" }],
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
