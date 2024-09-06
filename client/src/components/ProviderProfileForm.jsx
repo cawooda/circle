@@ -34,6 +34,7 @@ import { useMutation } from "@apollo/client";
 import { UPDATE_PROVIDER_PROFILE } from "../utils/mutations";
 
 export default ProviderProfileForm = ({ user }) => {
+  console.log("user", user);
   const [
     updateProviderProfile,
     {
@@ -55,12 +56,14 @@ export default ProviderProfileForm = ({ user }) => {
     providerId: user.roleProvider._id,
     providerName: user.roleProvider.providerName,
     abn: user.roleProvider.abn,
-    termsAndConditions: user.roleProvider.termsAndConditions,
+    termsAndConditions: user.roleProvider.termsAndConditions || [
+      { heading: "", paragraph: "" },
+    ],
     address: {
-      street: user.roleProvider.address.street,
-      city: user.roleProvider.address.city,
-      state: user.roleProvider.address.state,
-      postalCode: user.roleProvider.address.postalCode,
+      street: user.roleProvider.address?.street || "d",
+      city: user.roleProvider.address?.city || "d",
+      state: user.roleProvider.address?.state || "d",
+      postalCode: user.roleProvider.address?.postalCode || "d",
     },
   });
 
@@ -95,9 +98,11 @@ export default ProviderProfileForm = ({ user }) => {
       const index = parseInt(name.split("-")[1], 10);
       const field = name.split("-")[2];
 
-      const updatedTerms = formData.termsAndConditions.map((tc, i) =>
-        i === index ? { ...tc, [field]: value } : tc
-      );
+      const updatedTerms = formData.termsAndConditions
+        ? formData.termsAndConditions.map((tc, i) =>
+            i === index ? { ...tc, [field]: value } : tc
+          )
+        : [];
 
       setFormData({
         ...formData,
@@ -241,7 +246,6 @@ export default ProviderProfileForm = ({ user }) => {
                         value={tc.heading}
                         required
                       />
-
                       <FormLabel
                         fontSize={"1.2rem"}
                         htmlFor={`termsAndConditions-paragraph-${index}`}

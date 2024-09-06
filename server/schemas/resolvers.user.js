@@ -25,6 +25,7 @@ module.exports = {
   getMe: async (_parent, {}, context) => {
     const user = await User.findById(context.user._id)
       .populate("roleCustomer")
+      .populate("roleProvider")
       .populate({
         path: "roleProvider",
         populate: [
@@ -46,8 +47,9 @@ module.exports = {
           },
         ],
       })
-      .populate("roleAdmin");
-
+      .populate("roleAdmin")
+      .exec();
+    console.log(user);
     if (user) {
       const serviceAgreements = await ServiceAgreement.find({
         $or: [{ provider: user.roleProvider }, { customer: user.roleCustomer }],
