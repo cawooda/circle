@@ -21,8 +21,12 @@ import {
   VStack,
   Alert,
   InputGroup,
+  Spacer,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
+
+import TermsAndConditions from "./TermsAndConditions";
+import ProviderContactDetails from "./ProviderContactDetails";
 
 import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
 
@@ -131,6 +135,7 @@ const ProviderProfileForm = ({ user }) => {
       },
     });
   };
+
   if (user.roleProvider)
     return (
       <>
@@ -161,110 +166,21 @@ const ProviderProfileForm = ({ user }) => {
             <ModalCloseButton />
 
             <ModalBody>
-              <Heading>Provider Details</Heading>
               <Flex direction="column" align="center" justify="center">
                 <FormControl as="form" onSubmit={handleFormSubmit}>
-                  <FormLabel htmlFor="providerName">Provider Name</FormLabel>
-                  <Input
-                    id="providerName"
-                    {...InputStyles}
-                    placeholder="Provider Name..."
-                    name="providerName"
-                    onChange={handleInputChange}
-                    value={formData.providerName}
-                    required
+                  <ProviderContactDetails
+                    formData={formData}
+                    handleInputChange={handleInputChange}
                   />
-
-                  <FormLabel htmlFor="abn">ABN</FormLabel>
-                  <Input
-                    id="abn"
-                    {...InputStyles}
-                    placeholder="ABN..."
-                    name="abn"
-                    onChange={handleInputChange}
-                    value={formData.abn}
-                    required
+                  <Spacer />
+                  <TermsAndConditions
+                    formData={formData}
+                    handleInputChange={handleInputChange}
+                    handleFormSubmit={() => {
+                      onClose();
+                      handleFormSubmit();
+                    }}
                   />
-
-                  <FormLabel htmlFor="street">Street</FormLabel>
-                  <Input
-                    id="street"
-                    {...InputStyles}
-                    placeholder="Street..."
-                    name="street"
-                    onChange={handleInputChange}
-                    value={formData.address.street}
-                    required
-                  />
-
-                  <FormLabel htmlFor="city">City</FormLabel>
-                  <Input
-                    id="city"
-                    {...InputStyles}
-                    placeholder="City..."
-                    name="city"
-                    onChange={handleInputChange}
-                    value={formData.address.city}
-                    required
-                  />
-
-                  <FormLabel htmlFor="state">State</FormLabel>
-                  <Input
-                    id="state"
-                    {...InputStyles}
-                    placeholder="State..."
-                    name="state"
-                    onChange={handleInputChange}
-                    value={formData.address.state}
-                    required
-                  />
-
-                  <FormLabel htmlFor="postalCode">Postal Code</FormLabel>
-                  <Input
-                    id="postalCode"
-                    {...InputStyles}
-                    placeholder="Postal Code..."
-                    name="postalCode"
-                    onChange={handleInputChange}
-                    value={formData.address.postalCode}
-                    required
-                  />
-                  <Heading>Terms and Conditions</Heading>
-                  {formData.termsAndConditions.map((tc, index) => (
-                    <div key={index}>
-                      <FormLabel
-                        fontSize={"1.2rem"}
-                        htmlFor={`termsAndConditions-heading-${index}`}
-                      >
-                        Terms and Conditions Heading {index + 1}
-                      </FormLabel>
-                      <Input
-                        id={`termsAndConditions-heading-${index}`}
-                        {...InputStyles}
-                        placeholder="Heading..."
-                        name={`termsAndConditions-${index}-heading`}
-                        onChange={handleInputChange}
-                        value={tc.heading}
-                        required
-                      />
-                      <FormLabel
-                        fontSize={"1.2rem"}
-                        htmlFor={`termsAndConditions-paragraph-${index}`}
-                      >
-                        Terms and Conditions Paragraph {index + 1}
-                      </FormLabel>
-                      <Textarea
-                        id={`termsAndConditions-paragraph-${index}`}
-                        {...InputStyles}
-                        {...InputTextareaStyles}
-                        placeholder="Paragraph..."
-                        name={`termsAndConditions-${index}-paragraph`}
-                        onChange={handleInputChange}
-                        value={tc.paragraph}
-                        required
-                      />
-                    </div>
-                  ))}
 
                   <Container centerContent>
                     <Button
@@ -282,7 +198,7 @@ const ProviderProfileForm = ({ user }) => {
                       type="submit"
                       variant="success"
                     >
-                      Update Profile
+                      Update
                     </Button>
                   </Container>
                 </FormControl>

@@ -163,7 +163,7 @@ module.exports = {
         },
         "emailTemplate"
       );
-      console.log("outputPath", outputPath);
+
       console.log("renderedEmail", renderedEmail);
       userEmailService.sendMail(
         customerUser.email,

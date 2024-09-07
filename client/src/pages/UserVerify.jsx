@@ -10,11 +10,13 @@ export default function UserVerify() {
   const handleCodeSubmit = async (code) => {
     try {
       const response = await AuthService.verifySmsCode(code);
-
+      if (!response.codeValid) {
+        navigate("/");
+      }
       if (response.user) {
         navigate("/");
       } else {
-        throw new Error("Invalid code");
+        navigate("/");
       }
     } catch (error) {
       throw error;

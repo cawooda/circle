@@ -41,7 +41,7 @@ class EMAILService {
           text, // plain text body
           html, // html body
         });
-        console.log("email", info.messageId);
+
         return info.messageId;
       }
     } catch (error) {

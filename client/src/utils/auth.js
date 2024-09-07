@@ -10,9 +10,11 @@ class AuthService {
   getProfile() {
     try {
       const token = this.getToken();
-      console.log("Token inside getProfile:", token); // Debugging token
+      if (!token)
+        throw new Error(
+          "token made null, visitor has registerd but logged out"
+        );
       const profile = jwtDecode(token);
-      console.log("Decoded profile inside getProfile:", profile); // Debugging decoded profile
       return profile;
     } catch (error) {
       console.log("Error in getProfile:", error); // Catch any errors
@@ -40,7 +42,9 @@ class AuthService {
 
   getToken() {
     // Retrieves the user token from localStorage
-    return localStorage.getItem("id_token");
+    if (localStorage.getItem("id_token") != "null")
+      return localStorage.getItem("id_token");
+    return null;
   }
   async smsLinkLogin(userData) {
     if (userData.mobile) {
@@ -122,17 +126,22 @@ class AuthService {
       },
       body: JSON.stringify({ authLinkNumber: code }),
     });
-
+    const res = await response.json();
+    if (!response.validCode) {
+      this.logout();
+      return res;
+    }
     if (response.ok) {
-      const res = await response.json();
       localStorage.setItem("id_token", res.user.token);
+      return res;
+    } else {
       return res;
     }
     return response;
   }
   logout() {
     // Clear user token and profile data from localStorage
-    localStorage.removeItem("id_token");
+    localStorage.setItem("id_token", "null");
     // this will reload the page and reset the state of the application
   }
 }

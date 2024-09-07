@@ -37,14 +37,13 @@ const Slideshow = ({ data, setSlideShow }) => {
         textAlign: "center",
         padding: "50px",
         gap: "30",
-        backgroundColor: "rgba(255, 223, 89, 0.6)",
       }}
       direction="column"
     >
       <div>
         {currentIndex == 0 ? (
           <>
-            <Center gap={10} marginBottom="20vh">
+            <Center gap={10} marginBottom="10vh">
               <Image src={logo} width="25vw"></Image>
               <Heading>Circle Independent</Heading>
             </Center>
@@ -63,7 +62,7 @@ const Slideshow = ({ data, setSlideShow }) => {
         )}
         <Center padding={30} gap={10} marginBottom={`15vh`}>
           <Flex
-            direction={{ base: "column", md: "row" }}
+            direction={{ base: "column" }}
             alignItems={currentIndex % 2 ? "end" : "start"}
           >
             <Heading
@@ -76,8 +75,6 @@ const Slideshow = ({ data, setSlideShow }) => {
 
             <Box
               padding="20px"
-              alignSelf="right"
-              width="50%"
               key={data[currentIndex].description}
               className="fade-in-slow"
             >

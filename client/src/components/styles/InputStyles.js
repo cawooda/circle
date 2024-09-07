@@ -2,6 +2,7 @@ export const InputStyles = {
   borderRadius: "50px",
   borderWidth: "2px",
   borderColor: "black",
+  marginBottom: "10px",
 };
 
 export const DisplayStyles = {
@@ -13,4 +14,5 @@ export const DisplayStyles = {
 
 export const InputTextareaStyles = {
   borderRadius: "20px",
+  marginBottom: "20px",
 };

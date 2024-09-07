@@ -176,7 +176,7 @@ const ProfileForm = () => {
                     type="submit"
                     variant="success"
                   >
-                    Go
+                    Update
                   </Button>
                 </Container>
               </FormControl>

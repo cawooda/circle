@@ -38,7 +38,7 @@ const SigninForm = () => {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
   const { user, setUser, loading, error } = useUser();
-  const [signup, setSignup] = useState(false);
+  const [signup, setSignup] = useState(!localStorage.getItem("id_token"));
   const [message, setMessage] = useState("");
   const [userFormData, setUserFormData] = useState({
     mobile: "",

@@ -7,7 +7,7 @@ export const firstVisitSlideShow = [
   {
     title: "For Business",
     description:
-      "For existing Circle Independents, we hanlde invoicing effortlessly and our instant service agreements, consent forms and incident reporting create transparency and NDIS complience",
+      "For existing Circle Independents, we handle invoicing effortlessly and our instant service agreements, consent forms and incident reporting create transparency and NDIS complience",
   },
   {
     title: "For Participants",

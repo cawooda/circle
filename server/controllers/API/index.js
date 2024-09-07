@@ -43,13 +43,11 @@ async function setupUserLink(req, res, mobile) {
 
 router.put("/users", async (req, res) => {
   const { mobile, linkRequest, authLinkNumber } = req.body;
-  //this needs to manage a request that has link:true. This would be a case where the user shouldnt be logged in but a working
-  //route configured that would sign the user in without password.
+
   if (authLinkNumber) {
     const userExists = await User.findOne({ authLinkNumber: authLinkNumber });
     if (userExists) {
       await userExists.generateAuthToken();
-
       await userExists.populate([
         { path: "roleCustomer" },
         { path: "roleProvider" },
@@ -61,9 +59,10 @@ router.put("/users", async (req, res) => {
         .json({ userExists: true, userCreated: false, user: userExists });
     } else {
       res.status(401).json({
-        userExists: false,
+        codeValid: false,
         userCreated: false,
-        message: "that code didnt match any user or auth code",
+        message:
+          "that code didnt match any user or auth code, which could mean the link is expired",
       });
     }
     await User.updateMany(
