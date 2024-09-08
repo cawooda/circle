@@ -29,7 +29,7 @@ import TermsAndConditions from "./TermsAndConditions";
 import ProviderContactDetails from "./ProviderContactDetails";
 
 import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
-
+import { ModalHeadingStyle } from "./styles/modalStyles";
 import { InputStyles, InputTextareaStyles } from "./styles/InputStyles";
 
 import logo from "/logo.png";
@@ -159,20 +159,15 @@ const ProviderProfileForm = ({ user }) => {
               <Center>
                 <VStack>
                   <Image src={logo} boxSize="20" />
-                  <Heading size="sm">Provider Profile</Heading>
+                  <Heading {...ModalHeadingStyle}>Provider Profile</Heading>
                 </VStack>
               </Center>
             </ModalHeader>
             <ModalCloseButton />
 
             <ModalBody>
-              <Flex direction="column" align="center" justify="center">
+              <Flex direction="column">
                 <FormControl as="form" onSubmit={handleFormSubmit}>
-                  <ProviderContactDetails
-                    formData={formData}
-                    handleInputChange={handleInputChange}
-                  />
-                  <Spacer />
                   <TermsAndConditions
                     formData={formData}
                     handleInputChange={handleInputChange}
@@ -181,6 +176,11 @@ const ProviderProfileForm = ({ user }) => {
                       handleFormSubmit();
                     }}
                   />
+                  <ProviderContactDetails
+                    formData={formData}
+                    handleInputChange={handleInputChange}
+                  />
+                  <Spacer />
 
                   <Container centerContent>
                     <Button

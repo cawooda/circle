@@ -1,6 +1,6 @@
 import {
   Heading,
-  FormLabel,
+  Spacer,
   Input,
   useDisclosure,
   Button,
@@ -16,6 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { InputStyles, InputTextareaStyles } from "./styles/InputStyles";
 import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
+import { ModalHeadingStyle } from "./styles/modalStyles";
 
 const TermsAndConditions = ({
   formData,
@@ -43,20 +44,13 @@ const TermsAndConditions = ({
         <ModalOverlay />
         <ModalContent maxWidth="900px" width="90%">
           <ModalHeader>
-            <Heading>Terms and Conditions</Heading>
+            <Heading {...ModalHeadingStyle}>Terms and Conditions</Heading>
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Heading size="md">Update your details here</Heading>
-
+            <Spacer />
             {formData.termsAndConditions.map((tc, index) => (
               <div key={index}>
-                <FormLabel
-                  fontSize={"1.2rem"}
-                  htmlFor={`termsAndConditions-heading-${index}`}
-                >
-                  Terms and Conditions Heading {index + 1}
-                </FormLabel>
                 <Input
                   id={`termsAndConditions-heading-${index}`}
                   {...InputStyles}
@@ -66,12 +60,7 @@ const TermsAndConditions = ({
                   value={tc.heading}
                   required
                 />
-                <FormLabel
-                  fontSize={"1.2rem"}
-                  htmlFor={`termsAndConditions-paragraph-${index}`}
-                >
-                  Terms and Conditions Paragraph {index + 1}
-                </FormLabel>
+
                 <Textarea
                   id={`termsAndConditions-paragraph-${index}`}
                   {...InputStyles}
@@ -97,7 +86,7 @@ const TermsAndConditions = ({
                   !formData.address.state ||
                   !formData.address.postalCode
                 }
-                type="submit"
+                onClick={handleFormSubmit}
                 variant="success"
               >
                 Update

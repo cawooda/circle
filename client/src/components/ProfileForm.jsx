@@ -112,10 +112,9 @@ const ProfileForm = () => {
           <ModalHeader size="md">Update your details here</ModalHeader>
           <ModalBody>
             <Flex direction="row" gap="5  " wrap="wrap" paddingBottom={5}>
-              <PasswordResetForm />
               {user.roleProvider ? <ProviderProfileForm user={user} /> : <></>}
             </Flex>
-            <Flex direction="column" align="center" justify="center">
+            <Flex direction="column">
               <FormControl as="form" onSubmit={handleFormSubmit}>
                 <FormLabel htmlFor="first">First Name</FormLabel>
                 <Input
@@ -164,6 +163,7 @@ const ProfileForm = () => {
                 <Container centerContent>
                   <Button
                     {...ButtonStyles}
+                    {...ButtonHighlightStyle}
                     style={{ margin: "50px" }}
                     disabled={
                       !(
@@ -178,6 +178,7 @@ const ProfileForm = () => {
                   >
                     Update
                   </Button>
+                  <PasswordResetForm />
                 </Container>
               </FormControl>
             </Flex>

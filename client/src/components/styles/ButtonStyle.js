@@ -12,6 +12,11 @@ export const ButtonStyles = {
   padding: "5px",
 };
 
+export const SmallButtonStyle = {
+  fontSize: "0.75rem",
+  padding: "1px",
+};
+
 export const ButtonHighlightStyle = {
   bgColor: "yellow.400",
 };

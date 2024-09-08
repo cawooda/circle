@@ -1,5 +1,5 @@
 export const InputStyles = {
-  borderRadius: "50px",
+  borderRadius: "15px",
   borderWidth: "2px",
   borderColor: "black",
   marginBottom: "10px",

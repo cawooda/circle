@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
-import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
+import {
+  ButtonStyles,
+  SmallButtonStyle,
+  ButtonHighlightStyle,
+} from "./styles/ButtonStyle";
 import { InputStyles } from "./styles/InputStyles";
 import logo from "/logo.png";
 import { useMutation } from "@apollo/client";
@@ -68,6 +72,7 @@ export default function PasswordResetForm() {
     <>
       <Button
         {...ButtonStyles}
+        {...SmallButtonStyle}
         onClick={() => {
           if (!user) {
             onClose();
