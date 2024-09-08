@@ -27,6 +27,7 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     if (data && data.getMe) {
       setUser(data.getMe);
+      console.log(data.getMe);
       setHasError(false); // Reset error state on successful data fetch
     }
   }, [data]);
@@ -41,6 +42,7 @@ export const UserProvider = ({ children }) => {
   if (loading) return <p>Loading...</p>;
 
   if (hasError) {
+    () => window.location.reload(false);
     return (
       <div>
         <p>

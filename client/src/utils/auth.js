@@ -10,10 +10,8 @@ class AuthService {
   getProfile() {
     try {
       const token = this.getToken();
-      if (!token)
-        throw new Error(
-          "token made null, visitor has registerd but logged out"
-        );
+      if (!token) return null;
+
       const profile = jwtDecode(token);
       return profile;
     } catch (error) {
