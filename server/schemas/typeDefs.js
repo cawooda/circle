@@ -115,11 +115,23 @@ type Product {
   price: Float!
 }
 
+type ProductListResponse {
+  success: Boolean!
+  message: String!
+  products: [Product]
+  }
+
 type Service {
  _id: ID!
  product: Product!
  price: Float!
  provider: Provider
+}
+
+type ServicesResponse {
+  success: Boolean!
+  message: String!
+  services: [Service]
 }
 
 type AddServiceResponse {
@@ -152,8 +164,8 @@ type Query {
     getMe(id: ID!): User!
     getUserRoles(id: ID!): [String]
     getCustomers: [Customer]
-    getProducts: [Product]
-    getServices(providerId: ID!): [Service]
+    getProducts: ProductListResponse
+    getServices(providerId: ID!): ServicesResponse
     getServiceAgreements: ServiceAgreementResponse!
     getServiceAgreement(agreementNumber: String!): ServiceAgreement
 }

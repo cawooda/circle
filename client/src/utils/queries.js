@@ -209,11 +209,32 @@ export const QUERY_CUSTOMERS = gql`
 `;
 
 export const QUERY_PRODUCTS = gql`
-  query getProducts {
+  query GetProducts {
     getProducts {
-      _id
-      name
-      price
+      success
+      message
+      products {
+        _id
+        name
+        price
+      }
+    }
+  }
+`;
+export const QUERY_SERVICES = gql`
+  query GetServices($providerId: ID!) {
+    getServices(providerId: $providerId) {
+      success
+      message
+      services {
+        _id
+        product {
+          _id
+          name
+          price
+        }
+        price
+      }
     }
   }
 `;

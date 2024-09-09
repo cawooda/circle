@@ -27,13 +27,13 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     if (data && data.getMe) {
       setUser(data.getMe);
-      console.log(data.getMe);
       setHasError(false); // Reset error state on successful data fetch
     }
   }, [data]);
 
   const handleRetry = () => {
     if (retryCount < 3) {
+      window.location.reload(false);
       setRetryCount(retryCount + 1);
       refetch(); // Retry the query
     }
@@ -48,7 +48,7 @@ export const UserProvider = ({ children }) => {
         <p>
           We encountered an issue fetching your data. Please try again later.
         </p>
-        <Button onClick={() => window.location.reload(false)}>Refresh</Button>
+        <Button onClick={handleRetry}>Refresh</Button>
       </div>
     );
   }

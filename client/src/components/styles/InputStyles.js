@@ -5,6 +5,10 @@ export const InputStyles = {
   marginBottom: "10px",
 };
 
+export const SmallInputStyle = {
+  width: "30%",
+};
+
 export const DisplayStyles = {
   borderRadius: "50px",
   borderWidth: "2px",

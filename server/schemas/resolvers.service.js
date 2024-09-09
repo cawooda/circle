@@ -1,5 +1,35 @@
 const { Provider, Product, Service } = require("../models");
 module.exports = {
+  getServices: async (_parent, { providerId }, context) => {
+    try {
+      if (context.user.roleProvider._id == providerId) {
+        const foundServices = await Service.find({
+          provider: providerId,
+        }).populate({
+          path: "product",
+          model: "product",
+        });
+
+        return {
+          success: true,
+          message: "we successfully found a list of providers servcies",
+          services: foundServices,
+        };
+      } else {
+        return {
+          success: false,
+          message: "You can only query your own services",
+          services: [],
+        };
+      }
+    } catch (error) {
+      console.log(error);
+      return {
+        success: false,
+        message: "an error occurred getting services for provider",
+      };
+    }
+  },
   addService: async (_parent, { providerId, productId, price }) => {
     //Look int unique keys multiple fields mongoose.
     // tell the front end guys to check whether the provider already has a service before adding one that could be a duplicate

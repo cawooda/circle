@@ -6,16 +6,15 @@ class AuthService {
   constructor() {
     if (this.isTokenExpired(this.getProfile())) this.logout();
   }
-  // get user data
+
   getProfile() {
     try {
       const token = this.getToken();
       if (!token) return null;
-
       const profile = jwtDecode(token);
       return profile;
     } catch (error) {
-      console.log("Error in getProfile:", error); // Catch any errors
+      console.log("Error in getProfile:", error);
       return null;
     }
   }
@@ -138,9 +137,7 @@ class AuthService {
     return response;
   }
   logout() {
-    // Clear user token and profile data from localStorage
     localStorage.setItem("id_token", "null");
-    // this will reload the page and reset the state of the application
   }
 }
 

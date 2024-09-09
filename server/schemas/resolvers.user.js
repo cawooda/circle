@@ -109,11 +109,20 @@ module.exports = {
   },
   getProducts: async (_parent, {}, context) => {
     try {
-      const productList = Product.find({});
+      const productList = await Product.find({});
 
-      return productList;
+      return {
+        success: true,
+        message: "product list fetched successfully",
+        products: productList,
+      };
     } catch (error) {
       console.error(error);
+      return {
+        success: false,
+        message: "product list fetch encountered an error",
+        products: [],
+      };
     }
   },
   toggleUserRole: async (_parent, { userId, role }, context) => {

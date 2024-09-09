@@ -22,6 +22,7 @@ const {
   addService,
   deleteService,
   updateServicePrice,
+  getServices,
 } = require("./resolvers.service");
 const {
   addServiceAgreement,
@@ -38,9 +39,7 @@ const resolvers = {
     getProducts,
     getUserByToken,
     getUserRoles,
-    getServices: async (_parent, { providerId }, context) => {
-      return providerServices;
-    },
+    getServices,
     getServiceAgreement,
     getServiceAgreements,
   },
