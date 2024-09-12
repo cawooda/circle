@@ -52,7 +52,7 @@ const SmsCodeModal = ({ isOpen, onClose, onSubmit }) => {
               <Input
                 id="code"
                 type="text"
-                autofocus="true"
+                autoFocus={true}
                 value={code}
                 onChange={handleCodeChange}
                 placeholder="Enter the 6-digit code"

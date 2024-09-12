@@ -6,16 +6,17 @@ class AuthService {
   constructor() {
     if (this.isTokenExpired(this.getProfile())) this.logout();
   }
-  // get user data
+
   getProfile() {
     try {
       const token = this.getToken();
+      console.log("token", token);
       if (!token) return null;
-
       const profile = jwtDecode(token);
+      console.log("profile", profile);
       return profile;
     } catch (error) {
-      console.log("Error in getProfile:", error); // Catch any errors
+      console.log("Error in getProfile:", error);
       return null;
     }
   }
@@ -40,8 +41,9 @@ class AuthService {
 
   getToken() {
     // Retrieves the user token from localStorage
-    if (localStorage.getItem("id_token") != "null")
+    if (localStorage.getItem("id_token")) {
       return localStorage.getItem("id_token");
+    }
     return null;
   }
   async smsLinkLogin(userData) {
@@ -90,12 +92,15 @@ class AuthService {
       });
       if (response.ok) {
         const res = await response.json();
-        localStorage.setItem("id_token", res.user.token);
+        if (res.user.token) {
+          localStorage.setItem("id_token", res.user.token);
+          localStorage.setItem("user_signed_up", res.user.mobile);
+          return res;
+        }
         return res;
       }
-      return response;
     } catch (error) {
-      //alert error message
+      console.log(error);
     }
   }
 
@@ -110,7 +115,11 @@ class AuthService {
 
     if (response.ok) {
       const res = await response.json();
-      localStorage.setItem("id_token", res.user.token);
+      if (res.user.token) {
+        localStorage.setItem("id_token", res.user.token);
+        localStorage.setItem("user_signed_up", res.user.mobile);
+        return res;
+      }
       return res;
     }
     return response;
@@ -138,9 +147,7 @@ class AuthService {
     return response;
   }
   logout() {
-    // Clear user token and profile data from localStorage
-    localStorage.setItem("id_token", "null");
-    // this will reload the page and reset the state of the application
+    localStorage.removeItem("id_token");
   }
 }
 

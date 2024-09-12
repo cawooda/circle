@@ -16,6 +16,7 @@
         "paragraph": "This is the first term."
       }
     ],
+    "services": ["66a0d9f4a0eb8627cc6320f9", "66a0d9f4a0eb8627cc6321f0"],
     "notes": "Provider 1 notes.",
     "linkedCustomers": ["66a0d9f4a0eb8627cc6320f4", "66a0d9f4a0eb8627cc6320f5"],
     "serviceAgreements": [],
@@ -39,6 +40,7 @@
         "paragraph": "This is the first term for Provider 2."
       }
     ],
+    "services": ["66a0d9f4a0eb8627cc6323f4", "66a0d9f4a0eb8627cc6323f6"],
     "notes": "Provider 2 notes.",
     "linkedCustomers": ["66a0d9f4a0eb8627cc6320f4", "66a0d9f4a0eb8627cc6320f5"],
     "serviceAgreements": [],

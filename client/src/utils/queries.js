@@ -72,6 +72,13 @@ export const QUERY_USER_BY_ID = gql`
           heading
           paragraph
         }
+        services {
+          _id
+          price
+          product {
+            name
+          }
+        }
         linkedCustomers {
           _id
           user {
@@ -152,11 +159,7 @@ export const QUERY_USER_BY_ID = gql`
         }
         agreementNumber
         startDate
-        product {
-          _id
-          name
-          price
-        }
+
         service {
           _id
           product {
@@ -209,11 +212,33 @@ export const QUERY_CUSTOMERS = gql`
 `;
 
 export const QUERY_PRODUCTS = gql`
-  query getProducts {
+  query GetProducts {
     getProducts {
-      _id
-      name
-      price
+      success
+      message
+      products {
+        _id
+        name
+        price
+      }
+    }
+  }
+`;
+export const QUERY_SERVICES = gql`
+  query GetServices($providerId: ID!) {
+    getServices(providerId: $providerId) {
+      success
+      message
+      services {
+        _id
+        active
+        product {
+          _id
+          name
+          price
+        }
+        price
+      }
     }
   }
 `;
@@ -263,9 +288,11 @@ export const QUERY_SERVICE_AGREEMENT = gql`
       }
       agreementNumber
       startDate
-      product {
+      service {
         _id
-        name
+        product {
+          name
+        }
         price
       }
       quantity

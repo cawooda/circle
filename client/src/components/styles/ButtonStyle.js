@@ -1,7 +1,6 @@
 export const ButtonStyles = {
-  minWidth: "150px",
+  minWidth: "70px",
   align: "center",
-
   fontWeight: "bold",
   colorScheme: "yellow.500",
   borderColor: "black",
@@ -10,6 +9,15 @@ export const ButtonStyles = {
   borderRadius: "30px",
   borderWidth: "2px",
   padding: "5px",
+};
+
+export const DeleteButtonStyle = {
+  minWidth: "auto",
+  height: "1.5rem",
+  alignSelf: "center",
+
+  bgColor: "red.400",
+  borderColor: "black",
 };
 
 export const SmallButtonStyle = {

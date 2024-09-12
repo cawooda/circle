@@ -27,6 +27,7 @@ import { useNavigate } from "react-router-dom";
 
 import TermsAndConditions from "./TermsAndConditions";
 import ProviderContactDetails from "./ProviderContactDetails";
+import ProviderServiceSelect from "./ProviderServiceSelect";
 
 import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
 import { ModalHeadingStyle } from "./styles/modalStyles";
@@ -38,8 +39,6 @@ import { useMutation } from "@apollo/client";
 import { UPDATE_PROVIDER_PROFILE } from "../utils/mutations";
 
 const ProviderProfileForm = ({ user }) => {
-  console.log("user", user);
-
   const [
     updateProviderProfile,
     {
@@ -166,7 +165,7 @@ const ProviderProfileForm = ({ user }) => {
             <ModalCloseButton />
 
             <ModalBody>
-              <Flex direction="column">
+              <Flex direction="column" gap={20}>
                 <FormControl as="form" onSubmit={handleFormSubmit}>
                   <TermsAndConditions
                     formData={formData}
@@ -176,6 +175,7 @@ const ProviderProfileForm = ({ user }) => {
                       handleFormSubmit();
                     }}
                   />
+                  <ProviderServiceSelect />
                   <ProviderContactDetails
                     formData={formData}
                     handleInputChange={handleInputChange}

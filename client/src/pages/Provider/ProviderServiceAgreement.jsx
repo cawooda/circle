@@ -8,9 +8,6 @@ import {
   Heading,
   Container,
   Spacer,
-  NumberInput,
-  NumberInputField,
-  Select,
   Alert,
   Button,
   AlertDescription,
@@ -147,7 +144,7 @@ export default function ProviderServiceAgreement() {
       });
       setCustomers(customerList);
     }
-  });
+  }, [user]);
 
   const handleInputChange = (event) => {
     if (event.target.name) {
@@ -169,6 +166,7 @@ export default function ProviderServiceAgreement() {
 
   async function handleFormSubmit(event) {
     event.preventDefault();
+    console.log(agreementFormData);
     if (
       agreementFormData.customer ||
       agreementFormData.provider ||
@@ -231,10 +229,7 @@ export default function ProviderServiceAgreement() {
       />
 
       <Spacer />
-      <ServiceControl
-        handleInputChange={handleInputChange}
-        services={services}
-      />
+      <ServiceControl handleInputChange={handleInputChange} />
 
       <Heading>Please Sign</Heading>
       <div

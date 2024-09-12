@@ -6,7 +6,7 @@ const { convertToPdf } = require("../utils/pdfUtility");
 const { EMAILService } = require("../utils/mailer");
 const userEmailService = new EMAILService();
 
-const { User, Product, ServiceAgreement } = require("../models");
+const { User, Product, ServiceAgreement, Service } = require("../models");
 
 const { renderTemplate } = require("../templates/renderTemplate");
 module.exports = {
@@ -46,20 +46,20 @@ module.exports = {
       startDate,
       endDate,
       quantity,
-      product,
+      service,
       providerSignature,
     },
     context
   ) => {
     if (!(context.user.roleProvider._id == provider))
       throw new Error("provider is not in context. not valid");
-    productPopulated = await Product.findById(product);
+    servicePopulated = await Service.findById(service).populate("product");
     try {
       const newServiceAgreement = await ServiceAgreement.create({
         provider: provider || null,
         customer: customer || null,
         startDate: new Date() || null,
-        product: productPopulated || null,
+        service: servicePopulated || null,
         quantity: quantity || null,
         endDate: endDate || null,
         providerSignature: providerSignature || null,
@@ -67,6 +67,8 @@ module.exports = {
       // Populate paths individually to fix an issue I cant trace
       await newServiceAgreement.populate("customer");
       await newServiceAgreement.populate("provider");
+      await newServiceAgreement.populate("service");
+      await newServiceAgreement.populate("service.product");
       await newServiceAgreement.populate("customer.user");
       await newServiceAgreement.populate("provider.user");
       newServiceAgreement.save();
@@ -105,7 +107,7 @@ module.exports = {
       // Populate paths individually to fix an issue I can't trace
       await signedServiceAgreement.populate("customer");
       await signedServiceAgreement.populate("provider");
-      await signedServiceAgreement.populate("product");
+      await signedServiceAgreement.populate("service");
       await signedServiceAgreement.populate("customer.user");
       await signedServiceAgreement.populate("provider.user");
       await signedServiceAgreement.save();
@@ -133,7 +135,10 @@ module.exports = {
         startDate: startDate,
         endDate: endDate,
       };
-
+      console.log(
+        "renderPreparedServiceAgreement",
+        renderPreparedServiceAgreement
+      );
       const renderedHtml = renderTemplate(
         renderPreparedServiceAgreement,
         "serviceAgreementTemplate"
@@ -203,11 +208,8 @@ module.exports = {
         path: "provider",
         populate: { path: "user" },
       });
-      await serviceAgreement.populate("product");
-      // await serviceAgreement.populate({
-      //   path: "product",
-      //   populate: { path: "name price" },
-      // });
+      await serviceAgreement.populate("service");
+      await serviceAgreement.populate("service.product");
 
       await serviceAgreement.toObject();
 

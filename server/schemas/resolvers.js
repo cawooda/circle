@@ -10,7 +10,6 @@ const {
   getAllUsers,
   getMe,
   getCustomers,
-  getProducts,
   getUserByToken,
   getUserRoles,
   toggleUserRole,
@@ -22,6 +21,7 @@ const {
   addService,
   deleteService,
   updateServicePrice,
+  getServices,
 } = require("./resolvers.service");
 const {
   addServiceAgreement,
@@ -29,6 +29,7 @@ const {
   getServiceAgreements,
   getServiceAgreement,
 } = require("./resolvers.serviceAgreement");
+const { getProducts } = require("./resolvers.product");
 
 const resolvers = {
   Query: {
@@ -38,9 +39,7 @@ const resolvers = {
     getProducts,
     getUserByToken,
     getUserRoles,
-    getServices: async (_parent, { providerId }, context) => {
-      return providerServices;
-    },
+    getServices,
     getServiceAgreement,
     getServiceAgreements,
   },

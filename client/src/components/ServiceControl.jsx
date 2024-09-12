@@ -7,12 +7,11 @@ import {
   NumberInputField,
 } from "@chakra-ui/react";
 import { InputStyles } from "./styles/InputStyles";
+import { useUser } from "../contexts/UserContext";
 
-export default function ServiceControl({
-  services,
-  handleInputChange,
-  locked,
-}) {
+export default function ServiceControl({ handleInputChange, locked }) {
+  const { user } = useUser();
+  if (!user.roleProvider.services[0]?.product?.name) return null;
   return (
     <>
       <FormControl>
@@ -23,15 +22,15 @@ export default function ServiceControl({
           onClick={handleInputChange}
           onChange={handleInputChange}
         >
-          {services.length
-            ? services.map((service, index) => {
+          {user.roleProvider.services.length
+            ? user.roleProvider.services.map((service, index) => {
                 return (
                   <option
-                    key={service.value}
+                    key={service._id}
                     selected={index === 0}
-                    value={service.value}
+                    value={service._id}
                   >
-                    {service.label}
+                    {service.product.name}
                   </option>
                 );
               })

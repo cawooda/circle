@@ -40,7 +40,6 @@ export default function RootLayout() {
     return (
       <Center height="100vh">
         <div>
-          <Heading>Please log in</Heading>
           <Flex justify="center" align="center">
             <SigninForm />
           </Flex>

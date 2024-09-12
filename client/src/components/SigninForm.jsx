@@ -38,10 +38,11 @@ const SigninForm = () => {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
   const { user, setUser, loading, error } = useUser();
-  const [signup, setSignup] = useState(!localStorage.getItem("id_token"));
+  const userSignedUp = localStorage.getItem("user_signed_up");
+  const [signup, setSignup] = useState(!userSignedUp);
   const [message, setMessage] = useState("");
   const [userFormData, setUserFormData] = useState({
-    mobile: "",
+    mobile: userSignedUp || "",
     password: "",
   });
 
@@ -52,6 +53,7 @@ const SigninForm = () => {
   } = useDisclosure();
 
   useEffect(() => {
+    if (loading) onClose;
     if (!user) {
       onOpen();
     }
@@ -104,10 +106,8 @@ const SigninForm = () => {
     onClose();
     event.preventDefault();
     try {
-      if (!signup) {
-        const response = await AuthService.loginUser({
-          ...userFormData,
-        });
+      if (signup) {
+        const response = await AuthService.signUpUser(userFormData);
         if (!response.user) {
           setMessage(response.message); // Set the error message
         } else {
@@ -115,19 +115,19 @@ const SigninForm = () => {
           onClose();
         }
       } else {
-        const response = await AuthService.signUpUser(userFormData);
-
+        const response = await AuthService.loginUser({
+          ...userFormData,
+        });
         if (!response.user) {
           setMessage(response.message); // Set the error message
         } else {
           setUser(response.user);
-          onClose();
         }
       }
     } catch (error) {
       console.log("Error received trying to create new userAuth", error);
     }
-
+    onClose();
     setUserFormData({
       first: "",
       last: "",
@@ -135,7 +135,7 @@ const SigninForm = () => {
       password: "",
     });
   };
-
+  console.log(user);
   return (
     <>
       <Button

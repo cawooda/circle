@@ -211,7 +211,7 @@ export const ADD_SERVICE_AGREEMENT = gql`
     $customer: ID!
     $startDate: String!
     $endDate: String!
-    $product: String!
+    $service: ID!
     $quantity: Int!
     $providerSignature: String!
   ) {
@@ -220,7 +220,7 @@ export const ADD_SERVICE_AGREEMENT = gql`
       customer: $customer
       startDate: $startDate
       endDate: $endDate
-      product: $product
+      service: $service
       quantity: $quantity
       providerSignature: $providerSignature
     ) {
@@ -257,9 +257,11 @@ export const ADD_SERVICE_AGREEMENT = gql`
       }
       agreementNumber
       startDate
-      product {
+      service {
         _id
-        name
+        product {
+          name
+        }
         price
       }
       quantity
@@ -330,9 +332,11 @@ export const SIGN_SERVICE_AGREEMENT = gql`
       }
       agreementNumber
       startDate
-      product {
+      service {
         _id
-        name
+        product {
+          name
+        }
         price
       }
       quantity
@@ -345,37 +349,29 @@ export const SIGN_SERVICE_AGREEMENT = gql`
   }
 `;
 
+export const UPDATE_SERVICE = gql`
+  mutation UpdateServicePrice($serviceId: ID!, $price: Float!) {
+    updateServicePrice(serviceId: $serviceId, price: $price) {
+      price
+    }
+  }
+`;
+export const DELETE_SERVICE = gql`
+  mutation DeleteService($serviceId: ID!) {
+    deleteService(serviceId: $serviceId) {
+      _id
+    }
+  }
+`;
+
 export const ADD_SERVICE = gql`
-  mutation AddService($providerId: ID!, $productId: ID!, $price: Float!) {
-    addService(providerId: $providerId, productId: $productId, price: $price) {
+  mutation AddService($providerId: ID!, $productId: ID!) {
+    addService(providerId: $providerId, productId: $productId) {
+      success
       message
       service {
         _id
-        product {
-          _id
-          name
-          price
-        }
-        price
-        provider {
-          _id
-          user {
-            _id
-            fullName
-          }
-          abn
-          address {
-            street
-            city
-            state
-            postalCode
-          }
-          providerName
-          createdAt
-          updatedAt
-        }
       }
-      success
     }
   }
 `;

@@ -31,11 +31,14 @@ module.exports = {
         populate: [
           {
             path: "termsAndConditions",
-            model: "TermsAndConditions",
           },
           {
             path: "services",
             model: "service",
+            populate: {
+              path: "product",
+              model: "product",
+            },
           },
           {
             path: "linkedCustomers",
@@ -64,13 +67,16 @@ module.exports = {
           model: "customer",
           populate: { path: "user", model: "user" },
         })
-        .populate("product")
-        .populate("service")
+        .populate({
+          path: "service",
+          model: "service",
+          populate: { path: "product", model: "product" },
+        })
         .lean({ virtuals: true })
         .exec();
 
       user.serviceAgreements = serviceAgreements;
-
+      console.log(user);
       return user;
     } else {
       return { message: "user not found" };
@@ -107,15 +113,7 @@ module.exports = {
       console.error(error);
     }
   },
-  getProducts: async (_parent, {}, context) => {
-    try {
-      const productList = Product.find({});
 
-      return productList;
-    } catch (error) {
-      console.error(error);
-    }
-  },
   toggleUserRole: async (_parent, { userId, role }, context) => {
     if (!userId === (context.user.roleAdmin || context.user.superAdmin))
       throw new Error("userId didnt match with admin");
