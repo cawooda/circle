@@ -46,24 +46,26 @@ connection.once("open", async () => {
     }
 
     // Seed Customers
-    let customerCheck = await connection.db
-      .listCollections({ name: "customers" })
-      .toArray();
-    if (customerCheck.length && process.env.DEVELOPMENT) {
-      await connection.dropCollection("customers");
+    for (let customer of customerSeed) {
+      const existingCustomer = await Customer.findOne({ _id: customer._id });
+      if (!existingCustomer) {
+        await Customer.create(customer);
+        console.log(`Added customer: ${customer._id}`);
+      } else {
+        console.log(`Customer ${customer._id} already exists.`);
+      }
     }
-    const customers = await Customer.insertMany(customerSeed);
-    console.table(customers);
 
     // Seed Providers
-    let providerCheck = await connection.db
-      .listCollections({ name: "providers" })
-      .toArray();
-    if (providerCheck.length && process.env.DEVELOPMENT) {
-      await connection.dropCollection("providers");
+    for (let provider of providerSeed) {
+      const existingProvider = await Provider.findOne({ _id: provider._id });
+      if (!existingProvider) {
+        await Provider.create(provider);
+        console.log(`Added provider: ${provider.providerName}`);
+      } else {
+        console.log(`Provider ${provider.providerName} already exists.`);
+      }
     }
-    const providers = await Provider.insertMany(providerSeed);
-    console.table(providers);
 
     // Seed Products
     let productCheck = await connection.db
@@ -76,34 +78,39 @@ connection.once("open", async () => {
     console.table(products);
 
     // Seed Services
-    let serviceCheck = await connection.db
-      .listCollections({ name: "services" })
-      .toArray();
-    if (serviceCheck.length && process.env.DEVELOPMENT) {
-      await connection.dropCollection("services");
+    for (let service of serviceSeed) {
+      const existingService = await Service.findOne({ _id: service._id });
+      if (!existingService) {
+        await Service.create(service);
+        console.log(`Added service: ${service._id}`);
+      } else {
+        console.log(`Service ${service._id} already exists.`);
+      }
     }
-    const services = await Service.insertMany(serviceSeed);
-    console.table(services);
 
     // Seed Shifts
-    let shiftCheck = await connection.db
-      .listCollections({ name: "shifts" })
-      .toArray();
-    if (shiftCheck.length && process.env.DEVELOPMENT) {
-      await connection.dropCollection("shifts");
+    for (let shift of shiftSeed) {
+      const existingShift = await Shift.findOne({ _id: shift._id });
+      if (!existingShift) {
+        await Shift.create(shift);
+        console.log(`Added shift: ${shift._id}`);
+      } else {
+        console.log(`Shift ${shift._id} already exists.`);
+      }
     }
-    const shifts = await Shift.insertMany(shiftSeed);
-    console.table(shifts);
 
     // Seed Agreements
-    let agreementsCheck = await connection.db
-      .listCollections({ name: "agreements" })
-      .toArray();
-    if (agreementsCheck.length && process.env.DEVELOPMENT) {
-      await connection.dropCollection("agreements");
+    for (let agreement of agreementSeed) {
+      const existingAgreement = await ServiceAgreement.findOne({
+        _id: agreement._id,
+      });
+      if (!existingAgreement) {
+        await ServiceAgreement.create(agreement);
+        console.log(`Added agreement: ${agreement.agreementNumber}`);
+      } else {
+        console.log(`Agreement ${agreement.agreementNumber} already exists.`);
+      }
     }
-    const agreements = await ServiceAgreement.insertMany(agreementSeed);
-    console.table(agreements);
   } catch (error) {
     console.error("Error seeding the database", error);
   } finally {
