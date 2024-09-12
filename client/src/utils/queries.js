@@ -72,6 +72,13 @@ export const QUERY_USER_BY_ID = gql`
           heading
           paragraph
         }
+        services {
+          _id
+          price
+          product {
+            name
+          }
+        }
         linkedCustomers {
           _id
           user {
@@ -152,11 +159,7 @@ export const QUERY_USER_BY_ID = gql`
         }
         agreementNumber
         startDate
-        product {
-          _id
-          name
-          price
-        }
+
         service {
           _id
           product {
@@ -228,6 +231,7 @@ export const QUERY_SERVICES = gql`
       message
       services {
         _id
+        active
         product {
           _id
           name
@@ -284,9 +288,11 @@ export const QUERY_SERVICE_AGREEMENT = gql`
       }
       agreementNumber
       startDate
-      product {
+      service {
         _id
-        name
+        product {
+          name
+        }
         price
       }
       quantity

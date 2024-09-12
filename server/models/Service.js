@@ -19,6 +19,11 @@ const serviceSchema = new Schema(
       type: Number,
       required: true,
     },
+    active: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
     createdAt: {
       type: Date,
       immutable: true, //this prevents changes to the date once created

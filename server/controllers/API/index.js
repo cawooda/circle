@@ -84,8 +84,34 @@ router.put("/users", async (req, res) => {
         await userExists
           .populate("roleCustomer")
           .populate("roleProvider")
-          .populate("roleAdmin");
+          .populate({
+            path: "roleProvider",
+            populate: [
+              {
+                path: "termsAndConditions",
+              },
+              {
+                path: "services",
+                model: "service",
+                populate: {
+                  path: "product",
+                  model: "product",
+                },
+              },
+              {
+                path: "linkedCustomers",
+                model: "customer",
+                populate: {
+                  path: "user", // Nested population of linkedCustomers' user
+                  model: "user",
+                },
+              },
+            ],
+          })
+          .populate("roleAdmin")
+          .exec();
         await userExists.save();
+
         res
           .status(200)
           .json({ userExists: true, userCreated: false, user: userExists });
@@ -132,15 +158,40 @@ router.post("/users", async (req, res) => {
     return;
   }
   try {
-    const userExists = await User.findOne({ mobile: req.body.mobile });
+    const userExists = await User.findOne({ mobile: req.body.mobile })
+      .populate("roleCustomer")
+      .populate("roleProvider")
+      .populate({
+        path: "roleProvider",
+        populate: [
+          {
+            path: "termsAndConditions",
+          },
+          {
+            path: "services",
+            model: "service",
+            populate: {
+              path: "product",
+              model: "product",
+            },
+          },
+          {
+            path: "linkedCustomers",
+            model: "customer",
+            populate: {
+              path: "user", // Nested population of linkedCustomers' user
+              model: "user",
+            },
+          },
+        ],
+      })
+      .populate("roleAdmin")
+      .exec();
+
     if (userExists) {
       if (await userExists.isCorrectPassword(req.body.password)) {
         await userExists.generateAuthToken();
-        await userExists.populate("roleCustomer");
-        await userExists.populate("roleProvider");
-        await userExists.populate("roleAdmin");
         await userExists.save();
-
         res
           .status(200)
           .json({ userExists: true, userCreated: false, user: userExists });
@@ -165,8 +216,8 @@ router.post("/users", async (req, res) => {
       const host = process.env.HOST || `http://localhost:3000`; // Get the host (hostname:port)
       userCreated.sendMessage(
         `Welcome to Circle`,
-        `Hi ${this.first}, We created you a new Circle Account. You can log in at any time using your password or SMS login at ${host}`,
-        `<p>Hi ${this.first},</p> <p>We created you a new Circle Account. You can log in at any time using your password or SMS login</p><p>Circle helps custoemrs and businesses connect through service agreements and ensures work done is accurately recorded for payment and to secure records for future reference.</p><p>To find out more visit <a href="http://circleindependent.com">Cirlcle Independent</a></p><p>Have a great day :)</p>`,
+        `Hi , We created you a new Circle Account. You can log in at any time using your password or SMS login at ${host}`,
+        `<p>Hi</p> <p>We created you a new Circle Account. You can log in at any time using your password or SMS login</p><p>Circle helps custoemrs and businesses connect through service agreements and ensures work done is accurately recorded for payment and to secure records for future reference.</p><p>To find out more visit <a href="http://circleindependent.com">Cirlcle Independent</a></p><p>Have a great day :)</p>`,
         null
       );
       res

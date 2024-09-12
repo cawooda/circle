@@ -22,7 +22,7 @@ import {
   InputGroup,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import AuthService from "../utils/auth";
+
 import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
 
 import { InputStyles } from "./styles/InputStyles";

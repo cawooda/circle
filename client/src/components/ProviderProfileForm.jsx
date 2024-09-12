@@ -165,7 +165,7 @@ const ProviderProfileForm = ({ user }) => {
             <ModalCloseButton />
 
             <ModalBody>
-              <Flex direction="column">
+              <Flex direction="column" gap={20}>
                 <FormControl as="form" onSubmit={handleFormSubmit}>
                   <TermsAndConditions
                     formData={formData}
@@ -175,7 +175,7 @@ const ProviderProfileForm = ({ user }) => {
                       handleFormSubmit();
                     }}
                   />
-                  <ProviderServiceSelect providerId={user.roleProvider._id} />
+                  <ProviderServiceSelect />
                   <ProviderContactDetails
                     formData={formData}
                     handleInputChange={handleInputChange}

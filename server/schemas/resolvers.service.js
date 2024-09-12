@@ -30,19 +30,36 @@ module.exports = {
       };
     }
   },
-  addService: async (_parent, { providerId, productId, price }) => {
-    //Look int unique keys multiple fields mongoose.
-    // tell the front end guys to check whether the provider already has a service before adding one that could be a duplicate
-    // front end should check that the returned object contains data property
+  addService: async (_parent, { providerId, productId }) => {
     try {
+      // Find the provider and product by their IDs
       const provider = await Provider.findById(providerId);
       const product = await Product.findById(productId);
-      const addedService = await Service.create({ provider, product, price });
+
+      if (!provider || !product) {
+        return {
+          success: false,
+          message: "Provider or Product not found",
+        };
+      }
+
+      // Create the new service
+      const addedService = await Service.create({
+        provider: providerId,
+        product: productId,
+        price: product.price,
+      });
+
+      // Add the service ID to the provider's services array
+      provider.services.push(addedService._id);
+      await provider.save(); // Save the provider with the updated services array
+
+      // Populate the service with the provider and product data
       await addedService.populate("provider product");
 
       return {
         success: true,
-        message: "service successfully created",
+        message: "Service successfully created",
         service: addedService,
       };
     } catch (error) {
@@ -50,10 +67,14 @@ module.exports = {
         return {
           success: false,
           message:
-            "a provider can only have one service of the same product name",
+            "A provider can only have one service of the same product name",
         };
       }
       console.log(error);
+      return {
+        success: false,
+        message: "An error occurred while creating the service",
+      };
     }
   },
   deleteService: async (_parent, { serviceId }) => {
@@ -64,6 +85,7 @@ module.exports = {
   updateServicePrice: async (_parent, { serviceId, price }) => {
     const updatedService = await Service.findById(serviceId);
     updatedService.price = price;
+    updatedService.save();
     await updatedService.populate("product provider");
     return updatedService;
   },

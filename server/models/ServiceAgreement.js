@@ -24,14 +24,10 @@ const serviceAgreementSchema = new Schema(
     endDate: { type: Date },
     customerSignature: { type: String, default: null }, // Store the path to the image file
     providerSignature: { type: String, default: null }, // Store the path to the image file
-    product: {
-      type: Schema.Types.ObjectId,
-      ref: "product", //linking to the Product object
-      required: true,
-    },
+
     service: {
       type: Schema.Types.ObjectId,
-      ref: "service", //linking to the Product object
+      ref: "service",
     },
     quantity: { type: Number, required: true, default: 0 },
     totalPrice: { type: Number, required: true, default: 0 },
@@ -51,12 +47,12 @@ const serviceAgreementSchema = new Schema(
 // Pre-save hook to calculate total price
 serviceAgreementSchema.pre("save", async function (next) {
   const serviceAgreement = this;
-  serviceAgreement.populate("product");
+  serviceAgreement.populate("service");
   setTimeout(() => {
     this.agreementNumber = "expired";
   }, 30 * 60 * 1000);
   //expecting to set the time to expire in 30 minutes
-  serviceAgreement.totalPrice = this.product.price * this.quantity;
+  serviceAgreement.totalPrice = this.service.price * this.quantity;
   // Populate product details
 
   next();

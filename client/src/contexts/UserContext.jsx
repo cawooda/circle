@@ -16,11 +16,12 @@ export const UserProvider = ({ children }) => {
   const [hasError, setHasError] = useState(false);
 
   const profile = AuthService.getProfile();
+  console.log(profile);
   const userId = profile?.authenticatedPerson?._id || null;
 
   const { loading, error, data, refetch } = useQuery(QUERY_USER_BY_ID, {
     variables: { id: userId },
-    skip: !profile, // Skip query if no userId is available
+
     onError: () => setHasError(true), // Set hasError state when error occurs
   });
 
@@ -41,17 +42,18 @@ export const UserProvider = ({ children }) => {
 
   if (loading) return <p>Loading...</p>;
 
-  if (hasError) {
-    () => window.location.reload(false);
-    return (
-      <div>
-        <p>
-          We encountered an issue fetching your data. Please try again later.
-        </p>
-        <Button onClick={handleRetry}>Refresh</Button>
-      </div>
-    );
-  }
+  // if (hasError) {
+  //   refetch(); // Retry the query
+  //   window.location.reload(false);
+  //   return (
+  //     <div>
+  //       <p>
+  //         We encountered an issue fetching your data. Please try again later.
+  //       </p>
+  //       <Button onClick={handleRetry}>Refresh</Button>
+  //     </div>
+  //   );
+  // }
 
   return (
     <UserContext.Provider value={{ user, setUser, loading, error }}>

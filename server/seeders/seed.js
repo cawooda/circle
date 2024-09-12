@@ -34,16 +34,15 @@ const hashPassword = async (password) => {
 connection.once("open", async () => {
   try {
     // Seed Users
-    let userCheck = await connection.db
-      .listCollections({ name: "users" })
-      .toArray();
-    if (userCheck.length && process.env.DEVELOPMENT) {
-      await connection.dropCollection("users");
-      for (let user of userSeed) {
+    for (let user of userSeed) {
+      const existingUser = await User.findOne({ mobile: user.mobile });
+      if (!existingUser) {
         user.password = await hashPassword(user.password);
+        await User.create(user);
+        console.log(`Added user: ${user.first} ${user.last}`);
+      } else {
+        console.log(`User ${user.first} ${user.last} already exists.`);
       }
-      const users = await User.insertMany(userSeed);
-      console.table(users);
     }
 
     // Seed Customers

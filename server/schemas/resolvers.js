@@ -10,7 +10,6 @@ const {
   getAllUsers,
   getMe,
   getCustomers,
-  getProducts,
   getUserByToken,
   getUserRoles,
   toggleUserRole,
@@ -30,6 +29,7 @@ const {
   getServiceAgreements,
   getServiceAgreement,
 } = require("./resolvers.serviceAgreement");
+const { getProducts } = require("./resolvers.product");
 
 const resolvers = {
   Query: {

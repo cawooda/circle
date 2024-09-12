@@ -34,7 +34,6 @@ type ServiceAgreement {
     customer: Customer
     agreementNumber:Int
     startDate: String
-    product: Product
     service: Service
     quantity: Int
     endDate: String
@@ -74,7 +73,6 @@ type Provider {
     customer: Customer
     agreementNumber:Int
     startDate: String
-    product: Product
     service: Service
     quantity: Int
     endDate: String
@@ -103,7 +101,7 @@ input AddressInput {
  input ServiceAgreementInput {
     provider: ID!
     customer: ID!
-    product: ID!
+    
     quantity: Int!
     endDate: String
     # Add any other fields here
@@ -126,6 +124,7 @@ type Service {
  product: Product!
  price: Float!
  provider: Provider
+ active: Boolean
 }
 
 type ServicesResponse {
@@ -172,7 +171,7 @@ type Query {
 
 
 type Mutation {
-    addServiceAgreement(provider:ID!,customer:ID!,endDate:String!,startDate:String!,product:String!,quantity:Int!,providerSignature:String!): ServiceAgreement
+    addServiceAgreement(provider:ID!,customer:ID!,endDate:String!,startDate:String!,service:ID!,quantity:Int!,providerSignature:String!): ServiceAgreement
     signServiceAgreement(agreementId:ID!,customerSignature:String!):ServiceAgreement    
     toggleUserRole(userId: ID!,role: String!): User!  
     updateProfile( userId:ID!, first: String, last: String, mobile: String,email: String):User  
@@ -186,7 +185,7 @@ type Mutation {
     ): Provider
     updateUserPassword(userId:ID!,password:String):User
     
-    addService(providerId: ID!, productId: ID!, price: Float!):AddServiceResponse
+    addService(providerId: ID!, productId: ID!):AddServiceResponse
     deleteService(serviceId:ID!):Service
     updateServicePrice(serviceId:ID!,price: Float!):Service
 }

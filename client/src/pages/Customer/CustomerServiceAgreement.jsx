@@ -1,7 +1,6 @@
 import dayjs from "dayjs";
 import {
   FormControl,
-  Box,
   Input,
   Flex,
   Heading,
@@ -30,7 +29,7 @@ import Error from "../../components/Error";
 import NotifyUser from "../../components/NotifyUser";
 import DateDisplay from "../../components/FormDisplays/DateDisplay";
 import CustomerDisplay from "../../components/FormDisplays/CustomerDisplay";
-import ProductDisplay from "../../components/FormDisplays/ProductDisplay";
+import ServiceDisplay from "../../components/FormDisplays/ServiceDisplay";
 import { InputStyles } from "../../components/styles/InputStyles";
 
 export default function CustomerServiceAgreement() {
@@ -77,7 +76,7 @@ export default function CustomerServiceAgreement() {
       setAgreementFormData((prev) => ({
         ...prev,
         provider: agreementQueryData.getServiceAgreement.provider._id,
-        product: agreementQueryData.getServiceAgreement.product.name,
+        service: agreementQueryData.getServiceAgreement.service,
         quantity: agreementQueryData.getServiceAgreement.quantity,
         totalPrice: agreementQueryData.getServiceAgreement.totalPrice,
       }));
@@ -197,11 +196,12 @@ export default function CustomerServiceAgreement() {
         <CustomerDisplay
           customer={agreementQueryData.getServiceAgreement.customer}
         />
-        <ProductDisplay
-          product={agreementQueryData.getServiceAgreement.product}
+        <ServiceDisplay
+          service={agreementQueryData.getServiceAgreement.service}
           quantity={agreementQueryData.getServiceAgreement.quantity}
           total={agreementQueryData.getServiceAgreement.totalPrice}
         />
+
         <Heading>Please Sign</Heading>
         <div
           style={{
