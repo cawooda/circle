@@ -33,6 +33,7 @@ import { InputStyles } from "./styles/InputStyles";
 
 import logo from "/logo.png";
 import { useUser } from "../contexts/UserContext";
+import Splash from "./Splash";
 
 const SigninForm = () => {
   const navigate = useNavigate();
@@ -45,6 +46,7 @@ const SigninForm = () => {
     mobile: userSignedUp || "",
     password: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     isOpen: isSmsModalOpen,
@@ -103,7 +105,9 @@ const SigninForm = () => {
   };
 
   const handleFormSubmit = async (event) => {
+    setIsLoading(true);
     event.preventDefault();
+
     try {
       if (signup) {
         const response = await AuthService.signUpUser(userFormData);
@@ -112,6 +116,7 @@ const SigninForm = () => {
         } else {
           setUser(user);
           refetch(); // Refetch user data after login
+          setIsLoading(false);
           onClose();
         }
       } else {
@@ -122,6 +127,9 @@ const SigninForm = () => {
           setMessage(response.message); // Set the error message
         } else {
           setUser(response.user);
+          refetch();
+          setIsLoading(false);
+          onclose();
         }
       }
     } catch (error) {
@@ -135,7 +143,8 @@ const SigninForm = () => {
       password: "",
     });
   };
-  console.log(user);
+
+  if (isLoading) return <Splash />;
   return (
     <>
       <Button
@@ -169,7 +178,14 @@ const SigninForm = () => {
           <ModalCloseButton />
           <ModalBody>
             <Flex direction="column" align="center" justify="center">
-              <FormControl as="form" onSubmit={handleFormSubmit}>
+              <FormControl
+                as="form"
+                onSubmit={() => {
+                  setTimeout(() => {
+                    handleFormSubmit();
+                  }, 12000);
+                }}
+              >
                 {signup ? (
                   <>
                     <FormLabel htmlFor="first">First Name</FormLabel>

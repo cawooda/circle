@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAdmin } from "../../contexts/AdminContext";
 import UserAdminRow from "../../components/AdminComponents/UserAdminRow";
 import { TOGGLE_USER_ROLE } from "../../utils/mutations";
+import Splash from "../../components/Splash";
 
 export default function UsersAdmin() {
   const [users, setUsers] = useState([]);
@@ -10,7 +11,7 @@ export default function UsersAdmin() {
     setUsers(adminData);
   }, [adminData]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Splash />;
   if (error) return <p>Error: {error.message}</p>;
 
   function handleSubmit(e) {

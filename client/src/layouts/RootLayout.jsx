@@ -15,6 +15,7 @@ import { useUser } from "../contexts/UserContext";
 import logo from "/logo.png";
 import Slideshow from "../components/Slideshow";
 import { firstVisitSlideShow } from "../assets/training";
+import Splash from "../components/Splash";
 const logoStyle = { paddingBottom: "15px" };
 
 export default function RootLayout() {
@@ -33,7 +34,7 @@ export default function RootLayout() {
     }
   }, [returnVisitor]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Splash />;
   if (slideShow)
     return <Slideshow data={firstVisitSlideShow} setSlideShow={setSlideShow} />;
   if (error || !user)

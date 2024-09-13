@@ -1,0 +1,24 @@
+.pendulum {
+  width: 100px;
+  height: 100px;
+  transform-origin: 50% 0; /* Pivot from the center-top of the logo */
+  animation: pendulum 3s ease-out infinite;
+}
+
+@keyframes pendulum {
+  0% {
+    transform: rotate(45deg); /* Start with a large swing */
+  }
+  25% {
+    transform: rotate(-45deg); /* Swing to the opposite side */
+  }
+  50% {
+    transform: rotate(30deg); /* Decrease the swing angle */
+  }
+  75% {
+    transform: rotate(-30deg); /* Opposite side, smaller swing */
+  }
+  100% {
+    transform: rotate(0deg); /* Return to center */
+  }
+}

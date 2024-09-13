@@ -35,6 +35,7 @@ import { UPDATE_USER_PROFILE } from "../utils/mutations";
 import PasswordResetForm from "./PasswordResetForm";
 
 import ProviderProfileForm from "./ProviderProfileForm";
+import Splash from "./Splash";
 
 const ProfileForm = () => {
   const [

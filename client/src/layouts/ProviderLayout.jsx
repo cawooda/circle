@@ -21,10 +21,11 @@ const menu = [
   { label: "Invoices", link: "invoices" },
 ];
 import { useUser } from "../contexts/UserContext";
+import Splash from "../components/Splash";
 
 export default function ProviderLayout() {
   const { user, setUser, loading, error } = useUser();
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Splash />;
   if (error) {
     console.log("error", error);
     return <SigninForm user={user} />;

@@ -4,6 +4,7 @@ import { useQuery } from "@apollo/client";
 import { QUERY_USER_BY_ID } from "../utils/queries"; // Adjust the path as necessary
 import AuthService from "../utils/auth";
 import { useNavigate } from "react-router-dom";
+import Splash from "../components/Splash";
 
 const UserContext = createContext();
 
@@ -16,9 +17,8 @@ export const UserProvider = ({ children }) => {
   const [hasError, setHasError] = useState(false);
 
   const profile = AuthService.getProfile();
-  console.log(profile);
+
   const userId = profile?.authenticatedPerson?._id || null;
-  console.log(userId);
 
   const { loading, error, data, refetch } = useQuery(QUERY_USER_BY_ID, {
     variables: { id: userId },
@@ -41,7 +41,7 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Splash />;
 
   // if (hasError) {
   //   refetch(); // Retry the query
