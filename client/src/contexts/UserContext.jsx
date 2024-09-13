@@ -21,6 +21,8 @@ export const UserProvider = ({ children }) => {
   const userId = profile?.authenticatedPerson?._id;
   console.log("userId", userId);
   const { loading, error, data, refetch } = useQuery(QUERY_USER_BY_ID, {
+    variables: { id: userId },
+    skip: !userId,
     fetchPolicy: "network-only",
     onError: () => setHasError(true),
   });
@@ -37,19 +39,6 @@ export const UserProvider = ({ children }) => {
   };
 
   if (loading) return <Splash />;
-
-  // if (hasError) {
-  //   refetch(); // Retry the query
-  //   window.location.reload(false);
-  //   return (
-  //     <div>
-  //       <p>
-  //         We encountered an issue fetching your data. Please try again later.
-  //       </p>
-  //       <Button onClick={handleRetry}>Refresh</Button>
-  //     </div>
-  //   );
-  // }
 
   return (
     <UserContext.Provider value={{ user, setUser, refetch, loading, error }}>
