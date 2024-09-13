@@ -21,8 +21,8 @@ export const UserProvider = ({ children }) => {
   const userId = profile?.authenticatedPerson?._id;
   console.log("userId", userId);
   const { loading, error, data, refetch } = useQuery(QUERY_USER_BY_ID, {
-    skip: !userId,
-    onError: () => setHasError(true), // Set hasError state when error occurs
+    fetchPolicy: "network-only",
+    onError: () => setHasError(true),
   });
 
   useEffect(() => {
