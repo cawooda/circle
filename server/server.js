@@ -25,6 +25,7 @@ const server = new ApolloServer({
 
 //require the connection to Mongoose for MongoDb database
 const db = require("./config/connection");
+db.set("debug", true);
 
 const apiRoutes = require("./controllers/API");
 
