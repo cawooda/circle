@@ -34,7 +34,9 @@ export const UserProvider = ({ children }) => {
 
   const handleRetry = () => {
     if (retryCount < 3) {
-      window.location.reload(false);
+      setTimeout(() => {
+        window.location.reload(false);
+      }, 3000);
       setRetryCount(retryCount + 1);
       refetch(); // Retry the query
     }
