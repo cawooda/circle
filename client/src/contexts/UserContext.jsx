@@ -33,13 +33,7 @@ export const UserProvider = ({ children }) => {
   }, [data]);
 
   const handleRetry = () => {
-    if (retryCount < 3) {
-      setTimeout(() => {
-        window.location.reload(false);
-      }, 3000);
-      setRetryCount(retryCount + 1);
-      refetch(); // Retry the query
-    }
+    refetch(); // Retry the query
   };
 
   if (loading) return <Splash />;
