@@ -160,7 +160,7 @@ union RoleModel = Admin | Provider | Customer
 type Query {
     getAllUsers(id: ID!): [User]
     getUserByToken(token: String!): User
-    getMe(id: ID!): User!
+    getMe: User!
     getUserRoles(id: ID!): [String]
     getCustomers: [Customer]
     getProducts: ProductListResponse
