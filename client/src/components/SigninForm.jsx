@@ -52,12 +52,12 @@ const SigninForm = () => {
     onClose: onSmsModalClose,
   } = useDisclosure();
 
-  useEffect(() => {
-    if (loading) onClose;
-    if (!user) {
-      onOpen();
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (loading) onClose;
+  //   if (!user) {
+  //     onOpen();
+  //   }
+  // }, [user]);
 
   const handleInputChange = (event) => {
     var { name, value } = event.target;
@@ -103,7 +103,6 @@ const SigninForm = () => {
   };
 
   const handleFormSubmit = async (event) => {
-    onClose();
     event.preventDefault();
     try {
       if (signup) {
