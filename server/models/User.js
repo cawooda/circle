@@ -31,7 +31,6 @@ const userSchema = new Schema(
       type: String,
       toLowerCase: true,
     },
-    token: String,
     roleCustomer: {
       type: Schema.Types.ObjectId,
       ref: "customer",
@@ -213,7 +212,6 @@ userSchema.methods.generateAuthToken = function (
   const token = jwt.sign(user, process.env.SECRET_KEY, {
     expiresIn: process.env.TOKEN_EXPIRES_IN,
   });
-  this.token = token;
   return token;
 };
 

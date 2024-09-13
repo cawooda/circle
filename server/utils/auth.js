@@ -52,15 +52,19 @@ module.exports = {
       }
 
       if (registeredUser._id == authenticatedPerson._id) {
-        await registeredUser.populate("roleCustomer");
+        await registeredUser.populate({
+          path: "roleCustomer",
+          model: "customer",
+        });
         await registeredUser.populate("roleAdmin");
         await registeredUser.populate("roleProvider");
         await registeredUser.toObject();
         return { user: registeredUser };
-      } else return { user: null };
-      throw new GraphQLError("Authentication failed", {
-        extensions: { code: "UNAUTHENTICATED" },
-      });
+      } else {
+        throw new GraphQLError("Authentication failed", {
+          extensions: { code: "UNAUTHENTICATED" },
+        });
+      }
     } catch (error) {
       if (error.name === "TokenExpiredError") {
         console.error("Token expired error:", error);
