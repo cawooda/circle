@@ -37,7 +37,7 @@ import { useUser } from "../contexts/UserContext";
 const SigninForm = () => {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
-  const { user, setUser, loading, error } = useUser();
+  const { user, setUser, refetch, loading, error } = useUser();
   const userSignedUp = localStorage.getItem("user_signed_up");
   const [signup, setSignup] = useState(!userSignedUp);
   const [message, setMessage] = useState("");
@@ -110,7 +110,8 @@ const SigninForm = () => {
         if (!response.user) {
           setMessage(response.message); // Set the error message
         } else {
-          setUser(response.user);
+          setUser(user);
+          refetch(); // Refetch user data after login
           onClose();
         }
       } else {

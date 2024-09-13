@@ -18,10 +18,11 @@ export const UserProvider = ({ children }) => {
   const profile = AuthService.getProfile();
   console.log(profile);
   const userId = profile?.authenticatedPerson?._id || null;
+  console.log(userId);
 
   const { loading, error, data, refetch } = useQuery(QUERY_USER_BY_ID, {
     variables: { id: userId },
-
+    skip: !userId,
     onError: () => setHasError(true), // Set hasError state when error occurs
   });
 
@@ -56,7 +57,7 @@ export const UserProvider = ({ children }) => {
   // }
 
   return (
-    <UserContext.Provider value={{ user, setUser, loading, error }}>
+    <UserContext.Provider value={{ user, setUser, refetch, loading, error }}>
       {children}
     </UserContext.Provider>
   );
