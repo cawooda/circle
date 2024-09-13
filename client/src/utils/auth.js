@@ -4,7 +4,7 @@ import { jwtDecode } from "jwt-decode";
 // create a new class to instantiate for a user
 class AuthService {
   constructor() {
-    if (this.isTokenExpired(this.getProfile())) this.logout();
+    if (this.isTokenExpired(this.getToken())) this.logout();
   }
 
   getProfile() {
@@ -55,6 +55,10 @@ class AuthService {
         },
         body: JSON.stringify({ ...userData, linkRequest: true }),
       });
+      if (!response.ok) {
+        throw new Error("Failed to fetch");
+      }
+
       if (response.ok) {
         const res = await response.json();
         return res;
@@ -73,6 +77,9 @@ class AuthService {
         },
         body: JSON.stringify({ ...userData, link: true }),
       });
+      if (!response.ok) {
+        throw new Error("Failed to fetch");
+      }
       if (response.ok) {
         const res = await response.json();
         return res;
@@ -90,6 +97,10 @@ class AuthService {
         },
         body: JSON.stringify(userData),
       });
+      if (!response.ok) {
+        throw new Error("Failed to fetch");
+      }
+
       if (response.ok) {
         const res = await response.json();
         if (res.user.token) {
@@ -112,6 +123,9 @@ class AuthService {
       },
       body: JSON.stringify({ ...userData }),
     });
+    if (!response.ok) {
+      throw new Error("Failed to fetch");
+    }
 
     if (response.ok) {
       const res = await response.json();
@@ -134,6 +148,9 @@ class AuthService {
       body: JSON.stringify({ authLinkNumber: code }),
     });
     const res = await response.json();
+    if (!response.ok) {
+      throw new Error("Failed to fetch");
+    }
     if (!response.validCode) {
       this.logout();
       return res;

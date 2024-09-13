@@ -1,3 +1,4 @@
+import { validateMobileInput } from "../utils/helpers";
 import { useState, useEffect } from "react";
 import {
   Button,
@@ -54,12 +55,12 @@ const SigninForm = () => {
     onClose: onSmsModalClose,
   } = useDisclosure();
 
-  // useEffect(() => {
-  //   if (loading) onClose;
-  //   if (!user) {
-  //     onOpen();
-  //   }
-  // }, [user]);
+  useEffect(() => {
+    if (loading) onClose;
+    if (!user) {
+      onOpen();
+    }
+  }, [user]);
 
   const handleInputChange = (event) => {
     var { name, value } = event.target;
@@ -105,6 +106,10 @@ const SigninForm = () => {
   };
 
   const handleFormSubmit = async (event) => {
+    if (!validateMobileInput(userFormData.mobile)) {
+      setMessage("check mobile number");
+      return;
+    }
     setIsLoading(true);
     event.preventDefault();
 
@@ -114,7 +119,7 @@ const SigninForm = () => {
         if (!response.user) {
           setMessage(response.message); // Set the error message
         } else {
-          setUser(user);
+          setUser(response.user);
           refetch(); // Refetch user data after login
           setIsLoading(false);
           onClose();
@@ -129,7 +134,7 @@ const SigninForm = () => {
           setUser(response.user);
           refetch();
           setIsLoading(false);
-          onclose();
+          onClose();
         }
       }
     } catch (error) {
@@ -178,14 +183,7 @@ const SigninForm = () => {
           <ModalCloseButton />
           <ModalBody>
             <Flex direction="column" align="center" justify="center">
-              <FormControl
-                as="form"
-                onSubmit={() => {
-                  setTimeout(() => {
-                    handleFormSubmit();
-                  }, 12000);
-                }}
-              >
+              <FormControl as="form" onSubmit={(e) => handleFormSubmit(e)}>
                 {signup ? (
                   <>
                     <FormLabel htmlFor="first">First Name</FormLabel>
