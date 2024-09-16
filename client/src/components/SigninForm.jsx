@@ -184,6 +184,12 @@ const SigninForm = () => {
           <ModalBody>
             <Flex direction="column" align="center" justify="center">
               <FormControl as="form" onSubmit={(e) => handleFormSubmit(e)}>
+                <Center>
+                  <Text>{signup ? "Already Signed Up?" : "No Account?"}</Text>
+                  <Button width="20%" onClick={() => setSignup(!signup)}>
+                    {signup ? "Login" : "Signup"}
+                  </Button>
+                </Center>
                 {signup ? (
                   <>
                     <FormLabel htmlFor="first">First Name</FormLabel>
@@ -198,6 +204,7 @@ const SigninForm = () => {
                       type="text"
                       placeholder="first name..."
                       name="first"
+                      autoComplete="given-name"
                       onChange={handleInputChange}
                       value={userFormData.first}
                       required
@@ -214,6 +221,7 @@ const SigninForm = () => {
                       type="text"
                       placeholder="last name..."
                       name="last"
+                      autoComplete="family-name"
                       onChange={handleInputChange}
                       value={userFormData.last}
                       required
@@ -234,6 +242,7 @@ const SigninForm = () => {
                   type="mobile"
                   placeholder="mobile..."
                   name="mobile"
+                  autoComplete={signup ? "mobile" : "username"}
                   onChange={handleInputChange}
                   value={userFormData.mobile}
                   required
@@ -251,6 +260,7 @@ const SigninForm = () => {
                         handleFormSubmit(e);
                       }
                     }}
+                    autoComplete="current-password"
                     id="passwordInput"
                     {...InputStyles}
                     type="password"
@@ -274,12 +284,6 @@ const SigninForm = () => {
                     Go
                   </Button>
                 </Container>
-                <Center>
-                  <Text>{signup ? "Already Signed Up?" : "No Account?"}</Text>
-                  <Button width="20%" onClick={() => setSignup(!signup)}>
-                    {signup ? "Login" : "Signup"}
-                  </Button>
-                </Center>
               </FormControl>
             </Flex>
           </ModalBody>
