@@ -13,13 +13,23 @@ const {
   // Use the correct model name here
 } = require("../models");
 
-const userSeed = require("./userSeed.json");
-const customerSeed = require("./customerSeed.json");
-const providerSeed = require("./provderSeed.json");
-const productSeed = require("./productSeed.json");
-const serviceSeed = require("./serviceSeed.json");
-const shiftSeed = require("./shiftSeed.json");
-const agreementSeed = require("./agreementSeed.json");
+// const userSeed = require("./userSeed.json");
+// const customerSeed = require("./customerSeed.json");
+// const providerSeed = require("./provderSeed.json");
+// const productSeed = require("./productSeed.json");
+// const serviceSeed = require("./serviceSeed.json");
+// const shiftSeed = require("./shiftSeed.json");
+// const agreementSeed = require("./agreementSeed.json");
+
+const {
+  userSeed,
+  customerSeed,
+  providerSeed,
+  productSeed,
+  serviceSeed,
+  shiftSeed,
+  agreementSeed,
+} = require("./seedData");
 
 // require bcrypt for password hashing
 const bcrypt = require("bcrypt");

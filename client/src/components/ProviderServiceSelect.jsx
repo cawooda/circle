@@ -16,7 +16,7 @@ import {
   Alert,
 } from "@chakra-ui/react";
 import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
-import { ModalHeadingStyle } from "./styles/modalStyles";
+
 import ProductList from "./ProductList";
 import ServiceList from "./ServiceList";
 import { useUser } from "../contexts/UserContext";

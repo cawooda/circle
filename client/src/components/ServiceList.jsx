@@ -2,7 +2,16 @@ import { useEffect, useReducer } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { QUERY_SERVICES, QUERY_PRODUCTS } from "../utils/queries";
 import { UPDATE_SERVICE, DELETE_SERVICE } from "../utils/mutations"; // Add DELETE_SERVICE mutation here
-import { Button, Flex, Input, Heading, Text } from "@chakra-ui/react";
+import {
+  Button,
+  Box,
+  Flex,
+  Input,
+  Heading,
+  Text,
+  Stack,
+  FormLabel,
+} from "@chakra-ui/react";
 import {
   DisplayStyles,
   InputStyles,
@@ -14,6 +23,7 @@ import {
   DeleteButtonStyle,
 } from "./styles/ButtonStyle";
 import { useUser } from "../contexts/UserContext";
+import Splash from "./Splash";
 
 // Reducer actions
 const SET_SERVICES = "SET_SERVICES";
@@ -52,7 +62,14 @@ const ServiceList = () => {
     onError: () => console.error("Error loading services"),
   });
 
-  const [updateService] = useMutation(UPDATE_SERVICE, {
+  const [
+    updateService,
+    {
+      data: updateServiceData,
+      loading: updateServiceLoading,
+      error: updateServiceError,
+    },
+  ] = useMutation(UPDATE_SERVICE, {
     refetchQueries: [
       {
         query: QUERY_SERVICES,
@@ -66,7 +83,14 @@ const ServiceList = () => {
     onError: (err) => console.error(err),
   });
 
-  const [deleteService] = useMutation(DELETE_SERVICE, {
+  const [
+    deleteService,
+    {
+      data: deleteServiceData,
+      loading: deleteServiceLoading,
+      error: deleteServiceError,
+    },
+  ] = useMutation(DELETE_SERVICE, {
     refetchQueries: [
       {
         query: QUERY_SERVICES,
@@ -126,7 +150,7 @@ const ServiceList = () => {
       console.error("Error deleting service: ", error);
     }
   };
-
+  if (updateServiceLoading || deleteServiceLoading) return <Splash />;
   return (
     <>
       {state.services.length ? (
@@ -134,53 +158,66 @@ const ServiceList = () => {
           <Heading size="md" mb={4}>
             Current Services
           </Heading>
-          <Text>You set your prices</Text>
-          {state.services.map((service, index) => (
-            <Flex key={index} gap={5} alignItems="center" mb={4} wrap="nowrap">
-              <Input
-                id={`serviceId-${index}`}
-                hidden
-                value={service.serviceId}
-              />
-              <Input
-                id={`serviceName-${index}`}
-                {...DisplayStyles}
-                name={`serviceName-${index}`}
-                value={service.name}
-                required
-                flex="2"
-                isReadOnly
-              />
-
-              <Input
-                id={`servicePrice-${index}`}
-                {...InputStyles}
-                {...SmallInputStyle}
-                name={`servicePrice-${index}`}
-                value={service.price}
-                onChange={(e) => handlePriceChange(index, e.target.value)}
-                required
-                flex="1"
-              />
-
-              <Button
-                {...ButtonStyles}
-                {...ButtonHighlightStyle}
-                onClick={() =>
-                  handleUpdateServicePrice(service.serviceId, service.price)
-                }
-                isDisabled={isNaN(service.price) || service.price === ""} // Disable if price is invalid
+          <Text>
+            You can Edit the Price of Serices. Below are further Products you
+            can add you your list.
+          </Text>
+          <Stack spacing={4}>
+            {state.services.map((service, index) => (
+              <Flex
+                key={index}
+                bgColor={"#A4CBE0"}
+                borderRadius={20}
+                wrap="wrap"
+                gap={2}
+                padding={3}
+                alignItems="center"
+                mb={4}
               >
-                Update
-              </Button>
-              <Button
-                {...DeleteButtonStyle}
-                onClick={() => handleDeleteService(service.serviceId)}
-              >
-                X
-              </Button>
-            </Flex>
-          ))}
+                <Input
+                  id={`serviceId-${index}`}
+                  hidden
+                  value={service.serviceId}
+                />
+                <Input
+                  id={`serviceName-${index}`}
+                  {...DisplayStyles}
+                  name={`serviceName-${index}`}
+                  value={service.name}
+                  required
+                  minWidth={200}
+                  isReadOnly
+                />
+                <FormLabel>$</FormLabel>
+                <Input
+                  id={`servicePrice-${index}`}
+                  {...InputStyles}
+                  {...SmallInputStyle}
+                  name={`servicePrice-${index}`}
+                  value={service.price}
+                  onChange={(e) => handlePriceChange(index, e.target.value)}
+                  required
+                />
+
+                <Button
+                  {...ButtonStyles}
+                  {...ButtonHighlightStyle}
+                  onClick={() =>
+                    handleUpdateServicePrice(service.serviceId, service.price)
+                  }
+                  isDisabled={isNaN(service.price) || service.price === ""} // Disable if price is invalid
+                >
+                  Update
+                </Button>
+                <Button
+                  {...ButtonStyles}
+                  onClick={() => handleDeleteService(service.serviceId)}
+                >
+                  Remove
+                </Button>
+              </Flex>
+            ))}
+          </Stack>
         </>
       ) : (
         <></>

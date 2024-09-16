@@ -48,7 +48,7 @@ const ProviderProfileForm = ({ user }) => {
     },
   ] = useMutation(UPDATE_PROVIDER_PROFILE, {
     onError: (error) => {
-      console.error("GraphQL Error updating user Profile", err.graphQLErrors);
+      console.error("GraphL Error updating user Profile", err.graphQLErrors);
       console.error("Network Error updating user Profile", err.networkError);
       console.error("Message updating user Profile", err.message);
     },
