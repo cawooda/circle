@@ -166,11 +166,8 @@ const ServiceList = () => {
             {state.services.map((service, index) => (
               <Flex
                 key={index}
-                bgColor={"#A4CBE0"}
-                borderRadius={20}
+                {...CardStyles}
                 wrap="wrap"
-                gap={2}
-                padding={3}
                 alignItems="center"
                 mb={4}
               >

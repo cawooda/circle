@@ -16,24 +16,12 @@ export default function NavBar({ user }) {
     <>
       <Flex gap={3} flexDirection={{ base: "column", md: "column" }}>
         {/* Check roles and serve up what they should see */}
-        {user?.roleAdmin || user?.roleSuperAdmin ? (
-          <Box>
-            <NavLink to="/admin">
-              <Container {...ButtonStyles}>Admin</Container>
-            </NavLink>
-          </Box>
-        ) : null}
         {user?.roleProvider || user?.roleAdmin || user?.roleSuperAdmin ? (
           <Box>
             <NavLink to="/provider">
-              <Container {...ButtonStyles}>Provider</Container>
-            </NavLink>
-          </Box>
-        ) : null}
-        {user?.roleCustomer || user?.roleAdmin || user?.roleSuperAdmin ? (
-          <Box>
-            <NavLink to="/customer">
-              <Container {...ButtonStyles}>Customer</Container>
+              <Container {...ButtonStyles}>
+                {user.roleProvider.providerName}
+              </Container>
             </NavLink>
           </Box>
         ) : null}

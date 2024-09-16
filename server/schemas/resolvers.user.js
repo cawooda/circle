@@ -57,6 +57,21 @@ module.exports = {
       .populate("roleAdmin")
       .exec();
 
+    user.roleProvider?.linkedCustomers.forEach((customer, index) => {});
+
+    // better to use a filter
+    if (user.roleProvider) {
+      user.roleProvider.linkedCustomers =
+        user.roleProvider?.linkedCustomers.filter((customer) => {
+          if (!customer?.user?.mobile) {
+            console.log("no mobile");
+            console.log(customer.user);
+            return false;
+          }
+        });
+    }
+
+    user.save();
     // for each linked customer in the roleProvider of user, check whether the population has worked to give name, mobile etc.
     // if not delete the id from the linked
 

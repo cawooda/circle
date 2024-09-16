@@ -36,7 +36,7 @@ import logo from "/logo.png";
 import { useUser } from "../contexts/UserContext";
 import Splash from "./Splash";
 
-const SigninForm = () => {
+const SigninForm = ({ forceOpen }) => {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
   const { user, setUser, refetch, loading, error } = useUser();
@@ -59,6 +59,9 @@ const SigninForm = () => {
     if (loading) onClose;
     if (!user) {
       onOpen();
+    }
+    if (forceOpen) {
+      onOpen;
     }
   }, [user]);
 

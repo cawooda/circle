@@ -75,6 +75,7 @@ const Slideshow = ({ data, setSlideShow }) => {
 
             <Box
               padding="20px"
+              fontSize="2xl"
               key={data[currentIndex].description}
               className="fade-in-slow"
             >

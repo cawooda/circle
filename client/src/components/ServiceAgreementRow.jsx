@@ -11,6 +11,7 @@ import {
 import { DisplayStyles, InputStyles } from "./styles/InputStyles";
 import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
 import { useUser } from "../contexts/UserContext";
+import { CardStyles } from "./styles/CardStyles";
 
 export default function ServiceAgreementRow({ agreement, index }) {
   const { user, loading, error } = useUser();
@@ -40,6 +41,7 @@ export default function ServiceAgreementRow({ agreement, index }) {
     quantity: agreement.quantity || 0,
     endDate: agreement.endDate || "",
     totalPrice: agreement.totalPrice || 0,
+    agreementNumber: agreement.agreementNumber || "",
     approvedByCustomer: agreement.approvedByCustomer || false,
   });
 
@@ -54,7 +56,7 @@ export default function ServiceAgreementRow({ agreement, index }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    updateUserProfile({
+    mutation({
       variables: {
         userId: user._id,
         ...formData,
@@ -75,16 +77,7 @@ export default function ServiceAgreementRow({ agreement, index }) {
   return (
     <form onSubmit={handleSubmit}>
       <FormControl wrap="wrap">
-        <Flex
-          key={index}
-          p={2}
-          gap={2}
-          borderWidth={2}
-          borderRadius="lg"
-          boxShadow="sm"
-          wrap="wrap"
-          m={2}
-        >
+        <Flex key={index} {...CardStyles} wrap="wrap" m={2}>
           {fields.map((field, index) => (
             <Box key={index}>
               <FormLabel>{field.label}</FormLabel>

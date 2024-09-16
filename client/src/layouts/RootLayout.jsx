@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useState, useEffect } from "react";
-import { Flex, Box, Center } from "@chakra-ui/react";
+import { Flex, Container, Box, Center } from "@chakra-ui/react";
 import SigninForm from "../components/SigninForm";
 import ProfileForm from "../components/ProfileForm";
 import { useUser } from "../contexts/UserContext";
@@ -9,23 +9,25 @@ import logo from "/logo.png";
 import Slideshow from "../components/Slideshow";
 import { firstVisitSlideShow } from "../assets/training";
 import Splash from "../components/Splash";
+import { NavLink } from "react-router-dom";
 const logoStyle = { paddingBottom: "15px" };
+import { ButtonStyles } from "../components/styles/ButtonStyle";
 
 export default function RootLayout() {
   const { user, loading, error } = useUser();
   const [slideShow, setSlideShow] = useState();
-  const [returnVisitor, setReturnVisitor] = useState(
-    localStorage.getItem("returnVisitor")
+  const [returnVisit, setReturnVisit] = useState(
+    localStorage.getItem("returnVisit") || 1
   );
 
   useEffect(() => {
-    if (returnVisitor) {
+    if (returnVisit > 10) {
       setSlideShow(false);
     } else {
       setSlideShow(true);
-      localStorage.setItem("returnVisitor", true);
+      localStorage.setItem("returnVisit", parseInt(returnVisit) + 1);
     }
-  }, [returnVisitor]);
+  }, [returnVisit]);
 
   if (loading) return <Splash />;
 
@@ -33,11 +35,12 @@ export default function RootLayout() {
     return <Slideshow data={firstVisitSlideShow} setSlideShow={setSlideShow} />;
   if (error || !user) {
     console.log("error in rootLayout", error);
+    console.log("user in rootLayout", user);
     return (
       <Center height="100vh">
         <div>
           <Flex justify="center" align="center">
-            <SigninForm />
+            <SigninForm forceOpen />
           </Flex>
         </div>
       </Center>
@@ -64,6 +67,20 @@ export default function RootLayout() {
       <Center bgColor="yellow.100" padding={5} gap={3}>
         <ProfileForm />
         <SigninForm />
+        {user?.roleAdmin || user?.roleSuperAdmin ? (
+          <Box>
+            <NavLink to="/admin">
+              <Container {...ButtonStyles}>Admin</Container>
+            </NavLink>
+          </Box>
+        ) : null}
+        {user?.roleCustomer || user?.roleAdmin || user?.roleSuperAdmin ? (
+          <Box>
+            <NavLink to="/customer">
+              <Container {...ButtonStyles}>Customer</Container>
+            </NavLink>
+          </Box>
+        ) : null}
       </Center>
     </Flex>
   );

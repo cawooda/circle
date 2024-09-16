@@ -25,7 +25,6 @@ export default function ProviderServiceAgreements() {
         {user?.serviceAgreements?.length ? (
           user.serviceAgreements.map((agreement, index) => (
             <>
-              <Heading>Service Agreement Row</Heading>
               <ServiceAgreementRow
                 index={index}
                 key={agreement._id}
