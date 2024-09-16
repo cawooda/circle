@@ -20,7 +20,6 @@ export default function ProviderServiceAgreements() {
   }
 
   if (user) {
-    console.log("user", user);
     return (
       <div>
         {user?.serviceAgreements?.length ? (

@@ -12,6 +12,7 @@ import { Outlet } from "react-router-dom";
 import RootLayout from "./layouts/RootLayout";
 import { UserProvider } from "./contexts/UserContext";
 import { jwtDecode } from "jwt-decode";
+import AuthService from "./utils/auth";
 
 const httpLink = createHttpLink({
   uri: "/graphql",
@@ -19,18 +20,10 @@ const httpLink = createHttpLink({
 });
 
 const authLink = setContext((_, { headers }) => {
-  let token = localStorage.getItem("id_token");
+  let token = AuthService.getToken();
 
   if (token) {
     const decodedToken = jwtDecode(token);
-    const currentTime = Date.now() / 1000;
-
-    // Check if token is expired
-    if (decodedToken.exp < currentTime) {
-      // Optionally, handle token refresh logic here
-      localStorage.removeItem("id_token");
-      token = null;
-    }
   }
 
   return {
@@ -48,8 +41,6 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
         case "UNAUTHENTICATED":
           // Handle token expiration error
           if (err.message === "Token expired") {
-            localStorage.removeItem("id_token");
-            window.location.href = "/login"; // Redirect to login page
           }
           break;
         default:

@@ -44,6 +44,12 @@ type ServiceAgreement {
     signature:String
   }
 
+type signServiceAgreementResponse {
+success: Boolean!
+message: String!
+agreementNumber: Int
+}
+
 type Admin {
     _id: ID!
     user: User!
@@ -109,8 +115,8 @@ input AddressInput {
 
 type Product {
   _id: ID!
-  name: String!
-  price: Float!
+  name: String
+  price: Float
 }
 
 type ProductListResponse {
@@ -172,7 +178,7 @@ type Query {
 
 type Mutation {
     addServiceAgreement(provider:ID!,customer:ID!,endDate:String!,startDate:String!,service:ID!,quantity:Int!,providerSignature:String!): ServiceAgreement
-    signServiceAgreement(agreementId:ID!,customerSignature:String!):ServiceAgreement    
+    signServiceAgreement(agreementId:ID!,customerSignature:String!):signServiceAgreementResponse    
     toggleUserRole(userId: ID!,role: String!): User!  
     updateProfile( userId:ID!, first: String, last: String, mobile: String,email: String):User  
     updateProviderProfile(

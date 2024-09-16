@@ -50,7 +50,7 @@ export const QUERY_ALL_USERS = gql`
   }
 `;
 
-export const QUERY_USER_BY_ID = gql`
+export const GET_ME = gql`
   query GetMe {
     getMe {
       _id

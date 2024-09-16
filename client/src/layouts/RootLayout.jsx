@@ -1,14 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useState, useEffect } from "react";
-import {
-  Container,
-  Spacer,
-  Flex,
-  Box,
-  Heading,
-  Center,
-} from "@chakra-ui/react";
+import { Flex, Box, Center } from "@chakra-ui/react";
 import SigninForm from "../components/SigninForm";
 import ProfileForm from "../components/ProfileForm";
 import { useUser } from "../contexts/UserContext";
@@ -35,9 +28,11 @@ export default function RootLayout() {
   }, [returnVisitor]);
 
   if (loading) return <Splash />;
+
   if (slideShow)
     return <Slideshow data={firstVisitSlideShow} setSlideShow={setSlideShow} />;
-  if (error || !user)
+  if (error || !user) {
+    console.log("error in rootLayout", error);
     return (
       <Center height="100vh">
         <div>
@@ -47,7 +42,7 @@ export default function RootLayout() {
         </div>
       </Center>
     );
-
+  }
   return (
     <Flex direction="column" height="100vh">
       <Box bg="blue.500" p={4} color="white" textAlign="center">

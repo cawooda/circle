@@ -4,9 +4,6 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import ServiceSign from "./ServiceSign";
 
-// Layouts
-import RootLayout from "./layouts/RootLayout";
-
 // Pages
 import ProviderLayout from "./layouts/ProviderLayout";
 import CustomerLayout from "./layouts/CustomerLayout";

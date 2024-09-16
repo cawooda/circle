@@ -8,11 +8,24 @@ const userSmsService = new SMSService();
 const { EMAILService } = require("../utils/mailer");
 const userEmailService = new EMAILService();
 
-const validator = require("validator"); //this package provides a range of validator checks including email.
-const jwt = require("jsonwebtoken");
+const validator = require("validator");
+
 const Customer = require("./Customer");
 const Provider = require("./Provider");
 const SALT_WORK_FACTOR = process.env.SALT_WORK_FACTOR;
+
+const secret = process.env.SECRET_KEY;
+const jwt = require("jsonwebtoken");
+const signToken = (payload, expiresIn) => {
+  if (!expiresIn) expiresIn = process.env.TOKEN_EXPIRES_IN;
+
+  const token = jwt.sign(payload, secret, {
+    expiresIn,
+  });
+  const decodedToken = jwt.decode(token);
+
+  return token;
+};
 
 //defind the user model schema
 const userSchema = new Schema(
@@ -204,14 +217,18 @@ userSchema.methods.generateAuthToken = function (
       _id: this._id,
       mobile: this.mobile,
       first: this.first,
-      admin: this.roleAdmin || null,
-      provider: this.roleProvider || null,
-      customer: this.roleCustomer || null,
+      admin: this.roleAdmin ? true : false,
+      provider: this.roleProvider ? true : false,
+      customer: this.roleCustomer ? true : false,
+      createdAt: new Date(),
     },
   };
-  const token = jwt.sign(user, process.env.SECRET_KEY, {
-    expiresIn: process.env.TOKEN_EXPIRES_IN,
+
+  const token = signToken(user, expiresIn);
+  const verifiedToken = jwt.verify(token, secret, {
+    maxAge: process.env.TOKEN_EXPIRES_IN,
   });
+
   return token;
 };
 

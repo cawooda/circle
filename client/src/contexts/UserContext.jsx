@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
-import { Button } from "@chakra-ui/react";
+
 import { useQuery } from "@apollo/client";
-import { QUERY_USER_BY_ID } from "../utils/queries";
+import { GET_ME } from "../utils/queries";
 import AuthService from "../utils/auth";
 import { useNavigate } from "react-router-dom";
 import Splash from "../components/Splash";
@@ -16,13 +16,7 @@ export const UserProvider = ({ children }) => {
   const [retryCount, setRetryCount] = useState(0);
   const [hasError, setHasError] = useState(false);
 
-  const profile = AuthService.getProfile();
-
-  const userId = profile?.authenticatedPerson?._id;
-  console.log("userId", userId);
-  const { loading, error, data, refetch } = useQuery(QUERY_USER_BY_ID, {
-    variables: { id: userId },
-    skip: !userId,
+  const { loading, error, data, refetch } = useQuery(GET_ME, {
     fetchPolicy: "network-only",
     onError: () => setHasError(true),
   });
@@ -33,10 +27,6 @@ export const UserProvider = ({ children }) => {
       setHasError(false); // Reset error state on successful data fetch
     }
   }, [data]);
-
-  const handleRetry = () => {
-    refetch(); // Retry the query
-  };
 
   if (loading) return <Splash />;
 
