@@ -1,0 +1,16 @@
+SIGNIN FORM
+The signin form thinks its logged in. Its test for loggedin needs checking, but it is displaying as though it is in the logged in state, even though the components that also need a logged in state are not displaying corretly.
+
+ROOT LAYOUT
+the root layout thinks its logged out. The getMe query hasnt worked.
+The user sees a signin button (component) with no surrounding layout
+
+CAUSE OF ERROR
+cause of error: deleted 3-4 customers which are seed data. manually deleting the customers has caused a problem because the user model had an array of linkedCustomers
+
+POSSIBLE FIX:
+the Provider model has the array of linkedCustomers. if a User is deleted, the customer should be deleted. If a customer is deleted, the array of customers in the Provider should be reduced byt that customer Id. Deleting a customer using MongoDB, doesent have anything to do with Mongoose, so a check will be needed that prevents a Provider from containing any customer ids if the customer id doesent link to anything.
+
+OPTION 1: 'pre' hook for populate so that dead id's are deleted from a Provider
+
+OPTION 2: 'pre' hook for any accessing of the provider that prunes the dead id's

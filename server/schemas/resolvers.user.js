@@ -30,6 +30,10 @@ module.exports = {
         path: "roleProvider",
         populate: [
           {
+            path: "serviceAgreements",
+            model: "agreement",
+          },
+          {
             path: "termsAndConditions",
           },
           {
@@ -52,6 +56,9 @@ module.exports = {
       })
       .populate("roleAdmin")
       .exec();
+
+    // for each linked customer in the roleProvider of user, check whether the population has worked to give name, mobile etc.
+    // if not delete the id from the linked
 
     if (user) {
       const serviceAgreements = await ServiceAgreement.find({

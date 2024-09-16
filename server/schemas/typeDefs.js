@@ -17,7 +17,7 @@ type User {
 
 type Customer {
     _id: ID!
-    user: User!
+    user: User
     fullName: String
     first: String
     last: String
@@ -107,7 +107,6 @@ input AddressInput {
  input ServiceAgreementInput {
     provider: ID!
     customer: ID!
-    
     quantity: Int!
     endDate: String
     # Add any other fields here
