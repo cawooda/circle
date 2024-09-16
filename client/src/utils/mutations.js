@@ -284,67 +284,9 @@ export const SIGN_SERVICE_AGREEMENT = gql`
       agreementId: $agreementId
       customerSignature: $customerSignature
     ) {
-      _id
-      provider {
-        _id
-        user {
-          _id
-          first
-          last
-          mobile
-          email
-          date_of_birth
-          fullName
-        }
-        abn
-        address {
-          street
-          city
-          state
-          postalCode
-        }
-        providerName
-        termsAndConditions {
-          heading
-          paragraph
-        }
-        createdAt
-        updatedAt
-      }
-      customer {
-        _id
-        user {
-          first
-          _id
-          email
-          mobile
-        }
-        referenceNumber
-        referenceName
-        address {
-          street
-          city
-          state
-          postalCode
-        }
-        dateOfBirth
-        customerSpecificField
-      }
+      success
+      message
       agreementNumber
-      startDate
-      service {
-        _id
-        product {
-          name
-        }
-        price
-      }
-      quantity
-      endDate
-      totalPrice
-      approvedByCustomer
-      createdAt
-      updatedAt
     }
   }
 `;

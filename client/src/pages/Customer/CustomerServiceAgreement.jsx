@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import Splash from "../../components/Splash";
 import {
   FormControl,
   Input,
@@ -100,10 +101,7 @@ export default function CustomerServiceAgreement() {
 
   function handleFormSubmit(event) {
     event.preventDefault();
-    console.log(
-      "agreementFormData.customerSignature",
-      agreementFormData.customerSignature
-    );
+
     signServiceAgreement({
       variables: {
         agreementId: agreementQueryData.getServiceAgreement._id,
@@ -119,13 +117,7 @@ export default function CustomerServiceAgreement() {
     }
   }
 
-  if (agreementQueryLoading)
-    return (
-      <NotifyUser
-        component="Customer Service agreement"
-        message="agreement still loading..."
-      />
-    );
+  if (agreementQueryLoading) return <Splash />;
 
   if (agreementQueryError || agreementNumber === "expired") {
     if (agreementNumber === "expired") {

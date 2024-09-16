@@ -11,8 +11,6 @@ import {
 import { DisplayStyles, InputStyles } from "./styles/InputStyles";
 import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
 import { useUser } from "../contexts/UserContext";
-// import { useMutation } from "@apollo/client";
-// import { TOGGLE_USER_ROLE, UPDATE_USER_PROFILE } from "../utils/mutations";
 
 export default function ServiceAgreementRow({ agreement, index }) {
   const { user, loading, error } = useUser();
@@ -20,10 +18,6 @@ export default function ServiceAgreementRow({ agreement, index }) {
     return null; // Don't render anything if user is not available
   }
 
-  console.log("Received user:", user); // Ensure user is received correctly
-  console.log("Received agreement:", agreement); // Ensure agreement is received correctly
-
-  // Safely destructure agreement properties
   const provider = agreement.provider || {};
   const customer = agreement.customer || {};
   const customerUser = customer.user || {};

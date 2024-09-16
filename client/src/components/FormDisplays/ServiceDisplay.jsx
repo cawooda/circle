@@ -3,8 +3,6 @@ import { FormControl, FormLabel, Input } from "@chakra-ui/react";
 import { DisplayStyles } from "../styles/InputStyles";
 
 export default function ServiceDisplay({ service, quantity, total }) {
-  console.log(service);
-
   return (
     <>
       <FormControl>

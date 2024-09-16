@@ -1,6 +1,5 @@
 import { Outlet } from "react-router-dom";
 
-import AuthService from "../utils/auth";
 import {
   Container,
   Heading,
@@ -9,10 +8,10 @@ import {
   AlertTitle,
   Spacer,
 } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+
 import SubMenu from "../components/SubMenu";
 import SigninForm from "../components/SigninForm";
+import { useUser } from "../contexts/UserContext";
 
 const menu = [
   { highlight: true, label: "New Agreement", link: "service-agreement" },
@@ -20,14 +19,15 @@ const menu = [
   { label: "Shifts", link: "shifts" },
   { label: "Invoices", link: "invoices" },
 ];
-import { useUser } from "../contexts/UserContext";
+
+import Splash from "../components/Splash";
 
 export default function ProviderLayout() {
   const { user, setUser, loading, error } = useUser();
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Splash />;
   if (error) {
     console.log("error", error);
-    return <SigninForm user={user} />;
+    return <SigninForm />;
   }
   if (user)
     return (

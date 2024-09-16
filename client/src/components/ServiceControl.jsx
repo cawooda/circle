@@ -12,6 +12,7 @@ import { useUser } from "../contexts/UserContext";
 export default function ServiceControl({ handleInputChange, locked }) {
   const { user } = useUser();
   if (!user.roleProvider.services[0]?.product?.name) return null;
+
   return (
     <>
       <FormControl>
@@ -22,14 +23,13 @@ export default function ServiceControl({ handleInputChange, locked }) {
           onClick={handleInputChange}
           onChange={handleInputChange}
         >
+          <option value="" selected>
+            -- Select a service --
+          </option>
           {user.roleProvider.services.length
             ? user.roleProvider.services.map((service, index) => {
                 return (
-                  <option
-                    key={service._id}
-                    selected={index === 0}
-                    value={service._id}
-                  >
+                  <option key={service._id} value={service._id}>
                     {service.product.name}
                   </option>
                 );

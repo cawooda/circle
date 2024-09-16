@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import Splash from "../../components/Splash";
 import {
   FormControl,
   FormLabel,
@@ -18,20 +19,18 @@ import { useState, useEffect, useRef } from "react";
 
 import { useUser } from "../../contexts/UserContext";
 
-import AuthService from "../../utils/auth";
-
 import { useQuery, useMutation } from "@apollo/client";
-import { QUERY_CUSTOMERS, QUERY_PRODUCTS } from "../../utils/queries";
+
 import { ADD_SERVICE_AGREEMENT } from "../../utils/mutations";
 
 import { ButtonStyles } from "../../components/styles/ButtonStyle";
 import { InputStyles } from "../../components/styles/InputStyles";
 import CustomerControl from "../../components/CustomerControl";
-import ProductControl from "../../components/ProductControl";
+
 import ServiceControl from "../../components/ServiceControl";
 
 export default function ProviderServiceAgreement() {
-  const { user, loading, error } = useUser();
+  const { user } = useUser();
   if (!user) {
     return (
       <Container paddingTop={10}>
@@ -88,31 +87,26 @@ export default function ProviderServiceAgreement() {
   const [services, setServices] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
 
-  const [
-    addServiceAgreement,
+  const [addServiceAgreement, { loading, data, error }] = useMutation(
+    ADD_SERVICE_AGREEMENT,
     {
-      loading: AddServiceAgreementLoading,
-      data: AddServiceAgreementData,
-      error: AddServiceAgreementError,
-    },
-  ] = useMutation(ADD_SERVICE_AGREEMENT, {
-    onError: (err) => {
-      console.error(
-        "GraphQL Error adding service agreement:",
-        err.graphQLErrors
-      );
-      console.error(
-        "Network Error adding service agreement:",
-        err.networkError
-      );
-      console.error("Message adding service agreement:", err.message);
-    },
-  });
+      onError: (err) => {
+        console.error(
+          "GraphQL Error adding service agreement:",
+          err.graphQLErrors
+        );
+        console.error(
+          "Network Error adding service agreement:",
+          err.networkError
+        );
+        console.error("Message adding service agreement:", err.message);
+      },
+    }
+  );
 
   //implement this throughout the app and change window.location into the following router hook
   useEffect(() => {
     if (!userId) {
-      AuthService.logout();
       navigate("/");
     }
   }, [userId]);
@@ -149,8 +143,6 @@ export default function ProviderServiceAgreement() {
   const handleInputChange = (event) => {
     if (event.target.name) {
       const { name, value } = event.target;
-      console.log(name);
-      console.log(value);
 
       setAgreementFormData((prevState) => ({ ...prevState, [name]: value })); //handle the change of for an input with useState
     } else {
@@ -166,7 +158,7 @@ export default function ProviderServiceAgreement() {
 
   async function handleFormSubmit(event) {
     event.preventDefault();
-    console.log(agreementFormData);
+
     if (
       agreementFormData.customer ||
       agreementFormData.provider ||
@@ -196,7 +188,7 @@ export default function ProviderServiceAgreement() {
         throw error;
       }
   }
-
+  if (loading) return <Splash />;
   return (
     <Container>
       <div></div>

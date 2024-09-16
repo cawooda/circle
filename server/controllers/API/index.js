@@ -53,10 +53,16 @@ router.put("/users", async (req, res) => {
         { path: "roleProvider" },
         { path: "roleAdmin" },
       ]);
+      const token = userExists.generateToken();
       await userExists.save();
       res
         .status(200)
-        .json({ userExists: true, userCreated: false, user: userExists });
+        .json({
+          userExists: true,
+          userCreated: false,
+          user: userExists,
+          token,
+        });
     } else {
       res.status(401).json({
         codeValid: false,
@@ -110,11 +116,17 @@ router.put("/users", async (req, res) => {
           })
           .populate("roleAdmin")
           .exec();
+        const token = userExists.generateAuthToken();
         await userExists.save();
 
         res
           .status(200)
-          .json({ userExists: true, userCreated: false, user: userExists });
+          .json({
+            userExists: true,
+            userCreated: false,
+            user: userExists,
+            token,
+          });
       } else {
         res.status(401).json({
           userExists: true,
@@ -190,11 +202,14 @@ router.post("/users", async (req, res) => {
 
     if (userExists) {
       if (await userExists.isCorrectPassword(req.body.password)) {
-        await userExists.generateAuthToken();
-        await userExists.save();
-        res
-          .status(200)
-          .json({ userExists: true, userCreated: false, user: userExists });
+        const token = await userExists.generateAuthToken();
+
+        res.status(200).json({
+          userExists: true,
+          userCreated: false,
+          user: userExists,
+          token,
+        });
         return userExists;
       } else {
         res.status(401).json({
@@ -212,7 +227,7 @@ router.post("/users", async (req, res) => {
         ...user,
       });
       userCreated.save();
-      await userCreated.generateAuthToken();
+      const token = await userCreated.generateAuthToken();
       const host = process.env.HOST || `http://localhost:3000`; // Get the host (hostname:port)
       userCreated.sendMessage(
         `Welcome to Circle`,
@@ -220,9 +235,12 @@ router.post("/users", async (req, res) => {
         `<p>Hi</p> <p>We created you a new Circle Account. You can log in at any time using your password or SMS login</p><p>Circle helps custoemrs and businesses connect through service agreements and ensures work done is accurately recorded for payment and to secure records for future reference.</p><p>To find out more visit <a href="http://circleindependent.com">Cirlcle Independent</a></p><p>Have a great day :)</p>`,
         null
       );
-      res
-        .status(200)
-        .json({ userExists: true, userCreated: true, user: userCreated });
+      res.status(200).json({
+        userExists: true,
+        userCreated: true,
+        user: userCreated,
+        token,
+      });
     }
   } catch (error) {
     throw error;

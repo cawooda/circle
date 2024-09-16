@@ -50,9 +50,9 @@ export const QUERY_ALL_USERS = gql`
   }
 `;
 
-export const QUERY_USER_BY_ID = gql`
-  query GetMe($id: ID!) {
-    getMe(id: $id) {
+export const GET_ME = gql`
+  query GetMe {
+    getMe {
       _id
       first
       last

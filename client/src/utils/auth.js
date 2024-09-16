@@ -3,17 +3,11 @@ import { jwtDecode } from "jwt-decode";
 
 // create a new class to instantiate for a user
 class AuthService {
-  constructor() {
-    if (this.isTokenExpired(this.getProfile())) this.logout();
-  }
-
   getProfile() {
     try {
       const token = this.getToken();
-      console.log("token", token);
       if (!token) return null;
       const profile = jwtDecode(token);
-      console.log("profile", profile);
       return profile;
     } catch (error) {
       console.log("Error in getProfile:", error);
@@ -38,9 +32,12 @@ class AuthService {
       return false;
     }
   }
+  setToken(token) {
+    localStorage.setItem("id_token", token);
+    return null;
+  }
 
   getToken() {
-    // Retrieves the user token from localStorage
     if (localStorage.getItem("id_token")) {
       return localStorage.getItem("id_token");
     }
@@ -55,8 +52,14 @@ class AuthService {
         },
         body: JSON.stringify({ ...userData, linkRequest: true }),
       });
+      if (!response.ok) {
+        throw new Error("Failed to fetch");
+      }
+
       if (response.ok) {
         const res = await response.json();
+
+        this.setToken(res.token);
         return res;
       }
     } else {
@@ -73,6 +76,9 @@ class AuthService {
         },
         body: JSON.stringify({ ...userData, link: true }),
       });
+      if (!response.ok) {
+        throw new Error("Failed to fetch");
+      }
       if (response.ok) {
         const res = await response.json();
         return res;
@@ -90,6 +96,10 @@ class AuthService {
         },
         body: JSON.stringify(userData),
       });
+      if (!response.ok) {
+        throw new Error("Failed to fetch");
+      }
+
       if (response.ok) {
         const res = await response.json();
         if (res.user.token) {
@@ -112,11 +122,14 @@ class AuthService {
       },
       body: JSON.stringify({ ...userData }),
     });
+    if (!response.ok) {
+      throw new Error("Failed to fetch");
+    }
 
     if (response.ok) {
       const res = await response.json();
-      if (res.user.token) {
-        localStorage.setItem("id_token", res.user.token);
+      if (res.token) {
+        localStorage.setItem("id_token", res.token);
         localStorage.setItem("user_signed_up", res.user.mobile);
         return res;
       }
@@ -134,6 +147,9 @@ class AuthService {
       body: JSON.stringify({ authLinkNumber: code }),
     });
     const res = await response.json();
+    if (!response.ok) {
+      throw new Error("Failed to fetch");
+    }
     if (!response.validCode) {
       this.logout();
       return res;

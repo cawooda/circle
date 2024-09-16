@@ -23,7 +23,6 @@ const server = new ApolloServer({
   resolvers,
 });
 
-//require the connection to Mongoose for MongoDb database
 const db = require("./config/connection");
 
 const apiRoutes = require("./controllers/API");
@@ -40,9 +39,6 @@ const startApolloServer = async () => {
       context: authMiddleware,
     })
   );
-
-  //if any user gets a token, they can query any grapghql query and any data. How can we set what users can query and what restrictions
-  // are in place based on token? role? etc.
 
   app.use("/api", apiRoutes);
 

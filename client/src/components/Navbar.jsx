@@ -11,8 +11,6 @@ import { ButtonStyles } from "./styles/ButtonStyle";
 
 import { NavLink } from "react-router-dom";
 
-import AuthService from "../utils/auth";
-
 export default function NavBar({ user }) {
   return (
     <>

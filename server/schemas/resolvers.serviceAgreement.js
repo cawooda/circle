@@ -6,7 +6,7 @@ const { convertToPdf } = require("../utils/pdfUtility");
 const { EMAILService } = require("../utils/mailer");
 const userEmailService = new EMAILService();
 
-const { User, Product, ServiceAgreement, Service } = require("../models");
+const { User, ServiceAgreement, Service } = require("../models");
 
 const { renderTemplate } = require("../templates/renderTemplate");
 module.exports = {
@@ -105,11 +105,14 @@ module.exports = {
         agreementId
       );
       // Populate paths individually to fix an issue I can't trace
-      await signedServiceAgreement.populate("customer");
-      await signedServiceAgreement.populate("provider");
-      await signedServiceAgreement.populate("service");
-      await signedServiceAgreement.populate("customer.user");
-      await signedServiceAgreement.populate("provider.user");
+      await signedServiceAgreement.populate([
+        { path: "customer" },
+        { path: "provider" },
+        { path: "service" },
+        { path: "customer.user" },
+        { path: "provider.user" },
+      ]);
+
       await signedServiceAgreement.save();
 
       if (customerSignature) {
@@ -120,7 +123,7 @@ module.exports = {
       const first = signedServiceAgreement.customer.user?.first;
       const last = signedServiceAgreement.customer.user?.last;
       const providerName = signedServiceAgreement.provider?.providerName;
-      const product = signedServiceAgreement?.product;
+      const service = signedServiceAgreement?.service;
       const startDate = dayjs(
         new Date(signedServiceAgreement?.startDate)
       ).format("DD-MM-YYYY");
@@ -135,10 +138,7 @@ module.exports = {
         startDate: startDate,
         endDate: endDate,
       };
-      console.log(
-        "renderPreparedServiceAgreement",
-        renderPreparedServiceAgreement
-      );
+
       const renderedHtml = renderTemplate(
         renderPreparedServiceAgreement,
         "serviceAgreementTemplate"
@@ -162,30 +162,33 @@ module.exports = {
           subject: "New Service Agreement",
           first,
           providerName,
-          product,
+          service,
           startDate,
           endDate,
         },
         "emailTemplate"
       );
-
-      console.log("renderedEmail", renderedEmail);
-      userEmailService.sendMail(
-        customerUser.email,
-        "A new Service Agreement has Arrived",
-        `Hi ${signedServiceAgreement.customer.user.first}, 
+      if (customerUser.email) {
+        userEmailService.sendMail(
+          customerUser.email,
+          "A new Service Agreement has Arrived",
+          `Hi ${signedServiceAgreement.customer.user.first}, 
           you just signed a new service agreement with ${signedServiceAgreement.provider.providerName} for
-          ${signedServiceAgreement?.product.name}. We've attached a copy for your reccords and included
+          ${signedServiceAgreement?.service.product.name}. We've attached a copy for your reccords and included
           your plan manager for reference.
           Have a great day.
         `,
-        renderedEmail,
-        outputPath
-      );
-
+          renderedEmail,
+          outputPath
+        );
+      }
       signedServiceAgreement.agreementPath = pdfPath;
       await signedServiceAgreement.save();
-      return signedServiceAgreement;
+      return {
+        success: true,
+        message: "Service Agreement Signed",
+        agreementNumber: signedServiceAgreement.agreementNumber,
+      };
     } catch (error) {
       console.error(
         `Error in signServiceAgreementsigned Service Agreement: `,

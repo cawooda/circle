@@ -1,3 +1,4 @@
+import { validateMobileInput } from "../utils/helpers";
 import { useState, useEffect } from "react";
 import {
   Button,
@@ -33,6 +34,7 @@ import { InputStyles } from "./styles/InputStyles";
 
 import logo from "/logo.png";
 import { useUser } from "../contexts/UserContext";
+import Splash from "./Splash";
 
 const SigninForm = () => {
   const navigate = useNavigate();
@@ -45,6 +47,7 @@ const SigninForm = () => {
     mobile: userSignedUp || "",
     password: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     isOpen: isSmsModalOpen,
@@ -52,12 +55,12 @@ const SigninForm = () => {
     onClose: onSmsModalClose,
   } = useDisclosure();
 
-  // useEffect(() => {
-  //   if (loading) onClose;
-  //   if (!user) {
-  //     onOpen();
-  //   }
-  // }, [user]);
+  useEffect(() => {
+    if (loading) onClose;
+    if (!user) {
+      onOpen();
+    }
+  }, [user]);
 
   const handleInputChange = (event) => {
     var { name, value } = event.target;
@@ -103,15 +106,22 @@ const SigninForm = () => {
   };
 
   const handleFormSubmit = async (event) => {
+    if (!validateMobileInput(userFormData.mobile)) {
+      setMessage("check mobile number");
+      return;
+    }
+    setIsLoading(true);
     event.preventDefault();
+
     try {
       if (signup) {
         const response = await AuthService.signUpUser(userFormData);
         if (!response.user) {
           setMessage(response.message); // Set the error message
         } else {
-          setUser(user);
+          setUser(response.user);
           refetch(); // Refetch user data after login
+          setIsLoading(false);
           onClose();
         }
       } else {
@@ -122,6 +132,9 @@ const SigninForm = () => {
           setMessage(response.message); // Set the error message
         } else {
           setUser(response.user);
+          refetch();
+          setIsLoading(false);
+          onClose();
         }
       }
     } catch (error) {
@@ -135,7 +148,8 @@ const SigninForm = () => {
       password: "",
     });
   };
-  console.log(user);
+
+  if (isLoading) return <Splash />;
   return (
     <>
       <Button
@@ -169,7 +183,7 @@ const SigninForm = () => {
           <ModalCloseButton />
           <ModalBody>
             <Flex direction="column" align="center" justify="center">
-              <FormControl as="form" onSubmit={handleFormSubmit}>
+              <FormControl as="form" onSubmit={(e) => handleFormSubmit(e)}>
                 {signup ? (
                   <>
                     <FormLabel htmlFor="first">First Name</FormLabel>

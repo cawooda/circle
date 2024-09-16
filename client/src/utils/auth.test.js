@@ -23,19 +23,12 @@ describe("getProfile", () => {
     const mockToken = "validToken";
     const mockProfile = { id: "user1", name: "John Doe" };
 
-    // Mock localStorage to return the mock token
     localStorage.getItem.mockReturnValue(mockToken);
 
-    // Mock jwtDecode to return the mock profile
     jwtDecode.mockReturnValue(mockProfile);
 
-    // Use the AuthService instance directly
     const profile = AuthService.getProfile();
 
-    // Debugging output
-    console.log("Decoded profile:", profile); // Should log { id: "user1", name: "John Doe" }
-
-    // Check that the profile matches the expected output
     expect(profile).toEqual(mockProfile);
   });
 });
