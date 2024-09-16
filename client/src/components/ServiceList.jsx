@@ -2,9 +2,9 @@ import { useEffect, useReducer } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { QUERY_SERVICES, QUERY_PRODUCTS } from "../utils/queries";
 import { UPDATE_SERVICE, DELETE_SERVICE } from "../utils/mutations"; // Add DELETE_SERVICE mutation here
+import { CardStyles } from "./styles/CardStyles";
 import {
   Button,
-  Box,
   Flex,
   Input,
   Heading,

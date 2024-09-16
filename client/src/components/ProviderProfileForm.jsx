@@ -19,8 +19,6 @@ import {
   Image,
   Center,
   VStack,
-  Alert,
-  InputGroup,
   Spacer,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
@@ -31,8 +29,7 @@ import ProviderServiceSelect from "./ProviderServiceSelect";
 
 import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
 import { ModalHeadingStyle } from "./styles/modalStyles";
-import { InputStyles, InputTextareaStyles } from "./styles/InputStyles";
-
+import { CardStyles } from "./styles/CardStyles";
 import logo from "/logo.png";
 
 import { useMutation } from "@apollo/client";
@@ -165,17 +162,19 @@ const ProviderProfileForm = ({ user }) => {
             <ModalCloseButton />
 
             <ModalBody>
-              <Flex direction="column" gap={20}>
+              <Flex direction="column" {...CardStyles} gap={20}>
                 <FormControl as="form" onSubmit={handleFormSubmit}>
-                  <TermsAndConditions
-                    formData={formData}
-                    handleInputChange={handleInputChange}
-                    handleFormSubmit={() => {
-                      onClose();
-                      handleFormSubmit();
-                    }}
-                  />
-                  <ProviderServiceSelect />
+                  <Flex direction="column" {...CardStyles}>
+                    <TermsAndConditions
+                      formData={formData}
+                      handleInputChange={handleInputChange}
+                      handleFormSubmit={() => {
+                        onClose();
+                        handleFormSubmit();
+                      }}
+                    />
+                    <ProviderServiceSelect />
+                  </Flex>
                   <ProviderContactDetails
                     formData={formData}
                     handleInputChange={handleInputChange}
