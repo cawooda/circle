@@ -101,25 +101,30 @@ module.exports = {
     context
   ) => {
     try {
-      const signedServiceAgreement = await ServiceAgreement.findById(
-        agreementId
-      );
-      // Populate paths individually to fix an issue I can't trace
-      await signedServiceAgreement.populate([
-        { path: "customer", model: "customer" },
-        { path: "provider", model: "provider" },
-        { path: "service", model: "service" },
-        { path: "customer.user", model: "user" },
-        { path: "provider.user", model: "user" },
-      ]);
-
-      await signedServiceAgreement.save();
+      const signedServiceAgreement = await ServiceAgreement.findOne({
+        _id: agreementId,
+      })
+        .populate([
+          { path: "customer", model: "customer" },
+          { path: "provider", model: "provider" },
+          { path: "provider.user", model: "user" },
+          { path: "customer.user", model: "user" },
+          { path: "service", model: "service" },
+          { path: "service.product", model: "product" },
+        ])
+        .exec();
+      signedServiceAgreement.customer.user = await User.findOne({
+        _id: signedServiceAgreement.customer.user,
+      }).populate();
+      signedServiceAgreement.service = await Service.findOne({
+        _id: signedServiceAgreement.service,
+      }).populate("product");
 
       if (customerSignature) {
         signedServiceAgreement.approvedByCustomer = true;
         signedServiceAgreement.customerSignature = customerSignature;
       }
-
+      await signedServiceAgreement.save();
       const first = signedServiceAgreement.customer.user?.first;
       const last = signedServiceAgreement.customer.user?.last;
       const providerName = signedServiceAgreement.provider?.providerName;

@@ -41,7 +41,6 @@ const customerSchema = new Schema(
   }
 );
 
-// Create the Customer model
 const Customer = model("customer", customerSchema);
 
 module.exports = Customer;
