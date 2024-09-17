@@ -4,7 +4,7 @@
 /server/node_modules/
 /server/cache
 /client/node_modules/
-/client/customerData/agreements
+/server/customerData/agreements
 
 # Other files and directories to ignore
 node_modules/
