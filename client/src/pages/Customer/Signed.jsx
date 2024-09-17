@@ -1,6 +1,7 @@
-import { Heading } from "@chakra-ui/react";
+import { Center, Heading, Flex, Button } from "@chakra-ui/react";
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { ButtonStyles } from "../../components/styles/ButtonStyle";
 
 export default function Signed() {
   const location = useLocation();
@@ -9,7 +10,22 @@ export default function Signed() {
 
   return (
     <div>
-      <Heading>Thanks for signing that service agreement {name}</Heading>
+      <Center height="100vh">
+        <div>
+          <Flex justify="center" align="center">
+            <Heading fontSize={80}>
+              Thank you {name ? name : ""}, that service agreement is on its
+              way...
+            </Heading>
+            <br />
+          </Flex>
+          <Button {...ButtonStyles} fontSize={30}>
+            <a style={{ textDecoration: "none", padding: "12px" }} href="/">
+              Circle Independent
+            </a>
+          </Button>
+        </div>
+      </Center>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { GET_ME } from "../utils/queries";
 import AuthService from "../utils/auth";
 import { useNavigate } from "react-router-dom";
 import Splash from "../components/Splash";
+import SigninForm from "../components/SigninForm";
 
 const UserContext = createContext();
 
@@ -21,18 +22,20 @@ export const UserProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    if (data && data.getMe) {
+    if (data) {
       setUser(data.getMe);
       setHasError(false); // Reset error state on successful data fetch
     }
-  }, [data]);
+  }, [data, loading]);
 
-  console.log("user in context", user);
-  if (loading) return <Splash />;
-  if (data)
-    return (
-      <UserContext.Provider value={{ user, setUser, refetch, loading, error }}>
-        {children}
-      </UserContext.Provider>
-    );
+  // if (loading) return <Splash />;
+  console.log("usr", user);
+  console.log("error", error);
+  console.log("loading", loading);
+
+  return (
+    <UserContext.Provider value={{ user, setUser, refetch, loading, error }}>
+      {children}
+    </UserContext.Provider>
+  );
 };

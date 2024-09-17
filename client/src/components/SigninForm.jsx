@@ -56,12 +56,11 @@ const SigninForm = ({ forceOpen }) => {
   } = useDisclosure();
 
   useEffect(() => {
-    if (loading) onClose;
     if (!user) {
       onOpen();
     }
     if (forceOpen) {
-      onOpen;
+      onOpen();
     }
   }, [user]);
 
@@ -152,7 +151,7 @@ const SigninForm = ({ forceOpen }) => {
     });
   };
 
-  if (isLoading) return <Splash />;
+  // if (isLoading) return <Splash />;
   return (
     <>
       <Button

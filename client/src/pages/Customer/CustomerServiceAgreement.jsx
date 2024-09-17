@@ -109,7 +109,9 @@ export default function CustomerServiceAgreement() {
       },
     });
 
-    navigate(`/`);
+    navigate(
+      `/signed?name=${agreementQueryData.getServiceAgreement.customer.user.first}`
+    );
     try {
     } catch (error) {
       console.log(error);

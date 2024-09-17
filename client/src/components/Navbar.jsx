@@ -13,7 +13,7 @@ import { NavLink } from "react-router-dom";
 
 export default function NavBar() {
   const { user, loading } = useUser();
-  if (loading) return null;
+  // if (loading) return null;
   return (
     <>
       <Flex gap={3} flexDirection={{ base: "column", md: "column" }}>

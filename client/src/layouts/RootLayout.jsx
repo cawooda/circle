@@ -38,7 +38,7 @@ export default function RootLayout() {
       <Center height="100vh">
         <div>
           <Flex justify="center" align="center">
-            <SigninForm forceOpen />
+            <SigninForm />
           </Flex>
         </div>
       </Center>
@@ -53,7 +53,7 @@ export default function RootLayout() {
       </Box>
       <Flex flex="1" direction={{ base: "column", md: "row" }}>
         <Box bg="gray.200" p={4} maxWidth={{ base: "100vw", md: "100vw" }}>
-          <Navbar user={user} />
+          <Navbar />
         </Box>
         <Box flex="1" bg="gray.50" p={4}>
           <Outlet />

@@ -39,6 +39,7 @@ import AuthReset from "./pages/AuthReset";
 import "./index.css";
 
 import { createBrowserRouter, Route, RouterProvider } from "react-router-dom";
+
 // Router configuration
 const router = createBrowserRouter([
   {
@@ -48,6 +49,7 @@ const router = createBrowserRouter([
       { path: ":agreementNumber", element: <CustomerServiceAgreement /> },
     ],
   },
+  { path: "signed", element: <Signed /> },
   {
     path: "auth",
     element: <AuthLink />,
@@ -58,7 +60,6 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       { path: "reset/:authLinkNumber", element: <AuthReset /> },
-      { path: "signed", element: <Signed /> },
       {
         path: "admin",
         element: <AdminLayout />,
