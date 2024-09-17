@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAdmin } from "../../contexts/AdminContext";
 import UserAdminRow from "../../components/AdminComponents/UserAdminRow";
-import { TOGGLE_USER_ROLE } from "../../utils/mutations";
+
 import Splash from "../../components/Splash";
 
 export default function UsersAdmin() {

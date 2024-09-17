@@ -23,7 +23,7 @@ const menu = [
 import Splash from "../components/Splash";
 
 export default function ProviderLayout() {
-  const { user, setUser, loading, error } = useUser();
+  const { user, loading, error } = useUser();
   if (loading) return <Splash />;
   if (error) {
     console.log("error", error);

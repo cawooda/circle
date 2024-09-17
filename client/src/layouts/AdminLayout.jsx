@@ -2,7 +2,6 @@ import React from "react";
 
 import { Outlet } from "react-router-dom";
 import SubMenu from "../components/SubMenu";
-import { useUser } from "../contexts/UserContext";
 import { AdminProvider } from "../contexts/AdminContext";
 
 const menu = [
@@ -14,7 +13,6 @@ const menu = [
 ];
 
 export default function AdminLayout() {
-  const { user, setUser, loading, error } = useUser();
   return (
     <>
       <AdminProvider>

@@ -17,7 +17,6 @@ export const UserProvider = ({ children }) => {
   const [hasError, setHasError] = useState(false);
 
   const { loading, error, data, refetch } = useQuery(GET_ME, {
-    fetchPolicy: "network-only",
     onError: () => setHasError(true),
   });
 
@@ -30,10 +29,10 @@ export const UserProvider = ({ children }) => {
 
   console.log("user in context", user);
   if (loading) return <Splash />;
-
-  return (
-    <UserContext.Provider value={{ user, setUser, refetch, loading, error }}>
-      {children}
-    </UserContext.Provider>
-  );
+  if (data)
+    return (
+      <UserContext.Provider value={{ user, setUser, refetch, loading, error }}>
+        {children}
+      </UserContext.Provider>
+    );
 };

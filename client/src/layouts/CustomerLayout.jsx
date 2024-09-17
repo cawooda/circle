@@ -2,7 +2,7 @@ import React from "react";
 
 import { Outlet } from "react-router-dom";
 import SubMenu from "../components/SubMenu";
-import { useUser } from "../contexts/UserContext";
+// import { useUser } from "../contexts/UserContext";
 
 const menu = [
   { label: "Service Agreements", link: "service-agreements" },
@@ -11,7 +11,7 @@ const menu = [
 ];
 
 export default function CustomerLayout() {
-  const { user, setUser, loading, error } = useUser();
+  // const { user, setUser, loading, error } = useUser();
 
   return (
     <>

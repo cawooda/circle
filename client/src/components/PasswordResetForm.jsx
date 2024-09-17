@@ -33,7 +33,7 @@ import {
 } from "@chakra-ui/react";
 
 export default function PasswordResetForm() {
-  const { user, setUser } = useUser();
+  const { user } = useUser();
   const [formData, setFormData] = useState({
     password: "",
     confirmPassword: "",

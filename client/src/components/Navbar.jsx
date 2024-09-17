@@ -12,12 +12,13 @@ import { useUser } from "../contexts/UserContext";
 import { NavLink } from "react-router-dom";
 
 export default function NavBar() {
-  const { user, setUser } = useUser();
+  const { user, loading } = useUser();
+  if (loading) return null;
   return (
     <>
       <Flex gap={3} flexDirection={{ base: "column", md: "column" }}>
         {/* Check roles and serve up what they should see */}
-        {user?.roleProvider || user?.roleAdmin || user?.roleSuperAdmin ? (
+        {user?.roleProvider ? (
           <Box>
             <NavLink to="/provider">
               <Container {...ButtonStyles}>

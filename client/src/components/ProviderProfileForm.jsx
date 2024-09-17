@@ -37,7 +37,7 @@ import { useMutation } from "@apollo/client";
 import { UPDATE_PROVIDER_PROFILE } from "../utils/mutations";
 
 const ProviderProfileForm = () => {
-  const { user, setUser } = useUser();
+  const { user } = useUser();
   console.log("user provider profile", user);
   const [
     updateProviderProfile,

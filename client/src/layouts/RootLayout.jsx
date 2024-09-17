@@ -34,8 +34,6 @@ export default function RootLayout() {
   if (slideShow)
     return <Slideshow data={firstVisitSlideShow} setSlideShow={setSlideShow} />;
   if (error || !user) {
-    console.log("error in rootLayout", error);
-    console.log("user in rootLayout", user);
     return (
       <Center height="100vh">
         <div>

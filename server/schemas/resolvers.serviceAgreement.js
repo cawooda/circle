@@ -106,11 +106,11 @@ module.exports = {
       );
       // Populate paths individually to fix an issue I can't trace
       await signedServiceAgreement.populate([
-        { path: "customer" },
-        { path: "provider" },
-        { path: "service" },
-        { path: "customer.user" },
-        { path: "provider.user" },
+        { path: "customer", model: "customer" },
+        { path: "provider", model: "provider" },
+        { path: "service", model: "service" },
+        { path: "customer.user", model: "user" },
+        { path: "provider.user", model: "user" },
       ]);
 
       await signedServiceAgreement.save();
