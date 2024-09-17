@@ -48,7 +48,7 @@ module.exports = {
             path: "linkedCustomers",
             model: "customer",
             populate: {
-              path: "user", // Nested population of linkedCustomers' user
+              path: "user",
               model: "user",
             },
           },
@@ -57,20 +57,27 @@ module.exports = {
       .populate("roleAdmin")
       .exec();
 
-    user.roleProvider?.linkedCustomers.forEach((customer, index) => {});
-
     // better to use a filter
     if (user.roleProvider) {
       user.roleProvider.linkedCustomers =
         user.roleProvider?.linkedCustomers.filter((customer) => {
-          if (!customer?.user?.mobile) {
-            console.log("no mobile");
-            console.log(customer.user);
-            return false;
+          if (customer.user.mobile) {
+            return true;
           }
         });
     }
-
+    if (user.roleProvider) {
+      user.roleProvider.services = user.roleProvider?.services.filter(
+        (service) => {
+          console.log("service id", service._id);
+          console.log("service product", service.product.name);
+          if (service.product.name) {
+            return true;
+          }
+        }
+      );
+    }
+    console.log(user.roleProvider.services);
     user.save();
     // for each linked customer in the roleProvider of user, check whether the population has worked to give name, mobile etc.
     // if not delete the id from the linked

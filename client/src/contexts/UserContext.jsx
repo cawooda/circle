@@ -28,6 +28,7 @@ export const UserProvider = ({ children }) => {
     }
   }, [data]);
 
+  console.log("user in context", user);
   if (loading) return <Splash />;
 
   return (

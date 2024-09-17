@@ -11,7 +11,7 @@ import { useUser } from "../contexts/UserContext";
 
 export default function ServiceControl({ handleInputChange, locked }) {
   const { user } = useUser();
-  if (!user.roleProvider.services[0]?.product?.name) return null;
+  if (!user.roleProvider.services) return null;
 
   return (
     <>

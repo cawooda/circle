@@ -14,6 +14,7 @@ import {
   ServiceAgreementsAdmin,
   ShiftsAdmin,
   InvoicesAdmin,
+  ProviderAdmin,
 } from "./pages/Admin";
 
 import {
@@ -65,6 +66,10 @@ const router = createBrowserRouter([
           {
             path: "users",
             element: <UsersAdmin />,
+          },
+          {
+            path: "providers",
+            element: <ProviderAdmin />,
           },
           {
             path: "service-agreements",

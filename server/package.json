@@ -7,6 +7,7 @@
     "start": "node server.js",
     "watch": "nodemon server.js && npm test",
     "seed": "node seeders/seed.js",
+    "seedReset": "node seeders/seedReset.js",
     "test": "jest --watch"
   },
   "dependencies": {

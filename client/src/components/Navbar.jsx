@@ -8,10 +8,11 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { ButtonStyles } from "./styles/ButtonStyle";
-
+import { useUser } from "../contexts/UserContext";
 import { NavLink } from "react-router-dom";
 
-export default function NavBar({ user }) {
+export default function NavBar() {
+  const { user, setUser } = useUser();
   return (
     <>
       <Flex gap={3} flexDirection={{ base: "column", md: "column" }}>

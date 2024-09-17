@@ -10,6 +10,7 @@ const menu = [
   { label: "Service Agreements", link: "service-agreements" },
   { label: "Shifts", link: "shifts" },
   { label: "Invoices", link: "invoices" },
+  { label: "Providers", link: "providers" },
 ];
 
 export default function AdminLayout() {
