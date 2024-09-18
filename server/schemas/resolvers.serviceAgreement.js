@@ -6,6 +6,7 @@ const { generateRandomNumber } = require("../utils/helpers");
 const { convertToPdf } = require("../utils/pdfUtility");
 const { EMAILService } = require("../utils/mailer");
 const userEmailService = new EMAILService();
+const { addProviderDirectory } = require("../setup.config");
 
 const { User, ServiceAgreement, Service } = require("../models");
 
@@ -151,21 +152,19 @@ module.exports = {
       );
 
       // Define the directory path
-      const directoryPath = path.join(
-        __dirname,
-        `../customerData/agreements/${providerName}-${first}-${last}`
-      );
+      const directoryPath = addProviderDirectory(providerName);
+      // path.join(
+      //   __dirname,
+      //   `../customerData/agreements/${providerName}-${first}-${last}`
+      // );
+
       // Ensure the directory exists before saving the file
-      if (!fs.existsSync(directoryPath)) {
-        fs.mkdirSync(directoryPath, { recursive: true });
-      }
+
       //set the outputPath for the service agreement to be saved and then sent
-      const outputPath = path.join(
-        __dirname,
-        `../customerData/agreements/${providerName}-${first}-${last}/ServiceAgreement-${providerName}-${first}-${last}-${dayjs(
-          startDate
-        ).format("DD-MM-YYYY")}-${generateRandomNumber(1, 3000000)}.pdf`
-      );
+      const outputPath = `${directoryPath}/ServiceAgreement-${providerName}-${first}-${last}-${dayjs(
+        startDate
+      ).format("DD-MM-YYYY")}-${generateRandomNumber(1, 3000000)}.pdf`;
+
       //convert it to pdf, saving at the outputPath
       const pdfPath = await convertToPdf(renderedHtml, outputPath);
       //find the customer to email to them.

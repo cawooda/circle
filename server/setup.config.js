@@ -17,9 +17,27 @@ function checkDirectory() {
       `Setup.config.fs projectStartup function errored which most ${error}`
     );
   }
+  return directory;
+}
+
+function addProviderDirectory(name) {
+  try {
+    const baseDirectory = checkDirectory();
+    const fullDirectory = path.join(baseDirectory, name);
+    const directoryExists = fs.existsSync(fullDirectory);
+    if (!directoryExists) {
+      fs.mkdirSync(fullDirectory, { recursive: true });
+    }
+    return fullDirectory;
+  } catch (error) {
+    console.log(
+      `Setup.config.fs projectStartup function errored which most ${error}`
+    );
+  }
 }
 
 module.exports = {
+  addProviderDirectory,
   projectStartUp: () => {
     checkDirectory();
   },
