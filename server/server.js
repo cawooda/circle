@@ -12,6 +12,7 @@ var accessLogStream = fs.createWriteStream(path.join(__dirname, "access.log"), {
 });
 
 const { authMiddleware } = require("./utils/auth");
+const { projectStartUp } = require("./setup.config");
 
 const { ApolloServer } = require("@apollo/server");
 const { expressMiddleware } = require("@apollo/server/express4");
@@ -32,6 +33,8 @@ const startApolloServer = async () => {
   app.use(morgan("combined", { stream: accessLogStream }));
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
+
+  projectStartUp();
 
   app.use(
     "/graphql",
