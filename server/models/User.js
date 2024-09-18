@@ -191,8 +191,9 @@ userSchema.methods.sendEmail = async function (
       );
       return { message: messageSent };
     } catch (error) {
-      console.error("Error sending email:", error);
-      throw error;
+      throw new Error(
+        `email service in user schema send message errorred ${error.message}`
+      );
     }
   } else {
     throw new Error("No email found for user");
