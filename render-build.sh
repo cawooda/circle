@@ -18,7 +18,6 @@ fi
 
 # Install dependencies
 cd server && npm install && cd ../client && npm install
-cd client && npm run build
-
+cd ../client && npm run build
 # Install Puppeteer
 cd $HOME/project/src && npx puppeteer install
