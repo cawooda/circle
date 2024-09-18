@@ -6,7 +6,7 @@ import "./spinner.css";
 export default function Splash() {
   return (
     <Container className="pendulum">
-      <img src={logo} width="20px" alt="Loading..." />
+      <img src={logo} width="50px" alt="Loading..." />
     </Container>
   );
 }

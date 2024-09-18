@@ -113,7 +113,7 @@ userSchema.pre("save", async function (next) {
     }
   }
 
-  if (!this.roleProvider && process.env.TESTING) {
+  if (!this.roleProvider) {
     try {
       const newProvider = new Provider({});
       await newProvider.save();

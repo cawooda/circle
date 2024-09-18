@@ -1,7 +1,7 @@
 const userSeed = [
   {
     _id: "66a083826e76d0e5ababe48f",
-    first: "Andrew",
+    first: "AndrewMasterUser",
     last: "Cawood",
     mobile: "0400442612",
     email: "cawooda@gmail.com",
@@ -88,8 +88,8 @@ const userSeed = [
 const productSeed = [
   {
     _id: "66a0d9f4a0eb8627cc6321f1",
-    name: "Assistance (07_002_0106_8_3)",
-    price: 100.14,
+    name: "Example Product (02_002_0106_8_3)",
+    price: 100,
   },
   {
     _id: "66a0d9f4a0eb8627cc6321f2",
@@ -98,7 +98,7 @@ const productSeed = [
   },
   {
     _id: "66a0d9f4a0eb8627cc6323f3",
-    name: "CB:Training STD(15_037_0117_1_3)",
+    name: "Example Product(15_037_0117_1_3)",
     price: 67.56,
   },
   {
@@ -131,9 +131,8 @@ const providerSeed = [
       state: "Stateville",
       postalCode: "12345",
     },
-    providerName: "My Better Life",
+    providerName: "MasterProvider",
 
-    services: ["66a0d9f4a0eb8627cc6320f9", "66a0d9f4a0eb8627cc6321f0"],
     notes: "Provider 1 notes.",
     linkedCustomers: [
       "66a0d9f4a0eb8627cc6320f5",

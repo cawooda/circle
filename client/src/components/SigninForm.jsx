@@ -119,10 +119,10 @@ const SigninForm = ({ forceOpen }) => {
       if (signup) {
         const response = await AuthService.signUpUser(userFormData);
         if (!response.user) {
-          setMessage(response.message); // Set the error message
+          setMessage(response.message);
         } else {
-          setUser(response.user);
-          refetch(); // Refetch user data after login
+          AuthService.setToken(response.token);
+          refetch();
           setIsLoading(false);
           onClose();
         }

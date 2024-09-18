@@ -1,5 +1,5 @@
 //import the Schema and model from mongoose.
-const { Schema, model } = require("mongoose");
+const { Schema, model, Types } = require("mongoose");
 const defaultTermsAndConditions = require("../seeders/defaultTerms");
 const { generateRandomNumber } = require("../utils/helpers");
 
@@ -30,8 +30,23 @@ const providerSchema = new Schema(
       default: defaultTermsAndConditions,
     },
     notes: { type: String },
-    linkedCustomers: [{ type: Schema.Types.ObjectId, ref: "customer" }],
-    services: [{ type: Schema.Types.ObjectId, ref: "service" }],
+    linkedCustomers: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "customer",
+        default: ["66d6b24c6bea26447abaeaf9"],
+      },
+    ],
+    services: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "service",
+        default: [
+          new Types.ObjectId("66a0d9f4a0eb8627cc6320f9"),
+          new Types.ObjectId("66a0d9f4a0eb8627cc6321f0"),
+        ],
+      },
+    ],
     serviceAgreements: [{ type: Schema.Types.ObjectId, ref: "agreement" }],
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },

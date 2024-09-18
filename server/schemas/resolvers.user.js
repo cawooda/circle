@@ -69,15 +69,13 @@ module.exports = {
     if (user.roleProvider) {
       user.roleProvider.services = user.roleProvider?.services.filter(
         (service) => {
-          console.log("service id", service._id);
-          console.log("service product", service.product.name);
           if (service.product.name) {
             return true;
           }
         }
       );
     }
-    console.log(user.roleProvider.services);
+    console.log(user.roleProvider?.services);
     user.save();
     // for each linked customer in the roleProvider of user, check whether the population has worked to give name, mobile etc.
     // if not delete the id from the linked
