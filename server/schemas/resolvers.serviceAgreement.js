@@ -1,5 +1,6 @@
 require("dotenv").config();
 const path = require("path");
+const fs = require("fs");
 const dayjs = require("dayjs");
 const { generateRandomNumber } = require("../utils/helpers");
 const { convertToPdf } = require("../utils/pdfUtility");
