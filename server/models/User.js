@@ -169,8 +169,7 @@ userSchema.methods.sendMessage = async function (
     if (this.email) await this.sendEmail(subject, body, html, attachment);
   } catch (error) {
     throw new Error(
-      "email service in user schema send message errorred",
-      error
+      `email service in user schema send message errorred ${error.message}`
     );
   }
 };
