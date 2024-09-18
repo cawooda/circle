@@ -148,6 +148,16 @@ module.exports = {
         renderPreparedServiceAgreement,
         "serviceAgreementTemplate"
       );
+
+      // Define the directory path
+      const directoryPath = path.join(
+        __dirname,
+        `../customerData/agreements/${providerName}-${first}-${last}`
+      );
+      // Ensure the directory exists before saving the file
+      if (!fs.existsSync(directoryPath)) {
+        fs.mkdirSync(directoryPath, { recursive: true });
+      }
       //set the outputPath for the service agreement to be saved and then sent
       const outputPath = path.join(
         __dirname,
