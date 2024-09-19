@@ -127,10 +127,11 @@ module.exports = {
         signedServiceAgreement.customerSignature = customerSignature;
       }
       await signedServiceAgreement.save();
-      const first = signedServiceAgreement.customer.user?.first;
-      const last = signedServiceAgreement.customer.user?.last;
-      const providerName = signedServiceAgreement.provider?.providerName;
-      const service = signedServiceAgreement?.service;
+      const first = signedServiceAgreement.customer.user?.first || "firstName";
+      const last = signedServiceAgreement.customer.user?.last || "lastName";
+      const providerName =
+        signedServiceAgreement.provider?.providerName || "providerName";
+      const service = signedServiceAgreement?.service || "__";
       const startDate = dayjs(
         new Date(signedServiceAgreement?.startDate)
       ).format("DD-MM-YYYY");
@@ -151,19 +152,16 @@ module.exports = {
         "serviceAgreementTemplate"
       );
 
-      // Define the directory path
+      // Define the directory path. checks if a direcotry exists and creates it if needed.
       const directoryPath = addProviderDirectory(providerName);
-      // path.join(
-      //   __dirname,
-      //   `../customerData/agreements/${providerName}-${first}-${last}`
-      // );
 
-      // Ensure the directory exists before saving the file
-
-      //set the outputPath for the service agreement to be saved and then sent
-      const outputPath = `${directoryPath}/ServiceAgreement-${providerName}-${first}-${last}-${dayjs(
-        startDate
-      ).format("DD-MM-YYYY")}-${generateRandomNumber(1, 3000000)}.pdf`;
+      const outputPath = path.join(
+        directoryPath,
+        `/ServiceAgreement-${providerName}-${first}${last}-${startDate}-${generateRandomNumber(
+          1,
+          30000
+        )}.pdf`
+      );
 
       //convert it to pdf, saving at the outputPath
       const pdfPath = await convertToPdf(renderedHtml, outputPath);
