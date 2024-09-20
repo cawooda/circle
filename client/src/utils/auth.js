@@ -1,3 +1,7 @@
+//Issues
+//This code should be importing and handling functions to update user context rather than having
+//it spread out in the code calling this servce
+
 // use this to decode a token and get the user's information out of it
 import { jwtDecode } from "jwt-decode";
 
@@ -103,7 +107,7 @@ class AuthService {
       if (response.ok) {
         const res = await response.json();
         if (res.user.token) {
-          localStorage.setItem("id_token", res.user.token);
+          localStorage.setItem("id_token", res.token);
           localStorage.setItem("user_signed_up", res.user.mobile);
           return res;
         }
@@ -146,22 +150,28 @@ class AuthService {
       },
       body: JSON.stringify({ authLinkNumber: code }),
     });
-    const res = await response.json();
     if (!response.ok) {
       throw new Error("Failed to fetch");
     }
-    if (!response.validCode) {
-      this.logout();
+    const res = await response.json();
+
+    console.log("res", res);
+    const token = res.token;
+    console.log("token", token);
+    if (token) {
+      console.log(token);
+      localStorage.setItem("id_token", token);
       return res;
     }
-    if (response.ok) {
-      localStorage.setItem("id_token", res.user.token);
+    if (!res.validCode) {
+      this.logout();
       return res;
     } else {
       return res;
     }
-    return response;
+    return res;
   }
+
   logout() {
     localStorage.removeItem("id_token");
   }

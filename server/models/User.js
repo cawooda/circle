@@ -142,6 +142,7 @@ userSchema.pre("save", async function (next) {
 
 userSchema.methods.sendAuthLink = async function () {
   this.authLinkNumber = generateRandomNumber(1000, 9999);
+  this.save();
   const host = process.env.HOST || `http://localhost:3000`; // Get the host (hostname:port)
   const fullUrl = `${host}/auth/${this.authLinkNumber}`;
 

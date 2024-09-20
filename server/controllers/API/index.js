@@ -1,3 +1,6 @@
+//Issues
+//This put is sending the user back differently depending on the method of login.
+
 const router = require("express").Router();
 const { User, Admin } = require("../../models");
 // const { User } = require("../../models");
@@ -5,6 +8,7 @@ const { SMSService } = require("../../utils/smsService");
 
 const controllerSmsService = new SMSService();
 
+// implementing load limiting for sms queries:
 //javascript table ip address number of times it has failed to try a code.
 //forwarded address or remote socket address
 
@@ -24,15 +28,12 @@ async function setupUserLink(req, res, mobile) {
       });
       return;
     }
-    userExists.generateAuthToken(`30s`);
     const authNumber = await userExists.sendAuthLink();
-    userExists.save();
-
+    console.log(authNumber);
     res.status(200).json({
       userExists: true,
       userCreated: false,
       linkSent: true,
-      authNumber: authNumber,
       message: "We sent a login link and auth number to log in with",
     });
   } catch (error) {
@@ -44,106 +45,96 @@ async function setupUserLink(req, res, mobile) {
 router.put("/users", async (req, res) => {
   const { mobile, linkRequest, authLinkNumber } = req.body;
 
-  if (authLinkNumber) {
-    const userExists = await User.findOne({ authLinkNumber: authLinkNumber });
-    if (userExists) {
-      await userExists.generateAuthToken();
-      await userExists.populate([
-        { path: "roleCustomer" },
-        { path: "roleProvider" },
-        { path: "roleAdmin" },
-      ]);
-      const token = userExists.generateToken();
-      await userExists.save();
-      res
-        .status(200)
-        .json({
-          userExists: true,
-          userCreated: false,
-          user: userExists,
-          token,
-        });
-    } else {
-      res.status(401).json({
-        codeValid: false,
-        userCreated: false,
-        message:
-          "that code didnt match any user or auth code, which could mean the link is expired",
-      });
-    }
-    await User.updateMany(
-      { authLinkNumber: { $ne: null } },
-      { authLinkNumber: null }
-    );
-    return;
-  }
-  if (linkRequest) {
-    setupUserLink(req, res, mobile);
-    return;
-  }
   try {
-    const userExists = await User.findOne({ mobile: req.body.mobile });
-
-    if (userExists) {
-      if (await userExists.isCorrectPassword(req.body.password)) {
-        await userExists.generateAuthToken();
-        await userExists
-          .populate("roleCustomer")
-          .populate("roleProvider")
-          .populate({
-            path: "roleProvider",
-            populate: [
-              {
-                path: "termsAndConditions",
-              },
-              {
-                path: "services",
-                model: "service",
-                populate: {
-                  path: "product",
-                  model: "product",
-                },
-              },
-              {
-                path: "linkedCustomers",
-                model: "customer",
-                populate: {
-                  path: "user", // Nested population of linkedCustomers' user
-                  model: "user",
-                },
-              },
-            ],
-          })
-          .populate("roleAdmin")
-          .exec();
-        const token = userExists.generateAuthToken();
-        await userExists.save();
-
-        res
-          .status(200)
-          .json({
-            userExists: true,
-            userCreated: false,
-            user: userExists,
-            token,
-          });
+    let returnObject = {};
+    let user = {};
+    if (authLinkNumber) {
+      user = await User.findOne({ authLinkNumber: authLinkNumber });
+      console.log(user);
+      if (user?._id) {
+        const token = await user.generateAuthToken();
+        returnObject = {
+          user,
+          token,
+          userExists: true,
+          validCode: true,
+          userCreated: false,
+        };
       } else {
         res.status(401).json({
-          userExists: true,
-          userCreated: false,
-          message: "We think the password wasnt right... sorry",
+          validCode: false,
+          userExists: false,
+          validCode: false,
+          message:
+            "That code didn't match any user or auth code, which could mean the link is expired.",
         });
         return;
       }
-    } else {
-      res.status(401).json({
-        userExists: false,
-        userCreated: false,
-        message: "We think the user doesent yet exist. Have you signed up?",
-      });
+      // await User.updateMany(
+      //   { authLinkNumber: { $ne: null } },
+      //   { authLinkNumber: null }
+      // );
     }
+
+    if (linkRequest) {
+      setupUserLink(req, res, mobile);
+      return;
+    }
+
+    // Check if user exists based on mobile and handle password
+    if (!authLinkNumber && !linkRequest) {
+      const user = await User.findOne({ mobile: req.body.mobile });
+      if (!user?._id)
+        throw new Error("couldnt find the user for regular login");
+      if (!user?.isCorrectPassword(req.body.password))
+        throw new Error("Password didnt work");
+      const token = await user.generateAuthToken();
+      await user
+        .populate("roleCustomer")
+        .populate("roleProvider")
+        .populate({
+          path: "roleProvider",
+          populate: [
+            {
+              path: "termsAndConditions",
+            },
+            {
+              path: "services",
+              model: "service",
+              populate: {
+                path: "product",
+                model: "product",
+              },
+            },
+            {
+              path: "linkedCustomers",
+              model: "customer",
+              populate: {
+                path: "user", // Nested population of linkedCustomers' user
+                model: "user",
+              },
+            },
+          ],
+        })
+        .populate("roleAdmin")
+        .exec();
+      returnObject = {
+        ...returnObject,
+        user,
+        token,
+        userExists: true,
+        userCreated: false,
+        message: "here is your user",
+      };
+    }
+    res.status(200).json(returnObject);
+    return;
   } catch (error) {
-    throw new Error();
+    console.log(error);
+    res.status(500).json({
+      message: "An error occurred while processing the request.",
+      error: error.message || "Unknown error",
+    });
   }
 });
 

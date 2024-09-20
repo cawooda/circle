@@ -95,8 +95,8 @@ const SigninForm = ({ forceOpen }) => {
   const handleCodeSubmit = async (code) => {
     try {
       const response = await AuthService.verifySmsCode(code);
-
-      if (response.user) {
+      console.log(response);
+      if (response.validCode) {
         setUser(response.user);
         navigate("/");
       } else {

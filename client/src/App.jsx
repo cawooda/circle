@@ -22,10 +22,6 @@ const httpLink = createHttpLink({
 const authLink = setContext((_, { headers }) => {
   let token = AuthService.getToken();
 
-  if (token) {
-    const decodedToken = jwtDecode(token);
-  }
-
   return {
     headers: {
       ...headers,
