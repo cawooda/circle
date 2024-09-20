@@ -50,7 +50,7 @@ router.put("/users", async (req, res) => {
     let user = {};
     if (authLinkNumber) {
       user = await User.findOne({ authLinkNumber: authLinkNumber });
-      console.log(user);
+
       if (user?._id) {
         const token = await user.generateAuthToken();
         returnObject = {

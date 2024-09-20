@@ -155,11 +155,9 @@ class AuthService {
     }
     const res = await response.json();
 
-    console.log("res", res);
     const token = res.token;
-    console.log("token", token);
+
     if (token) {
-      console.log(token);
       localStorage.setItem("id_token", token);
       return res;
     }
