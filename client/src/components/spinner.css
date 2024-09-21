@@ -1,7 +1,7 @@
 .pendulum {
   width: 100px;
   height: 100px;
-  transform-origin: 50% 0; /* Pivot from the center-top of the logo */
+  transform-origin: 50% 50%; /* Pivot from the center-top of the logo */
   animation: pendulum 10s ease-out infinite;
 }
 
