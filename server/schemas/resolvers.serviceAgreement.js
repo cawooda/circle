@@ -11,6 +11,7 @@ const { addProviderDirectory } = require("../setup.config");
 const { User, ServiceAgreement, Service } = require("../models");
 
 const { renderTemplate } = require("../templates/renderTemplate");
+
 module.exports = {
   getServiceAgreements: async (_parent, { userId }, context) => {
     try {
@@ -74,6 +75,7 @@ module.exports = {
       await newServiceAgreement.populate("customer.user");
       await newServiceAgreement.populate("provider.user");
       newServiceAgreement.save();
+
       const link =
         process.env.NODE_ENV == "development"
           ? `${process.env.HOST}${":"}${process.env.CLIENT_PORT}/agreement/${
@@ -81,10 +83,15 @@ module.exports = {
             }`
           : `${process.env.HOST}/agreement/${newServiceAgreement.agreementNumber}`;
 
+      const newServiceAgreementRenderedEmail = renderTemplate(
+        { ...newServiceAgreement.toObject(), link },
+        "newServiceAgreementEmail"
+      );
+
       newServiceAgreement.customer.user.sendMessage(
         `New Service Agreement`,
         `Hi ${newServiceAgreement.customer.user.first}, a new service agreement with ${newServiceAgreement.provider.providerName} agreement is ready. ${link}`,
-        `<p>Hi ${newServiceAgreement.customer.user.first},</p> <p>a new service agreement with ${newServiceAgreement.provider.providerName} agreement is ready.</p><p> Use the link <a href="${link}">Sign Now</a> to securely review and sign ;)`,
+        newServiceAgreementRenderedEmail,
         null
       );
 
