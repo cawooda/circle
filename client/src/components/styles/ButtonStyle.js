@@ -1,6 +1,5 @@
 export const ButtonStyles = {
   minWidth: "70px",
-  maxWidth: "80%",
   align: "center",
   fontWeight: "bold",
   colorScheme: "yellow.500",
