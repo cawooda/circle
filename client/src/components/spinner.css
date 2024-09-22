@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .fullscreen {
   position: fixed;
   top: 0;
@@ -9,6 +10,13 @@
   align-items: center;
   background-color: #f9f9f9;
   z-index: 9999; /* Ensure it appears above other content */
+=======
+.pendulum {
+  width: 100px;
+  height: 100px;
+  transform-origin: 50% 50%; /* Pivot from the center-top of the logo */
+  animation: pendulum 10s ease-out infinite;
+>>>>>>> 85a157bfbdad7c232e472532e4e0ad978d6b6c67
 }
 
 .rotate-logo {

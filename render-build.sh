@@ -3,6 +3,7 @@
 set -o errexit
 
 STORAGE_DIR=/opt/render/project/.render
+CACHE_DIR=/opt/render/.cache/puppeteer
 
 if [[ ! -d $STORAGE_DIR/chrome ]]; then
   echo "...Downloading Chrome"
@@ -19,5 +20,9 @@ fi
 # Install dependencies
 cd server && npm install && cd ../client && npm install
 cd ../client && npm run build
-# Install Puppeteer
+
+# Set Puppeteer to use the installed Chrome executable
+export PUPPETEER_EXECUTABLE_PATH=$STORAGE_DIR/chrome/opt/google/chrome/chrome
+
+# Install Puppeteer and the necessary browsers
 cd $HOME/project/src && npx puppeteer install

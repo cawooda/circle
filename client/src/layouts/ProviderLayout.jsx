@@ -17,6 +17,7 @@ const menu = [
   { highlight: true, label: "New Agreement", link: "service-agreement" },
   { label: "Service Agreements", link: "service-agreements" },
   { label: "Shifts", link: "shifts" },
+  { label: "Consent", link: "consent" },
   { label: "Invoices", link: "invoices" },
 ];
 
