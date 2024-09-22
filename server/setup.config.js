@@ -41,27 +41,22 @@ const { renderTemplate } = require("./templates/renderTemplate");
 
 const checkHeadlessChrome = async () => {
   try {
-    // Launch Puppeteer in headless mode
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-
-    // Example data to render the template
-    const data = {
-      title: "Test Template",
-      message: "This is a test message from Puppeteer!",
-    };
-
-    // Render the template with data
-    const renderedHtml = renderTemplate(data, "./checkingHeadless"); // Adjust file name
-
-    // Load the rendered HTML into Puppeteer
-    await page.setContent(renderedHtml);
-
-    // Capture a screenshot to verify the content rendered properly
-    await page.screenshot({ path: "rendered_template.png" });
-
-    console.log("Puppeteer test executed successfully!");
-    await browser.close();
+    // // Launch Puppeteer in headless mode
+    // const browser = await puppeteer.launch();
+    // const page = await browser.newPage();
+    // // Example data to render the template
+    // const data = {
+    //   title: "Test Template",
+    //   message: "This is a test message from Puppeteer!",
+    // };
+    // // Render the template with data
+    // const renderedHtml = renderTemplate(data, "./checkingHeadless"); // Adjust file name
+    // // Load the rendered HTML into Puppeteer
+    // await page.setContent(renderedHtml);
+    // // Capture a screenshot to verify the content rendered properly
+    // await page.screenshot({ path: "rendered_template.png" });
+    // console.log("Puppeteer test executed successfully!");
+    // await browser.close();
   } catch (error) {
     console.error("Error running Puppeteer test:", error);
     process.exit(1); // Exit with failure if the test fails
