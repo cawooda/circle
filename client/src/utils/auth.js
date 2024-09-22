@@ -1,8 +1,5 @@
 //Issues
-//This code should be importing and handling functions to update user context rather than having
-//it spread out in the code calling this servce
 
-// use this to decode a token and get the user's information out of it
 import { jwtDecode } from "jwt-decode";
 
 // create a new class to instantiate for a user
@@ -119,55 +116,61 @@ class AuthService {
   }
 
   async loginUser(userData) {
-    const response = await fetch("/api/users", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ ...userData }),
-    });
-    if (!response.ok) {
-      throw new Error("Failed to fetch");
-    }
-
-    if (response.ok) {
-      const res = await response.json();
-      if (res.token) {
-        localStorage.setItem("id_token", res.token);
-        localStorage.setItem("user_signed_up", res.user.mobile);
-        return res;
+    try {
+      const response = await fetch("/api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...userData }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch");
+      }
+      if (response.ok) {
+        const res = await response.json();
+        if (res.token) {
+          localStorage.setItem("id_token", res.token);
+          localStorage.setItem("user_signed_up", res.user.mobile);
+          return res;
+        }
       }
       return res;
+    } catch (error) {
+      throw new Error("Sorry, we couldnt log in user", error);
     }
-    return response;
   }
 
   async verifySmsCode(code) {
-    const response = await fetch("/api/users", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ authLinkNumber: code }),
-    });
-    if (!response.ok) {
-      throw new Error("Failed to fetch");
-    }
-    const res = await response.json();
+    try {
+      const response = await fetch("/api/users", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ authLinkNumber: code }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch");
+      }
+      if (response.ok) {
+        const res = await response.json();
+        if (res.token) {
+          localStorage.setItem("id_token", res.token);
+          localStorage.setItem("user_signed_up", res.user.mobile);
+          return res;
+        }
+      } else throw new Error("response from server was not OK");
 
-    const token = res.token;
-
-    if (token) {
-      localStorage.setItem("id_token", token);
-      return res;
+      if (!res.validCode) {
+        this.logout();
+        return res;
+      } else {
+        throw new Error("code was not valid");
+      }
+    } catch (error) {
+      throw new Error("code verification didnt result in login", error);
     }
-    if (!res.validCode) {
-      this.logout();
-      return res;
-    } else {
-      return res;
-    }
-    return res;
   }
 
   logout() {

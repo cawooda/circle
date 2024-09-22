@@ -5,8 +5,8 @@ import "./spinner.css";
 
 export default function Splash() {
   return (
-    <Container className="pendulum">
-      <img src={logo} width="50px" alt="Loading..." />
+    <Container className="fullscreen">
+      <img src={logo} alt="Loading..." className="rotate-logo" />
     </Container>
   );
 }

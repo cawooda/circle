@@ -1,60 +1,26 @@
-.pendulum {
-  width: 100px;
-  height: 100px;
-  transform-origin: 50% 0; /* Pivot from the center-top of the logo */
-  animation: pendulum 10s ease-out infinite;
+.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f9f9f9;
+  z-index: 9999; /* Ensure it appears above other content */
 }
 
-@keyframes pendulum {
+.rotate-logo {
+  width: 150px; /* Adjust the size of the logo as needed */
+  animation: rotate 3s cubic-bezier(0.6, 0.02, 0.34, 1.4) infinite; /* Speed up animation */
+}
+
+@keyframes rotate {
   0% {
-    transform: rotate(90deg); /* Start with a large swing */
-  }
-  6.25% {
-    transform: rotate(-90deg); /* Swing to the opposite side */
-  }
-  12.5% {
-    transform: rotate(85deg); /* Smaller swing */
-  }
-  18.75% {
-    transform: rotate(-85deg);
-  }
-  25% {
-    transform: rotate(70deg); /* Decrease the swing */
-  }
-  31.25% {
-    transform: rotate(-70deg);
-  }
-  37.5% {
-    transform: rotate(55deg);
-  }
-  43.75% {
-    transform: rotate(-55deg);
-  }
-  50% {
-    transform: rotate(40deg); /* Continue decreasing */
-  }
-  56.25% {
-    transform: rotate(-40deg);
-  }
-  62.5% {
-    transform: rotate(25deg);
-  }
-  68.75% {
-    transform: rotate(-25deg);
-  }
-  75% {
-    transform: rotate(10deg); /* Smaller swing towards the end */
-  }
-  81.25% {
-    transform: rotate(-10deg);
-  }
-  87.5% {
-    transform: rotate(5deg); /* Final small swing */
-  }
-  93.75% {
-    transform: rotate(-5deg);
+    transform: rotate(0deg);
   }
   100% {
-    transform: rotate(0deg); /* Return to center */
+    transform: rotate(360deg);
   }
 }

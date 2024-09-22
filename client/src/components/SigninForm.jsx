@@ -37,6 +37,7 @@ import { useUser } from "../contexts/UserContext";
 import Splash from "./Splash";
 
 const SigninForm = ({ forceOpen }) => {
+  const [loadingState, setLoadingState] = useState(false);
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
   const { user, setUser, refetch, loading, error } = useUser();
@@ -47,7 +48,6 @@ const SigninForm = ({ forceOpen }) => {
     mobile: userSignedUp || "",
     password: "",
   });
-  const [isLoading, setIsLoading] = useState(false);
 
   const {
     isOpen: isSmsModalOpen,
@@ -73,6 +73,7 @@ const SigninForm = ({ forceOpen }) => {
   };
 
   const handleSMSlinkLogin = async (event) => {
+    setLoadingState(true);
     event.preventDefault();
     if (userFormData.mobile.length === 10) {
       try {
@@ -80,6 +81,7 @@ const SigninForm = ({ forceOpen }) => {
 
         if (response.linkSent) {
           setMessage("We sent you a link to login with.");
+          setLoadingState(false);
           onSmsModalOpen(); // Open the SMS code modal
         } else {
           setMessage("Failed to send the link. Please try again.");
@@ -94,13 +96,15 @@ const SigninForm = ({ forceOpen }) => {
 
   const handleCodeSubmit = async (code) => {
     try {
+      setLoadingState(true);
       const response = await AuthService.verifySmsCode(code);
-      console.log(response);
-      if (response.validCode) {
-        setUser(response.user);
-        navigate("/");
+      if (!response.user) {
+        setMessage(response.message); // Set the error message
       } else {
-        throw new Error("Invalid code");
+        setUser(response.user);
+        refetch();
+        setIsLoading(false);
+        onClose();
       }
     } catch (error) {
       throw error;
@@ -108,12 +112,21 @@ const SigninForm = ({ forceOpen }) => {
   };
 
   const handleFormSubmit = async (event) => {
+    setIsLoading(true);
+    event.preventDefault();
     if (!validateMobileInput(userFormData.mobile)) {
       setMessage("check mobile number");
       return;
     }
-    setIsLoading(true);
-    event.preventDefault();
+
+    if (!response.user) {
+      setMessage(response.message); // Set the error message
+    } else {
+      setUser(response.user);
+      refetch();
+      setIsLoading(false);
+      onClose();
+    }
 
     try {
       if (signup) {
@@ -121,10 +134,9 @@ const SigninForm = ({ forceOpen }) => {
         if (!response.user) {
           setMessage(response.message);
         } else {
-          AuthService.setToken(response.token);
           refetch();
-          setIsLoading(false);
           onClose();
+          setIsLoading(false);
         }
       } else {
         const response = await AuthService.loginUser({
@@ -150,8 +162,7 @@ const SigninForm = ({ forceOpen }) => {
       password: "",
     });
   };
-
-  // if (isLoading) return <Splash />;
+  if (loadingState) return <Splash />;
   return (
     <>
       <Button
