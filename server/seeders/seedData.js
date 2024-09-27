@@ -147,7 +147,6 @@ const providerSeed = [
       postalCode: "54321",
     },
     providerName: "Provider 2",
-
     services: ["66a0d9f4a0eb8627cc6323f4", "66a0d9f4a0eb8627cc6323f6"],
     notes: "Provider 2 notes.",
     linkedCustomers: ["66a0d9f4a0eb8627cc6320f4", "66a0d9f4a0eb8627cc6320f5"],

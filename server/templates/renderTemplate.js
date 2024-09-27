@@ -3,7 +3,6 @@ const fs = require("fs");
 const path = require("path");
 
 const renderTemplate = (data, templateName) => {
-  console.log(data);
   try {
     const templatePath = path.join(__dirname, `${templateName}.ejs`);
     const templateString = fs.readFileSync(templatePath, "utf-8");
