@@ -1,6 +1,6 @@
 //import the Schema and model from mongoose.
 const { Schema, model, Types } = require("mongoose");
-const defaultTermsAndConditions = require("../seeders/defaultTerms");
+const defaultTermsAndConditions = require("../seeders/seedData");
 const { generateRandomNumber } = require("../utils/helpers");
 
 const providerSchema = new Schema(
