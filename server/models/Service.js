@@ -14,6 +14,7 @@ const serviceSchema = new Schema(
     product: {
       type: Schema.Types.ObjectId,
       ref: "product",
+      required: true,
     },
     price: {
       type: Number,

@@ -36,12 +36,8 @@ module.exports = {
       const provider = await Provider.findById(providerId);
       const product = await Product.findById(productId);
 
-      if (!provider || !product) {
-        return {
-          success: false,
-          message: "Provider or Product not found",
-        };
-      }
+      if (!provider) throw new Error(`${providerId} not found`);
+      if (!product) throw new Error(`${productId} not found`);
 
       // Create the new service
       const addedService = await Service.create({
@@ -49,10 +45,10 @@ module.exports = {
         product: productId,
         price: product.price,
       });
+      if (!addedService) throw new Error(`we couldnt create a service`);
 
-      // Add the service ID to the provider's services array
       provider.services.push(addedService._id);
-      await provider.save(); // Save the provider with the updated services array
+      await provider.save();
 
       // Populate the service with the provider and product data
       await addedService.populate("provider product");

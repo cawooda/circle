@@ -134,11 +134,7 @@ const providerSeed = [
     providerName: "MasterProvider",
 
     notes: "Provider 1 notes.",
-    linkedCustomers: [
-      "66a0d9f4a0eb8627cc6320f5",
-      "66a0d9f4a0eb8627cc6320f4",
-      "66a0d9f4a0eb8627cc6320f5",
-    ],
+    linkedCustomers: ["66a0d9f4a0eb8627cc6320f5", "66a0d9f4a0eb8627cc6320f4"],
     serviceAgreements: [],
   },
   {
@@ -205,6 +201,7 @@ const serviceSeed = [
     _id: "66a0d9f4a0eb8627cc6323f6",
     provider: "66a0d9f4a0eb8627cc6320f8",
     product: "66a0d9f4a0eb8627cc6321f2",
+    active: true,
     price: 67.56,
   },
 ];

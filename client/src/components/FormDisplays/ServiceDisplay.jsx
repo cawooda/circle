@@ -11,7 +11,7 @@ export default function ServiceDisplay({ service, quantity, total }) {
           {...DisplayStyles}
           name="service"
           readOnly
-          value={`${service.product.name}`}
+          value={`${service.product?.name}`}
         ></Input>
       </FormControl>
       <FormControl>
