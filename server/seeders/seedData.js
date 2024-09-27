@@ -132,9 +132,8 @@ const providerSeed = [
       postalCode: "12345",
     },
     providerName: "MasterProvider",
-
     notes: "Provider 1 notes.",
-    linkedCustomers: ["66a0d9f4a0eb8627cc6320f5", "66a0d9f4a0eb8627cc6320f4"],
+    linkedCustomers: ["66d6b24c6bea26447abaeaf9", "66a0d9f4a0eb8627cc6320f5"],
     serviceAgreements: [],
   },
   {
