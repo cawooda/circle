@@ -3,7 +3,7 @@
 set -o errexit
 
 STORAGE_DIR=/opt/render/project/.render
-CACHE_DIR=/opt/render/.cache/puppeteer
+
 
 if [[ ! -d $STORAGE_DIR/chrome ]]; then
   echo "...Downloading Chrome"
