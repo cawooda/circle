@@ -24,7 +24,7 @@ module.exports = {
       })
         .populate("provider")
         .populate("customer")
-        .populate("product");
+        .populate({ path: "product", model: "product" });
       const response = {
         success: true,
         message: "service agreements found successfully",
