@@ -160,9 +160,11 @@ module.exports = {
       );
 
       // Define the directory path. checks if a direcotry exists and creates it if needed.
+      // modify this to sanitise the directory
+      // strip out invalid filename characters
       const directoryPath = addProviderDirectory(providerName);
 
-      const outputPath = path.join(
+      const outputFileName = path.join(
         directoryPath,
         `/ServiceAgreement-${providerName}-${first}${last}-${startDate}-${generateRandomNumber(
           1,
@@ -170,8 +172,8 @@ module.exports = {
         )}.pdf`
       );
 
-      //convert it to pdf, saving at the outputPath
-      const pdfPath = await convertToPdf(renderedHtml, outputPath);
+      //convert it to pdf, saving at the outPutFileName
+      await convertToPdf(renderedHtml, outputFileName);
       //find the customer to email to them.
       const customerUser = await User.findById(
         signedServiceAgreement.customer.user._id
@@ -199,10 +201,10 @@ module.exports = {
           Have a great day.
         `,
           renderedEmail,
-          outputPath
+          outputFileName
         );
       }
-      signedServiceAgreement.agreementPath = pdfPath;
+      signedServiceAgreement.agreementPath = outputFileName;
       await signedServiceAgreement.save();
       return {
         success: true,
