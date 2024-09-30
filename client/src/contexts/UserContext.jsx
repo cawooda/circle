@@ -17,7 +17,12 @@ export const UserProvider = ({ children }) => {
   const [retryCount, setRetryCount] = useState(0);
   const [hasError, setHasError] = useState(false);
 
-  const { loading, error, data, refetch } = useQuery(GET_ME, {
+  const {
+    loading,
+    error,
+    data,
+    refetch: refetchUser,
+  } = useQuery(GET_ME, {
     onError: () => setHasError(true),
   });
 
@@ -28,13 +33,10 @@ export const UserProvider = ({ children }) => {
     }
   }, [data, loading]);
 
-  // if (loading) return <Splash />;
-  console.log("usr", user);
-  console.log("error", error);
-  console.log("loading", loading);
-
   return (
-    <UserContext.Provider value={{ user, setUser, refetch, loading, error }}>
+    <UserContext.Provider
+      value={{ user, setUser, refetchUser, loading, error }}
+    >
       {children}
     </UserContext.Provider>
   );

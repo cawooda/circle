@@ -11,6 +11,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { Outlet } from "react-router-dom";
 import RootLayout from "./layouts/RootLayout";
 import { UserProvider } from "./contexts/UserContext";
+import { ProviderProvider } from "./contexts/ProviderContext";
 import { jwtDecode } from "jwt-decode";
 import AuthService from "./utils/auth";
 
@@ -60,7 +61,9 @@ function App() {
       <ApolloProvider client={client}>
         <ChakraProvider>
           <UserProvider>
-            <RootLayout />
+            <ProviderProvider>
+              <RootLayout />
+            </ProviderProvider>
           </UserProvider>
         </ChakraProvider>
       </ApolloProvider>

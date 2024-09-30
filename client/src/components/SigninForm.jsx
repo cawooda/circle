@@ -1,4 +1,4 @@
-import { validateMobileInput } from "../utils/helpers";
+import { validateMobileInput, validatePasswordInput } from "../utils/helpers";
 import { useState, useEffect } from "react";
 import {
   Button,
@@ -38,9 +38,10 @@ import Splash from "./Splash";
 
 const SigninForm = ({ forceOpen }) => {
   const [loadingState, setLoadingState] = useState(false);
+  const [formValidState, setFormValidState] = useState(false);
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
-  const { user, setUser, refetch, loading, error } = useUser();
+  const { user, setUser, refetchUser, loading, error } = useUser();
   const userSignedUp = localStorage.getItem("user_signed_up");
   const [signup, setSignup] = useState(!userSignedUp);
   const [message, setMessage] = useState("");
@@ -63,6 +64,27 @@ const SigninForm = ({ forceOpen }) => {
       onOpen();
     }
   }, [user]);
+
+  useEffect(() => {
+    //set
+    const validMobile = validateMobileInput(userFormData.mobile);
+    const validPassword = validatePasswordInput(userFormData.password);
+    //check
+    if (validMobile && validPassword) {
+      setFormValidState(true);
+      setMessage(``);
+      return;
+    } else {
+      setFormValidState(false);
+    }
+    //compile message
+    if (!formValidState) {
+      let message = `${!validMobile ? `enter your mobile number` : ``}${
+        !validPassword ? `enter your password` : ``
+      }`;
+      setMessage(message);
+    } else setMessage(``);
+  }, [userFormData]);
 
   const handleInputChange = (event) => {
     var { name, value } = event.target;
@@ -102,8 +124,8 @@ const SigninForm = ({ forceOpen }) => {
         setMessage(response.message); // Set the error message
       } else {
         setUser(response.user);
-        refetch();
-        setIsLoading(false);
+        refetchUser();
+        setLoadingState(false);
         onClose();
       }
     } catch (error) {
@@ -112,55 +134,42 @@ const SigninForm = ({ forceOpen }) => {
   };
 
   const handleFormSubmit = async (event) => {
-    setIsLoading(true);
+    setLoadingState(true);
     event.preventDefault();
-    if (!validateMobileInput(userFormData.mobile)) {
-      setMessage("check mobile number");
-      return;
-    }
-
-    if (!response.user) {
-      setMessage(response.message); // Set the error message
-    } else {
-      setUser(response.user);
-      refetch();
-      setIsLoading(false);
-      onClose();
-    }
-
     try {
       if (signup) {
-        const response = await AuthService.signUpUser(userFormData);
-        if (!response.user) {
-          setMessage(response.message);
+        console.log("signup");
+        const responseSignup = await AuthService.signUpUser(userFormData);
+        if (!responseSignup.user) {
+          setMessage(responseSignup.message); // Set the error message
+          throw new Error("error with signup");
         } else {
-          refetch();
+          setUser(responseSignup.user);
+          setLoadingState(false);
           onClose();
-          setIsLoading(false);
         }
       } else {
-        const response = await AuthService.loginUser({
+        const responseLogin = await AuthService.loginUser({
           ...userFormData,
         });
-        if (!response.user) {
-          setMessage(response.message); // Set the error message
+        if (!responseLogin.user) {
+          setMessage(responseLogin.message); // Set the error message
         } else {
-          setUser(response.user);
-          refetch();
-          setIsLoading(false);
-          onClose();
+          setUser(responseLogin.user);
+          setLoadingState(false);
         }
       }
+      refetchUser();
+      onClose();
+      setUserFormData({
+        first: "",
+        last: "",
+        mobile: "",
+        password: "",
+      });
     } catch (error) {
       console.log("Error received trying to create new userAuth", error);
     }
-    onClose();
-    setUserFormData({
-      first: "",
-      last: "",
-      mobile: "",
-      password: "",
-    });
   };
   if (loadingState) return <Splash />;
   return (
@@ -263,7 +272,12 @@ const SigninForm = ({ forceOpen }) => {
                 <FormLabel htmlFor="password">Password</FormLabel>
                 <InputGroup>
                   <InputRightElement width="4.5rem">
-                    <Button h="1.75rem" size="sm" onClick={handleSMSlinkLogin}>
+                    <Button
+                      isDisabled={signup ? true : false}
+                      h="1.75rem"
+                      size="sm"
+                      onClick={handleSMSlinkLogin}
+                    >
                       SMS
                     </Button>
                   </InputRightElement>
@@ -287,6 +301,7 @@ const SigninForm = ({ forceOpen }) => {
                 {message ? <Alert status="error">{message}</Alert> : <></>}
                 <Container centerContent>
                   <Button
+                    isDisabled={formValidState ? false : true}
                     {...ButtonStyles}
                     style={{ margin: "50px" }}
                     disabled={!(userFormData.mobile && userFormData.password)}

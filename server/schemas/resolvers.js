@@ -29,6 +29,9 @@ const {
   getServiceAgreements,
   getServiceAgreement,
 } = require("./resolvers.serviceAgreement");
+
+const { getMyProvider } = require("./resolvers.provider");
+
 const { getProducts } = require("./resolvers.product");
 
 const resolvers = {
@@ -42,6 +45,7 @@ const resolvers = {
     getServices,
     getServiceAgreement,
     getServiceAgreements,
+    getMyProvider,
   },
   Mutation: {
     addServiceAgreement,

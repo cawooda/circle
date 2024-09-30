@@ -151,15 +151,7 @@ router.post("/users", async (req, res) => {
     });
     return;
   }
-  if (user.password.length < 8) {
-    res.status(400).json({
-      userExists: false,
-      userCreated: false,
-      user: null,
-      message: "password not required length",
-    });
-    return;
-  }
+
   try {
     const userExists = await User.findOne({ mobile: req.body.mobile })
       .populate("roleCustomer")
@@ -203,10 +195,11 @@ router.post("/users", async (req, res) => {
         });
         return userExists;
       } else {
-        res.status(401).json({
+        res.status(400).json({
           userExists: true,
           userCreated: false,
-          message: "Incorrect password",
+          errorCode: "INCORRECT_PASSWORD",
+          message: "password Incorrect",
         });
       }
     } else {

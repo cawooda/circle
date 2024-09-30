@@ -28,6 +28,22 @@ type Customer {
     customerSpecificField:String
 }
 
+type Provider {
+    _id: ID!
+    user: User
+    providerName: String
+    abn: String
+    address: Address
+    termsAndConditions: [TermsAndConditions]
+    createdAt: String
+    updatedAt: String
+    notes:String
+    linkedCustomers: [Customer]
+    services: [Service]
+    serviceAgreements: [ServiceAgreement]
+    shifts: [Shift]
+}
+
 type ServiceAgreement {
     _id: ID!
     provider: Provider
@@ -58,19 +74,19 @@ type Admin {
 }
 
 
-type Provider {
-    _id: ID!
-    user: User
-    providerName: String
-    abn: String
-    address: Address
-    termsAndConditions: [TermsAndConditions]
+
+
+type Shift {
+    _id:ID
+    provider: Provider
+    customer: Customer
+    service: Service!
+    startTime: String
+    endTime: String
+    units: Float
     createdAt: String
     updatedAt: String
-    notes:String
-    linkedCustomers: [Customer]
-    services: [Service]
-    serviceAgreements: [ServiceAgreement]
+
 }
 
  type ServiceAgreement {
@@ -166,6 +182,7 @@ type Query {
     getAllUsers(id: ID!): [User]
     getUserByToken(token: String!): User
     getMe: User!
+    getMyProvider: Provider!
     getUserRoles(id: ID!): [String]
     getCustomers: [Customer]
     getProducts: ProductListResponse

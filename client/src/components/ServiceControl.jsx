@@ -26,6 +26,7 @@ export default function ServiceControl({ handleInputChange, locked }) {
           <option value="" selected>
             -- Select a service --
           </option>
+          
           {user.roleProvider.services.length
             ? user.roleProvider.services.map((service, index) => {
                 return (

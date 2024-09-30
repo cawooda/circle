@@ -1,7 +1,4 @@
-import { useEffect } from "react";
-import { Heading } from "@chakra-ui/react";
 import ServiceAgreementRow from "../../components/ServiceAgreementRow";
-import { QUERY_SERVICE_AGREEMENTS } from "../../utils/queries";
 import { useUser } from "../../contexts/UserContext";
 import NotifyUser from "../../components/NotifyUser";
 

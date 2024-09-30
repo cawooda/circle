@@ -37,6 +37,12 @@ const providerSchema = new Schema(
         default: ["66d6b24c6bea26447abaeaf9"],
       },
     ],
+    shifts: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "shifts",
+      },
+    ],
     services: [
       {
         type: Schema.Types.ObjectId,

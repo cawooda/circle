@@ -184,6 +184,163 @@ export const GET_ME = gql`
   }
 `;
 
+export const GET_MY_PROVIDER = gql`
+  query GetMyProvider {
+    getMyProvider {
+      _id
+      user {
+        _id
+        first
+        last
+        mobile
+        email
+        date_of_birth
+        fullName
+        roleProvider {
+          _id
+        }
+        roleCustomer {
+          _id
+        }
+        roleSuperAdmin
+        serviceAgreements {
+          _id
+        }
+        roleAdmin {
+          _id
+        }
+      }
+      providerName
+      abn
+      address {
+        street
+        city
+        state
+        postalCode
+      }
+      termsAndConditions {
+        heading
+        paragraph
+      }
+      createdAt
+      updatedAt
+      notes
+      linkedCustomers {
+        _id
+        user {
+          _id
+          fullName
+        }
+        fullName
+        first
+        last
+        referenceNumber
+        referenceName
+        address {
+          street
+          city
+          state
+          postalCode
+        }
+        dateOfBirth
+        customerSpecificField
+      }
+      services {
+        _id
+        product {
+          _id
+          name
+          price
+        }
+        price
+        provider {
+          _id
+        }
+        active
+      }
+      serviceAgreements {
+        _id
+        provider {
+          _id
+        }
+        customer {
+          _id
+          user {
+            _id
+            first
+            fullName
+            last
+          }
+        }
+        agreementNumber
+        startDate
+        service {
+          _id
+          product {
+            _id
+            name
+            price
+          }
+          price
+          provider {
+            _id
+            abn
+            address {
+              street
+              city
+              state
+              postalCode
+            }
+            providerName
+            notes
+            user {
+              _id
+              fullName
+            }
+          }
+          active
+        }
+        quantity
+        endDate
+        totalPrice
+        approvedByCustomer
+        createdAt
+        updatedAt
+        signature
+      }
+      shifts {
+        _id
+        provider {
+          _id
+          providerName
+        }
+        customer {
+          _id
+          fullName
+        }
+        service {
+          _id
+          product {
+            _id
+            name
+            price
+          }
+          price
+          provider {
+            _id
+          }
+          active
+        }
+        startTime
+        endTime
+        units
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
+
 export const QUERY_CUSTOMERS = gql`
   query Query {
     getCustomers {

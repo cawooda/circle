@@ -1,5 +1,31 @@
 const { Provider, User } = require("../models");
 module.exports = {
+  getMyProvider: async (_parent, {}, context) => {
+    try {
+      const user = await User.findById(context.user._id);
+      if (!user)
+        throw new Error("there was no user found in the query context");
+      if (!user.roleProvider)
+        throw new Error("there was no provider role for that user");
+      const provider = await Provider.findById(user.roleProvider._id)
+        .populate("user")
+        .populate("services")
+        .populate({
+          path: "shifts",
+          model: "shift",
+          populate: { path: "service" },
+        })
+        .exec();
+      if (!provider)
+        throw new Error(
+          "we couldt get a provider when we tried the user's roleProvider id"
+        );
+      return provider.toObject();
+    } catch (error) {
+      console.log(error.message);
+      throw error;
+    }
+  },
   updateProviderProfile: async (
     _parent,
     { userId, providerId, providerName, abn, termsAndConditions, address },

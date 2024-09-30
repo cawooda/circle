@@ -100,7 +100,9 @@ class AuthService {
       if (!response.ok) {
         throw new Error("Failed to fetch");
       }
-
+      if (!response.errorCode == "MOBILE_INVALID") {
+        throw new Error("mobile was invalid");
+      }
       if (response.ok) {
         const res = await response.json();
         if (res.user.token) {
@@ -116,6 +118,7 @@ class AuthService {
   }
 
   async loginUser(userData) {
+    console.log("loginUser in authjs reached");
     try {
       const response = await fetch("/api/users", {
         method: "POST",
@@ -127,14 +130,18 @@ class AuthService {
       if (!response.ok) {
         throw new Error("Failed to fetch");
       }
-      if (response.ok) {
-        const res = await response.json();
-        if (res.token) {
-          localStorage.setItem("id_token", res.token);
-          localStorage.setItem("user_signed_up", res.user.mobile);
-          return res;
-        }
+      if (!response.errorCode == "INCORRECT_PASSWORD") {
+        throw new Error("password was incorrect");
       }
+
+      const res = await response.json();
+      if (res.token) {
+        console.log("token written id_token", res.token);
+        localStorage.setItem("id_token", res.token);
+        localStorage.setItem("user_signed_up", res.user.mobile);
+        return res;
+      }
+
       return res;
     } catch (error) {
       throw new Error("Sorry, we couldnt log in user", error);

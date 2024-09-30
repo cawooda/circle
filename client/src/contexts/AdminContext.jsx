@@ -9,7 +9,7 @@ const AdminContext = createContext();
 export const useAdmin = () => useContext(AdminContext);
 
 export const AdminProvider = ({ children }) => {
-  const { user, refetch } = useUser();
+  const { user, refetchUser } = useUser();
 
   const [adminData, setAdminData] = useState({});
   const isAdmin = user.roleAdmin || user.roleSuperAdmin || null;
@@ -17,7 +17,7 @@ export const AdminProvider = ({ children }) => {
     variables: { id: user._id },
     skip: !user._id, // Skip query if no userId is available
   });
-  refetch();
+  refetchUser();
   useEffect(() => {
     if (data && data.getAllUsers) {
       setAdminData(data.getAllUsers);

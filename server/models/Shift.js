@@ -16,7 +16,7 @@ const shiftSchema = new Schema(
     start_time: Date,
     end_time: Date,
     service: { type: Schema.Types.ObjectId, ref: "service" },
-    units: Schema.Types.Decimal128,
+    units: { type: Number, required: true },
     createdAt: {
       type: Date,
       immutable: true, //this prevents changes to the date once created

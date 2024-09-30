@@ -83,11 +83,9 @@ export default function ProviderServiceAgreement() {
   });
   const sigCanvas = useRef(null);
   const [customers, setCustomers] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [services, setServices] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
 
-  const [addServiceAgreement, { loading, data, error }] = useMutation(
+  const [addServiceAgreement, { loading }] = useMutation(
     ADD_SERVICE_AGREEMENT,
     {
       onError: (err) => {

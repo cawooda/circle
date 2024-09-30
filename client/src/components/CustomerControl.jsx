@@ -5,6 +5,7 @@ export default function CustomerControl({
   customers,
   handleInputChange,
   locked,
+  defaultValue,
 }) {
   return (
     <FormControl>
@@ -14,7 +15,6 @@ export default function CustomerControl({
         name="customer"
         onClick={handleInputChange}
         onChange={handleInputChange}
-        defaultValue={customers.length > 0 ? customers[0].value : ""}
       >
         {customers.map((customer, index) => {
           return (
