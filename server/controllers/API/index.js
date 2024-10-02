@@ -141,7 +141,8 @@ router.put("/users", async (req, res) => {
 router.post("/users", async (req, res) => {
   const user = req.body;
   console.log("req.body", req.body);
-
+  // Sanitize the input
+  req.body.mobile = req.body.mobile.replace(/[^\d]/g, ""); // Remove any non-numeric characters
   if (user.mobile.length != 10) {
     console.log(user.mobile.length);
   }
