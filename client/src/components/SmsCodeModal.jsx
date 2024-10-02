@@ -43,7 +43,7 @@ const SmsCodeModal = ({ isOpen, onClose, onSubmit }) => {
 
     try {
       await onSubmit(code);
-      console.log("onsubmit", code);
+
       onClose();
     } catch (error) {
       console.log(error);

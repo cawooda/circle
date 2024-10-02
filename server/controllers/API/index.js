@@ -12,133 +12,76 @@ const controllerSmsService = new SMSService();
 //javascript table ip address number of times it has failed to try a code.
 //forwarded address or remote socket address
 
-async function setupUserLink(req, res, mobile) {
-  try {
-    userExists = await User.findOne({ mobile: mobile }).populate([
-      { path: "roleCustomer" },
-      { path: "roleProvider" },
-      { path: "roleAdmin" },
-    ]);
-    if (!userExists) {
-      res.status(400).json({
-        userExists: false,
-        userCreated: false,
-        linkSent: false,
-        message: "We cant find that phone number. Did you sign up?",
-      });
-      return;
-    }
-    const authNumber = await userExists.sendAuthLink();
-    console.log(authNumber);
-    res.status(200).json({
-      userExists: true,
-      userCreated: false,
-      linkSent: true,
-      message: "We sent a login link and auth number to log in with",
-    });
-  } catch (error) {
-    console.log(error);
-    throw new Error(error);
-  }
+async function handleSetupUserLink(mobile) {
+  const userExists = await User.findOne({ mobile: mobile });
+  if (!userExists) throw new Error("NOT_FOUND: user doesnt exist");
+  const authNumber = await userExists.sendAuthLink();
+  console.log(authNumber);
+  return {
+    userExists: true,
+    userCreated: false,
+    linkSent: true,
+    message: "We sent a login link and auth number to log in with",
+  };
+}
+
+async function handleAuthLinkNumber(authLinkNumber, res) {
+  const user = await User.findOne({ authLinkNumber: authLinkNumber });
+  if (!user?._id) throw new Error("AUTH: that code didnt match");
+  const token = await user.generateAuthToken();
+  return {
+    token,
+    userExists: true,
+    userCreated: false,
+  };
+}
+
+async function handleLogin(mobile, password) {
+  const user = await User.findOne({ mobile: mobile });
+  if (!user?._id)
+    throw new Error(
+      "NOT_FOUND: couldnt find the user for mobile and password login"
+    );
+  if (!user?.isCorrectPassword(password))
+    throw new Error("Password didnt work");
+  const token = await user.generateAuthToken();
+
+  return {
+    token,
+    userExists: true,
+    userCreated: false,
+    message: "user found and password correct. Here's your token",
+  };
 }
 
 router.put("/users", async (req, res) => {
   const { mobile, linkRequest, authLinkNumber } = req.body;
-
+  //refactor to its own controller
   try {
-    let returnObject = {};
-    let user = {};
     if (authLinkNumber) {
-      user = await User.findOne({ authLinkNumber: authLinkNumber });
-
-      if (user?._id) {
-        const token = await user.generateAuthToken();
-        returnObject = {
-          user,
-          token,
-          userExists: true,
-          validCode: true,
-          userCreated: false,
-        };
-      } else {
-        res.status(401).json({
-          validCode: false,
-          userExists: false,
-          validCode: false,
-          message:
-            "That code didn't match any user or auth code, which could mean the link is expired.",
-        });
-        return;
-      }
-      // await User.updateMany(
-      //   { authLinkNumber: { $ne: null } },
-      //   { authLinkNumber: null }
-      // );
+      const obj = await handleAuthLinkNumber(authLinkNumber);
+      return await res.send(obj);
     }
-
     if (linkRequest) {
-      setupUserLink(req, res, mobile);
-      return;
+      const obj = await handleSetupUserLink(mobile);
+      return await res.send(obj);
     }
-
-    // Check if user exists based on mobile and handle password
-    if (!authLinkNumber && !linkRequest) {
-      const user = await User.findOne({ mobile: req.body.mobile });
-      if (!user?._id)
-        throw new Error("couldnt find the user for regular login");
-      if (!user?.isCorrectPassword(req.body.password))
-        throw new Error("Password didnt work");
-      const token = await user.generateAuthToken();
-      await user
-        .populate("roleCustomer")
-        .populate("roleProvider")
-        .populate({
-          path: "roleProvider",
-          populate: [
-            {
-              path: "termsAndConditions",
-            },
-            {
-              path: "services",
-              model: "service",
-              populate: {
-                path: "product",
-                model: "product",
-              },
-            },
-            {
-              path: "linkedCustomers",
-              model: "customer",
-              populate: {
-                path: "user", // Nested population of linkedCustomers' user
-                model: "user",
-              },
-            },
-          ],
-        })
-        .populate("roleAdmin")
-        .exec();
-      returnObject = {
-        ...returnObject,
-        user,
-        token,
-        userExists: true,
-        userCreated: false,
-        message: "here is your user",
-      };
-    }
-    res.status(200).json(returnObject);
-    return;
+    if (!authLinkNumber && !linkRequest)
+      return await res.send(handleLogin(mobile, password));
   } catch (error) {
     console.log(error);
-    res.status(500).json({
-      message: "An error occurred while processing the request.",
-      error: error.message || "Unknown error",
+    let statusCode = 500;
+    //start with AUTH and has a :
+    if (error.message.match(/^AUTH:/)) statusCode = 401;
+    if (error.message.match(/^NOT_FOUND:/)) statusCode = 404;
+    res.status(statusCode).json({
+      message: error.message,
     });
   }
 });
 
 router.post("/users", async (req, res) => {
+  //refactor to respond with a token. App should not rely on anything but the token.
   const user = req.body;
   console.log("req.body", req.body);
   // Sanitize the input
@@ -147,79 +90,25 @@ router.post("/users", async (req, res) => {
     console.log(user.mobile.length);
   }
   try {
-    const userExists = await User.findOne({ mobile: req.body.mobile })
-      .populate("roleCustomer")
-      .populate("roleProvider")
-      .populate({
-        path: "roleProvider",
-        populate: [
-          {
-            path: "termsAndConditions",
-          },
-          {
-            path: "services",
-            model: "service",
-            populate: {
-              path: "product",
-              model: "product",
-            },
-          },
-          {
-            path: "linkedCustomers",
-            model: "customer",
-            populate: {
-              path: "user", // Nested population of linkedCustomers' user
-              model: "user",
-            },
-          },
-        ],
-      })
-      .populate("roleAdmin")
-      .exec();
+    const userExists = await User.findOne({ mobile: req.body.mobile });
+
     if (userExists) {
       const token = await userExists.generateAuthToken();
       res.status(200).json({
         userExists: true,
         userCreated: false,
-        user: userExists,
+
         token,
       });
       return userExists;
     } else {
       const userCreated = await User.create({ ...user });
-      const populatedUser = await User.findById(userCreated._id)
-        .populate("roleProvider")
-        .populate({
-          path: "roleProvider",
-          populate: [
-            {
-              path: "termsAndConditions",
-            },
-            {
-              path: "services",
-              model: "service",
-              populate: {
-                path: "product",
-                model: "product",
-              },
-            },
-            {
-              path: "linkedCustomers",
-              model: "customer",
-              populate: {
-                path: "user", // Nested population of linkedCustomers' user
-                model: "user",
-              },
-            },
-          ],
-        })
-        .populate("roleAdmin")
-        .exec();
+
       const token = await userCreated.generateAuthToken();
       res.status(200).json({
         userExists: false,
         userCreated: true,
-        user: userCreated,
+
         token,
       });
       return;
@@ -227,12 +116,13 @@ router.post("/users", async (req, res) => {
   } catch (error) {
     const prep = {};
     console.error(error);
-    if ((error.message = "INVALID_MOBILE")) prep.errorCode = "INVALID_MOBILE";
-    res.status(400).json({
-      ...prep,
-      user: null,
-    });
-    throw error;
+    if ((error.message = "INVALID_MOBILE")) {
+      prep.errorCode = "INVALID_MOBILE";
+      res.status(400).json({
+        ...prep,
+      });
+    }
+    throw error("an error occurred", error.message);
   }
 });
 

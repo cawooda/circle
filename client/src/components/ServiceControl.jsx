@@ -23,10 +23,8 @@ export default function ServiceControl({ handleInputChange, locked }) {
           onClick={handleInputChange}
           onChange={handleInputChange}
         >
-          <option value="" selected>
-            -- Select a service --
-          </option>
-          
+          <option value="">-- Select a service --</option>
+
           {user.roleProvider.services.length
             ? user.roleProvider.services.map((service, index) => {
                 return (

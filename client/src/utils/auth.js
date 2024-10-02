@@ -44,27 +44,27 @@ class AuthService {
   }
 
   async smsLinkLogin(userData) {
-    if (userData.mobile) {
-      const response = await fetch("/api/users", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...userData, linkRequest: true }),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch");
+    const URL = "/api/users";
+    try {
+      if (userData.mobile) {
+        const response = await fetch(URL, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ ...userData, linkRequest: true }),
+        });
+        let res;
+        if (response.headers.get("content-type").match(/json/)) {
+          res = await response.json();
+        } else {
+          throw new Error(
+            `Response could not be parsed to json : url${URL} status:${res.status}`
+          );
+        }
+        if (res.linkSent) return true;
       }
-
-      if (response.ok) {
-        const res = await response.json();
-
-        this.setToken(res.token);
-        return res;
-      }
-    } else {
-      return null;
-    }
+    } catch (error) {}
   }
 
   async resetPassword(userData) {
@@ -106,7 +106,7 @@ class AuthService {
         const res = await response.json();
         if (res.user.token) {
           localStorage.setItem("id_token", res.token);
-          localStorage.setItem("user_signed_up", res.user.mobile);
+          localStorage.setItem("user_signed_up", "true");
           return res;
         }
         return res;
@@ -117,8 +117,9 @@ class AuthService {
   }
 
   async loginUser(userData) {
+    const URL = "/api/users";
     try {
-      const response = await fetch("/api/users", {
+      const response = await fetch(URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -146,34 +147,31 @@ class AuthService {
   }
 
   async verifySmsCode(code) {
+    const URL = "/api/users";
     try {
-      const response = await fetch("/api/users", {
+      const response = await fetch(URL, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ authLinkNumber: code }),
       });
-      if (!response.ok) {
-        throw new Error("Failed to fetch");
-      }
-      if (response.ok) {
-        const res = await response.json();
-        if (res.token) {
-          localStorage.setItem("id_token", res.token);
-          localStorage.setItem("user_signed_up", res.user.mobile);
-          return res;
-        }
-      } else throw new Error("response from server was not OK");
+      let res;
 
-      if (!res.validCode) {
-        this.logout();
-        return res;
+      if (response.headers.get("content-type").match(/json/)) {
+        res = await response.json();
       } else {
-        throw new Error("code was not valid");
+        throw new Error(
+          `Response could not be parsed to json : url${URL} status:${res.status}`
+        );
       }
+      if (res?.token) {
+        localStorage.setItem("id_token", res.token);
+        localStorage.setItem("user_signed_up", "true");
+        return true;
+      } else throw new Error("looks like there's no token", res.error);
     } catch (error) {
-      throw new Error("code verification didnt result in login", error);
+      console.log(error);
     }
   }
 

@@ -11,7 +11,7 @@ const userSeed = [
     password: "$2b$10$vMjCMGzbBeIfEtVLw4gbseVwv5LKJsA3npGoTXEApZrLSxDfi5KVy",
     roleSuperAdmin: true,
     sendEmails: true,
-    sendTexts: true,
+    sendTexts: false,
   },
 ];
 

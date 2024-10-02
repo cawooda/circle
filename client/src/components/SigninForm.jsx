@@ -46,7 +46,7 @@ const SigninForm = ({ forceOpen }) => {
   const [signup, setSignup] = useState(!userSignedUp);
   const [message, setMessage] = useState("");
   const [userFormData, setUserFormData] = useState({
-    mobile: userSignedUp || "",
+    mobile: "",
     password: "",
   });
 
@@ -100,11 +100,10 @@ const SigninForm = ({ forceOpen }) => {
     if (userFormData.mobile.length === 10) {
       try {
         const response = await AuthService.smsLinkLogin(userFormData);
-
-        if (response.linkSent) {
+        if (response) {
           setMessage("We sent you a link to login with.");
           setLoadingState(false);
-          onSmsModalOpen(); // Open the SMS code modal
+          onSmsModalOpen();
         } else {
           setMessage("Failed to send the link. Please try again.");
         }
@@ -120,15 +119,15 @@ const SigninForm = ({ forceOpen }) => {
     try {
       setLoadingState(true);
       const response = await AuthService.verifySmsCode(code);
-      if (!response.user) {
-        setMessage(response.message); // Set the error message
-      } else {
-        setUser(response.user);
+      if (response) {
+        console.log("log in should be all good");
         refetchUser();
         setLoadingState(false);
         onClose();
+        navigate("/");
       }
     } catch (error) {
+      console.error(error.message);
       throw error;
     }
   };
