@@ -138,7 +138,6 @@ const SigninForm = ({ forceOpen }) => {
     event.preventDefault();
     try {
       if (signup) {
-        console.log("signup");
         const responseSignup = await AuthService.signUpUser(userFormData);
         if (!responseSignup.user) {
           setMessage(responseSignup.message); // Set the error message

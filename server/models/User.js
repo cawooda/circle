@@ -60,10 +60,7 @@ const userSchema = new Schema(
       default: null,
     },
     roleSuperAdmin: { type: Boolean, required: true, default: false },
-    // roles: [
-    //   { type: String, enum: ["Customer", "Provider", "Admin", "SuperAdmin"] },
-    // ],
-    // roleModels: [{ type: Schema.Types.ObjectId }],
+
     password: { type: String, required: true },
     authLinkNumber: { type: String },
     sendEmails: { type: Boolean, default: true },
@@ -118,6 +115,7 @@ userSchema.pre("save", async function (next) {
       const newProvider = new Provider({});
       await newProvider.save();
       newProvider.user = this._id;
+      await newProvider.save();
       this.roleProvider = newProvider._id;
     } catch (error) {
       console.log(error);

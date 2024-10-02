@@ -13,7 +13,7 @@ module.exports = {
         .populate({
           path: "shifts",
           model: "shift",
-          populate: { path: "service" },
+          populate: { path: "service", model: "service" },
         })
         .exec();
       if (!provider)

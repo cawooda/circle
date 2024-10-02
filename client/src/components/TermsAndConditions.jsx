@@ -24,7 +24,7 @@ const TermsAndConditions = ({
   handleFormSubmit,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure(); // this is used for the Chakra modal
-
+  console.log(formData.termsAndConditions);
   return (
     <>
       <Button

@@ -4,8 +4,6 @@ import { useQuery } from "@apollo/client";
 import { GET_ME } from "../utils/queries";
 import AuthService from "../utils/auth";
 import { useNavigate } from "react-router-dom";
-import Splash from "../components/Splash";
-import SigninForm from "../components/SigninForm";
 
 const UserContext = createContext();
 
@@ -16,6 +14,7 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
   const [hasError, setHasError] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(() => AuthService.loggedIn());
 
   const {
     loading,
@@ -23,13 +22,23 @@ export const UserProvider = ({ children }) => {
     data,
     refetch: refetchUser,
   } = useQuery(GET_ME, {
+    variables: { token: AuthService.getToken() },
     onError: () => setHasError(true),
+    skip: !loggedIn,
   });
+  console.log("!loggedIn ", !loggedIn);
+  useEffect(() => {
+    const tokenCheck = AuthService.loggedIn();
+    setLoggedIn(tokenCheck);
+  }, []);
 
   useEffect(() => {
     if (data) {
-      setUser(data.getMe);
-      setHasError(false); // Reset error state on successful data fetch
+      if (data.getMe) {
+        setUser(data.getMe);
+
+        setHasError(false); // Reset error state on successful data fetch
+      }
     }
   }, [data, loading]);
 

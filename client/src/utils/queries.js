@@ -51,8 +51,8 @@ export const QUERY_ALL_USERS = gql`
 `;
 
 export const GET_ME = gql`
-  query GetMe {
-    getMe {
+  query GetMe($token: String!) {
+    getMe(token: $token) {
       _id
       first
       last

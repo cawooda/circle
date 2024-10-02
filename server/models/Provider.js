@@ -1,6 +1,6 @@
-//import the Schema and model from mongoose.
 const { Schema, model, Types } = require("mongoose");
-const defaultTermsAndConditions = require("../seeders/seedData");
+const { defaultTermsAndConditions } = require("../seeders/seedData");
+
 const { generateRandomNumber } = require("../utils/helpers");
 
 const providerSchema = new Schema(
@@ -27,7 +27,6 @@ const providerSchema = new Schema(
           paragraph: { type: String },
         },
       ],
-      default: defaultTermsAndConditions,
     },
     notes: { type: String },
     linkedCustomers: [
@@ -35,12 +34,6 @@ const providerSchema = new Schema(
         type: Schema.Types.ObjectId,
         ref: "customer",
         default: ["66d6b24c6bea26447abaeaf9"],
-      },
-    ],
-    shifts: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "shifts",
       },
     ],
     services: [
@@ -54,6 +47,7 @@ const providerSchema = new Schema(
       },
     ],
     serviceAgreements: [{ type: Schema.Types.ObjectId, ref: "agreement" }],
+    shifts: [{ type: Schema.Types.ObjectId, ref: "shift" }],
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
   },
@@ -75,6 +69,20 @@ providerSchema.pre("findOneAndRemove", async function (next) {
   } catch (error) {
     console.error("Error while deleting provider", error);
     next();
+  }
+});
+providerSchema.pre("save", async function (next) {
+  try {
+    // Add default terms and conditions only if it's not already provided
+    if (!this.termsAndConditions || this.termsAndConditions.length === 0) {
+      this.termsAndConditions = defaultTermsAndConditions.map((term) => ({
+        ...term,
+      }));
+    }
+    next();
+  } catch (error) {
+    console.error("Error while setting up default terms and conditions", error);
+    next(error);
   }
 });
 

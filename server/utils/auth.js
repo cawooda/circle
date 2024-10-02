@@ -26,8 +26,6 @@ async function authMiddleware({ req }) {
   if (openOperations.includes(operationName)) {
     return { user: null };
   }
-  if (!req.headers.authorization)
-    throw new Error("there doesent seem to be a token in the context");
 
   let token = req.headers.authorization.split(" ").pop().trim();
 
@@ -66,7 +64,7 @@ async function authMiddleware({ req }) {
     }
   } catch (error) {
     if (error.name === "TokenExpiredError") {
-      console.error("Token expired error:", error.message);
+      console.error("Token expired error:", error);
       throw new GraphQLError("Token expired", {
         extensions: { code: "UNAUTHENTICATED" },
       });

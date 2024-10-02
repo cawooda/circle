@@ -1,8 +1,5 @@
-//Issues
-
 import { jwtDecode } from "jwt-decode";
 
-// create a new class to instantiate for a user
 class AuthService {
   getProfile() {
     try {
@@ -33,6 +30,7 @@ class AuthService {
       return false;
     }
   }
+
   setToken(token) {
     localStorage.setItem("id_token", token);
     return null;
@@ -44,6 +42,7 @@ class AuthService {
     }
     return null;
   }
+
   async smsLinkLogin(userData) {
     if (userData.mobile) {
       const response = await fetch("/api/users", {
@@ -118,7 +117,6 @@ class AuthService {
   }
 
   async loginUser(userData) {
-    console.log("loginUser in authjs reached");
     try {
       const response = await fetch("/api/users", {
         method: "POST",
@@ -136,7 +134,6 @@ class AuthService {
 
       const res = await response.json();
       if (res.token) {
-        console.log("token written id_token", res.token);
         localStorage.setItem("id_token", res.token);
         localStorage.setItem("user_signed_up", res.user.mobile);
         return res;

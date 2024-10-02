@@ -1,3 +1,4 @@
+const { verifyToken } = require("./../utils/helpers");
 const { EMAILService } = require("../utils/mailer");
 const userEmailService = new EMAILService();
 const {
@@ -22,7 +23,10 @@ module.exports = {
       }
     } else return { message: "user needs to be admin to perform this action" };
   },
-  getMe: async (_parent, {}, context) => {
+  getMe: async (_parent, { token }, context) => {
+    if (!verifyToken(token))
+      throw new Error("Could not verify with that token");
+    if (!context) throw new Error("no context provided");
     const user = await User.findById(context.user._id)
       .populate("roleCustomer")
       .populate("roleProvider")
@@ -111,13 +115,7 @@ module.exports = {
   },
   getUserByToken: async (_parent, { token }, context) => {
     try {
-      const { authenticatedPerson } = jwt.verify(
-        token,
-        process.env.SECRET_KEY,
-        {
-          maxAge: process.env.TOKEN_EXPIRES_IN,
-        }
-      );
+      const authenticatedPerson = await verifyToken(token);
 
       const user = await User.findById(authenticatedPerson._id).populate();
 

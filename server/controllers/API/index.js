@@ -140,18 +140,11 @@ router.put("/users", async (req, res) => {
 
 router.post("/users", async (req, res) => {
   const user = req.body;
-  if (user.mobile.length != 10) {
-    res.status(400).json({
-      userExists: false,
-      mobileIsInvalid: true,
-      userCreated: false,
-      user: null,
-      errorCode: "MOBILE_INVALID",
-      message: "mobile not required length",
-    });
-    return;
-  }
+  console.log("req.body", req.body);
 
+  if (user.mobile.length != 10) {
+    console.log(user.mobile.length);
+  }
   try {
     const userExists = await User.findOne({ mobile: req.body.mobile })
       .populate("roleCustomer")
@@ -182,51 +175,62 @@ router.post("/users", async (req, res) => {
       })
       .populate("roleAdmin")
       .exec();
-
     if (userExists) {
-      if (await userExists.isCorrectPassword(req.body.password)) {
-        const token = await userExists.generateAuthToken();
-
-        res.status(200).json({
-          userExists: true,
-          userCreated: false,
-          user: userExists,
-          token,
-        });
-        return userExists;
-      } else {
-        res.status(400).json({
-          userExists: true,
-          userCreated: false,
-          errorCode: "INCORRECT_PASSWORD",
-          message: "password Incorrect",
-        });
-      }
-    } else {
-      //wishing not to take more information than required from a user, this app allows registration with only mobile, however we use the below code to
-
-      const userCreated = await User.create({
-        first: "firstName",
-        last: "lastName",
-        ...user,
-      });
-      userCreated.save();
-      const token = await userCreated.generateAuthToken();
-      const host = process.env.HOST || `http://localhost:3000`; // Get the host (hostname:port)
-      userCreated.sendMessage(
-        `Welcome to Circle`,
-        `Hi , We created you a new Circle Account. You can log in at any time using your password or SMS login at ${host}`,
-        `<p>Hi</p> <p>We created you a new Circle Account. You can log in at any time using your password or SMS login</p><p>Circle helps custoemrs and businesses connect through service agreements and ensures work done is accurately recorded for payment and to secure records for future reference.</p><p>To find out more visit <a href="http://circleindependent.com">Cirlcle Independent</a></p><p>Have a great day :)</p>`,
-        null
-      );
+      const token = await userExists.generateAuthToken();
       res.status(200).json({
         userExists: true,
+        userCreated: false,
+        user: userExists,
+        token,
+      });
+      return userExists;
+    } else {
+      const userCreated = await User.create({ ...user });
+      const populatedUser = await User.findById(userCreated._id)
+        .populate("roleProvider")
+        .populate({
+          path: "roleProvider",
+          populate: [
+            {
+              path: "termsAndConditions",
+            },
+            {
+              path: "services",
+              model: "service",
+              populate: {
+                path: "product",
+                model: "product",
+              },
+            },
+            {
+              path: "linkedCustomers",
+              model: "customer",
+              populate: {
+                path: "user", // Nested population of linkedCustomers' user
+                model: "user",
+              },
+            },
+          ],
+        })
+        .populate("roleAdmin")
+        .exec();
+      const token = await userCreated.generateAuthToken();
+      res.status(200).json({
+        userExists: false,
         userCreated: true,
         user: userCreated,
         token,
       });
+      return;
     }
   } catch (error) {
+    const prep = {};
+    console.error(error);
+    if ((error.message = "INVALID_MOBILE")) prep.errorCode = "INVALID_MOBILE";
+    res.status(400).json({
+      ...prep,
+      user: null,
+    });
     throw error;
   }
 });
