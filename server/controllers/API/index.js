@@ -36,21 +36,64 @@ async function handleAuthLinkNumber(authLinkNumber, res) {
   };
 }
 
-async function handleLogin(mobile, password) {
-  const user = await User.findOne({ mobile: mobile });
-  if (!user?._id)
-    throw new Error(
-      "NOT_FOUND: couldnt find the user for mobile and password login"
-    );
-  if (!user?.isCorrectPassword(password))
-    throw new Error("Password didnt work");
-  const token = await user.generateAuthToken();
+async function handleLogin(body) {
+  const { mobile, password, first, last } = body;
+  let user = {};
+  try {
+    // If first and last name are provided, create a new user
+    if (first && last) {
+      user = await User.create({ first, last, mobile, password });
+      if (user) {
+        const token = await user.generateAuthToken();
+        return {
+          token,
+          userExists: false,
+          userCreated: true,
+          message: "User created. Here's your token",
+        };
+      } else throw new Error("NOT_CREATED: could not create the user");
+    }
 
+    // If no first and last names, look for an existing user
+    user = await User.findOne({ mobile: mobile });
+    let token;
+    if (user) {
+      let correctPassword = await user.isCorrectPassword(password);
+      console.log("passwordCorrect", correctPassword);
+      if (correctPassword) {
+        token = await user.generateAuthToken();
+        return {
+          token,
+          userExists: true,
+          userCreated: false,
+          message: "User found and password correct. Here's your token",
+        };
+      } else throw new Error("PASSWORD: not correct");
+    } else {
+      throw new Error("NOT_FOUND: user does not exist");
+    }
+  } catch (error) {
+    // Instead of returning undefined, return a structured error object
+    return {
+      error: true,
+      message: error.message,
+    };
+  }
+}
+
+async function handleUserCreate(user) {
+  if (user.mobile.length != 10)
+    throw new Error("MOBILE:mobile not required length");
+  if (user.password.length != 10)
+    throw new Error("PASSWORD:password not required length");
+  const userExists = await User.findOne({ mobile: req.body.mobile });
+  if (!userExists) throw new Error("NOT_FOUND: User not found");
+
+  const token = await userExists.generateAuthToken();
   return {
-    token,
     userExists: true,
     userCreated: false,
-    message: "user found and password correct. Here's your token",
+    token,
   };
 }
 
@@ -66,63 +109,41 @@ router.put("/users", async (req, res) => {
       const obj = await handleSetupUserLink(mobile);
       return await res.send(obj);
     }
-    if (!authLinkNumber && !linkRequest)
-      return await res.send(handleLogin(mobile, password));
   } catch (error) {
     console.log(error);
     let statusCode = 500;
     //start with AUTH and has a :
     if (error.message.match(/^AUTH:/)) statusCode = 401;
     if (error.message.match(/^NOT_FOUND:/)) statusCode = 404;
-    res.status(statusCode).json({
+    return await res.status(statusCode).json({
       message: error.message,
     });
   }
 });
 
 router.post("/users", async (req, res) => {
-  //refactor to respond with a token. App should not rely on anything but the token.
-  const user = req.body;
-  console.log("req.body", req.body);
-  // Sanitize the input
-  req.body.mobile = req.body.mobile.replace(/[^\d]/g, ""); // Remove any non-numeric characters
-  if (user.mobile.length != 10) {
-    console.log(user.mobile.length);
-  }
+  req.body.mobile = req.body.mobile.replace(/[^\d]/g, "");
   try {
-    const userExists = await User.findOne({ mobile: req.body.mobile });
+    const obj = await handleLogin(req.body);
 
-    if (userExists) {
-      const token = await userExists.generateAuthToken();
-      res.status(200).json({
-        userExists: true,
-        userCreated: false,
+    // Check if handleLogin returned an error
+    if (obj.error) {
+      let statusCode = 500;
+      if (obj.message.match(/^PASSWORD:/)) statusCode = 401;
+      if (obj.message.match(/^NOT_CREATED:/)) statusCode = 404;
+      if (obj.message.match(/^NOT_FOUND:/)) statusCode = 404;
 
-        token,
-      });
-      return userExists;
-    } else {
-      const userCreated = await User.create({ ...user });
-
-      const token = await userCreated.generateAuthToken();
-      res.status(200).json({
-        userExists: false,
-        userCreated: true,
-
-        token,
-      });
-      return;
+      return res.status(statusCode).json(obj);
     }
+
+    // If no error, return the successful response object
+    return res.json(obj);
   } catch (error) {
-    const prep = {};
-    console.error(error);
-    if ((error.message = "INVALID_MOBILE")) {
-      prep.errorCode = "INVALID_MOBILE";
-      res.status(400).json({
-        ...prep,
-      });
-    }
-    throw error("an error occurred", error.message);
+    // Handle any unexpected errors
+    console.log(error);
+    return res.status(500).json({
+      message: "An unexpected error occurred",
+    });
   }
 });
 
@@ -130,11 +151,11 @@ router.use("/users/:id", async (req, res) => {
   const id = req.params.id;
   const user = await User.findById(id).populate().lean();
   const admin = await Admin.findOne({ user: id }).lean();
-  res.json({ user: user, admin: admin });
+  return await res.json({ user: user, admin: admin });
 });
 
 router.use("/", async (req, res) => {
-  res.send({ message: "Post request to api recieved" });
+  return await res.send({ message: "Post request to api recieved" });
 });
 
 module.exports = router;

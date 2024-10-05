@@ -137,34 +137,39 @@ const SigninForm = ({ forceOpen }) => {
     event.preventDefault();
     try {
       if (signup) {
-        const responseSignup = await AuthService.signUpUser(userFormData);
-        if (!responseSignup.user) {
-          setMessage(responseSignup.message); // Set the error message
+        const response = await AuthService.signUpUser(userFormData);
+        if (!response) {
+          setMessage(response.message); // Set the error message
+          setLoadingState(false);
           throw new Error("error with signup");
         } else {
-          setUser(responseSignup.user);
+          refetchUser();
           setLoadingState(false);
           onClose();
         }
-      } else {
-        const responseLogin = await AuthService.loginUser({
-          ...userFormData,
-        });
-        if (!responseLogin.user) {
-          setMessage(responseLogin.message); // Set the error message
-        } else {
-          setUser(responseLogin.user);
-          setLoadingState(false);
-        }
       }
+      const responseLogin = await AuthService.loginUser({
+        ...userFormData,
+      });
+
+      if (responseLogin?.token) {
+        onClose();
+        refetchUser();
+        setLoadingState(false);
+        setUserFormData({
+          first: "",
+          last: "",
+          mobile: "",
+          password: "",
+        });
+      } else {
+        setLoadingState(false);
+        setMessage(responseLogin.message);
+        return;
+      }
+
       refetchUser();
       onClose();
-      setUserFormData({
-        first: "",
-        last: "",
-        mobile: "",
-        password: "",
-      });
     } catch (error) {
       console.log("Error received trying to create new userAuth", error);
     }
@@ -180,6 +185,7 @@ const SigninForm = ({ forceOpen }) => {
           } else {
             AuthService.logout();
             setUser(null);
+            refetchUser();
             navigate("/");
           }
         }}

@@ -201,10 +201,8 @@ userSchema.methods.sendEmail = async function (
 
 userSchema.methods.isCorrectPassword = async function (password) {
   if (await bcrypt.compare(password, this.password)) {
-    this.generateAuthToken();
-  }
-
-  return bcrypt.compare(password, this.password);
+    return true;
+  } else return false;
 };
 
 // Method to generate JWT token

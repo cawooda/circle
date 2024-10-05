@@ -67,29 +67,10 @@ class AuthService {
     } catch (error) {}
   }
 
-  async resetPassword(userData) {
-    if (userData.mobile) {
-      const response = await fetch("/api/users", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...userData, link: true }),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch");
-      }
-      if (response.ok) {
-        const res = await response.json();
-        return res;
-      }
-    } else {
-      return null;
-    }
-  }
   async signUpUser(userData) {
+    const URL = "/api/users";
     try {
-      const response = await fetch("/api/users", {
+      const response = await fetch(URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -102,13 +83,11 @@ class AuthService {
       if (!response.errorCode == "MOBILE_INVALID") {
         throw new Error("mobile was invalid");
       }
-      if (response.ok) {
-        const res = await response.json();
-        if (res.user.token) {
-          localStorage.setItem("id_token", res.token);
-          localStorage.setItem("user_signed_up", "true");
-          return res;
-        }
+
+      const res = await response.json();
+      if (res.token) {
+        localStorage.setItem("id_token", res.token);
+        localStorage.setItem("user_signed_up", "true");
         return res;
       }
     } catch (error) {
@@ -132,17 +111,18 @@ class AuthService {
       if (!response.errorCode == "INCORRECT_PASSWORD") {
         throw new Error("password was incorrect");
       }
-
       const res = await response.json();
-      if (res.token) {
+      if (res.error) {
+        throw new Error("Something went Wrong");
+      }
+      if (res?.token) {
         localStorage.setItem("id_token", res.token);
-        localStorage.setItem("user_signed_up", res.user.mobile);
+        localStorage.setItem("user_signed_up", "true");
         return res;
       }
-
-      return res;
+      return false;
     } catch (error) {
-      throw new Error("Sorry, we couldnt log in user", error);
+      console.log(error.message);
     }
   }
 
