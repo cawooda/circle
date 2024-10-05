@@ -146,6 +146,7 @@ const SigninForm = ({ forceOpen }) => {
           refetchUser();
           setLoadingState(false);
           onClose();
+          return;
         }
       }
       const responseLogin = await AuthService.loginUser({
