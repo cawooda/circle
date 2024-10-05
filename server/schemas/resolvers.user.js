@@ -24,93 +24,100 @@ module.exports = {
     } else return { message: "user needs to be admin to perform this action" };
   },
   getMe: async (_parent, { token }, context) => {
-    if (!verifyToken(token))
-      throw new Error("Could not verify with that token");
-    if (!context) throw new Error("no context provided");
-    const user = await User.findById(context.user._id)
-      .populate("roleCustomer")
-      .populate("roleProvider")
-      .populate({
-        path: "roleProvider",
-        populate: [
-          {
-            path: "serviceAgreements",
-            model: "agreement",
-          },
-          {
-            path: "termsAndConditions",
-          },
-          {
-            path: "services",
-            model: "service",
-            populate: {
-              path: "product",
-              model: "product",
+    try {
+      if (!verifyToken(token))
+        throw new Error("Could not verify with that token");
+      if (!context) throw new Error("no context provided");
+      const user = await User.findById(context.user._id)
+        .populate("roleCustomer")
+        .populate("roleProvider")
+        .populate({
+          path: "roleProvider",
+          populate: [
+            {
+              path: "serviceAgreements",
+              model: "agreement",
             },
-          },
-          {
-            path: "linkedCustomers",
-            model: "customer",
-            populate: {
-              path: "user",
-              model: "user",
+            {
+              path: "termsAndConditions",
             },
-          },
-        ],
-      })
-      .populate("roleAdmin")
-      .exec();
-
-    // better to use a filter
-    if (user.roleProvider) {
-      user.roleProvider.linkedCustomers =
-        user.roleProvider?.linkedCustomers.filter((customer) => {
-          if (customer.user.mobile) {
-            return true;
-          }
-        });
-    }
-    if (user.roleProvider) {
-      user.roleProvider.services = user.roleProvider?.services.filter(
-        (service) => {
-          if (service.product.name) {
-            return true;
-          }
-        }
-      );
-    }
-    console.log(user.roleProvider?.services);
-    user.save();
-    // for each linked customer in the roleProvider of user, check whether the population has worked to give name, mobile etc.
-    // if not delete the id from the linked
-
-    if (user) {
-      const serviceAgreements = await ServiceAgreement.find({
-        $or: [{ provider: user.roleProvider }, { customer: user.roleCustomer }],
-      })
-        .populate({
-          path: "provider",
-          model: "provider",
-          populate: { path: "user", model: "user" },
+            {
+              path: "services",
+              model: "service",
+              populate: {
+                path: "product",
+                model: "product",
+              },
+            },
+            {
+              path: "linkedCustomers",
+              model: "customer",
+              populate: {
+                path: "user",
+                model: "user",
+              },
+            },
+          ],
         })
-        .populate({
-          path: "customer",
-          model: "customer",
-          populate: { path: "user", model: "user" },
-        })
-        .populate({
-          path: "service",
-          model: "service",
-          populate: { path: "product", model: "product" },
-        })
-        .lean({ virtuals: true })
+        .populate("roleAdmin")
         .exec();
 
-      user.serviceAgreements = serviceAgreements;
-      console.log(user);
-      return user;
-    } else {
-      return { message: "user not found" };
+      // better to use a filter
+      if (user.roleProvider) {
+        user.roleProvider.linkedCustomers =
+          user.roleProvider?.linkedCustomers.filter((customer) => {
+            if (customer.user.mobile) {
+              return true;
+            }
+          });
+      }
+      if (user.roleProvider) {
+        user.roleProvider.services = user.roleProvider?.services.filter(
+          (service) => {
+            if (service.product.name) {
+              return true;
+            }
+          }
+        );
+      }
+      console.log(user.roleProvider?.services);
+      user.save();
+      // for each linked customer in the roleProvider of user, check whether the population has worked to give name, mobile etc.
+      // if not delete the id from the linked
+
+      if (user) {
+        const serviceAgreements = await ServiceAgreement.find({
+          $or: [
+            { provider: user.roleProvider },
+            { customer: user.roleCustomer },
+          ],
+        })
+          .populate({
+            path: "provider",
+            model: "provider",
+            populate: { path: "user", model: "user" },
+          })
+          .populate({
+            path: "customer",
+            model: "customer",
+            populate: { path: "user", model: "user" },
+          })
+          .populate({
+            path: "service",
+            model: "service",
+            populate: { path: "product", model: "product" },
+          })
+          .lean({ virtuals: true })
+          .exec();
+
+        user.serviceAgreements = serviceAgreements;
+        console.log(user);
+        return user;
+      } else {
+        return { message: "user not found" };
+      }
+    } catch (error) {
+      console.log(error);
     }
   },
   getUserByToken: async (_parent, { token }, context) => {
