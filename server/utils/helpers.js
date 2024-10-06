@@ -18,9 +18,14 @@ function verifyToken(token) {
     return authenticatedPerson;
   } catch (error) {
     if (error.name === 'TokenExpiredError') {
-      throw new Error('Token has expired, please log in again.');
-    }
-    throw new Error('An error occurred in verifyToken');
+    console.log('Token has expired. Please log in again.');
+  } else if (error.name === 'JsonWebTokenError') {
+    console.log('Invalid token. Please provide a valid token.');
+  } else if (error.name === 'NotBeforeError') {
+    console.log('Token is not active yet.');
+  } else {
+    console.log('An unknown error occurred.');
+  }
   }
 }
 
