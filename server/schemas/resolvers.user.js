@@ -117,7 +117,7 @@ module.exports = {
         return { message: "user not found" };
       }
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
     }
   },
   getUserByToken: async (_parent, { token }, context) => {
