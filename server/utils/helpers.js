@@ -12,17 +12,14 @@ function generateRandomNumber(min = 1000000000, max = 9999999999) {
   return randomNumber;
 }
 
-async function verifyToken(token) {
+function verifyToken(token) {
   try {
-    const { authenticatedPerson } = await jwt.verify(token, secret, {
-      maxAge: process.env.TOKEN_EXPIRES_IN,
-    });
-    if (!authenticatedPerson)
-      throw new Error("we couldn't authenticate with that token.");
-    return authenticatedPerson;
+    return jwt.verify(token, process.env.JWT_SECRET);
   } catch (error) {
-    console.error(error.message);
-    throw new Error("an error occured in verifyToken", error);
+    if (error.name === 'TokenExpiredError') {
+      throw new Error('Token has expired, please log in again.');
+    }
+    throw new Error('An error occurred in verifyToken');
   }
 }
 
