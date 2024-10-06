@@ -14,7 +14,8 @@ function generateRandomNumber(min = 1000000000, max = 9999999999) {
 
 function verifyToken(token) {
   try {
-    return jwt.verify(token, process.env.JWT_SECRET);
+    const {authenticatedPerson} = jwt.verify(token, process.env.SECRET_KEY);
+    return authenticatedPerson;
   } catch (error) {
     if (error.name === 'TokenExpiredError') {
       throw new Error('Token has expired, please log in again.');
