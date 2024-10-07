@@ -68,7 +68,8 @@ module.exports = {
           user.roleProvider?.linkedCustomers.filter((customer) => {
             if (customer.user.mobile && customer.user.first) {
               return true;
-            }
+            } else
+              console.log(`${customer._id} dint have a mobile or first name`);
           });
       }
       if (user.roleProvider) {
