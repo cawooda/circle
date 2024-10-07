@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { InputStyles } from "./styles/InputStyles";
+import { validateMobileNumber, validateEmailInput } from "../utils/helpers";
 import AuthService from "../utils/auth";
 import {
+  Alert,
   Button,
   Flex,
   Input,
@@ -36,6 +38,9 @@ import { ADD_CUSTOMER } from "../utils/mutations";
 
 const AddCustomerForm = () => {
   const { user, refetchUser } = useUser();
+  const [mobileMessage, setMobileMessage] = useState();
+  const [invoiceEmailMessage, setInvoiceEmailMessage] = useState();
+  const [emailMessage, setEmailMessage] = useState();
 
   const [
     addCustomer,
@@ -65,6 +70,21 @@ const AddCustomerForm = () => {
     referenceName: "",
     datOfBirth: "",
   });
+
+  useEffect(() => {
+    if (formData.email != "" && !validateEmailInput(formData.email)) {
+      setEmailMessage("please enter valid email");
+    } else setEmailMessage("");
+    if (
+      formData.invoiceEmail != "" &&
+      !validateEmailInput(formData.invoiceEmail)
+    ) {
+      setInvoiceEmailMessage("please enter valid email");
+    } else setInvoiceEmailMessage("");
+    if (formData.mobile != "" && !validateMobileNumber(formData.mobile)) {
+      setMobileMessage("please enter valid mobile");
+    } else setMobileMessage("");
+  }, [formData]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -174,6 +194,11 @@ const AddCustomerForm = () => {
                     value={formData.mobile}
                     required
                   />
+                  {mobileMessage ? (
+                    <Alert status="error">{mobileMessage}</Alert>
+                  ) : (
+                    <></>
+                  )}
 
                   <FormLabel>Email:</FormLabel>
                   <Input
@@ -186,6 +211,11 @@ const AddCustomerForm = () => {
                     value={formData.email}
                     required
                   />
+                  {emailMessage ? (
+                    <Alert status="error">{emailMessage}</Alert>
+                  ) : (
+                    <></>
+                  )}
 
                   <FormLabel>Invoice Email:</FormLabel>
                   <Input
@@ -197,6 +227,11 @@ const AddCustomerForm = () => {
                     onChange={handleInputChange}
                     value={formData.invoiceEmail}
                   />
+                  {invoiceEmailMessage ? (
+                    <Alert status="error">{invoiceEmailMessage}</Alert>
+                  ) : (
+                    <></>
+                  )}
 
                   <FormLabel>Reference Name(default is NDIS Number):</FormLabel>
                   <Input
