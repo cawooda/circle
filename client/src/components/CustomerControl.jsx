@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import React from "react";
 import {
   FormControl,
@@ -9,7 +9,8 @@ import {
   IconButton,
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
-import { useUser } from "../contexts/UserContext";
+
+import { useProvider } from "../contexts/ProviderContext";
 import AddCustomerForm from "./AddCustomerForm";
 
 export default function CustomerControl({
@@ -17,12 +18,12 @@ export default function CustomerControl({
   locked,
   defaultValue,
 }) {
-  const { user } = useUser();
+  const { provider, refetchProvider } = useProvider();
   const [customers, setCustomers] = useState([]);
 
   useEffect(() => {
-    if (user) {
-      const customerList = user.roleProvider.linkedCustomers.map((customer) => {
+    if (provider) {
+      const customerList = provider.linkedCustomers.map((customer) => {
         return {
           value: customer._id,
           label: `${customer.user?.first || "first"} ${
@@ -36,9 +37,9 @@ export default function CustomerControl({
       });
       setCustomers(customerList);
     }
-  }, [user]);
+  }, [provider]);
 
-  if (!user) return null;
+  if (!provider) return null;
 
   return (
     <FormControl>

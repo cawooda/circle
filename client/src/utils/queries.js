@@ -229,11 +229,11 @@ export const GET_MY_PROVIDER = gql`
         _id
         user {
           _id
+          first
+          last
           fullName
         }
         fullName
-        first
-        last
         referenceNumber
         referenceName
         address {

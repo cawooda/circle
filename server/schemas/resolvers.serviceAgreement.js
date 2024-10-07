@@ -82,7 +82,7 @@ module.exports = {
               newServiceAgreement.agreementNumber
             }`
           : `${process.env.HOST}/agreement/${newServiceAgreement.agreementNumber}`;
-
+      console.log("link", link);
       const newServiceAgreementRenderedEmail = renderTemplate(
         { ...newServiceAgreement.toObject(), link },
         "newServiceAgreementEmail"

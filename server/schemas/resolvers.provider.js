@@ -8,18 +8,27 @@ module.exports = {
       if (!user.roleProvider)
         throw new Error("there was no provider role for that user");
       const provider = await Provider.findById(user.roleProvider._id)
-        .populate("user")
+        .populate({
+          path: "user",
+          model: "user",
+        })
         .populate("services")
         .populate({
           path: "shifts",
           model: "shift",
           populate: { path: "service", model: "service" },
         })
+        .populate({
+          path: "linkedCustomers",
+          model: "customer",
+          populate: { path: "user", model: "user" },
+        })
         .exec();
       if (!provider)
         throw new Error(
           "we couldt get a provider when we tried the user's roleProvider id"
         );
+
       return provider.toObject();
     } catch (error) {
       console.log(error.message);
