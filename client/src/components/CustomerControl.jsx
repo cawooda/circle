@@ -23,7 +23,7 @@ export default function CustomerControl({
 
   useEffect(() => {
     if (provider) {
-      const customerList = provider.linkedCustomers.map((customer) => {
+      const customerList = provider?.linkedCustomers.map((customer) => {
         return {
           value: customer._id,
           label: `${customer.user?.first || "first"} ${
