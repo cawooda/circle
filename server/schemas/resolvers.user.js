@@ -66,7 +66,7 @@ module.exports = {
       if (user.roleProvider) {
         user.roleProvider.linkedCustomers =
           user.roleProvider?.linkedCustomers.filter((customer) => {
-            if (customer.user.mobile) {
+            if (customer.user.mobile && customer.user.first) {
               return true;
             }
           });
