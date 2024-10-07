@@ -9,6 +9,7 @@
     "install": "cd server && npm i && cd ../client && npm i",
     "seed": "cd server && npm run seed",
     "seedReset": "cd server && npm run seedReset",
+    "cleanup": "cd server && npm run cleanup",
     "build": "cd client && npm run build",
     "test": "jest"
   },
