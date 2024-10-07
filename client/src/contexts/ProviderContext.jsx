@@ -21,7 +21,7 @@ export const ProviderProvider = ({ children }) => {
   } = useQuery(GET_MY_PROVIDER, {
     skip: !isProvider, // Skip query if no userId is available
   });
-  refetchUser();
+
   useEffect(() => {
     if (data && data.getMyProvider) {
       setProvider(data.getMyProvider);

@@ -22,7 +22,6 @@ async function verifyToken(token) {
     return authenticatedPerson;
   } catch (error) {
     console.error(error.message);
-    throw new Error("an error occured in verifyToken", error);
   }
 }
 

@@ -31,6 +31,7 @@ const {
 } = require("./resolvers.serviceAgreement");
 
 const { getMyProvider } = require("./resolvers.provider");
+const { addCustomer } = require("./resolvers.customer");
 
 const { getProducts } = require("./resolvers.product");
 
@@ -50,6 +51,7 @@ const resolvers = {
   Mutation: {
     addServiceAgreement,
     signServiceAgreement,
+    addCustomer,
     updateProviderProfile,
     toggleUserRole,
     updateProfile,

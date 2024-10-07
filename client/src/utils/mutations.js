@@ -20,6 +20,36 @@ export const ADD_USER = gql`
   }
 `;
 
+export const ADD_CUSTOMER = gql`
+  mutation AddCustomer(
+    $token: String!
+    $providerId: ID!
+    $first: String!
+    $last: String!
+    $mobile: String!
+    $email: String!
+    $invoiceEmail: String!
+    $referenceNumber: String!
+    $referenceName: String!
+    $datOfBirth: String!
+  ) {
+    addCustomer(
+      token: $token
+      providerId: $providerId
+      first: $first
+      last: $last
+      mobile: $mobile
+      email: $email
+      invoiceEmail: $invoiceEmail
+      referenceNumber: $referenceNumber
+      referenceName: $referenceName
+      datOfBirth: $datOfBirth
+    ) {
+      _id
+    }
+  }
+`;
+
 export const UPDATE_USER_PASSWORD = gql`
   mutation UpdateUserPassword($userId: ID!, $password: String) {
     updateUserPassword(userId: $userId, password: $password) {
@@ -140,6 +170,7 @@ export const UPDATE_PROVIDER_PROFILE = gql`
     $abn: String
     $termsAndConditions: [TermsAndConditionsInput]
     $address: AddressInput
+    $logoUrl: String
   ) {
     updateProviderProfile(
       userId: $userId
@@ -148,6 +179,7 @@ export const UPDATE_PROVIDER_PROFILE = gql`
       abn: $abn
       termsAndConditions: $termsAndConditions
       address: $address
+      logoUrl: $logoUrl
     ) {
       _id
       updatedAt

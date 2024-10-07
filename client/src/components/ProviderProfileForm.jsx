@@ -69,6 +69,7 @@ const ProviderProfileForm = () => {
       state: user.roleProvider.address?.state || "d",
       postalCode: user.roleProvider.address?.postalCode || "d",
     },
+    logo: null,
   });
 
   useEffect(() => {
@@ -76,6 +77,14 @@ const ProviderProfileForm = () => {
       onOpen();
     }
   }, [user, onOpen]);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setFormData({
+      ...formData,
+      logo: file,
+    });
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -116,7 +125,18 @@ const ProviderProfileForm = () => {
   };
 
   const handleFormSubmit = async (event) => {
-    const { providerName, abn, termsAndConditions, address } = formData;
+    const { providerName, abn, termsAndConditions, address, logo } = formData;
+    let logoUrl = null;
+    if (logo) {
+      const formData = new FormData();
+      formData.append("file", logo);
+      const response = await fetch("/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await response.json();
+      logoUrl = data.url;
+    }
 
     const response = await updateProviderProfile({
       variables: {
@@ -131,6 +151,7 @@ const ProviderProfileForm = () => {
           })
         ),
         address,
+        logoUrl,
       },
     });
   };
@@ -183,7 +204,14 @@ const ProviderProfileForm = () => {
                     handleInputChange={handleInputChange}
                   />
                   <Spacer />
-
+                  <FormControl>
+                    <FormLabel>Upload Logo</FormLabel>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                    />
+                  </FormControl>
                   <Container centerContent>
                     <Button
                       {...ButtonStyles}

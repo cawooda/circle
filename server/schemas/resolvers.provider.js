@@ -28,7 +28,15 @@ module.exports = {
   },
   updateProviderProfile: async (
     _parent,
-    { userId, providerId, providerName, abn, termsAndConditions, address },
+    {
+      userId,
+      providerId,
+      providerName,
+      abn,
+      termsAndConditions,
+      address,
+      logoUrl,
+    },
     context
   ) => {
     try {
@@ -61,6 +69,10 @@ module.exports = {
 
       if (termsAndConditions !== undefined) {
         provider.termsAndConditions = termsAndConditions;
+      }
+
+      if (logoUrl !== undefined) {
+        provider.logoUrl = logoUrl;
       }
 
       if (address !== undefined) {

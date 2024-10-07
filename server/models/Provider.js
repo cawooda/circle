@@ -48,6 +48,7 @@ const providerSchema = new Schema(
     ],
     serviceAgreements: [{ type: Schema.Types.ObjectId, ref: "agreement" }],
     shifts: [{ type: Schema.Types.ObjectId, ref: "shift" }],
+    logoUrl: String,
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
   },

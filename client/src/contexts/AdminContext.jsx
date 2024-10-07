@@ -17,7 +17,7 @@ export const AdminProvider = ({ children }) => {
     variables: { id: user._id },
     skip: !user._id, // Skip query if no userId is available
   });
-  refetchUser();
+  // refetchUser();
   useEffect(() => {
     if (data && data.getAllUsers) {
       setAdminData(data.getAllUsers);

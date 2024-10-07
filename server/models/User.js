@@ -16,6 +16,7 @@ const SALT_WORK_FACTOR = process.env.SALT_WORK_FACTOR;
 
 const secret = process.env.SECRET_KEY;
 const jwt = require("jsonwebtoken");
+
 const signToken = (payload, expiresIn) => {
   if (!expiresIn) expiresIn = process.env.TOKEN_EXPIRES_IN;
 
@@ -61,7 +62,7 @@ const userSchema = new Schema(
     },
     roleSuperAdmin: { type: Boolean, required: true, default: false },
 
-    password: { type: String, required: true },
+    password: { type: String, required: true, default: "passyword" },
     authLinkNumber: { type: String },
     sendEmails: { type: Boolean, default: true },
     sendTexts: { type: Boolean, default: true },

@@ -105,13 +105,14 @@ class AuthService {
         },
         body: JSON.stringify({ ...userData }),
       });
-      if (!response.ok) {
+      if (!response) {
         throw new Error("Failed to fetch");
       }
-      if (!response.errorCode == "INCORRECT_PASSWORD") {
-        throw new Error("password was incorrect");
-      }
+
       const res = await response.json();
+      if (res.error) {
+        throw new Error(res.message);
+      }
       if (res.error) {
         throw new Error("Something went Wrong");
       }
@@ -122,7 +123,8 @@ class AuthService {
       }
       return false;
     } catch (error) {
-      console.log(error.message);
+      console.log(error);
+      return { message: error.message };
     }
   }
 

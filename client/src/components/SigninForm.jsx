@@ -139,7 +139,7 @@ const SigninForm = ({ forceOpen }) => {
       if (signup) {
         const response = await AuthService.signUpUser(userFormData);
         if (!response) {
-          setMessage(response.message); // Set the error message
+          setMessage("sorry we didnt get a response from the server"); // Set the error message
           setLoadingState(false);
           throw new Error("error with signup");
         } else {

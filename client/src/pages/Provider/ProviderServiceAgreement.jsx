@@ -82,7 +82,7 @@ export default function ProviderServiceAgreement() {
     endDate: dayjs().format("YYYY-MM-DD"),
   });
   const sigCanvas = useRef(null);
-  const [customers, setCustomers] = useState([]);
+
   const [currentUser, setCurrentUser] = useState({});
 
   const [addServiceAgreement, { loading }] = useMutation(
@@ -123,18 +123,6 @@ export default function ProviderServiceAgreement() {
         ...prevState,
         endDate: defaultEndDate,
       }));
-
-      const customerList = user.roleProvider.linkedCustomers.map((customer) => {
-        return {
-          value: customer._id,
-          label: `${customer.user.first} ${customer.user.last}`,
-        };
-      });
-      customerList.unshift({
-        value: "00000--0000",
-        label: "...choose customer",
-      });
-      setCustomers(customerList);
     }
   }, [user]);
 
@@ -213,10 +201,7 @@ export default function ProviderServiceAgreement() {
           onChange={handleInputChange}
         />
       </FormControl>
-      <CustomerControl
-        handleInputChange={handleInputChange}
-        customers={customers}
-      />
+      <CustomerControl handleInputChange={handleInputChange} />
 
       <Spacer />
       <ServiceControl handleInputChange={handleInputChange} />

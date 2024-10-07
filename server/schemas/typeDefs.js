@@ -204,9 +204,19 @@ type Mutation {
         abn: String,
         termsAndConditions: [TermsAndConditionsInput],
         address: AddressInput
+        logoUrl:String
     ): Provider
     updateUserPassword(userId:ID!,password:String):User
-    
+    addCustomer(token:String!,
+      providerId:ID!,
+      first:String!,
+      last:String!,
+      mobile:String!,
+      email:String!,
+      invoiceEmail:String!,
+      referenceNumber:String!,
+      referenceName:String!,
+      datOfBirth:String!):Customer
     addService(providerId: ID!, productId: ID!):AddServiceResponse
     deleteService(serviceId:ID!):Service
     updateServicePrice(serviceId:ID!,price: Float!):Service

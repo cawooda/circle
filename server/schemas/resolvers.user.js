@@ -80,7 +80,7 @@ module.exports = {
           }
         );
       }
-      console.log(user.roleProvider?.services);
+
       user.save();
       // for each linked customer in the roleProvider of user, check whether the population has worked to give name, mobile etc.
       // if not delete the id from the linked
@@ -111,7 +111,7 @@ module.exports = {
           .exec();
 
         user.serviceAgreements = serviceAgreements;
-        console.log(user);
+        console.log("getMe finished");
         return user;
       } else {
         return { message: "user not found" };
