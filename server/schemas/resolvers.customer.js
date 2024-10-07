@@ -30,8 +30,6 @@ module.exports = {
         throw new Error("Could not add or find user in addCustomer resolver");
       }
 
-      console.log("User:", user);
-
       // Step 3: Check if the customer exists or create a new customer
       let customer = await Customer.findById(user.roleCustomer);
       if (!customer) {

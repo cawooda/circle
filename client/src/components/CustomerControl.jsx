@@ -25,7 +25,9 @@ export default function CustomerControl({
       const customerList = user.roleProvider.linkedCustomers.map((customer) => {
         return {
           value: customer._id,
-          label: `${customer.user.first} ${customer.user.last}`,
+          label: `${customer.user?.first || "first"} ${
+            customer.user?.last || "last"
+          }`,
         };
       });
       customerList.unshift({
