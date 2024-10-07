@@ -12,15 +12,20 @@ function generateRandomNumber(min = 1000000000, max = 9999999999) {
   return randomNumber;
 }
 
-async function verifyToken(token) {
+function verifyToken(token) {
   try {
-    const { authenticatedPerson } = await jwt.verify(token, secret, {
-      maxAge: process.env.TOKEN_EXPIRES_IN,
-    });
-    if (!authenticatedPerson)
-      throw new Error("we couldn't authenticate with that token.");
+    const { authenticatedPerson } = jwt.verify(token, process.env.SECRET_KEY);
     return authenticatedPerson;
   } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      console.log("Token has expired. Please log in again.");
+    } else if (error.name === "JsonWebTokenError") {
+      console.log("Invalid token. Please provide a valid token.");
+    } else if (error.name === "NotBeforeError") {
+      console.log("Token is not active yet.");
+    } else {
+      console.log("An unknown error occurred.");
+    }
     console.error(error.message);
   }
 }
