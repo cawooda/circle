@@ -177,8 +177,12 @@ module.exports = {
       //find the customer to email to them.
       const customerUser = await User.findById(
         signedServiceAgreement.customer.user._id
-      );
-
+      ).populate({
+        path: "service",
+        model: "service",
+        populate: { path: "product", model: "product" },
+      });
+      console.log(signedServiceAgreement.service);
       const renderedEmail = renderTemplate(
         {
           subject: "New Service Agreement",
@@ -206,6 +210,7 @@ module.exports = {
       }
       signedServiceAgreement.agreementPath = outputFileName;
       await signedServiceAgreement.save();
+      await signedServiceAgreement.toObject();
       return {
         success: true,
         message: "Service Agreement Signed",
@@ -224,20 +229,31 @@ module.exports = {
       const serviceAgreement = await ServiceAgreement.findOne({
         agreementNumber: agreementNumber,
       });
-      await serviceAgreement.populate({
-        path: "customer",
-        populate: { path: "user" },
-      });
-
-      await serviceAgreement.populate({
-        path: "provider",
-        populate: { path: "user" },
-      });
-      await serviceAgreement.populate("service");
-      await serviceAgreement.populate("service.product");
+      await serviceAgreement.populate([
+        {
+          path: "customer",
+          model: "customer",
+          populate: { path: "user", model: "user" },
+        },
+        {
+          path: "provider",
+          model: "provider",
+          populate: { path: "user", model: "user" },
+        },
+        {
+          path: "customer",
+          model: "customer",
+          populate: { path: "user", model: "user" },
+        },
+        {
+          path: "service",
+          model: "service",
+          populate: { path: "product", model: "product" },
+        },
+      ]);
 
       await serviceAgreement.toObject();
-
+      console.log(serviceAgreement);
       return serviceAgreement;
     } catch (error) {
       console.error(error);

@@ -1,4 +1,5 @@
 const { Customer, User, Provider } = require("../models");
+const { verifyToken } = require("../utils/helpers");
 
 module.exports = {
   addCustomer: async (
@@ -18,14 +19,15 @@ module.exports = {
     context
   ) => {
     try {
-      // Step 1: Check if the user exists
-      let user = await User.findOne({ first, last, dateOfBirth });
-
-      // Step 2: Create the user if they do not exist
+      if (!verifyToken(token))
+        throw new Error("Could not verify with that token");
+      let user = await User.findOneAndUpdate(
+        { first, last, dateOfBirth },
+        { email }
+      );
       if (!user) {
         user = await User.create({ first, last, mobile, email });
       }
-
       if (!user) {
         throw new Error("Could not add or find user in addCustomer resolver");
       }
@@ -34,13 +36,15 @@ module.exports = {
       let customer = await Customer.findById(user.roleCustomer);
       if (!customer) {
         customer = await Customer.create({
+          user: user._id,
           invoiceEmail,
           referenceName,
           referenceNumber,
           dateOfBirth,
         });
-
         // Link the newly created customer to the user
+        if (!customer)
+          throw new Error("Could not add customer in addCustomer resolver");
         user.roleCustomer = customer._id;
         await user.save();
       } else {
@@ -66,8 +70,8 @@ module.exports = {
           $addToSet: { linkedCustomers: customer._id },
         });
       }
-
-      console.log("Provider updated successfully");
+      await provider.save();
+      return provider.toObject();
     } catch (error) {
       console.error("Error in addCustomer resolver:", error.message);
     }

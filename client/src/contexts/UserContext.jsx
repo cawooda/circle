@@ -33,14 +33,11 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (data) {
-      if (data.getMe) {
-        setUser(data.getMe);
-
-        setHasError(false); // Reset error state on successful data fetch
-      }
+    if (data?.getMe) {
+      setUser(data.getMe);
+      setHasError(false);
     }
-  }, [data, loading]);
+  }, [data]);
 
   return (
     <UserContext.Provider

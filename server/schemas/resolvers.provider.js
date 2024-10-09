@@ -12,7 +12,11 @@ module.exports = {
           path: "user",
           model: "user",
         })
-        .populate("services")
+        .populate({
+          path: "services",
+          model: "service",
+          populate: { path: "product", model: "product" },
+        })
         .populate({
           path: "shifts",
           model: "shift",
@@ -92,7 +96,11 @@ module.exports = {
         if (address.postalCode !== undefined)
           provider.address.postalCode = address.postalCode;
       }
-
+      provider.services = provider?.services.filter((service) => {
+        if (service.product.name) {
+          return true;
+        }
+      });
       // Save the updated provider
       const updatedProvider = await provider.save();
 

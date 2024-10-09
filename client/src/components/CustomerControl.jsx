@@ -18,11 +18,11 @@ export default function CustomerControl({
   locked,
   defaultValue,
 }) {
-  const { provider, refetchProvider } = useProvider();
+  const { provider } = useProvider();
   const [customers, setCustomers] = useState([]);
 
   useEffect(() => {
-    if (provider) {
+    if (provider?.linkedCustomers) {
       const customerList = provider.linkedCustomers.map((customer) => {
         return {
           value: customer._id,

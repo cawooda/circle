@@ -121,7 +121,7 @@ const SigninForm = ({ forceOpen }) => {
       const response = await AuthService.verifySmsCode(code);
       if (response) {
         console.log("log in should be all good");
-        refetchUser();
+
         setLoadingState(false);
         onClose();
         navigate("/");
@@ -168,7 +168,6 @@ const SigninForm = ({ forceOpen }) => {
         setMessage(responseLogin.message);
         return;
       }
-
       refetchUser();
       onClose();
     } catch (error) {

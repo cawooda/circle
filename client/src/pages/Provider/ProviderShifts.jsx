@@ -7,7 +7,6 @@ export default function ProviderShifts() {
     provider,
     loading: providerLoading,
     error: providerError,
-    refetchProvider,
   } = useProvider();
 
   if (providerLoading) {

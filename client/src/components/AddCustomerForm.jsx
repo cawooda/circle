@@ -31,13 +31,13 @@ import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
 import { ModalHeadingStyle } from "./styles/modalStyles";
 import { CardStyles } from "./styles/CardStyles";
 import logo from "/logo.png";
-import { useUser } from "../contexts/UserContext";
+import { useProvider } from "../contexts/ProviderContext";
 
 import { useMutation } from "@apollo/client";
 import { ADD_CUSTOMER } from "../utils/mutations";
 
 const AddCustomerForm = () => {
-  const { user, refetchUser } = useUser();
+  const { provider, refetchProvider } = useProvider();
   const [mobileMessage, setMobileMessage] = useState();
   const [invoiceEmailMessage, setInvoiceEmailMessage] = useState();
   const [emailMessage, setEmailMessage] = useState();
@@ -60,7 +60,7 @@ const AddCustomerForm = () => {
   const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
 
   const [formData, setFormData] = useState({
-    providerId: user.roleProvider._id,
+    providerId: provider._id,
     first: "",
     last: "",
     mobile: "",
@@ -123,11 +123,11 @@ const AddCustomerForm = () => {
         datOfBirth,
       },
     });
+    // refetchProvider();
     onClose();
-    refetchUser();
   };
 
-  if (user.roleProvider)
+  if (provider)
     return (
       <>
         <IconButton

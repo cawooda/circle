@@ -137,7 +137,10 @@ export default function CustomerServiceAgreement() {
       />
     );
   }
-
+  console.log(
+    "agreementQueryData.getServiceAgreement",
+    agreementQueryData.getServiceAgreement
+  );
   return (
     <Container
       borderRadius="50px"

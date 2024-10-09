@@ -9,7 +9,8 @@ const ProviderContext = createContext();
 export const useProvider = () => useContext(ProviderContext);
 
 export const ProviderProvider = ({ children }) => {
-  const { user, refetchUser } = useUser();
+  const { user } = useUser();
+  const [hasError, setHasError] = useState(false);
 
   const [provider, setProvider] = useState({});
   const isProvider = user?.roleProvider || null;
@@ -19,14 +20,16 @@ export const ProviderProvider = ({ children }) => {
     data,
     refetch: refetchProvider,
   } = useQuery(GET_MY_PROVIDER, {
-    skip: !isProvider, // Skip query if no userId is available
+    skip: !isProvider,
+    onError: () => setHasError(true),
   });
 
   useEffect(() => {
-    if (data && data.getMyProvider) {
+    if (data?.getMyProvider) {
       setProvider(data.getMyProvider);
+      setHasError(false);
     }
-  }, [data, loading]);
+  }, [data]);
 
   return (
     <ProviderContext.Provider

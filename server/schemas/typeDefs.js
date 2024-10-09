@@ -41,7 +41,7 @@ type Provider {
     linkedCustomers: [Customer]
     services: [Service]
     serviceAgreements: [ServiceAgreement]
-    shifts: [Shift]
+    shifts: [Shift]!
 }
 
 type ServiceAgreement {
@@ -80,7 +80,7 @@ type Shift {
     _id:ID
     provider: Provider
     customer: Customer
-    service: Service!
+    service: Service
     startTime: String
     endTime: String
     units: Float
