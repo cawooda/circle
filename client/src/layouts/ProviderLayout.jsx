@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-
+import { useState } from "react";
 import {
   Container,
   Heading,
@@ -12,6 +12,7 @@ import {
 import SubMenu from "../components/SubMenu";
 import SigninForm from "../components/SigninForm";
 import { useUser } from "../contexts/UserContext";
+import AuthService from "../utils/auth";
 
 const menu = [
   { highlight: true, label: "New Agreement", link: "service-agreement" },
@@ -24,11 +25,12 @@ const menu = [
 import Splash from "../components/Splash";
 
 export default function ProviderLayout() {
+  const { loggedIn, setLoggedIn } = useState(AuthService.loggedIn());
   const { user, loading, error } = useUser();
   if (loading) return <Splash />;
   if (error) {
     console.log("error", error);
-    return <SigninForm />;
+    return <SigninForm loggedIn={loggedIn} setLoggedIn={setLoggedIn} />;
   }
   if (user)
     return (

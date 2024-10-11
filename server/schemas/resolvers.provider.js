@@ -35,7 +35,7 @@ module.exports = {
 
       return provider.toObject();
     } catch (error) {
-      console.log(error.message);
+      console.log("error in resolvers.provider", error.message);
       throw error;
     }
   },

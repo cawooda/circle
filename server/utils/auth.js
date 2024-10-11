@@ -15,7 +15,7 @@ async function authMiddleware({ req }) {
   const openOperations = [
     "getServiceAgreement",
     "signServiceAgreement",
-    "getMe",
+    "GetMe",
     "IntrospectionQuery", // Example operation name
   ];
 
@@ -24,6 +24,7 @@ async function authMiddleware({ req }) {
 
   // Check if the current request matches any open operation names
   if (openOperations.includes(operationName)) {
+    console.log("should retrun null for use as operationName matched");
     return { user: null };
   }
 
@@ -40,7 +41,7 @@ async function authMiddleware({ req }) {
       maxAge: process.env.TOKEN_EXPIRES_IN,
     });
 
-    const registeredUser = await User.findById(authenticatedPerson._id);
+    const registeredUser = await User.findById(authenticatedPerson?._id);
 
     if (!registeredUser) {
       throw new GraphQLError("No user found", {

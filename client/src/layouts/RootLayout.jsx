@@ -12,9 +12,11 @@ import Splash from "../components/Splash";
 import { NavLink } from "react-router-dom";
 const logoStyle = { paddingBottom: "15px" };
 import { ButtonStyles } from "../components/styles/ButtonStyle";
+import AuthService from "../utils/auth";
 
 export default function RootLayout() {
   const { user, loading, error } = useUser();
+  const { loggedIn, setLoggedIn } = useState(AuthService.loggedIn());
   const [slideShow, setSlideShow] = useState();
   const [returnVisit, setReturnVisit] = useState(
     localStorage.getItem("returnVisit") || 1
@@ -33,12 +35,12 @@ export default function RootLayout() {
 
   if (slideShow)
     return <Slideshow data={firstVisitSlideShow} setSlideShow={setSlideShow} />;
-  if (error || !user) {
+  if (!user) {
     return (
       <Center height="100vh">
         <div>
           <Flex justify="center" align="center">
-            <SigninForm />
+            <SigninForm loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
           </Flex>
         </div>
       </Center>
@@ -64,7 +66,7 @@ export default function RootLayout() {
       </Box>
       <Center bgColor="yellow.100" padding={5} gap={3}>
         <ProfileForm />
-        <SigninForm />
+        <SigninForm loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
         {user?.roleAdmin || user?.roleSuperAdmin ? (
           <Box>
             <NavLink to="/admin">

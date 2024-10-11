@@ -26,11 +26,16 @@ export const UserProvider = ({ children }) => {
     onError: () => setHasError(true),
     skip: !loggedIn,
   });
-  console.log("!loggedIn ", !loggedIn);
+
   useEffect(() => {
     const tokenCheck = AuthService.loggedIn();
     setLoggedIn(tokenCheck);
-  }, []);
+
+    // Optionally refetch the user data if the token changes or the user logs in
+    if (tokenCheck && !loading) {
+      refetchUser();
+    }
+  }, [AuthService.getToken()]);
 
   useEffect(() => {
     if (data?.getMe) {

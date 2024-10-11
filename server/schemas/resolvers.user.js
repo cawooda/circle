@@ -18,16 +18,21 @@ module.exports = {
         const users = await User.find({}).populate();
         return users;
       } catch (error) {
-        console.log(error);
+        console.log("getAllUsers resolver error", error);
         return error;
       }
     } else return { message: "user needs to be admin to perform this action" };
   },
   getMe: async (_parent, { token }, context) => {
     try {
-      if (!verifyToken(token))
-        throw new Error("Could not verify with that token");
-      if (!context) throw new Error("no context provided");
+      if (!context.user) {
+        const authenticatedPerson = await verifyToken(token);
+        if (!authenticatedPerson)
+          throw new Error("Could not verify with that token");
+        const user = authenticatedPerson;
+        context = { user };
+      }
+
       const user = await User.findById(context.user._id)
         .populate("roleCustomer")
         .populate("roleProvider")
@@ -118,7 +123,7 @@ module.exports = {
         return { message: "user not found" };
       }
     } catch (error) {
-      console.log(error.message);
+      console.log("user resolver error getMe", error);
     }
   },
   getUserByToken: async (_parent, { token }, context) => {

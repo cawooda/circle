@@ -13,7 +13,7 @@ export default function Signed() {
       <Center height="100vh">
         <div>
           <Flex justify="center" align="center">
-            <Heading fontSize={80}>
+            <Heading>
               Thank you {name ? name : ""}, that service agreement is on its
               way...
             </Heading>

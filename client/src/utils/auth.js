@@ -13,10 +13,9 @@ class AuthService {
     }
   }
 
-  // check if user's logged in
   loggedIn() {
     const token = this.getToken();
-    return !!token && !this.isTokenExpired(token);
+    return Boolean(token) && !this.isTokenExpired(token);
   }
 
   // check if token is expired
@@ -123,7 +122,7 @@ class AuthService {
       }
       return false;
     } catch (error) {
-      console.log(error);
+      console.log("error in client side auth", error);
       return { message: error.message };
     }
   }

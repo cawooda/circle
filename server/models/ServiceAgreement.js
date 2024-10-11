@@ -24,7 +24,6 @@ const serviceAgreementSchema = new Schema(
     endDate: { type: Date },
     customerSignature: { type: String, default: null }, // Store the path to the image file
     providerSignature: { type: String, default: null }, // Store the path to the image file
-
     service: {
       type: Schema.Types.ObjectId,
       ref: "service",

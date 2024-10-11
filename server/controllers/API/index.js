@@ -14,9 +14,10 @@ const controllerSmsService = new SMSService();
 
 async function handleSetupUserLink(mobile) {
   const userExists = await User.findOne({ mobile: mobile });
+  console.log("handle setup link reached");
   if (!userExists) throw new Error("NOT_FOUND: user doesnt exist");
   const authNumber = await userExists.sendAuthLink();
-  console.log(authNumber);
+  console.log("authNumber", authNumber);
   return {
     userExists: true,
     userCreated: false,
@@ -106,11 +107,12 @@ router.put("/users", async (req, res) => {
       return await res.send(obj);
     }
     if (linkRequest) {
+      console.log("link request in API");
       const obj = await handleSetupUserLink(mobile);
-      return await res.send(obj);
+      return await res.json(obj);
     }
   } catch (error) {
-    console.log(error);
+    console.log("error in index.js ", error);
     let statusCode = 500;
     //start with AUTH and has a :
     if (error.message.match(/^AUTH:/)) statusCode = 401;
@@ -140,7 +142,7 @@ router.post("/users", async (req, res) => {
     return res.json(obj);
   } catch (error) {
     // Handle any unexpected errors
-    console.log(error);
+    console.log("user api in index.js error", error);
     return res.status(500).json({
       message: "An unexpected error occurred",
     });

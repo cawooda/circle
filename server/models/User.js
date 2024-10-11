@@ -99,42 +99,34 @@ userSchema
   });
 
 userSchema.pre("save", async function (next) {
-  if (!this.roleCustomer) {
-    try {
+  try {
+    if (!this.roleCustomer) {
       const newCustomer = new Customer({
         user: this._id,
       });
       await newCustomer.save();
       this.roleCustomer = newCustomer._id;
-    } catch (error) {
-      console.log(error);
     }
-  }
 
-  if (!this.roleProvider) {
-    try {
+    if (!this.roleProvider) {
       const newProvider = new Provider({});
       await newProvider.save();
       newProvider.user = this._id;
       await newProvider.save();
       this.roleProvider = newProvider._id;
-    } catch (error) {
-      console.log(error);
     }
-  }
 
-  if (this.isModified("password") || this.isNew) {
-    try {
+    if (this.isModified("password") || this.isNew) {
       // Generate salt and hash the password
       const salt = await bcrypt.genSalt(10);
       this.password = await bcrypt.hash(this.password, salt);
-    } catch (error) {
-      return next(error);
     }
-  }
-  // Generate token after the user is saved
-  if (this.isNew) {
-    this.generateAuthToken();
+    // Generate token after the user is saved
+    if (this.isNew) {
+      this.generateAuthToken();
+    }
+  } catch (error) {
+    console.log("error in user model pre save", error);
   }
   next();
 });
@@ -145,12 +137,13 @@ userSchema.methods.sendAuthLink = async function () {
   const host = process.env.HOST || `http://localhost:3000`; // Get the host (hostname:port)
   const fullUrl = `${host}/auth/${this.authLinkNumber}`;
 
-  await this.sendMessage(
+  this.sendMessage(
     `Circle Login`,
     `Logging in is easy with the following link: ${fullUrl} CODE: ${this.authLinkNumber}  :)`,
     `<p>Logging in is easy with the following link. </p><p>${fullUrl}</p> <p>Your Temporary Access Code is :</p> <h3>${this.authLinkNumber} </h3>  :)`,
     null
   );
+
   return this.authLinkNumber;
 };
 
@@ -161,12 +154,12 @@ userSchema.methods.sendMessage = async function (
   attachment
 ) {
   try {
-    if (this.sendTexts) await userSmsService.sendText(this.mobile, body);
+    if (this.sendTexts) userSmsService.sendText(this.mobile, body);
   } catch (error) {
     throw new Error("sms service in user schema send message errorred", error);
   }
   try {
-    if (this.email) await this.sendEmail(subject, body, html, attachment);
+    if (this.email) this.sendEmail(subject, body, html, attachment);
   } catch (error) {
     throw new Error(
       `email service in user schema send message errorred ${error.message}`

@@ -36,7 +36,7 @@ import logo from "/logo.png";
 import { useUser } from "../contexts/UserContext";
 import Splash from "./Splash";
 
-const SigninForm = ({ forceOpen }) => {
+const SigninForm = ({ forceOpen, loggedIn, setLoggedIn }) => {
   const [loadingState, setLoadingState] = useState(false);
   const [formValidState, setFormValidState] = useState(false);
   const navigate = useNavigate();
@@ -121,10 +121,10 @@ const SigninForm = ({ forceOpen }) => {
       const response = await AuthService.verifySmsCode(code);
       if (response) {
         console.log("log in should be all good");
-
+        setLoggedIn(true);
         setLoadingState(false);
-        onClose();
         navigate("/");
+        onClose();
       }
     } catch (error) {
       console.error(error.message);
@@ -141,8 +141,10 @@ const SigninForm = ({ forceOpen }) => {
         if (!response) {
           setMessage("sorry we didnt get a response from the server"); // Set the error message
           setLoadingState(false);
+          setLoggedIn(false);
           throw new Error("error with signup");
         } else {
+          setLoggedIn(true);
           refetchUser();
           setLoadingState(false);
           onClose();
@@ -155,7 +157,8 @@ const SigninForm = ({ forceOpen }) => {
 
       if (responseLogin?.token) {
         onClose();
-        refetchUser();
+        setLoggedIn(true);
+
         setLoadingState(false);
         setUserFormData({
           first: "",
@@ -165,6 +168,7 @@ const SigninForm = ({ forceOpen }) => {
         });
       } else {
         setLoadingState(false);
+        setLoggedIn(false);
         setMessage(responseLogin.message);
         return;
       }
@@ -174,6 +178,7 @@ const SigninForm = ({ forceOpen }) => {
       console.log("Error received trying to create new userAuth", error);
     }
   };
+
   if (loadingState) return <Splash />;
   return (
     <>
@@ -190,7 +195,7 @@ const SigninForm = ({ forceOpen }) => {
           }
         }}
       >
-        {user ? "Logout" : "Login"}
+        {loggedIn ? "Logout" : "Login"}
       </Button>
 
       <Modal isOpen={isOpen} onClose={onClose}>

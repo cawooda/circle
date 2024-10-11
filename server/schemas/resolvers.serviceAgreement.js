@@ -82,7 +82,7 @@ module.exports = {
               newServiceAgreement.agreementNumber
             }`
           : `${process.env.HOST}/agreement/${newServiceAgreement.agreementNumber}`;
-      console.log("link", link);
+
       const newServiceAgreementRenderedEmail = renderTemplate(
         { ...newServiceAgreement.toObject(), link },
         "newServiceAgreementEmail"
@@ -114,31 +114,39 @@ module.exports = {
         _id: agreementId,
       })
         .populate([
-          { path: "customer", model: "customer" },
-          { path: "provider", model: "provider" },
-          { path: "provider.user", model: "user" },
-          { path: "customer.user", model: "user" },
-          { path: "service", model: "service" },
-          { path: "service.product", model: "product" },
+          {
+            path: "customer",
+            model: "customer",
+            populate: { path: "user", model: "user" },
+          },
+          {
+            path: "provider",
+            model: "provider",
+            populate: { path: "user", model: "user" },
+          },
+          ,
+          {
+            path: "service",
+            model: "service",
+            populate: { path: "product", model: "product" },
+          },
         ])
         .exec();
-      signedServiceAgreement.customer.user = await User.findOne({
-        _id: signedServiceAgreement.customer.user,
-      }).populate();
-      signedServiceAgreement.service = await Service.findOne({
-        _id: signedServiceAgreement.service,
-      }).populate("product");
+      console.log(signedServiceAgreement.service.product.name);
+      if (!signedServiceAgreement.service.product.name) {
+        console.log(signedServiceAgreement.service.product.name);
+        throw new Error("could not populate product name");
+      }
 
       if (customerSignature) {
         signedServiceAgreement.approvedByCustomer = true;
         signedServiceAgreement.customerSignature = customerSignature;
       }
-      await signedServiceAgreement.save();
-      const first = signedServiceAgreement.customer.user?.first || "firstName";
-      const last = signedServiceAgreement.customer.user?.last || "lastName";
-      const providerName =
-        signedServiceAgreement.provider?.providerName || "providerName";
-      const service = signedServiceAgreement?.service || "__";
+      const first = signedServiceAgreement.customer.user.first;
+      const last = signedServiceAgreement.customer.user.last;
+      const providerName = signedServiceAgreement.provider.providerName;
+      const service = signedServiceAgreement.service;
+
       const startDate = dayjs(
         new Date(signedServiceAgreement?.startDate)
       ).format("DD-MM-YYYY");
@@ -148,6 +156,7 @@ module.exports = {
 
       //makes use of the renderTemlate function to use a template to display the signedServiceagreement
       const signedServiceAgreementObject = signedServiceAgreement.toObject();
+
       const renderPreparedServiceAgreement = {
         ...signedServiceAgreementObject,
         startDate: startDate,
@@ -175,14 +184,10 @@ module.exports = {
       //convert it to pdf, saving at the outPutFileName
       await convertToPdf(renderedHtml, outputFileName);
       //find the customer to email to them.
-      const customerUser = await User.findById(
-        signedServiceAgreement.customer.user._id
-      ).populate({
-        path: "service",
-        model: "service",
-        populate: { path: "product", model: "product" },
-      });
-      console.log(signedServiceAgreement.service);
+      // const customerUser = await User.findById(
+      //   signedServiceAgreement.customer.user._id
+      // );
+
       const renderedEmail = renderTemplate(
         {
           subject: "New Service Agreement",
@@ -194,9 +199,9 @@ module.exports = {
         },
         "emailTemplate"
       );
-      if (customerUser.email) {
+      if (signedServiceAgreement?.customer?.user?.email) {
         userEmailService.sendMail(
-          customerUser.email,
+          signedServiceAgreement?.customer?.user?.email,
           "A new Service Agreement has Arrived",
           `Hi ${signedServiceAgreement.customer.user.first}, 
           you just signed a new service agreement with ${signedServiceAgreement.provider.providerName} for
@@ -253,7 +258,7 @@ module.exports = {
       ]);
 
       await serviceAgreement.toObject();
-      console.log(serviceAgreement);
+
       return serviceAgreement;
     } catch (error) {
       console.error(error);

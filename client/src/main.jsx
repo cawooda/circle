@@ -43,13 +43,17 @@ import { createBrowserRouter, Route, RouterProvider } from "react-router-dom";
 // Router configuration
 const router = createBrowserRouter([
   {
+    path: "signed",
+    element: <ServiceSign />,
+    children: [{ path: "", element: <Signed /> }],
+  },
+  {
     path: "agreement",
     element: <ServiceSign />,
     children: [
       { path: ":agreementNumber", element: <CustomerServiceAgreement /> },
     ],
   },
-  { path: "signed", element: <Signed /> },
   {
     path: "auth",
     element: <AuthLink />,
@@ -108,6 +112,7 @@ const router = createBrowserRouter([
           },
         ],
       },
+
       {
         path: "customer",
         element: <CustomerLayout />,
