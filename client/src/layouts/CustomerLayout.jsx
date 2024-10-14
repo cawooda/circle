@@ -11,8 +11,6 @@ const menu = [
 ];
 
 export default function CustomerLayout() {
-  // const { user, setUser, loading, error } = useUser();
-
   return (
     <>
       <SubMenu items={menu} />

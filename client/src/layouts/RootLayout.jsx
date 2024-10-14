@@ -16,7 +16,7 @@ import AuthService from "../utils/auth";
 
 export default function RootLayout() {
   const { user, loading, error } = useUser();
-  const { loggedIn, setLoggedIn } = useState(AuthService.loggedIn());
+  const [loggedIn, setLoggedIn] = useState(AuthService.loggedIn());
   const [slideShow, setSlideShow] = useState();
   const [returnVisit, setReturnVisit] = useState(
     localStorage.getItem("returnVisit") || 1

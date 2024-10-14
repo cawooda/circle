@@ -54,20 +54,26 @@ const ProfileForm = () => {
   });
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
-  const { user, setUser } = useUser();
+  const { user, loading, error } = useUser();
 
-  const [formData, setFormData] = useState({
-    first: user.first,
-    last: user.last,
-    mobile: user.mobile,
-    email: user.email,
-  });
+  const [formData, setFormData] = useState({});
 
   useEffect(() => {
-    if (!user) {
+    if (user) {
+      setFormData({
+        first: user.first || "",
+        last: user.last || "",
+        mobile: user.mobile || "",
+        email: user.email || "",
+      });
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (!user && !loading && !error) {
       onOpen();
     }
-  }, [user, onOpen]);
+  }, [user, loading, error, onOpen]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;

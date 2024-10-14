@@ -1,52 +1,88 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
+import React, {
+  createContext,
+  useMemo,
+  useState,
+  useEffect,
+  useContext,
+} from "react";
 
 import { useQuery } from "@apollo/client";
 import { GET_ME } from "../utils/queries";
 import AuthService from "../utils/auth";
-import { useNavigate } from "react-router-dom";
+import { GET_MY_PROVIDER } from "../utils/queries"; // Adjust the path as necessary
 
 const UserContext = createContext();
 
 export const useUser = () => useContext(UserContext);
 
 export const UserProvider = ({ children }) => {
-  const navigate = useNavigate();
+  const token = useMemo(() => AuthService.getToken(), []);
   const [user, setUser] = useState(null);
+  const [provider, setProvider] = useState({});
   const [retryCount, setRetryCount] = useState(0);
   const [hasError, setHasError] = useState(false);
   const [loggedIn, setLoggedIn] = useState(() => AuthService.loggedIn());
 
   const {
-    loading,
-    error,
-    data,
+    loading: userLoading,
+    error: userError,
+    data: userData,
     refetch: refetchUser,
   } = useQuery(GET_ME, {
-    variables: { token: AuthService.getToken() },
-    onError: () => setHasError(true),
-    skip: !loggedIn,
+    variables: { token },
+    fetchPolicy: "network-only",
+    onError: (err) => {
+      console.log("Error encountered:", err);
+      setHasError(true);
+    },
+  });
+
+  const {
+    loading: providerLoading,
+    error: providerError,
+    data: providerData,
+    refetch: refetchProvider,
+  } = useQuery(GET_MY_PROVIDER, {
+    skip: !user?.roleProvider, // Avoid unnecessary query when no provider is logged in
+    fetchPolicy: "network-only",
+    onError: (err) => {
+      console.log("Error in getMyProvider:", err);
+      setHasError(true);
+    },
   });
 
   useEffect(() => {
-    const tokenCheck = AuthService.loggedIn();
-    setLoggedIn(tokenCheck);
-
-    // Optionally refetch the user data if the token changes or the user logs in
-    if (tokenCheck && !loading) {
-      refetchUser();
-    }
-  }, [AuthService.getToken()]);
-
-  useEffect(() => {
-    if (data?.getMe) {
-      setUser(data.getMe);
+    if (
+      userData?.getMe &&
+      JSON.stringify(user) !== JSON.stringify(userData.getMe)
+    ) {
+      setUser(userData.getMe);
       setHasError(false);
     }
-  }, [data]);
+  }, [userData, user]);
+
+  useEffect(() => {
+    if (
+      providerData?.getMyProvider &&
+      JSON.stringify(provider) !== JSON.stringify(providerData.getMyProvider)
+    ) {
+      setProvider(providerData.getMyProvider);
+      setHasError(false);
+    }
+  }, [providerData, provider]);
 
   return (
     <UserContext.Provider
-      value={{ user, setUser, refetchUser, loading, error }}
+      value={{
+        user,
+        provider,
+        refetchUser,
+        refetchProvider,
+        userLoading,
+        userError,
+        providerLoading,
+        providerError,
+      }}
     >
       {children}
     </UserContext.Provider>

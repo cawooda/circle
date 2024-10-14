@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 
-import { useProvider } from "../contexts/ProviderContext";
+import { useUser } from "../contexts/UserContext";
 import AddCustomerForm from "./AddCustomerForm";
 
 export default function CustomerControl({
@@ -18,7 +18,7 @@ export default function CustomerControl({
   locked,
   defaultValue,
 }) {
-  const { provider } = useProvider();
+  const { provider } = useUser();
   const [customers, setCustomers] = useState([]);
 
   console.log("provider", provider);

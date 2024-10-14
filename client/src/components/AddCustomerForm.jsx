@@ -31,13 +31,13 @@ import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
 import { ModalHeadingStyle } from "./styles/modalStyles";
 import { CardStyles } from "./styles/CardStyles";
 import logo from "/logo.png";
-import { useProvider } from "../contexts/ProviderContext";
+import { useUser } from "../contexts/UserContext";
 
 import { useMutation } from "@apollo/client";
 import { ADD_CUSTOMER } from "../utils/mutations";
 
 const AddCustomerForm = () => {
-  const { provider, refetchProvider } = useProvider();
+  const { provider, refetchProvider } = useUser();
   const [mobileMessage, setMobileMessage] = useState();
   const [invoiceEmailMessage, setInvoiceEmailMessage] = useState();
   const [emailMessage, setEmailMessage] = useState();
@@ -123,7 +123,7 @@ const AddCustomerForm = () => {
         datOfBirth,
       },
     });
-    // refetchProvider();
+    refetchProvider();
     onClose();
   };
 
@@ -133,7 +133,7 @@ const AddCustomerForm = () => {
         <IconButton
           aria-label="Add Customer"
           onClick={() => {
-            if (!user) {
+            if (!provider) {
               onClose();
             } else {
               onOpen();

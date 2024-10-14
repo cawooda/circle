@@ -1,5 +1,5 @@
 import ShiftRow from "../../components/ShiftRow";
-import { useProvider } from "../../contexts/ProviderContext";
+import { useUser } from "../../contexts/UserContext";
 import NotifyUser from "../../components/NotifyUser";
 
 export default function ProviderShifts() {
@@ -7,7 +7,7 @@ export default function ProviderShifts() {
     provider,
     loading: providerLoading,
     error: providerError,
-  } = useProvider();
+  } = useUser();
 
   if (providerLoading) {
     return <div>Loading...</div>;

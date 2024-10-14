@@ -11,18 +11,13 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { Outlet } from "react-router-dom";
 import RootLayout from "./layouts/RootLayout";
 import { UserProvider } from "./contexts/UserContext";
-import { ProviderProvider } from "./contexts/ProviderContext";
+
 import { jwtDecode } from "jwt-decode";
 import AuthService from "./utils/auth";
 
-const httpLink = createHttpLink({
-  uri: "/graphql",
-  cache: new InMemoryCache(),
-});
-
 const authLink = setContext((_, { headers }) => {
-  let token = AuthService.getToken();
-
+  const token = AuthService.getToken();
+  console.log("token in authlink", token);
   return {
     headers: {
       ...headers,
@@ -38,6 +33,8 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
         case "UNAUTHENTICATED":
           // Handle token expiration error
           if (err.message === "Token expired") {
+            AuthService.logout(); // Optionally log out the user
+            // Or handle token refresh if applicable
           }
           break;
         default:
@@ -48,6 +45,10 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (networkError) {
     console.error(`[Network error]: ${networkError}`);
   }
+});
+
+const httpLink = createHttpLink({
+  uri: "/graphql",
 });
 
 const client = new ApolloClient({
@@ -61,9 +62,7 @@ function App() {
       <ApolloProvider client={client}>
         <ChakraProvider>
           <UserProvider>
-            <ProviderProvider>
-              <RootLayout />
-            </ProviderProvider>
+            <RootLayout />
           </UserProvider>
         </ChakraProvider>
       </ApolloProvider>

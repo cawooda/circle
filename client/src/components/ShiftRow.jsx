@@ -16,7 +16,7 @@ import { CardStyles } from "./styles/CardStyles";
 import CustomerControl from "./CustomerControl";
 
 export default function ShiftRow({ shift, index }) {
-  const { user, loading, error, refetchUser } = useUser();
+  const { user, loading, error } = useUser();
   const [customerList, setCustomerList] = useState([]);
   if (!user || loading || error) {
     return null; // Don't render anything if user is not available

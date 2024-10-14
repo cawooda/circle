@@ -201,12 +201,16 @@ module.exports = {
       );
       if (signedServiceAgreement?.customer?.user?.email) {
         userEmailService.sendMail(
-          signedServiceAgreement?.customer?.user?.email,
+          [
+            signedServiceAgreement?.customer?.user?.email,
+            signedServiceAgreement?.provider?.user?.email,
+            signedServiceAgreement?.customer?.serviceAgreementEmail,
+          ],
           "A new Service Agreement has Arrived",
-          `Hi ${signedServiceAgreement.customer.user.first}, 
-          you just signed a new service agreement with ${signedServiceAgreement.provider.providerName} for
-          ${signedServiceAgreement?.service.product.name}. We've attached a copy for your reccords and included
-          your plan manager for reference.
+          `Hello,
+          A new service agreement between ${signedServiceAgreement.customer.user.first} ${signedServiceAgreement.customer.user.last} with ${signedServiceAgreement.provider.providerName} for
+          ${signedServiceAgreement?.service.product.name}. 
+          We've attached a copy for your reccords and included your plan manager for reference.
           Have a great day.
         `,
           renderedEmail,
