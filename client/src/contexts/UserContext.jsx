@@ -82,6 +82,8 @@ export const UserProvider = ({ children }) => {
         userError,
         providerLoading,
         providerError,
+        loggedIn,
+        setLoggedIn,
       }}
     >
       {children}

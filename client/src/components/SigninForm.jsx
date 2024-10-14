@@ -45,7 +45,7 @@ const SigninForm = ({ forceOpen, loggedIn, setLoggedIn }) => {
 
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
-  const { user, refetchUser, loading, error } = useUser();
+  const { user, refetchUser, loading, error } = useUser() ? useUser() : {};
   const userSignedUp = localStorage.getItem("user_signed_up");
   const [signup, setSignup] = useState(!userSignedUp);
   const [userFormData, setUserFormData] = useState({
@@ -74,9 +74,7 @@ const SigninForm = ({ forceOpen, loggedIn, setLoggedIn }) => {
       setFormState((prev) => {
         return { ...prev, formValid: true };
       });
-      setFormState((prev) => {
-        return { ...prev, message };
-      });
+
       return;
     } else {
       setFormState((prev) => {
@@ -93,7 +91,7 @@ const SigninForm = ({ forceOpen, loggedIn, setLoggedIn }) => {
       });
     } else
       setFormState((prev) => {
-        return { ...prev, message };
+        return { ...prev, message: "" };
       });
   }, [userFormData]);
 
@@ -152,12 +150,13 @@ const SigninForm = ({ forceOpen, loggedIn, setLoggedIn }) => {
       });
       const response = await AuthService.verifySmsCode(code);
       if (response) {
-        console.log("log in should be all good");
+        navigate("/");
+
         setLoggedIn(true);
         setFormState((prev) => {
           return { ...prev, loading: false };
         });
-        navigate("/");
+
         onClose();
       }
     } catch (error) {
@@ -199,6 +198,7 @@ const SigninForm = ({ forceOpen, loggedIn, setLoggedIn }) => {
             return { ...prev, loading: false };
           });
           onClose();
+          navigate("/");
           return;
         }
       }
@@ -233,7 +233,7 @@ const SigninForm = ({ forceOpen, loggedIn, setLoggedIn }) => {
 
         return;
       }
-      // refetchUser();
+      refetchUser();
       onClose();
     } catch (error) {
       console.log("Error received trying to create new userAuth", error);
@@ -246,13 +246,11 @@ const SigninForm = ({ forceOpen, loggedIn, setLoggedIn }) => {
       <Button
         {...ButtonStyles}
         onClick={() => {
-          if (!user) {
+          if (!loggedIn) {
             onOpen();
           } else {
             AuthService.logout();
-
-            // refetchUser();
-            navigate("/");
+            navigate("/login");
           }
         }}
       >

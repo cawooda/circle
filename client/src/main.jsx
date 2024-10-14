@@ -39,6 +39,7 @@ import AuthReset from "./pages/AuthReset";
 import "./index.css";
 
 import { createBrowserRouter, Route, RouterProvider } from "react-router-dom";
+import SigninForm from "./components/SigninForm";
 
 // Router configuration
 const router = createBrowserRouter([
@@ -58,6 +59,11 @@ const router = createBrowserRouter([
     path: "auth",
     element: <AuthLink />,
     children: [{ path: ":authLinkNumber", element: <UserVerify /> }],
+  },
+  {
+    path: "login",
+    element: <AuthLink />,
+    children: [{ path: "", element: <SigninForm /> }],
   },
   {
     path: "/",
