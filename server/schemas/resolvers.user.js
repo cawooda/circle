@@ -86,7 +86,7 @@ module.exports = {
         })
         .populate("roleAdmin")
         .exec();
-
+      console.log(user);
       // better to use a filter
       if (user.roleProvider) {
         user.roleProvider.linkedCustomers =

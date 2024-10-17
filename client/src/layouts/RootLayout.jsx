@@ -13,6 +13,7 @@ import { NavLink } from "react-router-dom";
 const logoStyle = { paddingBottom: "15px" };
 import { ButtonStyles } from "../components/styles/ButtonStyle";
 import AuthService from "../utils/auth";
+import ProviderLogo from "../components/ProviderLogo";
 
 export default function RootLayout() {
   const { user, loggedIn, loading, error } = useUser();
@@ -50,7 +51,11 @@ export default function RootLayout() {
     <Flex direction="column" height="100vh">
       <Box bg="blue.500" p={4} color="white" textAlign="center">
         <Center>
-          <img src={logo} width={60} style={logoStyle} />
+          {user?.roleProvider?.logoUrl ? (
+            <ProviderLogo logoUrl={user?.roleProvider?.logoUrl} />
+          ) : (
+            <img src={logo} width={60} style={logoStyle} />
+          )}
         </Center>
       </Box>
       <Flex flex="1" direction={{ base: "column", md: "row" }}>

@@ -42,7 +42,7 @@ type Provider {
     services: [Service]
     serviceAgreements: [ServiceAgreement]
     shifts: [Shift]!
-    logo: String
+    logoUrl: String
 }
 
 type ServiceAgreement {

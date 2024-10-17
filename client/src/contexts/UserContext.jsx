@@ -29,7 +29,7 @@ export const UserProvider = ({ children }) => {
     data: userData,
     refetch: refetchUser,
   } = useQuery(GET_ME, {
-    variables: { token },
+    variables: { token: token },
     skip: !token,
     fetchPolicy: "network-only",
     onError: (err) => {

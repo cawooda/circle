@@ -94,6 +94,7 @@ export const GET_ME = gql`
           postalCode
         }
         providerName
+        logoUrl
       }
       roleCustomer {
         _id

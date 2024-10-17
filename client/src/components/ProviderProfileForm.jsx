@@ -128,20 +128,26 @@ const ProviderProfileForm = () => {
   };
 
   const handleFormSubmit = async (event) => {
+    event.preventDefault(); // Prevent form reload
+    const cleanedTermsAndConditions = formData.termsAndConditions.map(
+      ({ __typename, ...rest }) => rest
+    );
     const { providerName, abn, termsAndConditions, address, logo } = formData;
+
     try {
-      const response = await updateProviderProfile({
+      const { data } = await updateProviderProfile({
         variables: {
           userId: user._id,
           providerId: formData.providerId,
           providerName,
           abn,
-          termsAndConditions,
+          cleanedTermsAndConditions,
           address,
           logo,
         },
       });
 
+      console.log("Provider profile updated:", data);
       onClose();
     } catch (err) {
       console.error("Error submitting form:", err);

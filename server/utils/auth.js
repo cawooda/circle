@@ -29,7 +29,7 @@ async function authMiddleware({ req }) {
   }
 
   let token = req.headers.authorization.split(" ").pop().trim();
-
+  console.log(token);
   if (!token) {
     throw new GraphQLError("No token provided", {
       extensions: { code: "UNAUTHENTICATED" },
