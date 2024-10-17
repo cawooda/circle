@@ -36,10 +36,15 @@ class AuthService {
   }
 
   getToken() {
-    if (localStorage.getItem("id_token")) {
-      return localStorage.getItem("id_token");
+    try {
+      const tokenString = localStorage.getItem("id_token");
+      if (!tokenString) return null;
+      const parsed = JSON.parse(tokenString);
+      return parsed?.token || null;
+    } catch (error) {
+      console.error("Failed to parse token:", error);
+      return null;
     }
-    return null;
   }
 
   async smsLinkLogin(userData) {
@@ -76,15 +81,19 @@ class AuthService {
         },
         body: JSON.stringify(userData),
       });
-      if (!response.ok) {
-        throw new Error("Failed to fetch");
-      }
+      let res;
       if (!response.errorCode == "MOBILE_INVALID") {
         throw new Error("mobile was invalid");
       }
+      if (response.headers.get("content-type").match(/json/)) {
+        res = await response.json();
+      } else {
+        throw new Error(
+          `Response could not be parsed to json : url${URL} status:${res.status}`
+        );
+      }
 
-      const res = await response.json();
-      if (res.token) {
+      if (res?.token) {
         localStorage.setItem("id_token", res.token);
         localStorage.setItem("user_signed_up", "true");
         return res;
@@ -149,7 +158,7 @@ class AuthService {
       if (res?.token) {
         localStorage.setItem("id_token", res.token);
         localStorage.setItem("user_signed_up", "true");
-        return true;
+        return res;
       } else throw new Error("looks like there's no token", res.error);
     } catch (error) {
       console.log(error);

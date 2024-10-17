@@ -26,6 +26,7 @@ module.exports = {
   getMe: async (_parent, { token }, context) => {
     try {
       if (!context.user) {
+        console.log(token);
         const authenticatedPerson = await verifyToken(token);
         if (!authenticatedPerson)
           throw new Error("Could not verify with that token");
@@ -39,6 +40,25 @@ module.exports = {
         .populate({
           path: "roleProvider",
           populate: [
+            {
+              path: "user",
+              model: "user",
+            },
+            {
+              path: "services",
+              model: "service",
+              populate: { path: "product", model: "product" },
+            },
+            {
+              path: "shifts",
+              model: "shift",
+              populate: { path: "service", model: "service" },
+            },
+            {
+              path: "linkedCustomers",
+              model: "customer",
+              populate: { path: "user", model: "user" },
+            },
             {
               path: "serviceAgreements",
               model: "agreement",

@@ -5,11 +5,10 @@ import React, {
   useEffect,
   useContext,
 } from "react";
-
+import useToken from "../hooks/UseToken";
 import { useQuery } from "@apollo/client";
 import { GET_ME } from "../utils/queries";
 import AuthService from "../utils/auth";
-import { GET_MY_PROVIDER } from "../utils/queries"; // Adjust the path as necessary
 
 const UserContext = createContext();
 
@@ -30,6 +29,7 @@ export const UserProvider = ({ children }) => {
     refetch: refetchUser,
   } = useQuery(GET_ME, {
     variables: { token },
+    skip: !token,
     fetchPolicy: "network-only",
     onError: (err) => {
       console.log("Error encountered:", err);
@@ -37,21 +37,10 @@ export const UserProvider = ({ children }) => {
     },
   });
 
-  const {
-    loading: providerLoading,
-    error: providerError,
-    data: providerData,
-    refetch: refetchProvider,
-  } = useQuery(GET_MY_PROVIDER, {
-    skip: !user?.roleProvider, // Avoid unnecessary query when no provider is logged in
-    fetchPolicy: "network-only",
-    onError: (err) => {
-      console.log("Error in getMyProvider:", err);
-      setHasError(true);
-    },
-  });
-
   useEffect(() => {
+    if (userData?.getMe.roleProvider) {
+      setProvider(userData?.getMe.roleProvider);
+    }
     if (
       userData?.getMe &&
       JSON.stringify(user) !== JSON.stringify(userData.getMe)
@@ -59,17 +48,7 @@ export const UserProvider = ({ children }) => {
       setUser(userData.getMe);
       setHasError(false);
     }
-  }, [userData, user]);
-
-  useEffect(() => {
-    if (
-      providerData?.getMyProvider &&
-      JSON.stringify(provider) !== JSON.stringify(providerData.getMyProvider)
-    ) {
-      setProvider(providerData.getMyProvider);
-      setHasError(false);
-    }
-  }, [providerData, provider]);
+  }, [userData, user, provider]);
 
   return (
     <UserContext.Provider
@@ -77,11 +56,8 @@ export const UserProvider = ({ children }) => {
         user,
         provider,
         refetchUser,
-        refetchProvider,
         userLoading,
         userError,
-        providerLoading,
-        providerError,
         loggedIn,
         setLoggedIn,
       }}

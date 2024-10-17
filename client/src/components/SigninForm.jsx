@@ -1,5 +1,7 @@
 import { validateMobileInput, validatePasswordInput } from "../utils/helpers";
 import { useState, useEffect } from "react";
+import useToken from "../hooks/UseToken";
+
 import {
   Button,
   Text,
@@ -24,6 +26,7 @@ import {
   InputGroup,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
+//new #useHook
 import AuthService from "../utils/auth";
 import {
   ButtonStyles,
@@ -36,7 +39,8 @@ import logo from "/logo.png";
 import { useUser } from "../contexts/UserContext";
 import Splash from "./Splash";
 
-const SigninForm = ({ forceOpen, loggedIn, setLoggedIn }) => {
+const SigninForm = ({ forceOpen }) => {
+  const { setToken } = useToken();
   const [formState, setFormState] = useState({
     loading: false,
     formValid: false,
@@ -45,7 +49,9 @@ const SigninForm = ({ forceOpen, loggedIn, setLoggedIn }) => {
 
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
-  const { user, refetchUser, loading, error } = useUser() ? useUser() : {};
+  const { user, refetchUser, loading, loggedIn, setLoggedIn, error } = useUser()
+    ? useUser()
+    : {};
   const userSignedUp = localStorage.getItem("user_signed_up");
   const [signup, setSignup] = useState(!userSignedUp);
   const [userFormData, setUserFormData] = useState({
@@ -60,10 +66,12 @@ const SigninForm = ({ forceOpen, loggedIn, setLoggedIn }) => {
   } = useDisclosure();
 
   useEffect(() => {
-    if (!user || forceOpen) {
+    if ((!loggedIn && !user) || forceOpen) {
       onOpen();
+    } else {
+      onClose();
     }
-  }, [user, forceOpen]);
+  }, [loggedIn, user, forceOpen, onOpen, onClose]);
 
   useEffect(() => {
     //set
@@ -110,6 +118,7 @@ const SigninForm = ({ forceOpen, loggedIn, setLoggedIn }) => {
     event.preventDefault();
     if (userFormData.mobile.length === 10) {
       try {
+        //new #useHook
         const response = await AuthService.smsLinkLogin(userFormData);
         if (response) {
           setFormState((prev) => {
@@ -148,8 +157,10 @@ const SigninForm = ({ forceOpen, loggedIn, setLoggedIn }) => {
       setFormState((prev) => {
         return { ...prev, loading: true };
       });
+      //new #useHook
       const response = await AuthService.verifySmsCode(code);
-      if (response) {
+
+      if (response.token) {
         navigate("/");
 
         setLoggedIn(true);
@@ -171,76 +182,72 @@ const SigninForm = ({ forceOpen, loggedIn, setLoggedIn }) => {
     }
   };
 
+  const isFormValid = () => {
+    const validMobile = validateMobileInput(userFormData.mobile);
+    const validPassword = validatePasswordInput(userFormData.password);
+    return validMobile && validPassword;
+  };
+
   const handleFormSubmit = async (event) => {
-    setFormState((prev) => {
-      return { ...prev, loading: true };
-    });
+    if (!isFormValid()) {
+      setFormState((prev) => ({
+        ...prev,
+        message: "Please enter a valid mobile number and password.",
+      }));
+      return;
+    }
+
+    setFormState((prev) => ({ ...prev, loading: true }));
     event.preventDefault();
+
     try {
+      let response;
       if (signup) {
-        const response = await AuthService.signUpUser(userFormData);
-        if (!response) {
-          setFormState((prev) => {
-            return {
-              ...prev,
-              message: "sorry we didnt get a response from the server",
-            };
-          });
-          setFormState((prev) => {
-            return { ...prev, loading: false };
-          });
-          setLoggedIn(false);
-          throw new Error("error with signup");
-        } else {
-          setLoggedIn(true);
-          refetchUser();
-          setFormState((prev) => {
-            return { ...prev, loading: false };
-          });
-          onClose();
-          navigate("/");
+        // Handle Signup
+        response = await AuthService.signUpUser(userFormData);
+
+        if (!response?.token) {
+          setFormState((prev) => ({
+            ...prev,
+            loading: false,
+            message: response.message || "Signup failed. Please try again.",
+          }));
+          return;
+        }
+      } else {
+        // Handle Login
+        response = await AuthService.loginUser(userFormData);
+
+        if (!response?.token) {
+          setFormState((prev) => ({
+            ...prev,
+            loading: false,
+            message: response.message || "Login failed. Please try again.",
+          }));
           return;
         }
       }
-      const responseLogin = await AuthService.loginUser({
-        ...userFormData,
-      });
 
-      if (responseLogin?.token) {
-        onClose();
-        setLoggedIn(true);
-
-        setFormState((prev) => {
-          return { ...prev, loading: false };
-        });
-        setUserFormData({
-          first: "",
-          last: "",
-          mobile: "",
-          password: "",
-        });
-      } else {
-        setFormState((prev) => {
-          return { ...prev, loading: false };
-        });
-        setLoggedIn(false);
-        setFormState((prev) => {
-          return {
-            ...prev,
-            message: responseLogin.message,
-          };
-        });
-
-        return;
-      }
-      refetchUser();
-      onClose();
+      // If signup or login succeeds
+      setToken(response.token); // Save token
+      setLoggedIn(true); // Mark user as logged in
+      refetchUser(); // Fetch user data
+      setFormState((prev) => ({ ...prev, loading: false }));
+      setUserFormData({ mobile: "", password: "" });
+      onClose(); // Close modal
+      navigate("/"); // Redirect to home page
     } catch (error) {
-      console.log("Error received trying to create new userAuth", error);
+      setFormState((prev) => ({
+        ...prev,
+        loading: false,
+        message: `An error occurred: ${error.message}. Please try again.`,
+      }));
+      console.error("Login/Signup Error:", error);
     }
   };
 
   if (formState.loading) return <Splash />;
+
   return (
     <>
       <Button
@@ -249,6 +256,8 @@ const SigninForm = ({ forceOpen, loggedIn, setLoggedIn }) => {
           if (!loggedIn) {
             onOpen();
           } else {
+            onClose();
+            //new #useHook
             AuthService.logout();
             navigate("/login");
           }

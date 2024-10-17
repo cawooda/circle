@@ -119,7 +119,7 @@ const ProfileForm = () => {
           <ModalHeader size="md">Update your details here</ModalHeader>
           <ModalBody>
             <Flex direction="row" gap="5  " wrap="wrap" paddingBottom={5}>
-              {user.roleProvider ? <ProviderProfileForm user={user} /> : <></>}
+              {user?.roleProvider ? <ProviderProfileForm user={user} /> : <></>}
             </Flex>
             <Flex direction="column">
               <FormControl as="form" onSubmit={handleFormSubmit}>

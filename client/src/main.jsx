@@ -1,8 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-
+import useToken from "./hooks/UseToken";
 import App from "./App";
 import ServiceSign from "./ServiceSign";
+
+import { PrivateRoute } from "./components/PrivateRoute";
 
 // Pages
 import ProviderLayout from "./layouts/ProviderLayout";
@@ -72,7 +74,11 @@ const router = createBrowserRouter([
       { path: "reset/:authLinkNumber", element: <AuthReset /> },
       {
         path: "admin",
-        element: <AdminLayout />,
+        element: (
+          <PrivateRoute>
+            <AdminLayout />
+          </PrivateRoute>
+        ),
         children: [
           {
             path: "users",

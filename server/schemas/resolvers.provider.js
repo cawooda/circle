@@ -97,7 +97,7 @@ module.exports = {
           provider.address.postalCode = address.postalCode;
       }
       provider.services = provider?.services.filter((service) => {
-        if (service.product.name) {
+        if (service.product?.name) {
           return true;
         }
       });
