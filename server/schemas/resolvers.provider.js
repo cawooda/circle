@@ -48,7 +48,7 @@ module.exports = {
       abn,
       termsAndConditions,
       address,
-      logoUrl,
+      logo,
     },
     context
   ) => {
@@ -56,55 +56,43 @@ module.exports = {
       // Find the user and ensure they have the provider role
       const user = await User.findById(userId);
       if (
-        !user ||
-        !user.roleProvider ||
+        !user?.roleProvider ||
         user.roleProvider._id.toString() !== providerId
       ) {
-        throw new Error(
-          "User does not have permission to update this provider"
+        throw new GraphQLError(
+          "User does not have permission to update this provider."
         );
       }
 
-      // Find the provider by ID
+      // Update provider fields if they are provided (not undefined)
+      // Find the provider
       const provider = await Provider.findById(providerId);
       if (!provider) {
-        throw new Error("Provider not found");
+        throw new GraphQLError("Provider not found.");
       }
 
-      // Update provider fields if they are provided (not undefined)
-      if (providerName !== undefined) {
-        provider.providerName = providerName;
-      }
+      // Prepare the update object only with the fields provided
+      const updatedFields = {
+        ...(providerName && { providerName }),
+        ...(abn && { abn }),
+        ...(termsAndConditions && { termsAndConditions }),
+        ...(logo && { logoUrl: logo }), // Store the logo as Base64 or URL
+        address: {
+          ...provider.address,
+          ...address, // Merge new address fields with existing ones
+        },
+      };
 
-      if (abn !== undefined) {
-        provider.abn = abn;
-      }
+      // Update the provider with new fields
+      Object.assign(provider, updatedFields);
 
-      if (termsAndConditions !== undefined) {
-        provider.termsAndConditions = termsAndConditions;
-      }
+      // Optional: Filter out services with missing product names
+      provider.services = provider.services?.filter(
+        (service) => !!service.product?.name
+      );
 
-      if (logoUrl !== undefined) {
-        provider.logoUrl = logoUrl;
-      }
-
-      if (address !== undefined) {
-        if (address.street !== undefined)
-          provider.address.street = address.street;
-        if (address.city !== undefined) provider.address.city = address.city;
-        if (address.state !== undefined) provider.address.state = address.state;
-        if (address.postalCode !== undefined)
-          provider.address.postalCode = address.postalCode;
-      }
-      provider.services = provider?.services.filter((service) => {
-        if (service.product?.name) {
-          return true;
-        }
-      });
       // Save the updated provider
       const updatedProvider = await provider.save();
-
-      // Return the updated provider
       return updatedProvider;
     } catch (error) {
       console.error(error);

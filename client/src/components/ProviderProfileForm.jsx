@@ -38,7 +38,7 @@ import { UPDATE_PROVIDER_PROFILE } from "../utils/mutations";
 
 const ProviderProfileForm = () => {
   const { user } = useUser();
-  console.log("user provider profile", user);
+
   const [
     updateProviderProfile,
     {
@@ -48,9 +48,9 @@ const ProviderProfileForm = () => {
     },
   ] = useMutation(UPDATE_PROVIDER_PROFILE, {
     onError: (error) => {
-      console.error("GraphL Error updating user Profile", err.graphQLErrors);
-      console.error("Network Error updating user Profile", err.networkError);
-      console.error("Message updating user Profile", err.message);
+      console.error("GraphL Error updating user Profile", error.graphQLErrors);
+      console.error("Network Error updating user Profile", error.networkError);
+      console.error("Message updating user Profile", error.message);
     },
   });
   const navigate = useNavigate();
@@ -78,12 +78,15 @@ const ProviderProfileForm = () => {
     }
   }, [user, onOpen]);
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
-    setFormData({
-      ...formData,
-      logo: file,
-    });
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        setFormData((prev) => ({ ...prev, logo: reader.result }));
+      };
+    }
   };
 
   const handleInputChange = (e) => {
@@ -126,34 +129,23 @@ const ProviderProfileForm = () => {
 
   const handleFormSubmit = async (event) => {
     const { providerName, abn, termsAndConditions, address, logo } = formData;
-    let logoUrl = null;
-    if (logo) {
-      const formData = new FormData();
-      formData.append("file", logo);
-      const response = await fetch("/upload", {
-        method: "POST",
-        body: formData,
+    try {
+      const response = await updateProviderProfile({
+        variables: {
+          userId: user._id,
+          providerId: formData.providerId,
+          providerName,
+          abn,
+          termsAndConditions,
+          address,
+          logo,
+        },
       });
-      const data = await response.json();
-      logoUrl = data.url;
-    }
 
-    const response = await updateProviderProfile({
-      variables: {
-        userId: user._id,
-        providerId: formData.providerId,
-        providerName,
-        abn,
-        termsAndConditions: termsAndConditions.map(
-          ({ heading, paragraph }) => ({
-            heading,
-            paragraph,
-          })
-        ),
-        address,
-        logoUrl,
-      },
-    });
+      onClose();
+    } catch (err) {
+      console.error("Error submitting form:", err);
+    }
   };
 
   if (user.roleProvider)

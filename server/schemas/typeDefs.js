@@ -42,6 +42,7 @@ type Provider {
     services: [Service]
     serviceAgreements: [ServiceAgreement]
     shifts: [Shift]!
+    logo: String
 }
 
 type ServiceAgreement {
@@ -204,7 +205,7 @@ type Mutation {
         abn: String,
         termsAndConditions: [TermsAndConditionsInput],
         address: AddressInput
-        logoUrl:String
+        logo:String
     ): Provider
     updateUserPassword(userId:ID!,password:String):User
     addCustomer(token:String!,

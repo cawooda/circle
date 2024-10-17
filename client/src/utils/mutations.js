@@ -170,7 +170,7 @@ export const UPDATE_PROVIDER_PROFILE = gql`
     $abn: String
     $termsAndConditions: [TermsAndConditionsInput]
     $address: AddressInput
-    $logoUrl: String
+    $logo: String
   ) {
     updateProviderProfile(
       userId: $userId
@@ -179,7 +179,7 @@ export const UPDATE_PROVIDER_PROFILE = gql`
       abn: $abn
       termsAndConditions: $termsAndConditions
       address: $address
-      logoUrl: $logoUrl
+      logo: $logo
     ) {
       _id
       updatedAt

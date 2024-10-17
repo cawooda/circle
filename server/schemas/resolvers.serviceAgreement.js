@@ -132,9 +132,8 @@ module.exports = {
           },
         ])
         .exec();
-      console.log(signedServiceAgreement.service.product.name);
+
       if (!signedServiceAgreement.service.product.name) {
-        console.log(signedServiceAgreement.service.product.name);
         throw new Error("could not populate product name");
       }
 

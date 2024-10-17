@@ -145,7 +145,7 @@ userSchema.methods.sendAuthLink = async function () {
       }
     })
     .join(""); // Join without commas
-
+  console.log("complexified", this.authLinkNumber);
   this.authLinkNumber = complexCode;
 
   this.save();

@@ -14,7 +14,7 @@ const controllerSmsService = new SMSService();
 
 async function handleSetupUserLink(mobile) {
   const userExists = await User.findOne({ mobile: mobile });
-  console.log("handle setup link reached");
+
   if (!userExists) throw new Error("NOT_FOUND: user doesnt exist");
   const authNumber = await userExists.sendAuthLink();
   console.log("authNumber", authNumber);
@@ -60,7 +60,7 @@ async function handleLogin(body) {
     let token;
     if (user) {
       let correctPassword = await user.isCorrectPassword(password);
-      console.log("passwordCorrect", correctPassword);
+
       if (correctPassword) {
         token = await user.generateAuthToken();
         return {
@@ -107,7 +107,6 @@ router.put("/users", async (req, res) => {
       return await res.send(obj);
     }
     if (linkRequest) {
-      console.log("link request in API");
       const obj = await handleSetupUserLink(mobile);
       return await res.json(obj);
     }
