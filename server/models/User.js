@@ -132,7 +132,22 @@ userSchema.pre("save", async function (next) {
 });
 
 userSchema.methods.sendAuthLink = async function () {
-  this.authLinkNumber = generateRandomNumber(1000, 9999);
+  let simpleNumber = generateRandomNumber(1000, 9999).toString();
+  let simpleNumberArray = simpleNumber.split("");
+
+  const complexCode = simpleNumberArray
+    .map((digit, index) => {
+      // Convert the string 'digit' to a number and generate lowercase letters.
+      if (index % 2 === 1) {
+        return String.fromCharCode(65 + parseInt(digit)).toLowerCase(); // 'a' = 97, 'A' = 65
+      } else {
+        return digit; // Keep original digit for even indices
+      }
+    })
+    .join(""); // Join without commas
+
+  this.authLinkNumber = complexCode;
+
   this.save();
   const host = process.env.HOST || `http://localhost:3000`; // Get the host (hostname:port)
   const fullUrl = `${host}/auth/${this.authLinkNumber}`;

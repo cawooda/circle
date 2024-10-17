@@ -52,7 +52,7 @@ const ProfileForm = () => {
       console.error("Message updating user Profile", err.message);
     },
   });
-  const navigate = useNavigate();
+
   const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
   const { user, loading, error } = useUser();
 
@@ -69,37 +69,31 @@ const ProfileForm = () => {
     }
   }, [user]);
 
-  useEffect(() => {
-    if (!user && !loading && !error) {
-      onOpen();
-    }
-  }, [user, loading, error, onOpen]);
-
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value }); //handle the change of for an input with useState
   };
 
   const handleFormSubmit = async (event) => {
-    const response = await updateUserProfile({
-      variables: {
-        userId: user._id,
-        ...formData,
-      },
-    });
+    event.preventDefault(); // Prevent default form submission
+    try {
+      await updateUserProfile({
+        variables: {
+          userId: user._id,
+          ...formData,
+        },
+      });
+      onClose(); // Close the modal after successful submission
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
   };
 
   return (
     <>
       <Button
         {...ButtonStyles}
-        onClick={() => {
-          if (!user) {
-            onClose();
-          } else {
-            onOpen();
-          }
-        }}
+        onClick={() => (isOpen ? onClose() : onOpen())} // Toggle modal
       >
         Profile
       </Button>

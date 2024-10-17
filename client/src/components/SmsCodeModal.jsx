@@ -27,7 +27,7 @@ const SmsCodeModal = ({ isOpen, onClose, onSubmit }) => {
       setMessage(false);
       setCodeIsValid(true);
     } else {
-      setMessage("Please enter a valid 6-digit code.");
+      setMessage("Please enter a valid 4-digit code.");
       setCodeIsValid(false);
     }
   }, [code]);
@@ -65,7 +65,12 @@ const SmsCodeModal = ({ isOpen, onClose, onSubmit }) => {
                 autoFocus={true}
                 value={code}
                 onChange={handleCodeChange}
-                placeholder="Enter the 6-digit code"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSubmit(e);
+                  }
+                }}
+                placeholder="Enter 4-digit code we sent to you"
                 maxLength={6}
               />
             </FormControl>
