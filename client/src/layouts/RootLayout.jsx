@@ -23,7 +23,7 @@ export default function RootLayout() {
   );
 
   useEffect(() => {
-    if (returnVisit > 10) {
+    if (returnVisit > 2) {
       setSlideShow(false);
     } else {
       setSlideShow(true);
