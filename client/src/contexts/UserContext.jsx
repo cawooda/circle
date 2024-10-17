@@ -18,7 +18,7 @@ export const UserProvider = ({ children }) => {
   const token = useMemo(() => AuthService.getToken(), []);
 
   const [user, setUser] = useState(null);
-  const [provider, setProvider] = useState({});
+  const [provider, setProvider] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
   const [hasError, setHasError] = useState(false);
   const [loggedIn, setLoggedIn] = useState(() => AuthService.loggedIn());
@@ -39,14 +39,15 @@ export const UserProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    if (userData?.getMe.roleProvider) {
-      setProvider(userData?.getMe.roleProvider);
-    }
     if (
+      !userLoading &&
       userData?.getMe &&
       JSON.stringify(user) !== JSON.stringify(userData.getMe)
     ) {
       setUser(userData.getMe);
+      if (userData?.getMe.roleProvider) {
+        setProvider(userData?.getMe.roleProvider);
+      }
       setHasError(false);
     }
   }, [userData, user, provider]);
