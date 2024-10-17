@@ -16,6 +16,7 @@ export const useUser = () => useContext(UserContext);
 
 export const UserProvider = ({ children }) => {
   const token = useMemo(() => AuthService.getToken(), []);
+
   const [user, setUser] = useState(null);
   const [provider, setProvider] = useState({});
   const [retryCount, setRetryCount] = useState(0);

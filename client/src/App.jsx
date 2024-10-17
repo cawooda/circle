@@ -17,7 +17,7 @@ import AuthService from "./utils/auth";
 
 const authLink = setContext((_, { headers }) => {
   const token = AuthService.getToken();
-  console.log("token in authlink", token);
+
   return {
     headers: {
       ...headers,

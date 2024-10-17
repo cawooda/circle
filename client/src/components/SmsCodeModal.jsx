@@ -26,7 +26,6 @@ const SmsCodeModal = ({ isOpen, onClose, onSubmit }) => {
     if (isNumber(code) && isWithinRange(code, 4, 4)) {
       setMessage(false);
       setCodeIsValid(true);
-      console.log("setCodeIsValid(true)", setCodeIsValid(true));
     } else {
       setMessage("Please enter a valid 6-digit code.");
       setCodeIsValid(false);
@@ -35,7 +34,6 @@ const SmsCodeModal = ({ isOpen, onClose, onSubmit }) => {
 
   const handleCodeChange = (event) => {
     setCode(event.target.value);
-    console.log(code);
   };
 
   const handleSubmit = async (event) => {

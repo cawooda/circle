@@ -4,7 +4,7 @@ import NotifyUser from "../../components/NotifyUser";
 
 export default function ProviderServiceAgreements() {
   const { user, loading, error } = useUser();
-  console.log(user);
+
   if (loading) {
     return <div>Loading...</div>;
   }

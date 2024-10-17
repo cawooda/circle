@@ -31,15 +31,17 @@ class AuthService {
   }
 
   setToken(token) {
-    localStorage.setItem("id_token", token);
+    localStorage.setItem("id_token", JSON.stringify(userToken));
     return null;
   }
 
   getToken() {
     try {
       const tokenString = localStorage.getItem("id_token");
-      if (!tokenString) return null;
+      const userToken = JSON.parse(tokenString);
+      if (!userToken) return null;
       const parsed = JSON.parse(tokenString);
+
       return parsed?.token || null;
     } catch (error) {
       console.error("Failed to parse token:", error);
@@ -94,7 +96,7 @@ class AuthService {
       }
 
       if (res?.token) {
-        localStorage.setItem("id_token", res.token);
+        localStorage.setItem("id_token", JSON.stringify(res.token));
         localStorage.setItem("user_signed_up", "true");
         return res;
       }
@@ -113,23 +115,20 @@ class AuthService {
         },
         body: JSON.stringify({ ...userData }),
       });
-      if (!response) {
-        throw new Error("Failed to fetch");
-      }
+      let res;
 
-      const res = await response.json();
-      if (res.error) {
-        throw new Error(res.message);
-      }
-      if (res.error) {
-        throw new Error("Something went Wrong");
+      if (response.headers.get("content-type").match(/json/)) {
+        res = await response.json();
+      } else {
+        throw new Error(
+          `Response could not be parsed to json : url${URL} status:${res.status}`
+        );
       }
       if (res?.token) {
-        localStorage.setItem("id_token", res.token);
+        localStorage.setItem("id_token", JSON.stringify(res.token));
         localStorage.setItem("user_signed_up", "true");
         return res;
-      }
-      return false;
+      } else throw new Error("looks like there's no token", res.error);
     } catch (error) {
       console.log("error in client side auth", error);
       return { message: error.message };
@@ -156,12 +155,12 @@ class AuthService {
         );
       }
       if (res?.token) {
-        localStorage.setItem("id_token", res.token);
+        localStorage.setItem("id_token", JSON.stringify(res.token));
         localStorage.setItem("user_signed_up", "true");
         return res;
       } else throw new Error("looks like there's no token", res.error);
     } catch (error) {
-      console.log(error);
+      return { message: error.message };
     }
   }
 

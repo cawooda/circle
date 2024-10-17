@@ -49,7 +49,7 @@ const SigninForm = ({ forceOpen }) => {
 
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
-  const { user, refetchUser, loading, loggedIn, setLoggedIn, error } = useUser()
+  const { user, refetchUser, loggedIn, setLoggedIn } = useUser()
     ? useUser()
     : {};
   const userSignedUp = localStorage.getItem("user_signed_up");
@@ -158,18 +158,24 @@ const SigninForm = ({ forceOpen }) => {
         return { ...prev, loading: true };
       });
       //new #useHook
-      const response = await AuthService.verifySmsCode(code);
-
-      if (response.token) {
-        navigate("/");
-
-        setLoggedIn(true);
-        setFormState((prev) => {
-          return { ...prev, loading: false };
-        });
-
-        onClose();
+      setFormState((prev) => ({ ...prev, loading: true }));
+      let response;
+      response = await AuthService.verifySmsCode(code);
+      if (!response?.token) {
+        setFormState((prev) => ({
+          ...prev,
+          loading: false,
+          message: response.message || "Login failed. Please try again.",
+        }));
+        return;
       }
+      setToken({ token: response.token }); // Save token
+      setLoggedIn(true); // Mark user as logged in
+      refetchUser(); // Fetch user data
+      setFormState((prev) => ({ ...prev, loading: false }));
+      setUserFormData({ mobile: "", password: "" });
+      onClose(); // Close modal
+      navigate("/"); // Redirect to home page
     } catch (error) {
       setFormState((prev) => {
         return {
@@ -229,7 +235,7 @@ const SigninForm = ({ forceOpen }) => {
       }
 
       // If signup or login succeeds
-      setToken(response.token); // Save token
+      setToken({ token: response.token }); // Save token
       setLoggedIn(true); // Mark user as logged in
       refetchUser(); // Fetch user data
       setFormState((prev) => ({ ...prev, loading: false }));

@@ -21,7 +21,7 @@ export default function ShiftRow({ shift, index }) {
   if (!user || loading || error) {
     return null; // Don't render anything if user is not available
   }
-  console.log(shift.start_time);
+
   const [shiftFormData, setShiftFormData] = useState({
     _id: shift._id || "", // Ensure a safe fallback
     customer: shift.customer.fullName || "",

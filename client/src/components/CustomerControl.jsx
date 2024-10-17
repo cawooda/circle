@@ -21,7 +21,6 @@ export default function CustomerControl({
   const { provider } = useUser();
   const [customers, setCustomers] = useState([]);
 
-  console.log("provider", provider);
   useEffect(() => {
     if (provider?.linkedCustomers) {
       const customerList = provider?.linkedCustomers.map((customer) => {
