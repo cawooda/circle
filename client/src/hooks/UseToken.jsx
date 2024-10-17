@@ -9,13 +9,26 @@ export default function useToken() {
       return userToken?.token;
     } catch (error) {
       // Check if the error is a SyntaxError and contains the expected message
-    if (error instanceof SyntaxError && error.message.includes("Unexpected token")) {
-      console.warn("Invalid token detected. Clearing localStorage entry.");
+      if (
+        error instanceof SyntaxError &&
+        error.message.includes("Unexpected token")
+      ) {
+        console.warn("Invalid token detected. Clearing localStorage entry.");
 
-      // Remove the invalid token from localStorage
-      localStorage.removeItem("id_token");
+        // Remove the invalid token from localStorage
+        localStorage.removeItem("id_token");
 
-      // Optionally: Redirect to login or notify the user
+        // Optionally: Redirect to login or notify the user
+        return null;
+      }
+
+      // Log other unexpected errors for debugging purposes
+      console.error(
+        "An unexpected error occurred while retrieving the token.",
+        error
+      );
+
+      // Optionally, rethrow or return null depending on your needs
       return null;
     }
   };
