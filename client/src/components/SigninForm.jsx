@@ -1,5 +1,5 @@
 import { validateMobileInput, validatePasswordInput } from "../utils/helpers";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import useToken from "../hooks/UseToken";
 
 import {
@@ -48,10 +48,9 @@ const SigninForm = ({ forceOpen }) => {
   });
 
   const navigate = useNavigate();
-  const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
-  const { user, refetchUser, loggedIn, setLoggedIn } = useUser()
-    ? useUser()
-    : {};
+
+  const { user, refetchUser } = useUser() || {};
+
   const userSignedUp = localStorage.getItem("user_signed_up");
   const [signup, setSignup] = useState(!userSignedUp);
   const [userFormData, setUserFormData] = useState({
@@ -65,50 +64,39 @@ const SigninForm = ({ forceOpen }) => {
     onClose: onSmsModalClose,
   } = useDisclosure();
 
-  useEffect(() => {
-    if ((!loggedIn && !user) || forceOpen) {
-      onOpen();
-    } else {
-      onClose();
-    }
-  }, [loggedIn, user, forceOpen, onOpen, onClose]);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  // Use `useCallback` to memoize the handlers.
+  const handleOpen = useCallback(() => onOpen(), [onOpen]);
+  const handleClose = useCallback(() => onClose(), [onClose]);
 
   useEffect(() => {
-    //set
+    if (!user || !user?.loggedIn || forceOpen) {
+      if (!isOpen) handleOpen();
+    } else {
+      if (isOpen) handleClose();
+    }
+  }, [user, forceOpen, handleOpen, handleClose, isOpen]);
+
+  useEffect(() => {
     const validMobile = validateMobileInput(userFormData.mobile);
     const validPassword = validatePasswordInput(userFormData.password);
-    //check
-    if (validMobile && validPassword) {
-      setFormState((prev) => {
-        return { ...prev, formValid: true };
-      });
 
-      return;
-    } else {
-      setFormState((prev) => {
-        return { ...prev, formValid: false };
-      });
-    }
-    //compile message
-    if (!formState.formValid) {
-      let message = `${!validMobile ? `enter your mobile number` : ``}${
-        !validPassword ? `enter your password` : ``
-      }`;
-      setFormState((prev) => {
-        return { ...prev, message };
-      });
-    } else
-      setFormState((prev) => {
-        return { ...prev, message: "" };
-      });
+    const formValid = validMobile && validPassword;
+    const message = !formValid
+      ? `${!validMobile ? "enter your mobile number" : ""} ${
+          !validPassword ? "enter your password" : ""
+        }`
+      : "";
+
+    setFormState((prev) => ({ ...prev, formValid, message }));
   }, [userFormData]);
 
   const handleInputChange = (event) => {
-    var { name, value } = event.target;
-    if (name == "mobile") {
-      value = value.replace(/ /g, "");
+    const { name, value } = event.target;
+    if (userFormData[name] !== value.trim()) {
+      setUserFormData((prev) => ({ ...prev, [name]: value.trim() }));
     }
-    setUserFormData({ ...userFormData, [name]: value }); //handle the change of for an input with useState
   };
 
   const handleSMSlinkLogin = async (event) => {
@@ -170,7 +158,7 @@ const SigninForm = ({ forceOpen }) => {
         return;
       }
       setToken({ token: response.token }); // Save token
-      setLoggedIn(true); // Mark user as logged in
+
       refetchUser(); // Fetch user data
       setFormState((prev) => ({ ...prev, loading: false }));
       setUserFormData({ mobile: "", password: "" });
@@ -236,8 +224,8 @@ const SigninForm = ({ forceOpen }) => {
 
       // If signup or login succeeds
       setToken({ token: response.token }); // Save token
-      setLoggedIn(true); // Mark user as logged in
-      refetchUser(); // Fetch user data
+
+      // refetchUser(); // Fetch user data
       setFormState((prev) => ({ ...prev, loading: false }));
       setUserFormData({ mobile: "", password: "" });
       onClose(); // Close modal
@@ -259,17 +247,10 @@ const SigninForm = ({ forceOpen }) => {
       <Button
         {...ButtonStyles}
         onClick={() => {
-          if (!loggedIn) {
-            onOpen();
-          } else {
-            onClose();
-            //new #useHook
-            AuthService.logout();
-            navigate("/login");
-          }
+          onOpen();
         }}
       >
-        {loggedIn ? "Logout" : "Login"}
+        Login
       </Button>
 
       <Modal isOpen={isOpen} onClose={onClose}>

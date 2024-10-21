@@ -75,6 +75,12 @@ async function handleLogin(body) {
     }
   } catch (error) {
     // Instead of returning undefined, return a structured error object
+    if (error.message.match(/^NOT_FOUND:/))
+      return {
+        notFound: true,
+        error: true,
+        message: "NOT_FOUND:We find that user",
+      };
     return {
       error: true,
       message: error.message,

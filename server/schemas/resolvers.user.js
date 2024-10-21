@@ -86,8 +86,7 @@ module.exports = {
         })
         .populate("roleAdmin")
         .exec();
-      console.log(user);
-      // better to use a filter
+
       if (user.roleProvider) {
         user.roleProvider.linkedCustomers =
           user.roleProvider?.linkedCustomers.filter((customer) => {
@@ -137,7 +136,7 @@ module.exports = {
           .exec();
 
         user.serviceAgreements = serviceAgreements;
-        console.log("getMe finished");
+
         return user;
       } else {
         return { message: "user not found" };

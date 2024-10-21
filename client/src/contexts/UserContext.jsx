@@ -5,8 +5,8 @@ import React, {
   useEffect,
   useContext,
 } from "react";
-import useToken from "../hooks/UseToken";
 import { useQuery } from "@apollo/client";
+import useToken from "../hooks/UseToken"; // Assuming this handles the token logic
 import { GET_ME } from "../utils/queries";
 import AuthService from "../utils/auth";
 
@@ -15,56 +15,57 @@ const UserContext = createContext();
 export const useUser = () => useContext(UserContext);
 
 export const UserProvider = ({ children }) => {
+  // Memoize the token to ensure it doesn't trigger re-renders.
   const token = useMemo(() => AuthService.getToken(), []);
 
-  const [user, setUser] = useState(null);
-  const [provider, setProvider] = useState(null);
-  const [retryCount, setRetryCount] = useState(0);
-  const [hasError, setHasError] = useState(false);
+  // Consolidated state for user and provider.
+  const [userState, setUserState] = useState({
+    user: null,
+    provider: null,
+    hasError: false,
+  });
+
+  // Track the user's login status.
   const [loggedIn, setLoggedIn] = useState(() => AuthService.loggedIn());
 
+  // Apollo useQuery to fetch user data.
   const {
     loading: userLoading,
     error: userError,
     data: userData,
     refetch: refetchUser,
   } = useQuery(GET_ME, {
-    variables: { token: token },
+    variables: { token },
     skip: !token,
     fetchPolicy: "network-only",
     onError: (err) => {
       console.log("Error encountered:", err);
-      setHasError(true);
+      setUserState((prevState) => ({ ...prevState, hasError: true }));
     },
   });
 
+  // Sync the user data with the state whenever the query returns new data.
   useEffect(() => {
-    if (
-      !userLoading &&
-      userData?.getMe &&
-      JSON.stringify(user) !== JSON.stringify(userData.getMe)
-    ) {
-      setUser(userData.getMe);
-      if (userData?.getMe.roleProvider) {
-        setProvider(userData?.getMe.roleProvider);
-      }
-      setHasError(false);
+    if (!userLoading && userData?.getMe) {
+      setUserState({
+        user: { ...userData.getMe, loggedIn: true },
+        provider: userData.getMe.roleProvider || null,
+        hasError: false,
+      });
     }
-  }, [userData, user, provider]);
+  }, [userLoading, userData]);
 
-  return (
-    <UserContext.Provider
-      value={{
-        user,
-        provider,
-        refetchUser,
-        userLoading,
-        userError,
-        loggedIn,
-        setLoggedIn,
-      }}
-    >
-      {children}
-    </UserContext.Provider>
+  // Memoize the value to avoid unnecessary re-renders.
+  const value = useMemo(
+    () => ({
+      ...userState,
+      refetchUser,
+      userLoading,
+      userError,
+      setLoggedIn,
+    }),
+    [userState, refetchUser, userLoading, userError]
   );
+
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

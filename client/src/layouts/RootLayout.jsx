@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import { useState, useEffect } from "react";
 import { Flex, Container, Box, Center } from "@chakra-ui/react";
 import SigninForm from "../components/SigninForm";
+import LogoutButton from "../components/LogoutButton";
 import ProfileForm from "../components/ProfileForm";
 import { useUser } from "../contexts/UserContext";
 import logo from "/logo.png";
@@ -16,7 +17,7 @@ import AuthService from "../utils/auth";
 import ProviderLogo from "../components/ProviderLogo";
 
 export default function RootLayout() {
-  const { user, loggedIn, loading, error } = useUser();
+  const { user, loggedIn, userLoading, error } = useUser();
 
   const [slideShow, setSlideShow] = useState();
   const [returnVisit, setReturnVisit] = useState(
@@ -32,11 +33,11 @@ export default function RootLayout() {
     }
   }, [returnVisit]);
 
-  if (loading) return <Splash />;
+  if (userLoading) return <Splash />;
 
   if (slideShow)
     return <Slideshow data={firstVisitSlideShow} setSlideShow={setSlideShow} />;
-  if (!loggedIn) {
+  if (!user?.loggedIn) {
     return (
       <Center height="100vh">
         <div>
@@ -71,7 +72,7 @@ export default function RootLayout() {
       </Box>
       <Center bgColor="yellow.100" padding={5} gap={3}>
         <ProfileForm />
-        <SigninForm />
+        <LogoutButton />
         {user?.roleAdmin || user?.roleSuperAdmin ? (
           <Box>
             <NavLink to="/admin">

@@ -65,7 +65,7 @@ class AuthService {
           res = await response.json();
         } else {
           throw new Error(
-            `Response could not be parsed to json : url${URL} status:${res.status}`
+            `Response could not be parsed to json : url${URL} status:${res?.status}`
           );
         }
         if (res.linkSent) return true;
@@ -91,7 +91,7 @@ class AuthService {
         res = await response.json();
       } else {
         throw new Error(
-          `Response could not be parsed to json : url${URL} status:${res.status}`
+          `Response could not be parsed to json : url${URL} status:${res?.status}`
         );
       }
 
@@ -101,7 +101,8 @@ class AuthService {
         return res;
       }
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
+      return { message: error.message };
     }
   }
 
@@ -121,7 +122,7 @@ class AuthService {
         res = await response.json();
       } else {
         throw new Error(
-          `Response could not be parsed to json : url${URL} status:${res.status}`
+          `Response could not be parsed to json : url${URL} status:${res?.status}`
         );
       }
       if (res?.token) {
@@ -137,6 +138,7 @@ class AuthService {
 
   async verifySmsCode(code) {
     const URL = "/api/users";
+    let response = { statusCode: 500, message: "" };
     try {
       const response = await fetch(URL, {
         method: "PUT",
@@ -146,20 +148,55 @@ class AuthService {
         body: JSON.stringify({ authLinkNumber: code }),
       });
       let res;
-
+      if (!response)
+        throw new Error(
+          `NO_RESPONSE: We coulndt get a response from the server`
+        );
       if (response.headers.get("content-type").match(/json/)) {
         res = await response.json();
       } else {
         throw new Error(
-          `Response could not be parsed to json : url${URL} status:${res.status}`
+          `JSON_ERROR: Response could not be parsed to json : url${URL} status:${res?.status}`
         );
       }
+      if (res?.notFound)
+        throw new Error(
+          "NOT_FOUND: looks like there's no user with that phone number",
+          res.error
+        );
       if (res?.token) {
         localStorage.setItem("id_token", JSON.stringify(res.token));
         localStorage.setItem("user_signed_up", "true");
         return res;
-      } else throw new Error("looks like there's no token", res.error);
+      } else
+        throw new Error("NO_TOKEN: looks like there's no token", res.error);
     } catch (error) {
+      console.log("error in index.js ", error);
+      if (error.message.match(/^NO_TOKEN:/))
+        return {
+          error: true,
+          message: "We coulnd't verify you. Have you registered with us?",
+        };
+      if (error.message.match(/^NOT_FOUND:/))
+        return {
+          error: true,
+          message: "We find a user with that mobile. Have you signed up?",
+        };
+      if (error.message.match(/^JSON_ERROR:/))
+        return {
+          error: true,
+          message: "We had a problem with the server response. Sorry.",
+        };
+      if (error.message.match(/^NO_RESPONSE:/))
+        return {
+          error: true,
+          message: error.message,
+        };
+
+      return {
+        message: error.message,
+      };
+
       return { message: error.message };
     }
   }
