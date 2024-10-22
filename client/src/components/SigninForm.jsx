@@ -71,14 +71,6 @@ const SigninForm = ({ forceOpen }) => {
   const handleClose = useCallback(() => onClose(), [onClose]);
 
   useEffect(() => {
-    if (!user || !user?.loggedIn || forceOpen) {
-      if (!isOpen) handleOpen();
-    } else {
-      if (isOpen) handleClose();
-    }
-  }, [user, forceOpen, handleOpen, handleClose, isOpen]);
-
-  useEffect(() => {
     const validMobile = validateMobileInput(userFormData.mobile);
     const validPassword = validatePasswordInput(userFormData.password);
 
@@ -153,7 +145,7 @@ const SigninForm = ({ forceOpen }) => {
         setFormState((prev) => ({
           ...prev,
           loading: false,
-          message: response.message || "Login failed. Please try again.",
+          message: response?.message || "Login failed. Please try again.",
         }));
         return;
       }
@@ -197,26 +189,23 @@ const SigninForm = ({ forceOpen }) => {
     try {
       let response;
       if (signup) {
-        // Handle Signup
         response = await AuthService.signUpUser(userFormData);
-
         if (!response?.token) {
           setFormState((prev) => ({
             ...prev,
             loading: false,
-            message: response.message || "Signup failed. Please try again.",
+            message: response?.message || "Signup failed. Please try again.",
           }));
           return;
         }
       } else {
         // Handle Login
         response = await AuthService.loginUser(userFormData);
-
         if (!response?.token) {
           setFormState((prev) => ({
             ...prev,
             loading: false,
-            message: response.message || "Login failed. Please try again.",
+            message: response?.message || "Login failed. Please try again.",
           }));
           return;
         }
@@ -224,8 +213,7 @@ const SigninForm = ({ forceOpen }) => {
 
       // If signup or login succeeds
       setToken({ token: response.token }); // Save token
-
-      // refetchUser(); // Fetch user data
+      refetchUser(); // Fetch user data
       setFormState((prev) => ({ ...prev, loading: false }));
       setUserFormData({ mobile: "", password: "" });
       onClose(); // Close modal
@@ -270,9 +258,13 @@ const SigninForm = ({ forceOpen }) => {
           <ModalBody>
             <Flex direction="column" align="center" justify="center">
               <FormControl as="form" onSubmit={(e) => handleFormSubmit(e)}>
-                <Center>
+                <Center gap={3}>
                   <Text>{signup ? "Already Signed Up?" : "No Account?"}</Text>
-                  <Button width="20%" onClick={() => setSignup(!signup)}>
+                  <Button
+                    {...ButtonStyles}
+                    width="20%"
+                    onClick={() => setSignup(!signup)}
+                  >
                     {signup ? "Login" : "Signup"}
                   </Button>
                 </Center>

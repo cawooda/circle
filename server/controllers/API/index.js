@@ -79,7 +79,7 @@ async function handleLogin(body) {
       return {
         notFound: true,
         error: true,
-        message: "NOT_FOUND:We find that user",
+        message: "NOT_FOUND:We didn't you. Have you signed up?",
       };
     return {
       error: true,

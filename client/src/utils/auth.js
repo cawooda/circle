@@ -117,22 +117,25 @@ class AuthService {
         body: JSON.stringify({ ...userData }),
       });
       let res;
-
       if (response.headers.get("content-type").match(/json/)) {
         res = await response.json();
+        if (res?.token) {
+          localStorage.setItem("id_token", JSON.stringify(res.token));
+          localStorage.setItem("user_signed_up", "true");
+          return res;
+        } else {
+          if (res.notFound) return { ...res, message: "We couldnt find you" };
+          if (res.message.match(/^PASSWORD: Seems that password didnt work/))
+            return { ...res, message: res.message };
+        }
       } else {
         throw new Error(
           `Response could not be parsed to json : url${URL} status:${res?.status}`
         );
       }
-      if (res?.token) {
-        localStorage.setItem("id_token", JSON.stringify(res.token));
-        localStorage.setItem("user_signed_up", "true");
-        return res;
-      } else throw new Error("looks like there's no token", res.error);
     } catch (error) {
       console.log("error in client side auth", error);
-      return { message: error.message };
+      return { error: true, message: error.message };
     }
   }
 
@@ -154,22 +157,23 @@ class AuthService {
         );
       if (response.headers.get("content-type").match(/json/)) {
         res = await response.json();
+        if (res?.token) {
+          localStorage.setItem("id_token", JSON.stringify(res.token));
+          localStorage.setItem("user_signed_up", "true");
+          return res;
+        } else {
+          if (res?.notFound)
+            throw new Error(
+              "NOT_FOUND: looks like there's no user with that phone number",
+              res.error
+            );
+          throw new Error("NO_TOKEN: looks like there's no token", res.error);
+        }
       } else {
         throw new Error(
           `JSON_ERROR: Response could not be parsed to json : url${URL} status:${res?.status}`
         );
       }
-      if (res?.notFound)
-        throw new Error(
-          "NOT_FOUND: looks like there's no user with that phone number",
-          res.error
-        );
-      if (res?.token) {
-        localStorage.setItem("id_token", JSON.stringify(res.token));
-        localStorage.setItem("user_signed_up", "true");
-        return res;
-      } else
-        throw new Error("NO_TOKEN: looks like there's no token", res.error);
     } catch (error) {
       console.log("error in index.js ", error);
       if (error.message.match(/^NO_TOKEN:/))
@@ -180,7 +184,7 @@ class AuthService {
       if (error.message.match(/^NOT_FOUND:/))
         return {
           error: true,
-          message: "We find a user with that mobile. Have you signed up?",
+          message: "We didnt find a user with that mobile. Have you signed up?",
         };
       if (error.message.match(/^JSON_ERROR:/))
         return {
