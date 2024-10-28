@@ -75,7 +75,6 @@ export default function ProviderServiceAgreement() {
 
   const navigate = useNavigate();
   //use States
-  const [userId, setUserId] = useState(user._id || false);
 
   //setup use State for customers
   const [agreementFormData, setAgreementFormData] = useState({
@@ -102,22 +101,14 @@ export default function ProviderServiceAgreement() {
     }
   );
 
-  //implement this throughout the app and change window.location into the following router hook
-  useEffect(() => {
-    if (!userId) {
-      navigate("/");
-    }
-  }, [userId]);
-
   useEffect(() => {
     setAgreementFormData({
       provider: user.roleProvider._id,
     });
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     if (user) {
-      setCurrentUser(user);
       const defaultEndDate = dayjs().add(3, "month").format("YYYY-MM-DD");
       setAgreementFormData((prevState) => ({
         ...prevState,

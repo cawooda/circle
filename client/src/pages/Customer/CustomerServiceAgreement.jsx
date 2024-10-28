@@ -76,13 +76,16 @@ export default function CustomerServiceAgreement() {
     if (agreementQueryData) {
       setAgreementFormData((prev) => ({
         ...prev,
+        customer: agreementQueryData.getServiceAgreement.customer._id,
         provider: agreementQueryData.getServiceAgreement.provider._id,
         service: agreementQueryData.getServiceAgreement.service,
         quantity: agreementQueryData.getServiceAgreement.quantity,
         totalPrice: agreementQueryData.getServiceAgreement.totalPrice,
+        agreementId: agreementQueryData.getServiceAgreement._id,
+        customerSignature: agreementFormData.customerSignature,
       }));
     }
-  }, [agreementQueryData, agreementQueryLoading]);
+  }, [agreementQueryData]);
 
   const handleInputChange = (event) => {
     if (event.target.name) {
@@ -104,8 +107,7 @@ export default function CustomerServiceAgreement() {
 
     signServiceAgreement({
       variables: {
-        agreementId: agreementQueryData.getServiceAgreement._id,
-        customerSignature: agreementFormData.customerSignature,
+        ...agreementFormData,
       },
     });
 

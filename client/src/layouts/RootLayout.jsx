@@ -37,17 +37,7 @@ export default function RootLayout() {
 
   if (slideShow)
     return <Slideshow data={firstVisitSlideShow} setSlideShow={setSlideShow} />;
-  if (!user?.loggedIn) {
-    return (
-      <Center height="100vh">
-        <div>
-          <Flex justify="center" align="center">
-            <SigninForm />
-          </Flex>
-        </div>
-      </Center>
-    );
-  }
+
   return (
     <Flex direction="column" height="100vh">
       <Box bg="blue.500" p={4} color="white" textAlign="center">
