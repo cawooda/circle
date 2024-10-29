@@ -2,7 +2,6 @@ import { Outlet } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useState, useEffect } from "react";
 import { Flex, Container, Box, Center } from "@chakra-ui/react";
-import SigninForm from "../components/SigninForm";
 import LogoutButton from "../components/LogoutButton";
 import ProfileForm from "../components/ProfileForm";
 import { useUser } from "../contexts/UserContext";
@@ -15,6 +14,7 @@ const logoStyle = { paddingBottom: "15px" };
 import { ButtonStyles } from "../components/styles/ButtonStyle";
 import AuthService from "../utils/auth";
 import ProviderLogo from "../components/ProviderLogo";
+import SigninForm from "../components/SigninForm";
 
 export default function RootLayout() {
   const { user, loggedIn, userLoading, error } = useUser();
@@ -51,7 +51,23 @@ export default function RootLayout() {
       </Box>
       <Flex flex="1" direction={{ base: "column", md: "row" }}>
         <Box bg="gray.200" p={4} maxWidth={{ base: "100vw", md: "100vw" }}>
-          <Navbar />
+          <Flex gap={3} flexDirection={{ base: "column", md: "column" }}>
+            {/* Check roles and serve up what they should see */}
+            {user?.roleProvider ? (
+              <Box>
+                <NavLink to="/provider">
+                  <Container {...ButtonStyles}>
+                    {user.roleProvider.providerName}
+                  </Container>
+                </NavLink>
+              </Box>
+            ) : null}
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+            ></Box>
+          </Flex>
         </Box>
         <Box flex="1" bg="gray.50" p={4}>
           <Outlet />
@@ -61,8 +77,9 @@ export default function RootLayout() {
         (Ci) Circle Independent
       </Box>
       <Center bgColor="yellow.100" padding={5} gap={3}>
-        <ProfileForm />
-        <LogoutButton />
+        {user ? <ProfileForm /> : <></>}
+        {user ? <LogoutButton /> : <SigninForm />}
+
         {user?.roleAdmin || user?.roleSuperAdmin ? (
           <Box>
             <NavLink to="/admin">

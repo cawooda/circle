@@ -104,7 +104,11 @@ const router = createBrowserRouter([
       },
       {
         path: "provider",
-        element: <ProviderLayout />,
+        element: (
+          <PrivateRoute>
+            <ProviderLayout />
+          </PrivateRoute>
+        ),
         children: [
           {
             path: "service-agreement",
