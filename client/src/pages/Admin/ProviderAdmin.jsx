@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import { useAdmin } from "../../contexts/AdminContext";
+import { useUser } from "../../contexts/UserContext";
 import UserAdminRow from "../../components/AdminComponents/UserAdminRow";
 import Splash from "../../components/Splash";
 
 export default function ProviderAdmin() {
-  const [providers, setProviders] = useState([]);
-  const { adminData, loading, error } = useAdmin();
+  const { user } = useUser();
+
   useEffect(() => {
-    setUsers(adminData);
-  }, [adminData]);
+    setUsers(user?.adminData?.users);
+  }, [user]);
 
   if (loading) return <Splash />;
   if (error) return <p>Error: {error.message}</p>;

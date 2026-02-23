@@ -36,7 +36,23 @@ module.exports = {
 
       const user = await User.findById(context.user._id)
         .populate("roleCustomer")
-        .populate("roleProvider")
+        .populate({
+          path: "roleAdmin",
+          populate: {
+            path: "users",
+            model: "user",
+            populate: [
+              {
+                path: "roleCustomer",
+                model: "customer",
+              },
+              {
+                path: "roleProvider",
+                model: "provider",
+              },
+            ],
+          },
+        })
         .populate({
           path: "roleProvider",
           populate: [
@@ -77,15 +93,21 @@ module.exports = {
             {
               path: "linkedCustomers",
               model: "customer",
-              populate: {
-                path: "user",
-                model: "user",
-              },
+              populate: [
+                {
+                  path: "user",
+                  model: "user",
+                },
+              ],
             },
           ],
         })
-        .populate("roleAdmin")
         .exec();
+
+      const users = await User.find({});
+      console.log("users", users);
+      if (user?.roleAdmin.users == [] || !user?.roleAdmin?.users)
+        user.roleAdmin.users = users;
 
       if (user.roleProvider) {
         user.roleProvider.linkedCustomers =

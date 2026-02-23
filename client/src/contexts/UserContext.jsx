@@ -44,9 +44,10 @@ export const UserProvider = ({ children }) => {
       if (userData?.getMe.roleProvider) {
         setProvider(userData?.getMe.roleProvider);
       }
+
       setHasError(false);
     }
-  }, [userData, user, provider]);
+  }, []);
 
   return (
     <UserContext.Provider

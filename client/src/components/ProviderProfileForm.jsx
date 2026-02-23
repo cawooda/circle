@@ -72,12 +72,6 @@ const ProviderProfileForm = () => {
     logo: null,
   });
 
-  useEffect(() => {
-    if (!user) {
-      onOpen();
-    }
-  }, [user, onOpen]);
-
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {

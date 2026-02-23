@@ -5,12 +5,12 @@
   "main": "index.js",
   "scripts": {
     "start": "node server/server.js",
+    "build": "npm run install && cd client && npm run build",
+    "install": "cd server && npm ci && cd ../client && npm ci",
     "dev": "concurrently \"cd server && npm run watch\" \"cd client && npm run dev\"",
-    "install": "cd server && npm i && cd ../client && npm i",
     "seed": "cd server && npm run seed",
     "seedReset": "cd server && npm run seedReset",
     "cleanup": "cd server && npm run cleanup",
-    "build": "cd client && npm run build",
     "test": "jest"
   },
   "author": "Andrew Cawood",

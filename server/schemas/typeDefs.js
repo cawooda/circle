@@ -70,6 +70,7 @@ agreementNumber: Int
 type Admin {
     _id: ID!
     user: User!
+    users: [User]!
     createdAt: String
     updatedAt: String
 }

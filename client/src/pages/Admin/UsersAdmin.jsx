@@ -1,18 +1,21 @@
 import { useEffect, useState } from "react";
-import { useAdmin } from "../../contexts/AdminContext";
+import { useUser } from "../../contexts/UserContext";
+
 import UserAdminRow from "../../components/AdminComponents/UserAdminRow";
 
 import Splash from "../../components/Splash";
 
 export default function UsersAdmin() {
+  const { user, userLoading, userError } = useUser();
   const [users, setUsers] = useState([]);
-  const { adminData, loading, error } = useAdmin();
-  useEffect(() => {
-    setUsers(adminData);
-  }, [adminData]);
 
-  if (loading) return <Splash />;
-  if (error) return <p>Error: {error.message}</p>;
+  useEffect(() => {
+    console.log("users", user?.roleAdmin.users);
+    setUsers(user?.roleAdmin.users);
+  }, [user]);
+
+  if (userLoading) return <Splash />;
+  if (userError) return <p>Error: {userError.message}</p>;
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -20,7 +23,7 @@ export default function UsersAdmin() {
 
   return (
     <div>
-      {users.length > 0 ? (
+      {users?.length > 0 ? (
         users.map((user, index) => (
           <UserAdminRow
             index={index}

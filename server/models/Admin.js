@@ -1,5 +1,6 @@
 //import the Schema and model from mongoose.
 const { Schema, model } = require("mongoose");
+const User = require("./User");
 
 //definde the user model schema
 const adminSchema = new Schema(
@@ -19,6 +20,11 @@ const adminSchema = new Schema(
       type: Date,
       default: () => Date.now(),
     },
+    users: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+      default: [],
+    },
   },
   //then come the
   {
@@ -28,6 +34,12 @@ const adminSchema = new Schema(
     id: false,
   }
 );
+
+adminSchema.pre("save", async function (next) {
+  const allUsers = User.findAll();
+  this.users = allUsers;
+  next();
+});
 
 //initialise User Model. creates a collection called user based on the defined user schema
 const Admin = model("admin", adminSchema);

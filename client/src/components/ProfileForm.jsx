@@ -67,7 +67,7 @@ const ProfileForm = () => {
         email: user.email || "",
       });
     }
-  }, [user]);
+  }, []);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
