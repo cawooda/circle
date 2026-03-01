@@ -38,20 +38,19 @@ export const UserProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    if (!userLoading && userData?.getMe) {
+    if (!userLoading && !userError) {
       console.log("User data fetched:", userData);
       setUser({ ...userData.getMe, loggedIn: true });
-
       if (userData?.getMe.roleProvider) {
         setProvider(userData?.getMe.roleProvider);
       }
 
       setHasError(false);
     }
-  }, []);
+  }, [userData, userLoading, userError]);
   if (userLoading) return <p>Loading user...</p>;
   if (userError) return <p>Could not load your account.</p>;
-  if (userData?.getMe) return <>{userData.getMe.first}</>;
+
   return (
     <UserContext.Provider
       value={{
