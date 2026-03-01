@@ -17,7 +17,7 @@ import ProviderLogo from "../components/ProviderLogo";
 import SigninForm from "../components/SigninForm";
 
 export default function RootLayout() {
-  const { user, loggedIn, userLoading, error } = useUser();
+  const { user, userLoading } = useUser();
 
   const [slideShow, setSlideShow] = useState();
   const [returnVisit, setReturnVisit] = useState(
@@ -37,7 +37,7 @@ export default function RootLayout() {
 
   if (slideShow)
     return <Slideshow data={firstVisitSlideShow} setSlideShow={setSlideShow} />;
-
+  
   return (
     <Flex direction="column" height="100vh">
       <Box bg="blue.500" p={4} color="white" textAlign="center">
@@ -53,6 +53,7 @@ export default function RootLayout() {
         <Box bg="gray.200" p={4} maxWidth={{ base: "100vw", md: "100vw" }}>
           <Flex gap={3} flexDirection={{ base: "column", md: "column" }}>
             {/* Check roles and serve up what they should see */}
+            {console.log(user)}
             {user?.roleProvider ? (
               <Box>
                 <NavLink to="/provider">
@@ -61,7 +62,9 @@ export default function RootLayout() {
                   </Container>
                 </NavLink>
               </Box>
-            ) : null}
+            ) : (
+              <>Not Provider</>
+            )}
             <Box
               display="flex"
               justifyContent="center"

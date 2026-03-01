@@ -16,7 +16,7 @@ export const useUser = () => useContext(UserContext);
 
 export const UserProvider = ({ children }) => {
   const token = useMemo(() => AuthService.getToken(), []);
-
+  console.log("token in UserProvider", token);
   const [user, setUser] = useState(null);
   const [provider, setProvider] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
@@ -41,6 +41,7 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     if (!userLoading && userData?.getMe) {
       setUser({ ...userData.getMe, loggedIn: true });
+
       if (userData?.getMe.roleProvider) {
         setProvider(userData?.getMe.roleProvider);
       }

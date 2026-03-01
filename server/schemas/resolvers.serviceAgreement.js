@@ -19,12 +19,16 @@ module.exports = {
       await user.populate("roleProvider", "roleCustomer");
       const allServiceAgreements = await ServiceAgreement.find();
 
-      const serviceAgreements = await ServiceAgreement.find({
-        $or: [{ provider: user.roleProvider }, { customer: user.roleCustomer }],
-      })
+      const serviceAgreements = await allServiceAgreements
+        .find({
+          $or: [
+            { provider: user.roleProvider },
+            { customer: user.roleCustomer },
+          ],
+        })
         .populate("provider")
         .populate("customer")
-        .populate({ path: "product", model: "product" });
+        .populate({ path: "service", model: "product" });
       const response = {
         success: true,
         message: "service agreements found successfully",
@@ -52,11 +56,12 @@ module.exports = {
       service,
       providerSignature,
     },
-    context
+    context,
   ) => {
     if (!(context.user.roleProvider._id == provider))
       throw new Error("provider is not in context. not valid");
     servicePopulated = await Service.findById(service).populate("product");
+
     try {
       const newServiceAgreement = await ServiceAgreement.create({
         provider: provider || null,
@@ -85,21 +90,21 @@ module.exports = {
 
       const newServiceAgreementRenderedEmail = renderTemplate(
         { ...newServiceAgreement.toObject(), link },
-        "newServiceAgreementEmail"
+        "newServiceAgreementEmail",
       );
 
       newServiceAgreement.customer.user.sendMessage(
         `New Service Agreement`,
         `Hi ${newServiceAgreement.customer.user.first}, a new service agreement with ${newServiceAgreement.provider.providerName} agreement is ready. ${link}`,
         newServiceAgreementRenderedEmail,
-        null
+        null,
       );
 
       return newServiceAgreement;
     } catch (error) {
       console.error(
         "unable to create service agreement through mutation addServiceAgreement",
-        error
+        error,
       );
       throw error;
     }
@@ -107,7 +112,7 @@ module.exports = {
   signServiceAgreement: async (
     _parent,
     { agreementId, customerSignature },
-    context
+    context,
   ) => {
     try {
       const signedServiceAgreement = await ServiceAgreement.findOne({
@@ -147,10 +152,10 @@ module.exports = {
       const service = signedServiceAgreement.service;
 
       const startDate = dayjs(
-        new Date(signedServiceAgreement?.startDate)
+        new Date(signedServiceAgreement?.startDate),
       ).format("DD-MM-YYYY");
       const endDate = dayjs(new Date(signedServiceAgreement?.endDate)).format(
-        "DD-MM-YYYY"
+        "DD-MM-YYYY",
       );
 
       //makes use of the renderTemlate function to use a template to display the signedServiceagreement
@@ -164,7 +169,7 @@ module.exports = {
 
       const renderedHtml = renderTemplate(
         renderPreparedServiceAgreement,
-        "serviceAgreementTemplate"
+        "serviceAgreementTemplate",
       );
 
       // Define the directory path. checks if a direcotry exists and creates it if needed.
@@ -176,8 +181,8 @@ module.exports = {
         directoryPath,
         `/ServiceAgreement-${providerName}-${first}${last}-${startDate}-${generateRandomNumber(
           1,
-          30000
-        )}.pdf`
+          30000,
+        )}.pdf`,
       );
 
       //convert it to pdf, saving at the outPutFileName
@@ -196,7 +201,7 @@ module.exports = {
           startDate,
           endDate,
         },
-        "emailTemplate"
+        "emailTemplate",
       );
       if (signedServiceAgreement?.customer?.user?.email) {
         userEmailService.sendMail(
@@ -213,7 +218,7 @@ module.exports = {
           Have a great day.
         `,
           renderedEmail,
-          outputFileName
+          outputFileName,
         );
       }
       signedServiceAgreement.agreementPath = outputFileName;
@@ -227,7 +232,7 @@ module.exports = {
     } catch (error) {
       console.error(
         `Error in signServiceAgreementsigned Service Agreement: `,
-        error
+        error,
       );
       throw error;
     }

@@ -57,6 +57,7 @@ async function handleLogin(body) {
 
     // If no first and last names, look for an existing user
     user = await User.findOne({ mobile: mobile });
+    console.log("user found in login", user);
     let token;
     if (user) {
       let correctPassword = await user.isCorrectPassword(password);
@@ -132,7 +133,7 @@ router.post("/users", async (req, res) => {
   req.body.mobile = req.body.mobile.replace(/[^\d]/g, "");
   try {
     const obj = await handleLogin(req.body);
-
+    console.log("login obj", obj);
     // Check if handleLogin returned an error
     if (obj.error) {
       let statusCode = 500;

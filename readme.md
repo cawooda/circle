@@ -1,12 +1,12 @@
 # Circle Independent
 
 <<<<<<< HEAD
+
 - [Link to Deployment](https://circleindependent.onrender.com/)
 
-- [Presentation](/Circle%20Independent.pdf)
-=======
-![license](https://img.shields.io/badge/license-MIT-blue)
->>>>>>> main
+- # [Presentation](/Circle%20Independent.pdf)
+  ![license](https://img.shields.io/badge/license-MIT-blue)
+  > > > > > > > main
 
 Circle Independent is an application developed for a small business called Circle Support. The application is the platform through which the business will be transitioning its support work and coordination staff to independent emloyment as sole trading businesses working in the provision of disability supports.
 
@@ -61,6 +61,44 @@ That service agreement is then sent to the customer for viewing and signing.
 
 The UI is deliberatly simple and focussed on buttons and selections rather than inputing details using a keyboard.
 
+## Model Layer Review (`server/models`)
+
+This section captures critical inconsistencies across models and their seed scripts.
+
+### Critical issues and fixes
+
+7. Query middleware/event mismatch in provider deletion flow
+
+- File: `server/models/Provider.js`
+- Impact: `pre("findOneAndRemove")` only runs for that specific method; many code paths use `findOneAndDelete`/`deleteOne`.
+- Recommended fix: mirror cleanup middleware for `findOneAndDelete` (and/or delete APIs actually used in resolvers/services).
+
+8. Inconsistent field naming in `Shift`
+
+- File: `server/models/Shift.js`
+- Impact: mixed `startTime` and `end_time` increases bug risk in API and seeds.
+- Recommended fix: standardize on camelCase (`endTime`) and migrate seed fields to match.
+
+9. Dead/diagnostic code in auth model
+
+- File: `server/models/User.js`
+- Impact: logs expose sensitive values (`console.log` in password compare flow) and clutter runtime output.
+- Recommended fix: remove password logging and unused imports (`validator`) unless actively used.
+
+10. Model folder contains operational notes (`BUG.txt`)
+
+- File: `server/models/BUG.txt`
+- Impact: blurs model source-of-truth and docs.
+- Recommended fix: move notes to `/docs` or issue tracker; keep `/models` code-only.
+
+### Seed + model alignment checklist
+
+1. Use one canonical password path: set `password` (virtual) on input, persist only `passwordHash`.
+2. Ensure all seeded field names match schemas exactly (`endTime` vs `end_time`, etc.).
+3. Prefer idempotent upserts for seeded relational entities (`Service` already does this by `provider + product`).
+4. Keep role creation strategy consistent between `User` middleware and seed scripts to avoid duplicate or missing role docs.
+5. Add a smoke test that runs seed/reset and verifies one valid user can authenticate.
+
 ![alt text](./screenshot.png)
 <<<<<<< HEAD
 =======
@@ -102,4 +140,5 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.;
 
 ---
->>>>>>> main
+
+> > > > > > > main

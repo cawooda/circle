@@ -101,7 +101,7 @@ class AuthService {
         return res;
       }
     } catch (error) {
-      console.log(error.message);
+      console.log("error in signup:", error.message);
       return { message: error.message };
     }
   }

@@ -45,21 +45,7 @@ type Provider {
     logoUrl: String
 }
 
-type ServiceAgreement {
-    _id: ID!
-    provider: Provider
-    customer: Customer
-    agreementNumber:Int
-    startDate: String
-    service: Service
-    quantity: Int
-    endDate: String
-    totalPrice:Float
-    approvedByCustomer:Boolean
-    createdAt:String
-    updatedAt:String
-    signature:String
-  }
+
 
 type signServiceAgreementResponse {
 success: Boolean!
@@ -84,14 +70,14 @@ type Shift {
     customer: Customer
     service: Service
     startTime: String
-    endTime: String
+    end_time: String
     units: Float
     createdAt: String
     updatedAt: String
 
 }
 
- type ServiceAgreement {
+type ServiceAgreement {
     _id: ID!
     provider: Provider
     customer: Customer
@@ -218,7 +204,7 @@ type Mutation {
       invoiceEmail:String!,
       referenceNumber:String!,
       referenceName:String!,
-      datOfBirth:String!):Customer
+      dateOfBirth:String!):Customer
     addService(providerId: ID!, productId: ID!):AddServiceResponse
     deleteService(serviceId:ID!):Service
     updateServicePrice(serviceId:ID!,price: Float!):Service

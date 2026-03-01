@@ -1,9 +1,12 @@
 // require the connection to the database
 const connection = require("../config/connection");
+require("dotenv").config();
+const SALT_WORK_FACTOR = process.env.SALT_WORK_FACTOR || 10;
 
-// setup user, customer, provider, and product models
+const bcrypt = require("bcrypt");
 const {
   User,
+  Admin,
   Customer,
   Provider,
   Product,
@@ -31,24 +34,27 @@ const {
   agreementSeed,
 } = require("./seedData");
 
-// require bcrypt for password hashing
-const bcrypt = require("bcrypt");
-const saltRounds = 10; // Number of rounds to generate the salt
-
-// Function to hash password
-const hashPassword = async (password) => {
-  return bcrypt.hash(password, saltRounds);
-};
-
 // Set the callback to occur once the connection opens
 connection.once("open", async () => {
   try {
     // Seed Users
+
     for (let user of userSeed) {
-      const existingUser = await User.findOne({ mobile: user.mobile });
-      if (!existingUser) {
-        user.password = await hashPassword(user.password);
-        await User.create(user);
+      const userExistsAlready = await User.findOne({ mobile: user.mobile });
+      if (!userExistsAlready) {
+        const newUser = await User.create(user);
+        newUser.password = user.password;
+        const roleCustomer = new Customer({ user: newUser._id });
+        await roleCustomer.save();
+        newUser.roleCustomer = roleCustomer._id;
+        const roleAdmin = new Admin({ user: newUser._id });
+        await roleAdmin.save();
+        newUser.roleAdmin = roleAdmin._id;
+        newUser.roleSuperAdmin = true;
+        const roleProvider = new Provider({ user: newUser._id });
+        await roleProvider.save();
+        newUser.roleProvider = roleProvider._id;
+        await newUser.save();
         console.log(`Added user: ${user.first} ${user.last}`);
       } else {
         console.log(`User ${user.first} ${user.last} already exists.`);
@@ -89,12 +95,27 @@ connection.once("open", async () => {
 
     // Seed Services
     for (let service of serviceSeed) {
-      const existingService = await Service.findOne({ _id: service._id });
-      if (!existingService) {
-        await Service.create(service);
-        console.log(`Added service: ${service._id}`);
+      const { _id, provider, product, ...serviceData } = service;
+
+      const writeResult = await Service.updateOne(
+        { provider, product },
+        {
+          $set: { provider, product, ...serviceData },
+          $setOnInsert: { _id },
+        },
+        { upsert: true },
+      );
+
+      if (writeResult.upsertedCount > 0) {
+        console.log(
+          `Added service: provider=${provider} product=${product} (_id=${_id})`,
+        );
+      } else if (writeResult.modifiedCount > 0) {
+        console.log(`Updated service: provider=${provider} product=${product}`);
       } else {
-        console.log(`Service ${service._id} already exists.`);
+        console.log(
+          `Service unchanged: provider=${provider} product=${product}`,
+        );
       }
     }
 

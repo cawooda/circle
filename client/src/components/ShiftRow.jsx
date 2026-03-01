@@ -25,9 +25,9 @@ export default function ShiftRow({ shift, index }) {
   const [shiftFormData, setShiftFormData] = useState({
     _id: shift._id || "", // Ensure a safe fallback
     customer: shift.customer.fullName || "",
-    start_date: dayjs(shift.start_time).format("YYYY-MM-DD"),
+    start_date: dayjs(shift.startTime).format("YYYY-MM-DD"),
     end_date: dayjs(shift.end_time).format("YYYY-MM-DD"),
-    start_time: dayjs(shift.start_time).format("HH:mm"),
+    startTime: dayjs(shift.startTime).format("HH:mm"),
     end_time: dayjs(shift.end_time).format("HH:mm"),
     serviceName: shift.service.product.name || "",
     units: shift.units || "",
@@ -94,9 +94,9 @@ export default function ShiftRow({ shift, index }) {
               <FormLabel>Start Time</FormLabel>
               <Input
                 {...InputStyles}
-                name="start_time"
+                name="startTime"
                 type="time"
-                value={shiftFormData.start_time || ""}
+                value={shiftFormData.startTime || ""}
                 onChange={handleInputChange}
               />
             </Flex>

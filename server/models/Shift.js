@@ -1,7 +1,6 @@
 //import the Schema and model from mongoose.
 const { Schema, model } = require("mongoose");
 
-//definde the user model schema
 const shiftSchema = new Schema(
   //first come the paths, like properties
   {
@@ -13,39 +12,31 @@ const shiftSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "provider",
     },
-    start_time: Date,
+    startTime: Date,
     end_time: Date,
     service: { type: Schema.Types.ObjectId, ref: "service" },
     units: { type: Number, required: true },
-    createdAt: {
-      type: Date,
-      immutable: true, //this prevents changes to the date once created
-      default: () => Date.now(), //runs a function to get the current date when populating
-    },
-    updatedAt: {
-      type: Date,
-      default: () => Date.now(),
-    },
   },
   //then come the
   {
+    timestamps: true, // This will automatically manage createdAt and updatedAt fields
     toJSON: {
       virtuals: true,
     },
     id: false,
-  }
+  },
 );
 
 shiftSchema.virtual("totalHours").get(function () {
-  if (this.start_time && this.end_time) {
-    const durationInMilliseconds = this.end_time - this.start_time;
+  if (this.startTime && this.end_time) {
+    const durationInMilliseconds = this.end_time - this.startTime;
     const durationInHours = durationInMilliseconds / (1000 * 60 * 60);
     return durationInHours;
   } else return false;
 });
 
 shiftSchema.virtual("totalUnits").get(function () {
-  const durationInMilliseconds = this.end_time - this.start_time;
+  const durationInMilliseconds = this.end_time - this.startTime;
   const durationInHours = durationInMilliseconds / (1000 * 60 * 60);
 });
 

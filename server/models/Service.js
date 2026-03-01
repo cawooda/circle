@@ -1,11 +1,8 @@
-//import the Schema and model from mongoose
 //A service is a combination of a product and a custom price set by the provider.
 
 const { Schema, model } = require("mongoose");
 
-//definde the user model schema
 const serviceSchema = new Schema(
-  //first come the paths, like properties
   {
     provider: {
       type: Schema.Types.ObjectId,
@@ -25,29 +22,18 @@ const serviceSchema = new Schema(
       required: true,
       default: true,
     },
-    createdAt: {
-      type: Date,
-      immutable: true, //this prevents changes to the date once created
-      default: () => Date.now(), //runs a function to get the current date when populating
-    },
-    updatedAt: {
-      type: Date,
-      default: () => Date.now(),
-    },
   },
-  //then come the
   {
+    timestamps: true, // This will automatically manage createdAt and updatedAt fields
     toJSON: {
       virtuals: true,
     },
     id: false,
-  }
+  },
 );
 
-serviceSchema.index({ provider: 1, product: 1 }, { unique: true });
-
 serviceSchema.pre("save", function (next) {
-  if (!this.created) this.created = new Date();
+  if (!this.createdAt) this.createdAt = new Date();
   next();
 });
 

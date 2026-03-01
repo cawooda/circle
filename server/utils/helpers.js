@@ -13,8 +13,6 @@ function generateRandomNumber(min = 1000000000, max = 9999999999) {
 }
 
 function verifyToken(token) {
-  console.log(token);
-  console.log(jwt.verify(token, process.env.SECRET_KEY));
   try {
     const { authenticatedPerson } = jwt.verify(token, process.env.SECRET_KEY);
     return authenticatedPerson;

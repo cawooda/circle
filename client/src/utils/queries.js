@@ -333,7 +333,7 @@ export const GET_MY_PROVIDER = gql`
           active
         }
         startTime
-        endTime
+        end_time
         units
         createdAt
         updatedAt

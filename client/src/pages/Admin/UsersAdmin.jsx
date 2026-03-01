@@ -10,7 +10,6 @@ export default function UsersAdmin() {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    console.log("users", user?.roleAdmin.users);
     setUsers(user?.roleAdmin.users);
   }, [user]);
 

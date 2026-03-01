@@ -31,14 +31,12 @@ const customerSchema = new Schema(
     dateOfBirth: { type: Date, required: true, default: "1999-07-07" },
     customerSpecificField: { type: String },
     serviceAgreements: [{ type: Schema.Types.ObjectId, ref: "agreement" }],
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now },
   },
   {
     timestamps: true, // This will automatically manage createdAt and updatedAt fields
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
+  },
 );
 
 const Customer = model("customer", customerSchema);

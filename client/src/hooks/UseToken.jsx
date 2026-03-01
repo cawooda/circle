@@ -18,9 +18,9 @@ export default function useToken() {
     try {
       const tokenString = localStorage.getItem("id_token");
       const userToken = JSON.parse(tokenString);
-      console.log(userToken);
+
       const { authenticatedPerson } = jwtDecode(userToken.token);
-      console.log(authenticatedPerson.mobile);
+
       if (!isTokenExpired(userToken?.token)) {
         localStorage.setItem("user_mobile", authenticatedPerson.mobile);
         return userToken.token;

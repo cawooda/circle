@@ -16,14 +16,14 @@ module.exports = {
       referenceName,
       dateOfBirth,
     },
-    context
+    context,
   ) => {
     try {
       if (!verifyToken(token))
         throw new Error("Could not verify with that token");
       let user = await User.findOneAndUpdate(
         { first, last, dateOfBirth },
-        { email }
+        { email },
       );
       if (!user) {
         user = await User.create({ first, last, mobile, email });
@@ -57,11 +57,9 @@ module.exports = {
             referenceNumber,
             dateOfBirth,
           },
-          { new: true }
+          { new: true },
         );
       }
-
-      console.log("Customer:", customer);
 
       // Step 4: Link the customer to the provider
       const provider = await Provider.findById(providerId);

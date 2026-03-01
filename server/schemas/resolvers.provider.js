@@ -1,4 +1,5 @@
 const { Provider, User } = require("../models");
+const { GraphQLError } = require("graphql");
 module.exports = {
   getMyProvider: async (_parent, {}, context) => {
     try {
@@ -30,7 +31,7 @@ module.exports = {
         .exec();
       if (!provider)
         throw new Error(
-          "we couldt get a provider when we tried the user's roleProvider id"
+          "we couldt get a provider when we tried the user's roleProvider id",
         );
 
       return provider.toObject();
@@ -50,7 +51,7 @@ module.exports = {
       address,
       logo,
     },
-    context
+    context,
   ) => {
     try {
       // Find the user and ensure they have the provider role
@@ -60,7 +61,7 @@ module.exports = {
         user.roleProvider._id.toString() !== providerId
       ) {
         throw new GraphQLError(
-          "User does not have permission to update this provider."
+          "User does not have permission to update this provider.",
         );
       }
 
@@ -88,7 +89,7 @@ module.exports = {
 
       // Optional: Filter out services with missing product names
       provider.services = provider.services?.filter(
-        (service) => !!service.product?.name
+        (service) => !!service.product?.name,
       );
 
       // Save the updated provider

@@ -26,7 +26,6 @@ module.exports = {
   getMe: async (_parent, { token }, context) => {
     try {
       if (!context.user) {
-        console.log(token);
         const authenticatedPerson = await verifyToken(token);
         if (!authenticatedPerson)
           throw new Error("Could not verify with that token");
@@ -105,8 +104,8 @@ module.exports = {
         .exec();
 
       const users = await User.find({});
-      console.log("users", users);
-      if (user?.roleAdmin.users == [] || !user?.roleAdmin?.users)
+
+      if (user?.roleAdmin?.users == [] || !user?.roleAdmin?.users)
         user.roleAdmin.users = users;
 
       if (user.roleProvider) {
@@ -124,7 +123,7 @@ module.exports = {
             if (service.product.name) {
               return true;
             }
-          }
+          },
         );
       }
 
@@ -267,7 +266,7 @@ module.exports = {
         });
         await updatedUser.save();
 
-        await userEmailService.sendEmail(
+        await userEmailService.sendMail(
           updatedUser.email,
           "Profile updated",
           `Hi ${first}, we have updated your profile. Have a great day :)
@@ -282,7 +281,7 @@ module.exports = {
             <h4> ${mobile}</h4>
             <h3>email:</h3>
             <h4> ${email}</h4>            
-            `
+            `,
         );
       }
 

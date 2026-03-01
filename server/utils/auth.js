@@ -27,9 +27,14 @@ async function authMiddleware({ req }) {
     console.log("should retrun null for use as operationName matched");
     return { user: null };
   }
+  if (!req.headers.authorization) {
+    throw new GraphQLError("No token provided", {
+      extensions: { code: "UNAUTHENTICATED" },
+    });
+  }
 
   let token = req.headers.authorization.split(" ").pop().trim();
-  console.log(token);
+
   if (!token) {
     throw new GraphQLError("No token provided", {
       extensions: { code: "UNAUTHENTICATED" },

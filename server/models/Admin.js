@@ -11,32 +11,25 @@ const adminSchema = new Schema(
       ref: "user",
       unique: true,
     },
-    createdAt: {
-      type: Date,
-      immutable: true, //this prevents changes to the date once created
-      default: () => Date.now(), //runs a function to get the current date when populating
-    },
-    updatedAt: {
-      type: Date,
-      default: () => Date.now(),
-    },
-    users: {
-      type: Schema.Types.ObjectId,
-      ref: "user",
-      default: [],
-    },
+    users: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "user",
+        default: [],
+      },
+    ],
   },
-  //then come the
   {
+    timestamps: true, // This will automatically manage createdAt and updatedAt fields
     toJSON: {
       virtuals: true,
     },
     id: false,
-  }
+  },
 );
 
 adminSchema.pre("save", async function (next) {
-  const allUsers = User.findAll();
+  const allUsers = await User.find({}, "_id").exec(); //find all users and return only their _id field
   this.users = allUsers;
   next();
 });

@@ -1,6 +1,6 @@
 require("dotenv").config();
 const path = require("path");
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 const fs = require("fs");
 
 const express = require("express");
@@ -40,7 +40,7 @@ const startApolloServer = async () => {
     "/graphql",
     expressMiddleware(server, {
       context: authMiddleware,
-    })
+    }),
   );
 
   app.use("/api", apiRoutes);
@@ -61,7 +61,7 @@ db.once("open", () => {
       http://localhost:${PORT}
       http://localhost:${PORT}/api
       http://localhost:${PORT}/graphql
-      `)
+      `),
   );
 });
 

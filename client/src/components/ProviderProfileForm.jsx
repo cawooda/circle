@@ -141,7 +141,6 @@ const ProviderProfileForm = () => {
         },
       });
 
-      console.log("Provider profile updated:", data);
       onClose();
     } catch (err) {
       console.error("Error submitting form:", err);
