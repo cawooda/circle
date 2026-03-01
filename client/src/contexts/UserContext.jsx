@@ -38,7 +38,7 @@ export const UserProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    if (!userLoading && !userError) {
+    if (!userLoading && !userError && userData?.getMe) {
       console.log("User data fetched:", userData);
       setUser({ ...userData.getMe, loggedIn: true });
       if (userData?.getMe.roleProvider) {
