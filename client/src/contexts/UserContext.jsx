@@ -16,7 +16,6 @@ export const useUser = () => useContext(UserContext);
 
 export const UserProvider = ({ children }) => {
   const token = useMemo(() => AuthService.getToken(), []);
-  console.log("token in UserProvider", token);
   const [user, setUser] = useState(null);
   const [provider, setProvider] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
@@ -40,6 +39,7 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     if (!userLoading && userData?.getMe) {
+      console.log("User data fetched:", userData);
       setUser({ ...userData.getMe, loggedIn: true });
 
       if (userData?.getMe.roleProvider) {
@@ -49,7 +49,9 @@ export const UserProvider = ({ children }) => {
       setHasError(false);
     }
   }, []);
-
+  if (userLoading) return <p>Loading user...</p>;
+  if (userError) return <p>Could not load your account.</p>;
+  if (userData?.getMe) return <>{userData.getMe.first}</>;
   return (
     <UserContext.Provider
       value={{
