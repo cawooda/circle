@@ -13,21 +13,20 @@ import {
   Button,
   AlertDescription,
 } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
-import SignatureCanvas from "react-signature-canvas";
-import { useState, useEffect, useRef } from "react";
-
-import { useUser } from "../../contexts/UserContext";
-
-import { useQuery, useMutation } from "@apollo/client";
-
-import { ADD_SERVICE_AGREEMENT } from "../../utils/mutations";
 
 import { ButtonStyles } from "../../components/styles/ButtonStyle";
 import { InputStyles } from "../../components/styles/InputStyles";
 import CustomerControl from "../../components/CustomerControl";
 
-import ServiceControl from "../../components/ServiceControl";
+import { useNavigate } from "react-router-dom";
+import SignatureCanvas from "react-signature-canvas";
+import { useState, useEffect, useRef } from "react";
+import ProductControl from "../../components/ProductControl";
+
+import { useUser } from "../../contexts/UserContext";
+
+import { useQuery, useMutation } from "@apollo/client";
+import { ADD_SERVICE_AGREEMENT } from "../../utils/mutations";
 
 export default function ProviderServiceAgreement() {
   const { user } = useUser();
@@ -195,7 +194,8 @@ export default function ProviderServiceAgreement() {
       <CustomerControl handleInputChange={handleInputChange} />
 
       <Spacer />
-      <ServiceControl handleInputChange={handleInputChange} />
+      <ProductControl handleInputChange={handleInputChange} />
+      {/* <ServiceControl handleInputChange={handleInputChange} /> */}
 
       <Heading>Please Sign</Heading>
       <div

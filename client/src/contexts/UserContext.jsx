@@ -49,7 +49,12 @@ export const UserProvider = ({ children }) => {
     }
   }, [userData, userLoading, userError]);
   if (userLoading) return <p>Loading user...</p>;
-  if (userError) return <p>Could not load your account.</p>;
+  if (userError)
+    return (
+      <p>
+        Could not load your account.<a href="/login">Try logging in again</a>
+      </p>
+    );
 
   return (
     <UserContext.Provider

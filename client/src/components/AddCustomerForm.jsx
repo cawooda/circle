@@ -68,7 +68,7 @@ const AddCustomerForm = () => {
     invoiceEmail: "",
     referenceNumber: "",
     referenceName: "",
-    datOfBirth: "",
+    dateOfBirth: "",
   });
 
   useEffect(() => {
@@ -106,7 +106,7 @@ const AddCustomerForm = () => {
       invoiceEmail,
       referenceNumber,
       referenceName,
-      datOfBirth,
+      dateOfBirth,
     } = formData;
 
     const response = await addCustomer({
@@ -120,7 +120,7 @@ const AddCustomerForm = () => {
         invoiceEmail,
         referenceNumber,
         referenceName,
-        datOfBirth,
+        dateOfBirth,
       },
     });
     refetchProvider();
@@ -278,7 +278,7 @@ const AddCustomerForm = () => {
                         formData.invoiceEmail == "" ||
                         formData.referenceNumber == "" ||
                         formData.referenceName == "" ||
-                        formData.datOfBirth == ""
+                        formData.dateOfBirth == ""
                       }
                       type="submit"
                       variant="success"

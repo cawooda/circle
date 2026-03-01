@@ -7,6 +7,7 @@ const { User, Admin } = require("../../models");
 const { SMSService } = require("../../utils/smsService");
 
 const controllerSmsService = new SMSService();
+const emailService = require("../../utils/mailer").EMAILService;
 
 // implementing load limiting for sms queries:
 //javascript table ip address number of times it has failed to try a code.
@@ -153,6 +154,25 @@ router.post("/users", async (req, res) => {
       message: "An unexpected error occurred",
     });
   }
+});
+
+router.post("/signup", async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ message: "Email is required" });
+
+  // Simulate saving to the database
+  emailService.sendMail(
+    "cawooda@gmail.com",
+    "A New Subscriber!",
+    "A new user has subscribed to the yoga newsletter with the email: " + email,
+    "A new user has subscribed to the yoga newsletter with the email: " + email,
+  );
+
+  // In a real application, you would save newYogaPose to the database here
+
+  return res.status(201).json({
+    message: "Subscribed successfully",
+  });
 });
 
 router.use("/users/:id", async (req, res) => {

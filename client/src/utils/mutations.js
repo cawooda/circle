@@ -31,7 +31,7 @@ export const ADD_CUSTOMER = gql`
     $invoiceEmail: String!
     $referenceNumber: String!
     $referenceName: String!
-    $datOfBirth: String!
+    $dateOfBirth: String!
   ) {
     addCustomer(
       token: $token
@@ -43,7 +43,7 @@ export const ADD_CUSTOMER = gql`
       invoiceEmail: $invoiceEmail
       referenceNumber: $referenceNumber
       referenceName: $referenceName
-      datOfBirth: $datOfBirth
+      dateOfBirth: $dateOfBirth
     ) {
       _id
     }

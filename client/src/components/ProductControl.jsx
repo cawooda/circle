@@ -7,12 +7,12 @@ import {
   NumberInputField,
 } from "@chakra-ui/react";
 import { InputStyles } from "./styles/InputStyles";
+import { useUser } from "../contexts/UserContext";
 
-export default function CustomerControl({
-  products,
-  handleInputChange,
-  locked,
-}) {
+export default function ProductControl({ handleInputChange, locked }) {
+  const { user } = useUser();
+  if (!user.roleProvider.products) return null;
+
   return (
     <>
       <FormControl>
@@ -23,17 +23,17 @@ export default function CustomerControl({
           onClick={handleInputChange}
           onChange={handleInputChange}
         >
-          {products.map((product, index) => {
-            return (
-              <option
-                key={product.value}
-                selected={index === 0}
-                value={product.value}
-              >
-                {product.label}
-              </option>
-            );
-          })}
+          <option value="">-- Select a product --</option>
+
+          {user.roleProvider.products.length
+            ? user.roleProvider.products.map((product, index) => {
+                return (
+                  <option key={product._id} value={product._id}>
+                    {product.name}
+                  </option>
+                );
+              })
+            : ""}
         </Select>
       </FormControl>
       <FormControl>
@@ -42,7 +42,7 @@ export default function CustomerControl({
           <NumberInputField
             {...InputStyles}
             readOnly={locked || false}
-            name="quantity"
+            name="productQuantity"
             onInput={handleInputChange}
           />
         </NumberInput>
