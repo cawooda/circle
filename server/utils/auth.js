@@ -15,7 +15,7 @@ async function authMiddleware({ req }) {
   const openOperations = [
     "getServiceAgreement",
     "signServiceAgreement",
-    "GetMe",
+    "LoginUser",
     "IntrospectionQuery", // Example operation name
   ];
 
@@ -27,6 +27,7 @@ async function authMiddleware({ req }) {
     console.log("should retrun null for use as operationName matched");
     return { user: null };
   }
+
   if (!req.headers.authorization) {
     throw new GraphQLError("No token provided", {
       extensions: { code: "UNAUTHENTICATED" },
@@ -34,7 +35,7 @@ async function authMiddleware({ req }) {
   }
 
   let token = req.headers.authorization.split(" ").pop().trim();
-
+  console.log("token in authMiddleware", token);
   if (!token) {
     throw new GraphQLError("No token provided", {
       extensions: { code: "UNAUTHENTICATED" },
@@ -45,7 +46,7 @@ async function authMiddleware({ req }) {
     const { authenticatedPerson } = await jwt.verify(token, secret, {
       maxAge: process.env.TOKEN_EXPIRES_IN,
     });
-
+    console.log("authenticatedPerson from token", authenticatedPerson);
     const registeredUser = await User.findById(authenticatedPerson?._id);
 
     if (!registeredUser) {
@@ -55,12 +56,6 @@ async function authMiddleware({ req }) {
     }
 
     if (registeredUser._id == authenticatedPerson._id) {
-      await registeredUser.populate({
-        path: "roleCustomer",
-        model: "customer",
-      });
-      await registeredUser.populate("roleAdmin");
-      await registeredUser.populate("roleProvider");
       await registeredUser.toObject();
       return { user: registeredUser };
     } else {

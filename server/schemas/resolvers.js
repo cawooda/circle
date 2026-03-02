@@ -7,58 +7,44 @@ const { ServiceAgreement } = require("../models");
 const { generateRandomNumber } = require("../utils/helpers");
 
 const {
-  getAllUsers,
   getMe,
-  getCustomers,
-  getUserByToken,
-  getUserRoles,
-  toggleUserRole,
-  updateProfile,
-  updateUserPassword,
-} = require("./resolvers.user");
-const { updateProviderProfile } = require("./resolvers.provider");
-const {
-  addService,
-  deleteService,
-  updateServicePrice,
-  getServices,
-} = require("./resolvers.service");
-const {
+  getAllUsers,
+  getAllProducts,
+  getAllProviderServices,
+  getAllProviderServiceAgreements,
+  getServiceAgreement,
+  addUser,
+  loginUser,
   addServiceAgreement,
   signServiceAgreement,
-  getServiceAgreements,
-  getServiceAgreement,
-} = require("./resolvers.serviceAgreement");
-
-const { getMyProvider } = require("./resolvers.provider");
-const { addCustomer } = require("./resolvers.customer");
-
-const { getProducts } = require("./resolvers.product");
+  toggleUserRole,
+  updateUserProfile,
+  updateUserPassword,
+  updateProviderProfile,
+  addNewCustomerToProvider,
+  deleteServiceFromProvider,
+} = require("./resolvers.user");
 
 const resolvers = {
   Query: {
-    getAllUsers,
     getMe,
-    getCustomers,
-    getProducts,
-    getUserByToken,
-    getUserRoles,
-    getServices,
+    getAllUsers,
+    getAllProducts,
+    getAllProviderServices,
+    getAllProviderServiceAgreements,
     getServiceAgreement,
-    getServiceAgreements,
-    getMyProvider,
   },
   Mutation: {
+    addUser,
+    loginUser,
     addServiceAgreement,
     signServiceAgreement,
-    addCustomer,
-    updateProviderProfile,
     toggleUserRole,
-    updateProfile,
+    updateUserProfile,
     updateUserPassword,
-    addService,
-    deleteService,
-    updateServicePrice,
+    updateProviderProfile,
+    addNewCustomerToProvider,
+    deleteServiceFromProvider,
   },
 };
 

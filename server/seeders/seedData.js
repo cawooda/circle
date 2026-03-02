@@ -1,17 +1,36 @@
+require("dotenv").config();
+const seedPassword = process.env.SEED_PASSWORD;
+const seedPHONE1 = process.env.SEED_PHONE_1;
+const seedPHONE2 = process.env.SEED_PHONE_2;
+
 const userSeed = [
   {
     _id: "66a083826e76d0e5ababe48f",
     first: "AndrewMasterUser",
     last: "Cawood",
-    mobile: "0400442612",
+    mobile: seedPHONE1,
     email: "cawooda@gmail.com",
     roleCustomer: "66d6b24c6bea26447abaeaf9",
     roleProvider: "66a0d9f4a0eb8627cc6320f7",
     roleAdmin: "66a0d9f4a0eb8627cc6320fa",
-    password: "passyword123",
+    password: seedPassword,
     roleSuperAdmin: true,
     sendEmails: true,
-    sendTexts: false,
+    sendTexts: true,
+  },
+
+  {
+    _id: "69a40dc8695cbc8945a0c1ad",
+    first: "Jimmy",
+    last: "Fallon",
+    mobile: seedPHONE2,
+    email: "jimmy@jimmy.com",
+    roleCustomer: "66d6b24c6bea26447abaeafa",
+    roleProvider: "66a0d9f4a0eb8627cc6320f8",
+    roleAdmin: null,
+    roleSuperAdmin: false,
+    sendEmails: true,
+    sendTexts: true,
   },
 ];
 
@@ -45,6 +64,22 @@ const providerSeed = [
     serviceAgreements: ["66a0d9f4a0eb8627cc6321f3"],
     shifts: ["66a0d9f4a0eb8627cc6321f3"],
   },
+  {
+    _id: "66a0d9f4a0eb8627cc6320f8",
+    user: "69a40dc8695cbc8945a0c1ad",
+    abn: "1234567890",
+    address: {
+      street: "456 New St",
+      city: "Cityville",
+      state: "Stateville",
+      postalCode: "12345",
+    },
+    providerName: "Jimmy Fallon Provider",
+    notes: "Provider 2 notes.",
+    linkedCustomers: ["66d6b24c6bea26447abaeaf9"],
+    serviceAgreements: ["66a0d9f4a0eb8627cc6321f3"],
+    shifts: ["66a0d9f4a0eb8627cc6321f3"],
+  },
 ];
 
 const customerSeed = [
@@ -54,6 +89,14 @@ const customerSeed = [
     serviceAgreementEmail: "cawooda@gmail.com",
     invoiceEmail: "cawooda@gmail.com",
     referenceNumber: "5614406130",
+    referenceName: "NDIS Number",
+  },
+  {
+    _id: "66d6b24c6bea26447abaeafa",
+    user: "69a40dc8695cbc8945a0c1ad",
+    serviceAgreementEmail: "jimmy@jimmy.com",
+    invoiceEmail: "jimmy@jimmy.com",
+    referenceNumber: "5614406131",
     referenceName: "NDIS Number",
   },
 ];

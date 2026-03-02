@@ -1,103 +1,143 @@
 const typeDefs = `
 
+scalar DateTime
+  @specifiedBy(url: "https://scalars.graphql.org/andimarek/date-time")
+
 type User {
     _id: ID!
-    first: String
-    last: String
+    first: String!
+    last: String!
     mobile: String!
-    email: String
-    date_of_birth: String
-    fullName: String
+    email: String!
+    dateOfBirth: DateTime!
     roleAdmin: Admin
-    roleProvider: Provider
-    roleCustomer: Customer
+    providerProfile: Provider
+    customerProfile: Customer
     roleSuperAdmin: Boolean
     serviceAgreements: [ServiceAgreement]
 }
 
+type Admin {
+    users: [User]!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
 type Customer {
-    _id: ID!
-    user: User
-    fullName: String
-    first: String
-    last: String
+    active: Boolean!
+    dateOfBirth: DateTime
     referenceNumber: String
     referenceName: String
-    address: Address
-    dateOfBirth: String
-    customerSpecificField:String
+    address: Address!
+    invoiceEmail: String
+    serviceAgreementEmail: String
+    customerSpecificField: String
+    serviceAgreements: [ServiceAgreement]
+    createdAt: DateTime!
+    updatedAt: DateTime!
 }
 
 type Provider {
-    _id: ID!
-    user: User
-    providerName: String
-    abn: String
-    address: Address
+    providerName: String!
+    abn: String!
+    address: Address!
     termsAndConditions: [TermsAndConditions]
-    createdAt: String
-    updatedAt: String
+    createdAt: DateTime!
+    updatedAt: DateTime!
     notes:String
-    linkedCustomers: [Customer]
+    linkedCustomers: [User]
     services: [Service]
     serviceAgreements: [ServiceAgreement]
-    shifts: [Shift]!
+    shifts: [Shift]
     logoUrl: String
 }
 
+type TermsAndConditions {
+    heading: String!
+    paragraph: String!
+}
 
+type Product {
+  _id: ID!
+  name: String
+  defaultPrice: Float
+}
 
-type signServiceAgreementResponse {
+type Service {
+ _id: ID!
+ product: Product!
+ price: Float!
+ provider: User
+ active: Boolean
+}
+
+type SignServiceAgreementResponse {
 success: Boolean!
 message: String!
 agreementNumber: Int
 }
 
-type Admin {
-    _id: ID!
-    user: User!
-    users: [User]!
-    createdAt: String
-    updatedAt: String
-}
-
-
-
-
 type Shift {
-    _id:ID
-    provider: Provider
-    customer: Customer
-    service: Service
-    startTime: String
-    end_time: String
-    units: Float
-    createdAt: String
-    updatedAt: String
+    _id:ID!
+    provider: User!
+    customer: User!
+    service: Service!
+    startTime: String!
+    endTime: String!
+    units: Float!
+    createdAt: DateTime!
+    updatedAt: DateTime!
 
 }
 
 type ServiceAgreement {
     _id: ID!
-    provider: Provider
-    customer: Customer
-    agreementNumber:Int
-    startDate: String
-    service: Service
-    quantity: Int
-    endDate: String
+    provider: User!
+    customer: User!
+    agreementNumber:Int!
+    startDateTime: DateTime!
+    service: Service!
+    quantity: Int!
+    endDateTime: DateTime!
     totalPrice:Float
-    approvedByCustomer:Boolean
-    createdAt:String
-    updatedAt:String
+    approvedByCustomer:Boolean!
+    createdAt: DateTime!
+    updatedAt: DateTime!
     signature:String
   }
+
+
   
   type Address {
-    street: String
-    city: String
-    state: String
-    postalCode: String
+    street: String!
+    city: String!
+    state: String!
+    postalCode: String!
+}
+
+input AddUserInput {
+    first: String!
+    last: String!
+    mobile: String!
+    email: String!
+    password: String!
+    dateOfBirth: DateTime!
+}
+
+input UpdateUserProfileInput {
+    userId: ID!
+    first: String
+    last: String
+    mobile: String
+    email: String
+    dateOfBirth: DateTime
+}
+
+type LoginUserResponse {
+    success: Boolean!
+    message: String!
+    token: String
+    user: User
 }
 
 input AddressInput {
@@ -105,21 +145,88 @@ input AddressInput {
     city: String
     state: String
     postalCode: String
+    }
+
+input UpdateTermsAndConditionsInput {
+    heading: String!
+    paragraph: String!
+}    
+
+input UpdateProviderProfileInput {
+    userId: ID!
+    providerName: String
+    abn: String
+    address: AddressInput
+    termsAndConditions: [UpdateTermsAndConditionsInput]
+    notes:String
+    logoUrl: String
 }
 
+type UpdateProviderProfileResponse {
+    success: Boolean!
+    message: String!
+    provider: Provider
+}
+
+input AddNewCustomerToProviderInput {
+    providerUserId: ID!
+    invoiceEmail: String!
+    serviceAgreementEmail: String!
+    referenceNumber: String!
+    referenceName: String!
+    dateOfBirth: DateTime!
+    address: AddressInput!
+    customerSpecificField: String
+}
+    
+input UpdateAddressInput {
+    street: String
+    city: String
+    state: String
+    postalCode: String
+}
   
  input ServiceAgreementInput {
     provider: ID!
     customer: ID!
+    endDateTime: DateTime!
+    startDateTime: DateTime!
+    service: ID!
     quantity: Int!
-    endDate: String
-    # Add any other fields here
+    providerSignature: String!
   }
 
-type Product {
-  _id: ID!
-  name: String
-  price: Float
+input SignServiceAgreementInput {
+  agreementNumber: Int!
+  customerSignature: String!
+}
+
+input TermsAndConditionsInput {
+  heading: String!
+  paragraph: String!
+}
+
+type AddUserResponse {
+    success: Boolean!
+    message: String!
+    user: User
+}
+
+type UpdateUserProfileResponse {
+    success: Boolean!
+    message: String!
+    user: User
+}
+
+type UpdateUserPasswordResponse {
+    success: Boolean!
+    message: String!
+}
+
+type UpdateServicePriceResponse {
+  success: Boolean!
+  message: String!
+  service: Service
 }
 
 type ProductListResponse {
@@ -127,14 +234,6 @@ type ProductListResponse {
   message: String!
   products: [Product]
   }
-
-type Service {
- _id: ID!
- product: Product!
- price: Float!
- provider: Provider
- active: Boolean
-}
 
 type ServicesResponse {
   success: Boolean!
@@ -148,66 +247,52 @@ type AddServiceResponse {
   service: Service
 }
 
+type AddNewCustomerToProviderResponse {
+  success: Boolean!
+  message: String!
+  customer: User
+}
+
+type DeleteServiceResponse {
+  success: Boolean!
+  message: String!
+}
+
 type ServiceAgreementResponse {
   success: Boolean!
   message: String!
   serviceAgreements: [ServiceAgreement]!
 }
 
-type TermsAndConditions {
-    heading: String
-    paragraph: String
+type UpdateServiceResponse {
+  success: Boolean!
+  message: String!
+  service: Service
 }
-
-input TermsAndConditionsInput {
-    heading: String
-    paragraph: String
-}
-
-union RoleModel = Admin | Provider | Customer
 
 type Query {
-    getAllUsers(id: ID!): [User]
-    getUserByToken(token: String!): User
-    getMe(token:String!): User!
-    getMyProvider: Provider!
-    getUserRoles(id: ID!): [String]
-    getCustomers: [Customer]
-    getProducts: ProductListResponse
-    getServices(providerId: ID!): ServicesResponse
-    getServiceAgreements: ServiceAgreementResponse!
+    getMe: User!
+    getAllUsers: [User]
+    getAllProducts: ProductListResponse
+    getAllProviderServices(providerId: ID!): ServicesResponse
+    getAllProviderServiceAgreements: ServiceAgreementResponse!
     getServiceAgreement(agreementNumber: String!): ServiceAgreement
 }
 
 
 type Mutation {
-    addServiceAgreement(provider:ID!,customer:ID!,endDate:String!,startDate:String!,service:ID!,quantity:Int!,providerSignature:String!): ServiceAgreement
-    signServiceAgreement(agreementId:ID!,customerSignature:String!):signServiceAgreementResponse    
+    addUser(input : AddUserInput!): AddUserResponse
+    loginUser(email: String!, password: String!): LoginUserResponse
+    addServiceAgreement(input: ServiceAgreementInput!): ServiceAgreement
+    signServiceAgreement(input: SignServiceAgreementInput):SignServiceAgreementResponse    
     toggleUserRole(userId: ID!,role: String!): User!  
-    updateProfile( userId:ID!, first: String, last: String, mobile: String,email: String):User  
-    updateProviderProfile(
-        userId: ID!,
-        providerId: ID!,
-        providerName: String,
-        abn: String,
-        termsAndConditions: [TermsAndConditionsInput],
-        address: AddressInput
-        logo:String
-    ): Provider
-    updateUserPassword(userId:ID!,password:String):User
-    addCustomer(token:String!,
-      providerId:ID!,
-      first:String!,
-      last:String!,
-      mobile:String!,
-      email:String!,
-      invoiceEmail:String!,
-      referenceNumber:String!,
-      referenceName:String!,
-      dateOfBirth:String!):Customer
-    addService(providerId: ID!, productId: ID!):AddServiceResponse
-    deleteService(serviceId:ID!):Service
-    updateServicePrice(serviceId:ID!,price: Float!):Service
+    updateUserProfile(input: UpdateUserProfileInput!):UpdateUserProfileResponse  
+    updateUserPassword(password:String):UpdateUserPasswordResponse
+    updateProviderProfile(input: UpdateProviderProfileInput!): UpdateProviderProfileResponse
+    addNewCustomerToProvider(input: AddNewCustomerToProviderInput!):AddNewCustomerToProviderResponse
+    addServiceToProvider(providerUserId: ID!, productId: ID!):AddServiceResponse
+    deleteServiceFromProvider(serviceId:ID!):DeleteServiceResponse
+    updateServicePrice(serviceId:ID!,price: Float!):UpdateServicePriceResponse
 }
 
 `;

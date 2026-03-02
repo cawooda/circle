@@ -9,24 +9,19 @@ const {
   Product,
   ServiceAgreement,
 } = require("../models");
+const { addServiceAgreement } = require("./resolvers.serviceAgreement");
 module.exports = {
-  getAllUsers: async (_parent, {}, context) => {
-    const user = await User.findById(context.user._id);
-    const admin = await User.findById(context.user.roleAdmin);
-    if (admin || user.roleSuperAdmin) {
-      try {
-        const users = await User.find({}).populate();
-        return users;
-      } catch (error) {
-        console.log("getAllUsers resolver error", error);
-        return error;
-      }
-    } else return { message: "user needs to be admin to perform this action" };
-  },
-  getMe: async (_parent, { token }, context) => {
+  getMe: async (_parent, {}, context) => {
+    const { user } = context;
+    console.log("authenticatedPerson in getMe resolver", user);
+    const token = user.token || context.token;
     try {
       if (!context.user) {
         const authenticatedPerson = await verifyToken(token);
+        console.log(
+          "authenticatedPerson in getMe resolver",
+          authenticatedPerson,
+        );
         if (!authenticatedPerson)
           throw new Error("Could not verify with that token");
         const user = authenticatedPerson;
@@ -166,32 +161,27 @@ module.exports = {
       console.log("user resolver error getMe", error);
     }
   },
-  getUserByToken: async (_parent, { token }, context) => {
-    try {
-      const authenticatedPerson = await verifyToken(token);
-
-      const user = await User.findById(authenticatedPerson._id).populate();
-
-      return user;
-    } catch (error) {
-      throw new Error("Invalid or expired token");
-    }
+  getAllUsers: async (_parent, {}, context) => {
+    const user = await User.findById(context.user._id);
+    const admin = await User.findById(context.user.roleAdmin);
+    if (admin || user.roleSuperAdmin) {
+      try {
+        const users = await User.find({}).populate();
+        return users;
+      } catch (error) {
+        console.log("getAllUsers resolver error", error);
+        return error;
+      }
+    } else return { message: "user needs to be admin to perform this action" };
   },
-  getUserRoles: async (_parent, { id }, context) => {
-    const user = await User.findById(id);
-  },
-  getCustomers: async (_parent, {}, context) => {
-    //check what users the context user can get.
-
-    try {
-      const customers = await Customer.find({}).populate("user");
-
-      return customers;
-    } catch (error) {
-      console.error(error);
-    }
-  },
-
+  getAllProducts: async () => {},
+  getAllProviderServices: async (_parent, { providerId }) => {},
+  getAllProviderServiceAgreements: async (_parent, { providerId }) => {},
+  getServiceAgreement: async (_parent, { agreementNumber }) => {},
+  addUser: async (_parent, { input }) => {},
+  loginUser: async (_parent, { email, password }) => {},
+  addServiceAgreement: async (_parent, { input }) => {},
+  signServiceAgreement: async (_parent, { input }) => {},
   toggleUserRole: async (_parent, { userId, role }, context) => {
     if (!userId === (context.user.roleAdmin || context.user.superAdmin))
       throw new Error("userId didnt match with admin");
@@ -252,7 +242,10 @@ module.exports = {
       throw new Error("Failed to toggle user role");
     }
   },
-  updateProfile: async (_parent, { userId, first, last, mobile, email }) => {
+  updateUserProfile: async (
+    _parent,
+    { userId, first, last, mobile, email },
+  ) => {
     try {
       const updatedUser = await User.findById(userId);
       if (!updatedUser) {
@@ -286,7 +279,9 @@ module.exports = {
       }
 
       return updatedUser;
-    } catch (error) {}
+    } catch (error) {
+      throw new Error(error.message);
+    }
   },
   updateUserPassword: async (_parent, { userId, password }) => {
     try {
@@ -302,4 +297,185 @@ module.exports = {
       throw new Error(error.message);
     }
   },
+  updateProviderProfile: async (
+    _parent,
+    {
+      userId,
+      providerId,
+      providerName,
+      abn,
+      termsAndConditions,
+      address,
+      logo,
+    },
+    context,
+  ) => {
+    try {
+      // Find the user and ensure they have the provider role
+      const user = await User.findById(userId);
+      if (
+        !user?.roleProvider ||
+        user.roleProvider._id.toString() !== providerId
+      ) {
+        throw new GraphQLError(
+          "User does not have permission to update this provider.",
+        );
+      }
+
+      // Update provider fields if they are provided (not undefined)
+      // Find the provider
+      const provider = await Provider.findById(providerId);
+      if (!provider) {
+        throw new GraphQLError("Provider not found.");
+      }
+
+      // Prepare the update object only with the fields provided
+      const updatedFields = {
+        ...(providerName && { providerName }),
+        ...(abn && { abn }),
+        ...(termsAndConditions && { termsAndConditions }),
+        ...(logo && { logoUrl: logo }), // Store the logo as Base64 or URL
+        address: {
+          ...provider.address,
+          ...address, // Merge new address fields with existing ones
+        },
+      };
+
+      // Update the provider with new fields
+      Object.assign(provider, updatedFields);
+
+      // Optional: Filter out services with missing product names
+      provider.services = provider.services?.filter(
+        (service) => !!service.product?.name,
+      );
+
+      // Save the updated provider
+      const updatedProvider = await provider.save();
+      return updatedProvider;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Failed to update provider profile");
+    }
+  },
+  addNewCustomerToProvider: async (
+    _parent,
+    {
+      token,
+      providerId,
+      first,
+      last,
+      mobile,
+      email,
+      invoiceEmail,
+      referenceNumber,
+      referenceName,
+      dateOfBirth,
+    },
+    context,
+  ) => {
+    try {
+      if (!verifyToken(token))
+        throw new Error("Could not verify with that token");
+      let user = await User.findOneAndUpdate(
+        { first, last, dateOfBirth },
+        { email },
+      );
+      if (!user) {
+        user = await User.create({ first, last, mobile, email });
+      }
+      if (!user) {
+        throw new Error("Could not add or find user in addCustomer resolver");
+      }
+
+      // Step 3: Check if the customer exists or create a new customer
+      let customer = await Customer.findById(user.roleCustomer);
+      if (!customer) {
+        customer = await Customer.create({
+          user: user._id,
+          invoiceEmail,
+          referenceName,
+          referenceNumber,
+          dateOfBirth,
+        });
+        // Link the newly created customer to the user
+        if (!customer)
+          throw new Error("Could not add customer in addCustomer resolver");
+        user.roleCustomer = customer._id;
+        await user.save();
+      } else {
+        // Update existing customer with the provided details
+        await Customer.findByIdAndUpdate(
+          customer._id,
+          {
+            invoiceEmail,
+            referenceName,
+            referenceNumber,
+            dateOfBirth,
+          },
+          { new: true },
+        );
+      }
+
+      // Step 4: Link the customer to the provider
+      const provider = await Provider.findById(providerId);
+      if (provider) {
+        await provider.updateOne({
+          $addToSet: { linkedCustomers: customer._id },
+        });
+      }
+      await provider.save();
+      return provider.toObject();
+    } catch (error) {
+      console.error("Error in addCustomer resolver:", error.message);
+      throw error;
+    }
+  },
+  addServiceToProvider: async (_parent, { providerId, productId }, context) => {
+    try {
+      // Find the provider and product by their IDs
+      const provider = await Provider.findById(providerId);
+      const product = await Product.findById(productId);
+
+      if (!provider) throw new Error(`${providerId} not found`);
+      if (!product) throw new Error(`${productId} not found`);
+
+      // Create the new service
+      const addedService = await Service.create({
+        provider: providerId,
+        product: productId,
+        price: product.price,
+      });
+      if (!addedService) throw new Error(`we couldnt create a service`);
+
+      provider.services.push(addedService._id);
+      await provider.save();
+
+      // Populate the service with the provider and product data
+      await addedService.populate("provider product");
+
+      return {
+        success: true,
+        message: "Service successfully created",
+        service: addedService,
+      };
+    } catch (error) {
+      if (error.code === 11000) {
+        return {
+          success: false,
+          message:
+            "A provider can only have one service of the same product name",
+        };
+      }
+      console.log(error);
+      return {
+        success: false,
+        message: "An error occurred while creating the service",
+      };
+    }
+  },
+  deleteServiceFromProvider: async (
+    _parent,
+    { providerId, serviceId },
+    context,
+  ) => {},
 };
