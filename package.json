@@ -1,11 +1,11 @@
 {
-  "name": "circle-project3",
+  "name": "circle",
   "version": "1.0.0",
   "description": "Circle service agreements and invoicing platform",
   "main": "index.js",
   "scripts": {
     "start": "node server/server.js",
-    "build": "npm run install && npm run seed && cd client && npm run build",
+    "build": "npm run install && cd client && npm run build",
     "install": "cd server && npm ci && cd ../client && npm ci",
     "dev": "concurrently \"cd server && npm run watch\" \"cd client && npm run dev\"",
     "seed": "cd server && npm run seed",

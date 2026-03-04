@@ -3,87 +3,73 @@ const secret = process.env.SECRET_KEY;
 const { User } = require("../models/");
 const { GraphQLError } = require("graphql");
 const jwt = require("jsonwebtoken");
+const { openOperations } = require("./auth.config");
 
-const AuthenticationError = new GraphQLError("Could not authenticate user.", {
-  extensions: {
-    code: "UNAUTHENTICATED",
-  },
-});
+const unauthenticated = (message = "Not authenticated") =>
+  new GraphQLError(message, { extensions: { code: "UNAUTHENTICATED" } });
+const unauthorized = (message = "Not authorized") =>
+  new GraphQLError(message, { extensions: { code: "UNAUTHOURISED" } });
 
 async function authMiddleware({ req }) {
-  // List of operation names that do not require authentication
-  const openOperations = [
-    "getServiceAgreement",
-    "signServiceAgreement",
-    "GetMe",
-    "IntrospectionQuery", // Example operation name
-  ];
-
+  //Happy route sends a user object with fields.
+  // failuer leads to a user object with a null token.
+  // null token users can only proceed with certain operations.
+  // for all other operations, they fail.
+  // With a well formed token matching an existing user, the user is passed through the context
   // Parse the request body to get the operation name
-  const operationName = req.body.operationName;
-
-  // Check if the current request matches any open operation names
-  if (openOperations.includes(operationName)) {
-    console.log("should retrun null for use as operationName matched");
-    return { user: null };
+  const operationName = req.body.operationName || null;
+  // Check if the current request matches any open operation names and quickly fail if they do not have authorisation token
+  const checkNoOperationNameOrMatchedOperation =
+    !operationName || openOperations.includes(operationName);
+  console.log(
+    "checkOperationNameorMatched",
+    checkNoOperationNameOrMatchedOperation,
+  );
+  if (!operationName || openOperations.includes(operationName)) {
+    console.log(
+      "user with null token provided to context for operations requiring no authorization eg new user.",
+    );
+    return { user: { token: null } };
   }
   if (!req.headers.authorization) {
-    throw new GraphQLError("No token provided", {
-      extensions: { code: "UNAUTHENTICATED" },
-    });
+    throw unauthorized("could not find the right authorization");
   }
-
-  let token = req.headers.authorization.split(" ").pop().trim();
-
-  if (!token) {
-    throw new GraphQLError("No token provided", {
-      extensions: { code: "UNAUTHENTICATED" },
-    });
-  }
+  //extract the token or make it null. quickly fail if no token.
+  let token = req.headers.authorization.split(" ").pop().trim() || null;
+  if (!token) throw unauthorized("could not find the right token");
 
   try {
     const { authenticatedPerson } = await jwt.verify(token, secret, {
       maxAge: process.env.TOKEN_EXPIRES_IN,
     });
-
     const registeredUser = await User.findById(authenticatedPerson?._id);
-
     if (!registeredUser) {
-      throw new GraphQLError("No user found", {
-        extensions: { code: "UNAUTHENTICATED" },
-      });
+      throw unauthenticated("Could not find a registered user with that token");
     }
-
     if (registeredUser._id == authenticatedPerson._id) {
-      await registeredUser.populate({
-        path: "roleCustomer",
-        model: "customer",
-      });
-      await registeredUser.populate("roleAdmin");
-      await registeredUser.populate("roleProvider");
       await registeredUser.toObject();
       return { user: registeredUser };
     } else {
-      throw new GraphQLError("Authentication failed", {
-        extensions: { code: "UNAUTHENTICATED" },
-      });
+      throw unauthenticated("Authentication failed. thats all we know");
     }
   } catch (error) {
     if (error.name === "TokenExpiredError") {
-      console.error("Token expired error:", error);
-      throw new GraphQLError("Token expired", {
-        extensions: { code: "UNAUTHENTICATED" },
-      });
+      throw unauthenticated("Token Expired, sorry");
     } else {
-      console.error("Authentication Error:", error);
-      throw new GraphQLError("Authentication failed", {
-        extensions: { code: "UNAUTHENTICATED" },
-      });
+      throw unauthenticated("Authentication failed. Thats all we know");
     }
   }
 }
 
+const signToken = (payload, expiresIn = process.env.TOKEN_EXPIRES_IN) => {
+  const token = jwt.sign(payload, secret, {
+    expiresIn,
+  });
+
+  return token;
+};
+
 module.exports = {
-  AuthenticationError,
+  signToken,
   authMiddleware,
 };

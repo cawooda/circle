@@ -9,7 +9,31 @@ const {
   Product,
   ServiceAgreement,
 } = require("../models");
+const { addServiceAgreement } = require("./resolvers.serviceAgreement");
+const { signToken } = require("../utils/auth.js");
+
 module.exports = {
+  getMe: async (_parent, { contact, pasword }, context) => {
+    const { user } = context;
+    const authenticatedUser = await User.findOne({
+      $or: [
+        { "contact.email": contact.email.toLowerCase() || null },
+        { "contact.mobile": contact.mobile || null },
+      ],
+    });
+    if (!authenticatedUser)
+      throw unauthenticated("we couldn't find a user with those details");
+    const authenticatedUserObject = authenticatedUser.toObject();
+    const token = signToken(authenticatedUserObject);
+    const response = {
+      success: true,
+      message: "AUTHENTICATED: Here is your user and token",
+      user: authenticatedUserObject,
+      token,
+    };
+
+    return response;
+  }, //progessed to here. continue here:
   getAllUsers: async (_parent, {}, context) => {
     const user = await User.findById(context.user._id);
     const admin = await User.findById(context.user.roleAdmin);
@@ -23,175 +47,14 @@ module.exports = {
       }
     } else return { message: "user needs to be admin to perform this action" };
   },
-  getMe: async (_parent, { token }, context) => {
-    try {
-      if (!context.user) {
-        const authenticatedPerson = await verifyToken(token);
-        if (!authenticatedPerson)
-          throw new Error("Could not verify with that token");
-        const user = authenticatedPerson;
-        context = { user };
-      }
-
-      const user = await User.findById(context.user._id)
-        .populate("roleCustomer")
-        .populate({
-          path: "roleAdmin",
-          populate: {
-            path: "users",
-            model: "user",
-            populate: [
-              {
-                path: "roleCustomer",
-                model: "customer",
-              },
-              {
-                path: "roleProvider",
-                model: "provider",
-              },
-            ],
-          },
-        })
-        .populate({
-          path: "roleProvider",
-          populate: [
-            {
-              path: "user",
-              model: "user",
-            },
-            {
-              path: "services",
-              model: "service",
-              populate: { path: "product", model: "product" },
-            },
-            {
-              path: "shifts",
-              model: "shift",
-              populate: { path: "service", model: "service" },
-            },
-            {
-              path: "linkedCustomers",
-              model: "customer",
-              populate: { path: "user", model: "user" },
-            },
-            {
-              path: "serviceAgreements",
-              model: "agreement",
-            },
-            {
-              path: "termsAndConditions",
-            },
-            {
-              path: "services",
-              model: "service",
-              populate: {
-                path: "product",
-                model: "product",
-              },
-            },
-            {
-              path: "linkedCustomers",
-              model: "customer",
-              populate: [
-                {
-                  path: "user",
-                  model: "user",
-                },
-              ],
-            },
-          ],
-        })
-        .exec();
-
-      const users = await User.find({});
-
-      if (user?.roleAdmin?.users == [] || !user?.roleAdmin?.users)
-        user.roleAdmin.users = users;
-
-      if (user.roleProvider) {
-        user.roleProvider.linkedCustomers =
-          user.roleProvider?.linkedCustomers.filter((customer) => {
-            if (customer.user.mobile && customer.user.first) {
-              return true;
-            } else
-              console.log(`${customer._id} dint have a mobile or first name`);
-          });
-      }
-      if (user.roleProvider) {
-        user.roleProvider.services = user.roleProvider?.services.filter(
-          (service) => {
-            if (service.product.name) {
-              return true;
-            }
-          },
-        );
-      }
-
-      user.save();
-      // for each linked customer in the roleProvider of user, check whether the population has worked to give name, mobile etc.
-      // if not delete the id from the linked
-
-      if (user) {
-        const serviceAgreements = await ServiceAgreement.find({
-          $or: [
-            { provider: user.roleProvider },
-            { customer: user.roleCustomer },
-          ],
-        })
-          .populate({
-            path: "provider",
-            model: "provider",
-            populate: { path: "user", model: "user" },
-          })
-          .populate({
-            path: "customer",
-            model: "customer",
-            populate: { path: "user", model: "user" },
-          })
-          .populate({
-            path: "service",
-            model: "service",
-            populate: { path: "product", model: "product" },
-          })
-          .lean({ virtuals: true })
-          .exec();
-
-        user.serviceAgreements = serviceAgreements;
-
-        return user;
-      } else {
-        return { message: "user not found" };
-      }
-    } catch (error) {
-      console.log("user resolver error getMe", error);
-    }
-  },
-  getUserByToken: async (_parent, { token }, context) => {
-    try {
-      const authenticatedPerson = await verifyToken(token);
-
-      const user = await User.findById(authenticatedPerson._id).populate();
-
-      return user;
-    } catch (error) {
-      throw new Error("Invalid or expired token");
-    }
-  },
-  getUserRoles: async (_parent, { id }, context) => {
-    const user = await User.findById(id);
-  },
-  getCustomers: async (_parent, {}, context) => {
-    //check what users the context user can get.
-
-    try {
-      const customers = await Customer.find({}).populate("user");
-
-      return customers;
-    } catch (error) {
-      console.error(error);
-    }
-  },
-
+  getAllProducts: async () => {},
+  getAllProviderServices: async (_parent, { providerId }) => {},
+  getAllProviderServiceAgreements: async (_parent, { providerId }) => {},
+  getServiceAgreement: async (_parent, { agreementNumber }) => {},
+  addUser: async (_parent, { input }) => {},
+  loginUser: async (_parent, { email, password }) => {},
+  addServiceAgreement: async (_parent, { input }) => {},
+  signServiceAgreement: async (_parent, { input }) => {},
   toggleUserRole: async (_parent, { userId, role }, context) => {
     if (!userId === (context.user.roleAdmin || context.user.superAdmin))
       throw new Error("userId didnt match with admin");
@@ -252,7 +115,10 @@ module.exports = {
       throw new Error("Failed to toggle user role");
     }
   },
-  updateProfile: async (_parent, { userId, first, last, mobile, email }) => {
+  updateUserProfile: async (
+    _parent,
+    { userId, first, last, mobile, email },
+  ) => {
     try {
       const updatedUser = await User.findById(userId);
       if (!updatedUser) {
@@ -286,7 +152,9 @@ module.exports = {
       }
 
       return updatedUser;
-    } catch (error) {}
+    } catch (error) {
+      throw new Error(error.message);
+    }
   },
   updateUserPassword: async (_parent, { userId, password }) => {
     try {
@@ -302,4 +170,185 @@ module.exports = {
       throw new Error(error.message);
     }
   },
+  updateProviderProfile: async (
+    _parent,
+    {
+      userId,
+      providerId,
+      providerName,
+      abn,
+      termsAndConditions,
+      address,
+      logo,
+    },
+    context,
+  ) => {
+    try {
+      // Find the user and ensure they have the provider role
+      const user = await User.findById(userId);
+      if (
+        !user?.roleProvider ||
+        user.roleProvider._id.toString() !== providerId
+      ) {
+        throw new GraphQLError(
+          "User does not have permission to update this provider.",
+        );
+      }
+
+      // Update provider fields if they are provided (not undefined)
+      // Find the provider
+      const provider = await Provider.findById(providerId);
+      if (!provider) {
+        throw new GraphQLError("Provider not found.");
+      }
+
+      // Prepare the update object only with the fields provided
+      const updatedFields = {
+        ...(providerName && { providerName }),
+        ...(abn && { abn }),
+        ...(termsAndConditions && { termsAndConditions }),
+        ...(logo && { logoUrl: logo }), // Store the logo as Base64 or URL
+        address: {
+          ...provider.address,
+          ...address, // Merge new address fields with existing ones
+        },
+      };
+
+      // Update the provider with new fields
+      Object.assign(provider, updatedFields);
+
+      // Optional: Filter out services with missing product names
+      provider.services = provider.services?.filter(
+        (service) => !!service.product?.name,
+      );
+
+      // Save the updated provider
+      const updatedProvider = await provider.save();
+      return updatedProvider;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Failed to update provider profile");
+    }
+  },
+  addNewCustomerToProvider: async (
+    _parent,
+    {
+      token,
+      providerId,
+      first,
+      last,
+      mobile,
+      email,
+      invoiceEmail,
+      referenceNumber,
+      referenceName,
+      dateOfBirth,
+    },
+    context,
+  ) => {
+    try {
+      if (!verifyToken(token))
+        throw new Error("Could not verify with that token");
+      let user = await User.findOneAndUpdate(
+        { first, last, dateOfBirth },
+        { email },
+      );
+      if (!user) {
+        user = await User.create({ first, last, mobile, email });
+      }
+      if (!user) {
+        throw new Error("Could not add or find user in addCustomer resolver");
+      }
+
+      // Step 3: Check if the customer exists or create a new customer
+      let customer = await Customer.findById(user.roleCustomer);
+      if (!customer) {
+        customer = await Customer.create({
+          user: user._id,
+          invoiceEmail,
+          referenceName,
+          referenceNumber,
+          dateOfBirth,
+        });
+        // Link the newly created customer to the user
+        if (!customer)
+          throw new Error("Could not add customer in addCustomer resolver");
+        user.roleCustomer = customer._id;
+        await user.save();
+      } else {
+        // Update existing customer with the provided details
+        await Customer.findByIdAndUpdate(
+          customer._id,
+          {
+            invoiceEmail,
+            referenceName,
+            referenceNumber,
+            dateOfBirth,
+          },
+          { new: true },
+        );
+      }
+
+      // Step 4: Link the customer to the provider
+      const provider = await Provider.findById(providerId);
+      if (provider) {
+        await provider.updateOne({
+          $addToSet: { linkedCustomers: customer._id },
+        });
+      }
+      await provider.save();
+      return provider.toObject();
+    } catch (error) {
+      console.error("Error in addCustomer resolver:", error.message);
+      throw error;
+    }
+  },
+  addServiceToProvider: async (_parent, { providerId, productId }, context) => {
+    try {
+      // Find the provider and product by their IDs
+      const provider = await Provider.findById(providerId);
+      const product = await Product.findById(productId);
+
+      if (!provider) throw new Error(`${providerId} not found`);
+      if (!product) throw new Error(`${productId} not found`);
+
+      // Create the new service
+      const addedService = await Service.create({
+        provider: providerId,
+        product: productId,
+        price: product.price,
+      });
+      if (!addedService) throw new Error(`we couldnt create a service`);
+
+      provider.services.push(addedService._id);
+      await provider.save();
+
+      // Populate the service with the provider and product data
+      await addedService.populate("provider product");
+
+      return {
+        success: true,
+        message: "Service successfully created",
+        service: addedService,
+      };
+    } catch (error) {
+      if (error.code === 11000) {
+        return {
+          success: false,
+          message:
+            "A provider can only have one service of the same product name",
+        };
+      }
+      console.log(error);
+      return {
+        success: false,
+        message: "An error occurred while creating the service",
+      };
+    }
+  },
+  deleteServiceFromProvider: async (
+    _parent,
+    { providerId, serviceId },
+    context,
+  ) => {},
 };

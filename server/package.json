@@ -5,11 +5,13 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "debug": "nodemon --inspect=9229 server.js",
     "watch": "nodemon server.js && npm test",
     "seed": "node seeders/seed.js",
     "seedReset": "node seeders/seedReset.js",
     "cleanup": "node seeders/cleanupData.js",
-    "test": "jest --watch"
+    "test": "jest --watch",
+    "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand"
   },
   "dependencies": {
     "@apollo/server": "^4.10.4",
@@ -21,6 +23,7 @@
     "fs": "^0.0.1-security",
     "html-pdf": "^3.0.1",
     "html-pdf-node": "^1.0.8",
+    "jest": "^30.2.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.2",
     "morgan": "^1.10.0",

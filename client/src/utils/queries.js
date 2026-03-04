@@ -51,136 +51,21 @@ export const QUERY_ALL_USERS = gql`
 `;
 
 export const GET_ME = gql`
-  query GetMe($token: String!) {
-    getMe(token: $token) {
-      _id
-      first
-      last
-      mobile
-      email
-      date_of_birth
-      fullName
-      roleAdmin {
+  query getMe($contact: ContactInput, $password: String) {
+    getMe(contact: $contact, password: $password) {
+      success
+      message
+      user {
         _id
-        createdAt
-        updatedAt
-      }
-      roleProvider {
-        _id
-        abn
-        termsAndConditions {
-          heading
-          paragraph
-        }
-        services {
-          _id
-          price
-          product {
-            name
-          }
-        }
-        linkedCustomers {
-          _id
-          user {
-            _id
-            first
-            last
-          }
-        }
-        address {
-          street
-          city
-          state
-          postalCode
-        }
-        providerName
-        logoUrl
-      }
-      roleCustomer {
-        _id
-        user {
-          _id
-          fullName
-          first
-          last
-        }
-        referenceNumber
-        referenceName
-        address {
-          street
-          city
-          state
-          postalCode
+        contact {
+          email
+          mobile
         }
         dateOfBirth
-        customerSpecificField
+        first
+        last
       }
-      roleSuperAdmin
-      serviceAgreements {
-        _id
-        provider {
-          _id
-          user {
-            _id
-            first
-            last
-          }
-          abn
-          address {
-            street
-            city
-            state
-            postalCode
-          }
-          providerName
-          termsAndConditions {
-            heading
-            paragraph
-          }
-          createdAt
-          updatedAt
-        }
-        customer {
-          _id
-          user {
-            _id
-            first
-            last
-          }
-          referenceNumber
-          referenceName
-          address {
-            street
-            city
-            state
-            postalCode
-          }
-          dateOfBirth
-          customerSpecificField
-        }
-        agreementNumber
-        startDate
-
-        service {
-          _id
-          product {
-            name
-            _id
-            price
-          }
-          price
-          provider {
-            _id
-          }
-        }
-        quantity
-        endDate
-        totalPrice
-        approvedByCustomer
-        createdAt
-        updatedAt
-        signature
-      }
+      token
     }
   }
 `;

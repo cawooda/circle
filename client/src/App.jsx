@@ -37,6 +37,13 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
             // Or handle token refresh if applicable
           }
           break;
+        case "UNAUTHOURISED":
+          // Handle token expiration error
+          if (err.message === "Unauthorised for that graphql operation") {
+            AuthService.logout(); // Optionally log out the user
+            // Or handle token refresh if applicable
+          }
+          break;
         default:
           console.error(`[GraphQL error]: ${err.message}`);
       }

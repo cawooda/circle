@@ -1,7 +1,7 @@
 const { Schema, model, Types } = require("mongoose");
 const { defaultTermsAndConditions } = require("../seeders/seedData");
 
-const User = require("./User");
+const User = require("./UserOLD");
 
 const { generateRandomNumber } = require("../utils/helpers");
 
