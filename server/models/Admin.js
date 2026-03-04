@@ -1,6 +1,6 @@
 //import the Schema and model from mongoose.
 const { Schema, model } = require("mongoose");
-const User = require("./User");
+const User = require("./UserOLD");
 
 //definde the user model schema
 const adminSchema = new Schema(

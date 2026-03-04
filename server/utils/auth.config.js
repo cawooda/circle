@@ -1,4 +1,5 @@
 const openOperations = [
+  "getMe",
   "getServiceAgreement",
   "signServiceAgreement",
   "LoginUser",

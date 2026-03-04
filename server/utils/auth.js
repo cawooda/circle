@@ -19,6 +19,12 @@ async function authMiddleware({ req }) {
   // Parse the request body to get the operation name
   const operationName = req.body.operationName || null;
   // Check if the current request matches any open operation names and quickly fail if they do not have authorisation token
+  const checkNoOperationNameOrMatchedOperation =
+    !operationName || openOperations.includes(operationName);
+  console.log(
+    "checkOperationNameorMatched",
+    checkNoOperationNameOrMatchedOperation,
+  );
   if (!operationName || openOperations.includes(operationName)) {
     console.log(
       "user with null token provided to context for operations requiring no authorization eg new user.",
@@ -55,6 +61,15 @@ async function authMiddleware({ req }) {
   }
 }
 
+const signToken = (payload, expiresIn = process.env.TOKEN_EXPIRES_IN) => {
+  const token = jwt.sign(payload, secret, {
+    expiresIn,
+  });
+
+  return token;
+};
+
 module.exports = {
+  signToken,
   authMiddleware,
 };

@@ -3,13 +3,19 @@ const typeDefs = `
 scalar DateTime
   @specifiedBy(url: "https://scalars.graphql.org/andimarek/date-time")
 
+scalar Token
+
+type Contact {
+    mobile: String
+    email: String
+}
+
 type User {
     _id: ID!
     first: String!
     last: String!
-    mobile: String!
-    email: String!
-    dateOfBirth: DateTime!
+    contact: Contact
+    dateOfBirth: DateTime
     roleAdmin: Admin
     providerProfile: Provider
     customerProfile: Customer
@@ -114,6 +120,13 @@ type ServiceAgreement {
     state: String!
     postalCode: String!
 }
+
+input ContactInput {
+  email: String
+  mobile: String
+}
+
+
 
 input AddUserInput {
     first: String!
@@ -270,8 +283,15 @@ type UpdateServiceResponse {
   service: Service
 }
 
+type getMeResponse {
+  success: Boolean!
+  message: String!
+  user: User
+  token: Token
+}
+
 type Query {
-    getMe: User!
+    getMe(contact:ContactInput,password:String): getMeResponse!
     getAllUsers: [User]
     getAllProducts: ProductListResponse
     getAllProviderServices(providerId: ID!): ServicesResponse

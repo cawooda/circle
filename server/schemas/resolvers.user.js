@@ -10,157 +10,30 @@ const {
   ServiceAgreement,
 } = require("../models");
 const { addServiceAgreement } = require("./resolvers.serviceAgreement");
+const { signToken } = require("../utils/auth.js");
+
 module.exports = {
-  getMe: async (_parent, {}, context) => {
+  getMe: async (_parent, { contact, pasword }, context) => {
     const { user } = context;
-    console.log("authenticatedPerson in getMe resolver", user);
-    const token = user.token || context.token;
-    try {
-      if (!context.user) {
-        const authenticatedPerson = await verifyToken(token);
-        console.log(
-          "authenticatedPerson in getMe resolver",
-          authenticatedPerson,
-        );
-        if (!authenticatedPerson)
-          throw new Error("Could not verify with that token");
-        const user = authenticatedPerson;
-        context = { user };
-      }
+    const authenticatedUser = await User.findOne({
+      $or: [
+        { "contact.email": contact.email.toLowerCase() || null },
+        { "contact.mobile": contact.mobile || null },
+      ],
+    });
+    if (!authenticatedUser)
+      throw unauthenticated("we couldn't find a user with those details");
+    const authenticatedUserObject = authenticatedUser.toObject();
+    const token = signToken(authenticatedUserObject);
+    const response = {
+      success: true,
+      message: "AUTHENTICATED: Here is your user and token",
+      user: authenticatedUserObject,
+      token,
+    };
 
-      const user = await User.findById(context.user._id)
-        .populate("roleCustomer")
-        .populate({
-          path: "roleAdmin",
-          populate: {
-            path: "users",
-            model: "user",
-            populate: [
-              {
-                path: "roleCustomer",
-                model: "customer",
-              },
-              {
-                path: "roleProvider",
-                model: "provider",
-              },
-            ],
-          },
-        })
-        .populate({
-          path: "roleProvider",
-          populate: [
-            {
-              path: "user",
-              model: "user",
-            },
-            {
-              path: "services",
-              model: "service",
-              populate: { path: "product", model: "product" },
-            },
-            {
-              path: "shifts",
-              model: "shift",
-              populate: { path: "service", model: "service" },
-            },
-            {
-              path: "linkedCustomers",
-              model: "customer",
-              populate: { path: "user", model: "user" },
-            },
-            {
-              path: "serviceAgreements",
-              model: "agreement",
-            },
-            {
-              path: "termsAndConditions",
-            },
-            {
-              path: "services",
-              model: "service",
-              populate: {
-                path: "product",
-                model: "product",
-              },
-            },
-            {
-              path: "linkedCustomers",
-              model: "customer",
-              populate: [
-                {
-                  path: "user",
-                  model: "user",
-                },
-              ],
-            },
-          ],
-        })
-        .exec();
-
-      const users = await User.find({});
-
-      if (user?.roleAdmin?.users == [] || !user?.roleAdmin?.users)
-        user.roleAdmin.users = users;
-
-      if (user.roleProvider) {
-        user.roleProvider.linkedCustomers =
-          user.roleProvider?.linkedCustomers.filter((customer) => {
-            if (customer.user.mobile && customer.user.first) {
-              return true;
-            } else
-              console.log(`${customer._id} dint have a mobile or first name`);
-          });
-      }
-      if (user.roleProvider) {
-        user.roleProvider.services = user.roleProvider?.services.filter(
-          (service) => {
-            if (service.product.name) {
-              return true;
-            }
-          },
-        );
-      }
-
-      user.save();
-      // for each linked customer in the roleProvider of user, check whether the population has worked to give name, mobile etc.
-      // if not delete the id from the linked
-
-      if (user) {
-        const serviceAgreements = await ServiceAgreement.find({
-          $or: [
-            { provider: user.roleProvider },
-            { customer: user.roleCustomer },
-          ],
-        })
-          .populate({
-            path: "provider",
-            model: "provider",
-            populate: { path: "user", model: "user" },
-          })
-          .populate({
-            path: "customer",
-            model: "customer",
-            populate: { path: "user", model: "user" },
-          })
-          .populate({
-            path: "service",
-            model: "service",
-            populate: { path: "product", model: "product" },
-          })
-          .lean({ virtuals: true })
-          .exec();
-
-        user.serviceAgreements = serviceAgreements;
-
-        return user;
-      } else {
-        return { message: "user not found" };
-      }
-    } catch (error) {
-      console.log("user resolver error getMe", error);
-    }
-  },
+    return response;
+  }, //progessed to here. continue here:
   getAllUsers: async (_parent, {}, context) => {
     const user = await User.findById(context.user._id);
     const admin = await User.findById(context.user.roleAdmin);
