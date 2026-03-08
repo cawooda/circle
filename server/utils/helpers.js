@@ -12,23 +12,4 @@ function generateRandomNumber(min = 1000000000, max = 9999999999) {
   return randomNumber;
 }
 
-function verifyToken(token) {
-  try {
-    const { authenticatedPerson } = jwt.verify(token, process.env.SECRET_KEY);
-    return authenticatedPerson;
-  } catch (error) {
-    console.log(error);
-    if (error.name === "TokenExpiredError") {
-      console.log("Token has expired. Please log in again.");
-    } else if (error.name === "JsonWebTokenError") {
-      console.log("Invalid token. Please provide a valid token.");
-    } else if (error.name === "NotBeforeError") {
-      console.log("Token is not active yet.");
-    } else {
-      console.log("An unknown error occurred.");
-    }
-    console.error(error.message);
-  }
-}
-
-module.exports = { validateEmail, verifyToken, generateRandomNumber };
+module.exports = { validateEmail, generateRandomNumber };

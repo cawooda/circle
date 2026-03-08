@@ -1,6 +1,6 @@
 //import the User Model defenition from the user file
 const Admin = require("./Admin");
-const User = require("./UserOLD");
+const User = require("./User");
 const Customer = require("./Customer");
 const Provider = require("./Provider");
 const Shift = require("./Shift");

@@ -1,40 +1,76 @@
-const { verifyToken } = require("./../utils/helpers");
+const path = require("path");
+require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 const { EMAILService } = require("../utils/mailer");
 const userEmailService = new EMAILService();
-const {
-  User,
-  Admin,
-  Provider,
-  Customer,
-  Product,
-  ServiceAgreement,
-} = require("../models");
-const { addServiceAgreement } = require("./resolvers.serviceAgreement");
-const { signToken } = require("../utils/auth.js");
+const { User, Admin, Provider, Customer, Product } = require("../models");
 
+const { signToken, verifyToken } = require("../utils/tokenHandler");
+//context always contains { user, role } but these can be null. resolvers should always check role
 module.exports = {
-  getMe: async (_parent, { contact, pasword }, context) => {
-    const { user } = context;
-    const authenticatedUser = await User.findOne({
-      $or: [
-        { "contact.email": contact.email.toLowerCase() || null },
-        { "contact.mobile": contact.mobile || null },
-      ],
-    });
-    if (!authenticatedUser)
-      throw unauthenticated("we couldn't find a user with those details");
-    const authenticatedUserObject = authenticatedUser.toObject();
-    const token = signToken(authenticatedUserObject);
-    const response = {
-      success: true,
-      message: "AUTHENTICATED: Here is your user and token",
-      user: authenticatedUserObject,
-      token,
-    };
+  login: async (_parent, data, context) => {
+    console.log("data", data);
 
-    return response;
+    const { contact, password } = data;
+    const { user, role } = context;
+
+    try {
+      const foundUser = await User.findOne({
+        $or: [
+          { "contact.email": contact.email.toLowerCase() || null },
+          { "contact.mobile": contact.mobile || null },
+        ],
+      });
+      if (!foundUser.checkPassword(password))
+        throw new Error("that password didnt work");
+
+      const token = signToken(
+        {
+          sub: foundUser._id,
+          role: foundUser.roleAdmin
+            ? "ADMIN"
+            : foundUser.roleProvider
+            ? "PROVIDER"
+            : foundUser.roleCustomer
+            ? "CUSTOMER"
+            : "NONE",
+        },
+        process.env.TOKEN_EXPIRES_IN,
+        "CIRCLE_AUTH",
+      );
+      return {
+        success: true,
+        message: "AUTHENTICATED: Here is your user and token",
+        token,
+      };
+    } catch (error) {
+      console.log("an error occurred in login");
+      console.log(error);
+    }
+  },
+  getMe: async (_parent, _data, context) => {
+    try {
+      const { user, role } = context;
+      if (!user) throw new Error("cant do this without authenticated user");
+
+      const response = {
+        success: true,
+        message: "AUTHENTICATED: Here is your user and token",
+        user: user.toObject(),
+      };
+
+      return response;
+    } catch (error) {
+      console.log(error);
+      const response = {
+        success: false,
+        message: "FAILED: sorry we couldnt do that",
+        user: null,
+      };
+      return response;
+    }
   }, //progessed to here. continue here:
   getAllUsers: async (_parent, {}, context) => {
+    const { token } = context.user;
     const user = await User.findById(context.user._id);
     const admin = await User.findById(context.user.roleAdmin);
     if (admin || user.roleSuperAdmin) {

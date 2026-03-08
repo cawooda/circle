@@ -1,14 +1,15 @@
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 //import the Schema and model from mongoose.
-const { Schema, model } = require("mongoose");
+const { Schema, model, models } = require("mongoose");
 const { generateRandomNumber } = require("../utils/helpers");
 const { SMSService } = require("../utils/smsService");
 const userSmsService = new SMSService();
 const { EMAILService } = require("../utils/mailer");
 const userEmailService = new EMAILService();
+const { signToken } = require("../utils/tokenHandler");
 
-const validator = require("validator");
+// const validator = require("validator");
 
 const parsedSaltRounds = Number.parseInt(
   process.env.SALT_WORK_FACTOR ?? "10",
@@ -163,19 +164,17 @@ userSchema
   .virtual("authToken")
   .get(function (expiresIn = process.env.TOKEN_EXPIRES_IN) {
     const user = {
-      _id: this._id,
-      mobile: this.mobile,
-      first: this.first,
-      admin: this.roleAdmin ? true : false,
-      provider: this.roleProvider ? true : false,
-      customer: this.roleCustomer ? true : false,
-      createdAt: new Date(),
+      sub: this._id,
+      role: this.admin
+        ? "ADMIN"
+        : this.provider
+        ? "PROVIDER"
+        : this.customer
+        ? "CUSTOMER"
+        : "NONE",
     };
     const token = signToken(user, expiresIn);
     console.log("token", token);
-    const verifiedToken = jwt.verify(token, secret, {
-      maxAge: process.env.TOKEN_EXPIRES_IN,
-    });
 
     return token;
   });
@@ -277,7 +276,7 @@ userSchema.methods.sendEmail = async function (
   }
 };
 
-userSchema.methods.isCorrectPassword = async function (password) {
+userSchema.methods.checkPassword = async function (password) {
   if (await bcrypt.compare(password, this.passwordHash)) {
     return true;
   } else return false;
@@ -300,15 +299,11 @@ userSchema.methods.generateAuthToken = function (
   };
 
   const token = signToken(user, expiresIn);
-  console.log("token", token);
-  const verifiedToken = jwt.verify(token, secret, {
-    maxAge: process.env.TOKEN_EXPIRES_IN,
-  });
 
   return token;
 };
 
 //initialise User Model. creates a collection called user based on the defined user schema
-const User = model("user", userSchema);
+const User = models.user || model("user", userSchema);
 
 module.exports = User;

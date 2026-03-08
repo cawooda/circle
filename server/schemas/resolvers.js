@@ -14,7 +14,7 @@ const {
   getAllProviderServiceAgreements,
   getServiceAgreement,
   addUser,
-  loginUser,
+  login,
   addServiceAgreement,
   signServiceAgreement,
   toggleUserRole,
@@ -36,7 +36,7 @@ const resolvers = {
   },
   Mutation: {
     addUser,
-    loginUser,
+    login,
     addServiceAgreement,
     signServiceAgreement,
     toggleUserRole,

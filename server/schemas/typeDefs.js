@@ -283,6 +283,12 @@ type UpdateServiceResponse {
   service: Service
 }
 
+type loginResponse {
+  success: Boolean!
+  message: String!
+  token: Token
+}
+
 type getMeResponse {
   success: Boolean!
   message: String!
@@ -291,7 +297,7 @@ type getMeResponse {
 }
 
 type Query {
-    getMe(contact:ContactInput,password:String): getMeResponse!
+    getMe: getMeResponse!
     getAllUsers: [User]
     getAllProducts: ProductListResponse
     getAllProviderServices(providerId: ID!): ServicesResponse
@@ -301,6 +307,7 @@ type Query {
 
 
 type Mutation {
+    login(contact:ContactInput,password:String): loginResponse
     addUser(input : AddUserInput!): AddUserResponse
     loginUser(email: String!, password: String!): LoginUserResponse
     addServiceAgreement(input: ServiceAgreementInput!): ServiceAgreement

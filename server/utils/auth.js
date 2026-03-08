@@ -1,75 +1,38 @@
-require("dotenv").config();
-const secret = process.env.SECRET_KEY;
 const { User } = require("../models/");
 const { GraphQLError } = require("graphql");
-const jwt = require("jsonwebtoken");
-const { openOperations } = require("./auth.config");
+const { verifyToken } = require("./tokenHandler");
 
 const unauthenticated = (message = "Not authenticated") =>
   new GraphQLError(message, { extensions: { code: "UNAUTHENTICATED" } });
 const unauthorized = (message = "Not authorized") =>
   new GraphQLError(message, { extensions: { code: "UNAUTHOURISED" } });
 
-async function authMiddleware({ req }) {
-  //Happy route sends a user object with fields.
-  // failuer leads to a user object with a null token.
-  // null token users can only proceed with certain operations.
-  // for all other operations, they fail.
-  // With a well formed token matching an existing user, the user is passed through the context
-  // Parse the request body to get the operation name
-  const operationName = req.body.operationName || null;
-  // Check if the current request matches any open operation names and quickly fail if they do not have authorisation token
-  const checkNoOperationNameOrMatchedOperation =
-    !operationName || openOperations.includes(operationName);
-  console.log(
-    "checkOperationNameorMatched",
-    checkNoOperationNameOrMatchedOperation,
-  );
-  if (!operationName || openOperations.includes(operationName)) {
-    console.log(
-      "user with null token provided to context for operations requiring no authorization eg new user.",
-    );
-    return { user: { token: null } };
-  }
-  if (!req.headers.authorization) {
-    throw unauthorized("could not find the right authorization");
-  }
-  //extract the token or make it null. quickly fail if no token.
-  let token = req.headers.authorization.split(" ").pop().trim() || null;
-  if (!token) throw unauthorized("could not find the right token");
+//places a payload into a token returning the token
 
+async function authMiddleware({ req }) {
   try {
-    const { authenticatedPerson } = await jwt.verify(token, secret, {
-      maxAge: process.env.TOKEN_EXPIRES_IN,
-    });
-    const registeredUser = await User.findById(authenticatedPerson?._id);
-    if (!registeredUser) {
-      throw unauthenticated("Could not find a registered user with that token");
-    }
-    if (registeredUser._id == authenticatedPerson._id) {
-      await registeredUser.toObject();
-      return { user: registeredUser };
+    let headers = req?.headers;
+    let token = headers?.authorization?.split(" ").pop().trim() || null;
+    if (!token) throw new Error("no token");
+    let decoded = await verifyToken(token);
+    console.log("decoided", decoded);
+    let { sub, role } = decoded;
+    if (sub && role) {
+      console.log("sub", sub);
+      console.log("role", role);
+      user = await User.findOne({ _id: sub });
     } else {
-      throw unauthenticated("Authentication failed. thats all we know");
+      (user = null), (role = "LOGIN");
     }
+    return { user, role };
   } catch (error) {
-    if (error.name === "TokenExpiredError") {
-      throw unauthenticated("Token Expired, sorry");
-    } else {
-      throw unauthenticated("Authentication failed. Thats all we know");
-    }
+    console.log(error);
+    console.log({ user: null, role: "LOGIN" });
+    return { user: null, role: "LOGIN" };
   }
 }
 
-const signToken = (payload, expiresIn = process.env.TOKEN_EXPIRES_IN) => {
-  const token = jwt.sign(payload, secret, {
-    expiresIn,
-  });
-
-  return token;
-};
-
 module.exports = {
-  signToken,
+  verifyToken,
   authMiddleware,
 };
