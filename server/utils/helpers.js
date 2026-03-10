@@ -1,6 +1,5 @@
 require("dotenv").config();
-const jwt = require("jsonwebtoken");
-const secret = process.env.SECRET_KEY;
+
 const validateEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
