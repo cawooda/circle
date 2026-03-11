@@ -12,6 +12,7 @@ const unauthorized = (message = "Not authorized") =>
 async function authMiddleware({ req }) {
   try {
     let headers = req?.headers;
+    console.log(req.body?.operationName);
     let token = headers?.authorization?.split(" ").pop().trim() || null;
     if (!token) throw new Error("no token");
     let decoded = await verifyToken(token);

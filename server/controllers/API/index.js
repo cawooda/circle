@@ -30,7 +30,7 @@ async function handleSetupUserLink(mobile) {
 async function handleAuthLinkNumber(authLinkNumber, res) {
   const user = await User.findOne({ authLinkNumber: authLinkNumber });
   if (!user?._id) throw new Error("AUTH: that code didnt match");
-  const token = await user.generateAuthToken();
+  const token = await user.token;
   return {
     token,
     userExists: true,
@@ -46,7 +46,7 @@ async function handleLogin(body) {
     if (first && last) {
       user = await User.create({ first, last, mobile, password });
       if (user) {
-        const token = await user.generateAuthToken();
+        const token = await user.authToken;
         return {
           token,
           userExists: false,
@@ -64,7 +64,7 @@ async function handleLogin(body) {
       let correctPassword = await user.isCorrectPassword(password);
 
       if (correctPassword) {
-        token = await user.generateAuthToken();
+        token = await user.token;
         return {
           token,
           userExists: true,
@@ -98,7 +98,7 @@ async function handleUserCreate(user) {
   const userExists = await User.findOne({ mobile: req.body.mobile });
   if (!userExists) throw new Error("NOT_FOUND: User not found");
 
-  const token = await userExists.generateAuthToken();
+  const token = await userExists.authToken;
   return {
     userExists: true,
     userCreated: false,

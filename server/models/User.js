@@ -7,7 +7,7 @@ const { SMSService } = require("../utils/smsService");
 const userSmsService = new SMSService();
 const { EMAILService } = require("../utils/mailer");
 const userEmailService = new EMAILService();
-const { signToken } = require("../utils/tokenHandler");
+const { signToken, verifyToken } = require("../utils/tokenHandler");
 
 // const validator = require("validator");
 
@@ -127,6 +127,7 @@ const userSchema = new Schema(
         },
       ],
     },
+    token: { type: String },
     superAdmin: { type: Boolean, required: true, default: false },
     passwordHash: { type: String },
     authLinkNumber: { type: String },
@@ -173,9 +174,9 @@ userSchema
         ? "CUSTOMER"
         : "NONE",
     };
-    const token = signToken(user, expiresIn);
-    console.log("token", token);
-
+    const token = verifyToken(this.token)
+      ? this.token
+      : signToken(user, expiresIn);
     return token;
   });
 
@@ -193,9 +194,8 @@ userSchema.pre("save", async function () {
     this._plainPassword = undefined;
   }
 
-  // Generate token after the user is saved
   if (this.isNew) {
-    this.generateAuthToken();
+    this.authToken;
   }
 });
 
@@ -280,27 +280,6 @@ userSchema.methods.checkPassword = async function (password) {
   if (await bcrypt.compare(password, this.passwordHash)) {
     return true;
   } else return false;
-};
-
-// Method to generate JWT token
-userSchema.methods.generateAuthToken = function (
-  expiresIn = process.env.TOKEN_EXPIRES_IN,
-) {
-  const user = {
-    authenticatedPerson: {
-      _id: this._id,
-      mobile: this.mobile,
-      first: this.first,
-      admin: this.roleAdmin ? true : false,
-      provider: this.roleProvider ? true : false,
-      customer: this.roleCustomer ? true : false,
-      createdAt: new Date(),
-    },
-  };
-
-  const token = signToken(user, expiresIn);
-
-  return token;
 };
 
 //initialise User Model. creates a collection called user based on the defined user schema

@@ -8,16 +8,13 @@ const { signToken, verifyToken } = require("../utils/tokenHandler");
 //context always contains { user, role } but these can be null. resolvers should always check role
 module.exports = {
   login: async (_parent, data, context) => {
-    console.log("data", data);
-
     const { contact, password } = data;
-    const { user, role } = context;
 
     try {
       const foundUser = await User.findOne({
         $or: [
-          { "contact.email": contact.email.toLowerCase() || null },
-          { "contact.mobile": contact.mobile || null },
+          { "contact.email": contact?.email?.toLowerCase() || null },
+          { "contact.mobile": contact?.mobile || null },
         ],
       });
       if (!foundUser.checkPassword(password))

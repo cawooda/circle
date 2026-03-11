@@ -128,7 +128,7 @@ userSchema.pre("save", async function () {
 
   // Generate token after the user is saved
   if (this.isNew) {
-    this.generateAuthToken();
+    this.token;
   }
 });
 
