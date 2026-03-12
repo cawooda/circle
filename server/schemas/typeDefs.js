@@ -327,7 +327,6 @@ type UpdateServiceResponse {
 type LoginResponse {
   success: Boolean!
   message: String!
-  user: User
   token: Token
 }
 

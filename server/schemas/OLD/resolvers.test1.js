@@ -1,5 +1,5 @@
-const { User } = require("../models");
-const resolverModule = require("./resolvers.user");
+const { User } = require("../../models");
+const resolverModule = require("../resolvers.user");
 
 jest.mock("../models", () => ({
   User: {
