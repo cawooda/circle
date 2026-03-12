@@ -4,67 +4,34 @@ const { EMAILService } = require("../utils/mailer");
 const userEmailService = new EMAILService();
 const { User, Admin, Provider, Customer, Product } = require("../models");
 
-const { signToken, verifyToken } = require("../utils/tokenHandler");
+const { GraphQLError } = require("graphql");
+
+const {
+  signToken,
+  verifyToken,
+  checkPassword,
+  generateAuthCode,
+  hashPassword,
+} = require("../utils/auth");
 //context always contains { user, role } but these can be null. resolvers should always check role
 module.exports = {
-  login: async (_parent, data, context) => {
-    const { contact, password } = data;
-
-    try {
-      const foundUser = await User.findOne({
-        $or: [
-          { "contact.email": contact?.email?.toLowerCase() || null },
-          { "contact.mobile": contact?.mobile || null },
-        ],
-      });
-      if (!foundUser.checkPassword(password))
-        throw new Error("that password didnt work");
-
-      const token = signToken(
-        {
-          sub: foundUser._id,
-          role: foundUser.roleAdmin
-            ? "ADMIN"
-            : foundUser.roleProvider
-            ? "PROVIDER"
-            : foundUser.roleCustomer
-            ? "CUSTOMER"
-            : "NONE",
-        },
-        process.env.TOKEN_EXPIRES_IN,
-        "CIRCLE_AUTH",
-      );
-      return {
-        success: true,
-        message: "AUTHENTICATED: Here is your user and token",
-        token,
-      };
-    } catch (error) {
-      console.log("an error occurred in login");
-      console.log(error);
-    }
-  },
   getMe: async (_parent, _data, context) => {
-    try {
-      const { user, role } = context;
-      if (!user) throw new Error("cant do this without authenticated user");
+    const { user } = context;
+    if (!user)
+      throw new GraphQLError(
+        "UNAUTHENTICATED:Tried to do something without an authenticated user. Try logging in before anything else",
+        {
+          extensions: { code: "FORBIDDEN" },
+        },
+      );
 
-      const response = {
-        success: true,
-        message: "AUTHENTICATED: Here is your user and token",
-        user: user.toObject(),
-      };
+    const response = {
+      success: true,
+      message: "AUTHENTICATED: Here is your user",
+      user: user.toObject(),
+    };
 
-      return response;
-    } catch (error) {
-      console.log(error);
-      const response = {
-        success: false,
-        message: "FAILED: sorry we couldnt do that",
-        user: null,
-      };
-      return response;
-    }
+    return response;
   }, //progessed to here. continue here:
   getAllUsers: async (_parent, {}, context) => {
     const { token } = context.user;
@@ -84,8 +51,84 @@ module.exports = {
   getAllProviderServices: async (_parent, { providerId }) => {},
   getAllProviderServiceAgreements: async (_parent, { providerId }) => {},
   getServiceAgreement: async (_parent, { agreementNumber }) => {},
+  //mutations
   addUser: async (_parent, { input }) => {},
-  loginUser: async (_parent, { email, password }) => {},
+  passwordReset: async (_parent, { contact }, context) => {
+    const { email, mobile } = contact;
+    if (!email && !password)
+      throw new GraphQLError(
+        "NOCONTACT:contact details need to be given for a password reset",
+        { extensions: { code: "FORBIDDEN" } },
+      );
+    const foundUser = await User.findOne({
+      $or: [
+        { "contact.email": email || null },
+        { "contact.mobile": mobile || null },
+      ],
+    });
+    if (!foundUser)
+      throw new GraphQLError(
+        "NOUSER:a user must exist first before reseting their password",
+        { extensions: { code: "FORBIDDEN" } },
+      );
+
+    foundUser.passwordReset.requested = new Date();
+    foundUser.passwordReset.authCode = generateAuthCode().toString();
+    foundUser.save();
+
+    return { success: true, message: "PASSWORDRESET:password reset initiated" };
+  },
+  updatePassword: async (_parent, { update }, context) => {
+    const { authCode, newPassword } = update;
+
+    const foundUser = await User.findOne({
+      "passwordReset.authCode": authCode || null,
+    });
+    if (!foundUser)
+      throw new GraphQLError(
+        "NOCODE:a user must present the correct code to reset password",
+        { extensions: { code: "FORBIDDEN" } },
+      );
+    foundUser.passwordHash = await hashPassword(newPassword);
+    foundUser.save();
+    return {
+      success: true,
+      message: "PASSWORDSET:we successfully reset the password",
+    };
+  },
+  login: async (_parent, { contact, password }, context) => {
+    const foundUser = await User.findOne({
+      $or: [
+        { "contact.email": contact?.email?.toLowerCase() || null },
+        { "contact.mobile": contact?.mobile || null },
+      ],
+    });
+    if (!foundUser.passwordHash)
+      throw new GraphQLError(
+        "NOPASSWORD:a password needs to be set for this user before login",
+        { extensions: { code: "FORBIDDEN" } },
+      );
+    if (await !checkPassword(password, foundUser.passwordHash))
+      throw new GraphQLError("UNAUTHENTICATED:that password didnt work", {
+        extensions: { code: "FORBIDDEN" },
+      });
+
+    const token = signToken({
+      sub: foundUser._id,
+      role: foundUser.admin
+        ? "ADMIN"
+        : foundUser.provider
+        ? "PROVIDER"
+        : foundUser.customer
+        ? "CUSTOMER"
+        : "NONE",
+    });
+    return {
+      success: true,
+      message: "AUTHENTICATED: Here is your token",
+      token,
+    };
+  },
   addServiceAgreement: async (_parent, { input }) => {},
   signServiceAgreement: async (_parent, { input }) => {},
   toggleUserRole: async (_parent, { userId, role }, context) => {
@@ -189,20 +232,7 @@ module.exports = {
       throw new Error(error.message);
     }
   },
-  updateUserPassword: async (_parent, { userId, password }) => {
-    try {
-      const updatedUser = await User.findById(userId);
-      if (!updatedUser) {
-        throw new Error("User not found");
-      } else {
-        updatedUser.password = password;
-        await updatedUser.save();
-      }
-      return updatedUser;
-    } catch (error) {
-      throw new Error(error.message);
-    }
-  },
+
   updateProviderProfile: async (
     _parent,
     {

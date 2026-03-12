@@ -1,5 +1,6 @@
-require("dotenv").config();
-const bcrypt = require("bcrypt");
+const path = require("path");
+require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+
 //import the Schema and model from mongoose.
 const { Schema, model, models } = require("mongoose");
 const { generateRandomNumber } = require("../utils/helpers");
@@ -7,17 +8,8 @@ const { SMSService } = require("../utils/smsService");
 const userSmsService = new SMSService();
 const { EMAILService } = require("../utils/mailer");
 const userEmailService = new EMAILService();
-const { signToken, verifyToken } = require("../utils/tokenHandler");
 
 // const validator = require("validator");
-
-const parsedSaltRounds = Number.parseInt(
-  process.env.SALT_WORK_FACTOR ?? "10",
-  10,
-);
-const SALT_WORK_FACTOR = Number.isInteger(parsedSaltRounds)
-  ? parsedSaltRounds
-  : 10;
 
 //defind the user model schema
 const userSchema = new Schema(
@@ -127,10 +119,13 @@ const userSchema = new Schema(
         },
       ],
     },
-    token: { type: String },
     superAdmin: { type: Boolean, required: true, default: false },
     passwordHash: { type: String },
-    authLinkNumber: { type: String },
+    passwordReset: {
+      requested: { type: Date },
+      authCode: { type: String },
+      complete: { type: Boolean },
+    },
     sendEmails: { type: Boolean, default: true },
     sendTexts: { type: Boolean, default: true },
   },
@@ -156,48 +151,6 @@ userSchema
     const last = splitName[1];
     this.set({ first, last });
   });
-
-userSchema.virtual("password").set(function (plain) {
-  this._plainPassword = plain; // temporary, not persisted
-});
-
-userSchema
-  .virtual("authToken")
-  .get(function (expiresIn = process.env.TOKEN_EXPIRES_IN) {
-    const user = {
-      sub: this._id,
-      role: this.admin
-        ? "ADMIN"
-        : this.provider
-        ? "PROVIDER"
-        : this.customer
-        ? "CUSTOMER"
-        : "NONE",
-    };
-    const token = verifyToken(this.token)
-      ? this.token
-      : signToken(user, expiresIn);
-    return token;
-  });
-
-userSchema.pre("save", async function () {
-  // Basic length check (you can add stronger rules elsewhere)
-  if (this._plainPassword?.length < 10) {
-    throw new Error("Password must be at least 10 characters.");
-  }
-  if (this._plainPassword) {
-    this.passwordHash = await bcrypt.hash(
-      this._plainPassword,
-      SALT_WORK_FACTOR,
-    );
-    this.passwordChangedAt = new Date();
-    this._plainPassword = undefined;
-  }
-
-  if (this.isNew) {
-    this.authToken;
-  }
-});
 
 userSchema.methods.sendAuthLink = async function () {
   let simpleNumber = generateRandomNumber(1000, 9999).toString();
@@ -274,12 +227,6 @@ userSchema.methods.sendEmail = async function (
   } else {
     throw new Error("No email found for user");
   }
-};
-
-userSchema.methods.checkPassword = async function (password) {
-  if (await bcrypt.compare(password, this.passwordHash)) {
-    return true;
-  } else return false;
 };
 
 //initialise User Model. creates a collection called user based on the defined user schema

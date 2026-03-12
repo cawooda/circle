@@ -16,6 +16,10 @@ const signToken = (
     throw new Error(
       "TOKEN_EXPIRY_MISSING: TOKEN_EXPIRES_IN must be set or provided",
     );
+  if (!payload.sub || !payload.role)
+    throw new Error(
+      "Role or Sub Missing: role and sub must be provided for valid tokens",
+    );
   try {
     const token = jwt.sign(payload, secret, {
       issuer: ISSUER,
@@ -35,17 +39,13 @@ const verifyToken = async (
   ISSUER = "CIRCLE_AUTH",
 ) => {
   if (!token) return { error: "NO_TOKEN:No Token Provided" };
-  try {
-    const payload = jwt.verify(token, secret, {
-      issuer: ISSUER,
-      audience: AUDIENCE,
-    });
-    console.log(payload);
-    return payload;
-  } catch (error) {
-    console.log("error verifyToken", error);
-    return null;
-  }
+
+  const payload = jwt.verify(token, secret, {
+    issuer: ISSUER,
+    audience: AUDIENCE,
+  });
+
+  return payload;
 };
 
 module.exports = { signToken, verifyToken };

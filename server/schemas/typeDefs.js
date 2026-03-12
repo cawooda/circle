@@ -5,6 +5,35 @@ scalar DateTime
 
 scalar Token
 
+
+input AddUser {
+  contact: ContactInput  
+}
+
+input PaswordReset{
+  contact:ContactInput!
+}
+
+type PasswordResetResponse{
+  success:Boolean!
+  message:String!
+}
+
+input UpdatePassword{
+  authCode: String
+  newPassword: String
+}
+
+type UpdatePasswordResponse {
+  success:Boolean!
+  message:String!
+}
+
+input ContactInput {
+  email: String
+  mobile: String
+}
+
 type Contact {
     mobile: String
     email: String
@@ -16,11 +45,26 @@ type User {
     last: String!
     contact: Contact
     dateOfBirth: DateTime
-    roleAdmin: Admin
-    providerProfile: Provider
-    customerProfile: Customer
-    roleSuperAdmin: Boolean
+    admin: Admin
+    provider: Provider
+    customer: Customer
+    superAdmin: Boolean
     serviceAgreements: [ServiceAgreement]
+}
+
+input PaswordReset{
+  contact:ContactInput!
+}
+
+type PasswordResetResponse{
+  success:Boolean!
+  message:String!
+}
+
+type PasswordReset {
+  userId:ID!
+  complete:Boolean!
+  requestCode:String!
 }
 
 type Admin {
@@ -121,10 +165,7 @@ type ServiceAgreement {
     postalCode: String!
 }
 
-input ContactInput {
-  email: String
-  mobile: String
-}
+
 
 
 
@@ -283,13 +324,14 @@ type UpdateServiceResponse {
   service: Service
 }
 
-type loginResponse {
+type LoginResponse {
   success: Boolean!
   message: String!
+  user: User
   token: Token
 }
 
-type getMeResponse {
+type GetMeResponse {
   success: Boolean!
   message: String!
   user: User
@@ -297,7 +339,7 @@ type getMeResponse {
 }
 
 type Query {
-    getMe: getMeResponse!
+    getMe: GetMeResponse!
     getAllUsers: [User]
     getAllProducts: ProductListResponse
     getAllProviderServices(providerId: ID!): ServicesResponse
@@ -306,10 +348,14 @@ type Query {
 }
 
 
+
+
+
 type Mutation {
-    login(contact:ContactInput,password:String): loginResponse
-    addUser(input : AddUserInput!): AddUserResponse
-    loginUser(email: String!, password: String!): LoginUserResponse
+    passwordReset(contact:ContactInput): PasswordResetResponse!    
+    updatePassword(update:UpdatePassword):UpdatePasswordResponse!
+    login(contact:ContactInput,password:String): LoginResponse!
+    addUser(input : AddUserInput!): AddUserResponse!
     addServiceAgreement(input: ServiceAgreementInput!): ServiceAgreement
     signServiceAgreement(input: SignServiceAgreementInput):SignServiceAgreementResponse    
     toggleUserRole(userId: ID!,role: String!): User!  

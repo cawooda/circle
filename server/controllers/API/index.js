@@ -46,7 +46,7 @@ async function handleLogin(body) {
     if (first && last) {
       user = await User.create({ first, last, mobile, password });
       if (user) {
-        const token = await user.authToken;
+        const token = await user.token;
         return {
           token,
           userExists: false,
@@ -98,7 +98,7 @@ async function handleUserCreate(user) {
   const userExists = await User.findOne({ mobile: req.body.mobile });
   if (!userExists) throw new Error("NOT_FOUND: User not found");
 
-  const token = await userExists.authToken;
+  const token = await userExists.token;
   return {
     userExists: true,
     userCreated: false,

@@ -1,5 +1,5 @@
 require("dotenv").config();
-const seedPassword = process.env.SEED_PASSWORD;
+const seedPasswordHash = process.env.SEED_PASSWORD_HASH;
 const seedPHONE1 = process.env.SEED_PHONE_1;
 const seedPHONE2 = process.env.SEED_PHONE_2;
 
@@ -12,7 +12,6 @@ const userSeed = [
     roleCustomer: "66d6b24c6bea26447abaeaf9",
     roleProvider: "66a0d9f4a0eb8627cc6320f7",
     roleAdmin: "66a0d9f4a0eb8627cc6320fa",
-    password: seedPassword,
     roleSuperAdmin: true,
     sendEmails: true,
     sendTexts: true,
