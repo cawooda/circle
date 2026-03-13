@@ -36,7 +36,7 @@ import SmsCodeModal from "./SmsCodeModal"; // Import the new modal component
 import { InputStyles } from "./styles/InputStyles";
 
 import logo from "/logo.png";
-import { useUser } from "../contexts/UserContext";
+// import { useUser } from "../contexts/UserContext";
 import Splash from "./Splash";
 
 const SigninForm = ({ forceOpen }) => {
@@ -49,7 +49,7 @@ const SigninForm = ({ forceOpen }) => {
 
   const navigate = useNavigate();
 
-  const { user, refetchUser } = useUser() || {};
+  // const { user, refetchUser } = useUser() || {};
 
   const userSignedUp = localStorage.getItem("user_signed_up");
   const [signup, setSignup] = useState(!userSignedUp);
@@ -213,7 +213,7 @@ const SigninForm = ({ forceOpen }) => {
 
       // If signup or login succeeds
       setToken({ token: response.token }); // Save token
-      refetchUser(); // Fetch user data
+      // refetchUser(); // Fetch user data
       setFormState((prev) => ({ ...prev, loading: false }));
       setUserFormData({ mobile: "", password: "" });
       onClose(); // Close modal

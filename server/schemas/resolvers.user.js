@@ -23,21 +23,26 @@ const { GraphQLError } = require("graphql");
 //context always contains { user, role } but these can be null. resolvers should always check role
 module.exports = {
   getMe: async (_parent, _data, context) => {
-    const { user } = context;
-    if (!user)
+    if (!context?.user)
       throw new GraphQLError(
         "UNAUTHENTICATED:Tried to do something without an authenticated user. Try logging in before anything else",
         {
           extensions: { code: "FORBIDDEN" },
         },
       );
+    const user = await getUser({
+      actor: context.user,
+      payload: { userId: context.user._id },
+    });
+
     const response = {
-      success: true,
+      success: user && true,
       message: "success,heres your user details",
-      user: await getUser({ actor: user, payload: { userId: user._id } }),
+      user,
     };
     return response;
-  }, //progessed to here. continue here:
+  },
+  //progessed to here. continue here:
   // getAllUsers: async (_parent, {}, context) => {
   //   const { token } = context.user;
   //   const user = await User.findById(context.user._id);
@@ -57,24 +62,49 @@ module.exports = {
   // getAllProviderServiceAgreements: async (_parent, { providerId }) => {},
   // getServiceAgreement: async (_parent, { agreementNumber }) => {},
   //mutations
-  addUser: async (_parent, { input }, context) => {},
+  addUser: async (_parent, { input }, context) => {
+    const { first, last, mobile, email, dateOfBirth } = input;
+    if (!mobile && !email)
+      throw new GraphQLError(
+        "BAD_INPUT: we need the right contact details to add user",
+      );
+    const user = await addUser({
+      actor: context.user,
+      payload: {
+        first,
+        last,
+        mobile,
+        email,
+        dateOfBirth,
+      },
+    });
+    if (!user) throw new Error("FAILED: couldnt addUser in resolvers.user.js");
+    return {
+      success: user && true,
+      message: "SUCCESS: we created a user",
+      user,
+    };
+  },
   passwordReset: async (_parent, { contact }, context) => {
-    const response = {
-      success: await resetUserPassword({
+    const success =
+      (await resetUserPassword({
         actor: context,
         payload: { contact },
-      }),
+      })) || false;
+    const response = {
+      success,
       message: "Password reset initiated",
     };
     return response;
   },
   updatePassword: async (_parent, { update }, context) => {
     const { authCode, newPassword } = update;
+    const updatedUserPassword = await udpateUserPassword({
+      actor: null,
+      payload: { authCode, newPassword },
+    });
     const response = {
-      success: await udpateUserPassword({
-        actor: null,
-        payload: { authCode, newPassword },
-      }),
+      success: updatedUserPassword,
       message: "we successfully changed your password",
     };
 

@@ -3,7 +3,10 @@ require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
 //import the Schema and model from mongoose.
 const { Schema, model, models } = require("mongoose");
-const { generateRandomNumber } = require("../utils/helpers");
+const {
+  generateRandomNumber,
+  generateRandomPhoneNumber,
+} = require("../utils/helpers");
 const { SMSService } = require("../utils/smsService");
 const userSmsService = new SMSService();
 const { EMAILService } = require("../utils/mailer");
@@ -22,12 +25,13 @@ const userSchema = new Schema(
         type: String,
         minLength: 10,
         maxLength: 10,
-        required: true,
+        default: generateRandomPhoneNumber,
         unique: true,
       },
       email: {
         type: String,
         toLowerCase: true,
+        unique: true,
       },
     },
     customer: {
@@ -64,7 +68,7 @@ const userSchema = new Schema(
       serviceAgreements: [{ type: Schema.Types.ObjectId, ref: "agreement" }],
     },
     provider: {
-      active: { type: Boolean, default: true },
+      active: { type: Boolean, default: false },
       abn: {
         type: String,
       },

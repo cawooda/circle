@@ -60,10 +60,7 @@ async function hashPassword(password) {
 async function checkPassword(password, hash) {
   if (await bcrypt.compare(password, hash)) {
     return true;
-  } else
-    throw new Error(
-      "PASSWORD_FAIL:we compared the password with the hash and it didnt compare well",
-    );
+  } else return false;
 }
 
 function generateAuthCode() {

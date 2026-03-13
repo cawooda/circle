@@ -1,112 +1,49 @@
 import { jwtDecode } from "jwt-decode";
 
-class AuthService {
-  getProfile() {
-    try {
-      const token = this.getToken();
-      if (!token) return null;
-      const profile = jwtDecode(token);
-      return profile;
-    } catch (error) {
-      console.log("Error in getProfile:", error);
-      return null;
-    }
-  }
-
-  loggedIn() {
-    const token = this.getToken();
-    return Boolean(token) && !this.isTokenExpired(token);
-  }
-
-  // check if token is expired
-  isTokenExpired(token) {
-    try {
-      const decoded = jwtDecode(token);
-      if (decoded.exp < Date.now() / 1000) {
-        return true;
-      } else return false;
-    } catch (err) {
-      return false;
-    }
-  }
-
-  setToken(token) {
+async function AuthService() {
+  async function setToken(token) {
     localStorage.setItem("id_token", JSON.stringify(userToken));
-    return null;
+    return true;
   }
 
-  getToken() {
-    try {
-      const tokenString = localStorage.getItem("id_token");
-      const userToken = JSON.parse(tokenString);
-      if (!userToken) return null;
-      const parsed = JSON.parse(tokenString);
-
-      return parsed?.token || null;
-    } catch (error) {
-      console.error("Failed to parse token:", error);
-      return null;
-    }
+  async function getToken() {
+    const token = localStorage.getItem("id_token");
+    if (!token) throw new error("No token present");
   }
 
-  async smsLinkLogin(userData) {
-    const URL = "/api/users";
-    try {
-      if (userData.mobile) {
-        const response = await fetch(URL, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ ...userData, linkRequest: true }),
-        });
-        let res;
-        if (response.headers.get("content-type").match(/json/)) {
-          res = await response.json();
-        } else {
-          throw new Error(
-            `Response could not be parsed to json : url${URL} status:${res?.status}`
-          );
-        }
-        if (res.linkSent) return true;
-      }
-    } catch (error) {}
-  }
-
-  async signUpUser(userData) {
-    const URL = "/api/users";
+  async function addUser(userData) {
+    const URL = "/graphql";
+    const ADD_USER = require("./mutations");
+    const { first, last, mobile, email, dateOfBirth } = userData;
+    if (!mobile && !email) throw new Error("addUser needs an email or mobile");
+    const reqBody = {
+      query: ADD_USER,
+      operationName: "addUser",
+      variables: {
+        first,
+        last,
+        mobile,
+        email,
+        dateOfBirth,
+      },
+    };
     try {
       const response = await fetch(URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(userData),
+        body: reqBody,
       });
       let res;
-      if (!response.errorCode == "MOBILE_INVALID") {
-        throw new Error("mobile was invalid");
-      }
-      if (response.headers.get("content-type").match(/json/)) {
-        res = await response.json();
-      } else {
-        throw new Error(
-          `Response could not be parsed to json : url${URL} status:${res?.status}`
-        );
-      }
-
-      if (res?.token) {
-        localStorage.setItem("id_token", JSON.stringify(res.token));
-        localStorage.setItem("user_signed_up", "true");
-        return res;
-      }
+      res = await response.json();
+      console.log(res);
     } catch (error) {
-      console.log("error in signup:", error.message);
-      return { message: error.message };
+      console.log("error in addUser in auth.js:", error.message);
     }
   }
 
-  async loginUser(userData) {
+  async function loginUser(userData) {
     const URL = "/api/users";
     try {
       const response = await fetch(URL, {
@@ -139,7 +76,7 @@ class AuthService {
     }
   }
 
-  async verifySmsCode(code) {
+  async function verifySmsCode(code) {
     const URL = "/api/users";
     let response = { statusCode: 500, message: "" };
     try {
@@ -205,9 +142,50 @@ class AuthService {
     }
   }
 
-  logout() {
+  function logout() {
     localStorage.removeItem("id_token");
   }
-}
 
-export default new AuthService();
+  function loggedIn() {
+    const token = this.getToken();
+    return Boolean(token) && !this.isTokenExpired(token);
+  }
+
+  function getProfile() {
+    try {
+      const token = this.getToken();
+      if (!token) return null;
+      const profile = jwtDecode(token);
+      return profile;
+    } catch (error) {
+      console.log("Error in getProfile:", error);
+      return null;
+    }
+  }
+
+  module.exports = {};
+
+  // async function smsLinkLogin(userData) {
+  //   const URL = "/api/users";
+  //   try {
+  //     if (userData.mobile) {
+  //       const response = await fetch(URL, {
+  //         method: "PUT",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({ ...userData, linkRequest: true }),
+  //       });
+  //       let res;
+  //       if (response.headers.get("content-type").match(/json/)) {
+  //         res = await response.json();
+  //       } else {
+  //         throw new Error(
+  //           `Response could not be parsed to json : url${URL} status:${res?.status}`
+  //         );
+  //       }
+  //       if (res.linkSent) return true;
+  //     }
+  //   } catch (error) {}
+  // }
+}

@@ -41,8 +41,8 @@ type Contact {
 
 type User {
     _id: ID!
-    first: String!
-    last: String!
+    first: String
+    last: String
     contact: Contact
     dateOfBirth: DateTime
     admin: Admin
@@ -83,8 +83,8 @@ type Customer {
     serviceAgreementEmail: String
     customerSpecificField: String
     serviceAgreements: [ServiceAgreement]
-    createdAt: DateTime!
-    updatedAt: DateTime!
+    createdAt: DateTime
+    updatedAt: DateTime
 }
 
 type Provider {
@@ -170,12 +170,12 @@ type ServiceAgreement {
 
 
 input AddUserInput {
-    first: String!
-    last: String!
-    mobile: String!
-    email: String!
-    password: String!
-    dateOfBirth: DateTime!
+    first: String
+    last: String
+    mobile: String
+    email: String
+    password: String
+    dateOfBirth: DateTime
 }
 
 input UpdateUserProfileInput {
@@ -263,7 +263,7 @@ input TermsAndConditionsInput {
 type AddUserResponse {
     success: Boolean!
     message: String!
-    user: User
+    user: User!
 }
 
 type UpdateUserProfileResponse {
@@ -334,7 +334,6 @@ type GetMeResponse {
   success: Boolean!
   message: String!
   user: User
-  token: Token
 }
 
 type Query {
@@ -351,10 +350,11 @@ type Query {
 
 
 type Mutation {
+    addUser(input : AddUserInput!): AddUserResponse!
     passwordReset(contact:ContactInput): PasswordResetResponse!    
     updatePassword(update:UpdatePassword):UpdatePasswordResponse!
     login(contact:ContactInput,password:String): LoginResponse!
-    addUser(input : AddUserInput!): AddUserResponse!
+    
     addServiceAgreement(input: ServiceAgreementInput!): ServiceAgreement
     signServiceAgreement(input: SignServiceAgreementInput):SignServiceAgreementResponse    
     toggleUserRole(userId: ID!,role: String!): User!  

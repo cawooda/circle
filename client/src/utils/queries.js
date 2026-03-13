@@ -51,21 +51,34 @@ export const QUERY_ALL_USERS = gql`
 `;
 
 export const GET_ME = gql`
-  query getMe($contact: ContactInput, $password: String) {
-    getMe(contact: $contact, password: $password) {
+  query GetMe {
+    getMe {
       success
       message
       user {
         _id
-        contact {
-          email
-          mobile
+        admin {
+          createdAt
         }
-        dateOfBirth
-        first
-        last
+        contact {
+          mobile
+          email
+        }
+        customer {
+          active
+          address {
+            city
+            postalCode
+            state
+            street
+          }
+          dateOfBirth
+          invoiceEmail
+          referenceName
+          referenceNumber
+          serviceAgreementEmail
+        }
       }
-      token
     }
   }
 `;

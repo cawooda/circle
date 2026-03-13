@@ -1,10 +1,10 @@
 import { gql } from "@apollo/client";
 
-export const LOGIN_USER = gql`
+export const LOGIN = gql`
   mutation Login($contact: ContactInput, $password: String) {
     login(contact: $contact, password: $password) {
-      message
       success
+      message
       token
     }
   }

@@ -1,73 +1,79 @@
-import React, {
-  createContext,
-  useMemo,
-  useState,
-  useEffect,
-  useContext,
-} from "react";
-import useToken from "../hooks/UseToken";
+import React, { createContext, useContext, useMemo } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_ME } from "../utils/queries";
+import { LOGIN } from "../utils/mutations";
 import AuthService from "../utils/auth";
 
-const UserContext = createContext();
+export const UserContext = createContext(null);
 
-export const useUser = () => useContext(UserContext);
+export const useUser = () => {
+  const context = useContext(UserContext);
+
+  if (context === null) {
+    throw new Error("useUser must be used within a UserProvider");
+  }
+
+  return context;
+};
 
 export const UserProvider = ({ children }) => {
-  const token = useMemo(() => AuthService.getToken(), []);
-  const [user, setUser] = useState(null);
-  const [provider, setProvider] = useState(null);
-  const [retryCount, setRetryCount] = useState(0);
-  const [hasError, setHasError] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(() => AuthService.loggedIn());
+  const token = AuthService.getToken();
+  const loggedIn = Boolean(token) && AuthService.loggedIn();
 
   const {
-    loading: userLoading,
-    error: userError,
+    loading: queryLoading,
+    error: queryError,
     data: userData,
     refetch: refetchUser,
   } = useQuery(GET_ME, {
-    variables: { token: token },
-    skip: !token,
-    fetchPolicy: "network-only",
-    onError: (err) => {
-      console.log("Error encountered:", err);
-      setHasError(true);
-    },
+    skip: !loggedIn,
+    fetchPolicy: "cache-and-network",
+    nextFetchPolicy: "cache-first",
   });
 
-  useEffect(() => {
-    if (!userLoading && !userError && userData?.getMe) {
-      console.log("User data fetched:", userData);
-      setUser({ ...userData.getMe, loggedIn: true });
-      if (userData?.getMe.roleProvider) {
-        setProvider(userData?.getMe.roleProvider);
-      }
+  const user = useMemo(() => {
+    const me = userData?.getMe;
 
-      setHasError(false);
+    if (!loggedIn || me?.success === false || !me?.user) {
+      return null;
     }
-  }, [userData, userLoading, userError]);
-  if (userLoading) return <p>Loading user...</p>;
-  if (userError)
-    return (
-      <p>
-        Could not load your account.<a href="/login">Try logging in again</a>
-      </p>
-    );
 
-  return (
-    <UserContext.Provider
-      value={{
-        user,
-        provider,
-        refetchUser,
-        userLoading,
-        userError,
-        setLoggedIn,
-      }}
-    >
-      {children}
-    </UserContext.Provider>
+    return {
+      ...me.user,
+      loggedIn: true,
+    };
+  }, [loggedIn, userData]);
+
+  const provider = useMemo(
+    () => user?.provider ?? user?.roleProvider ?? null,
+    [user]
   );
+
+  const userError = useMemo(() => {
+    if (queryError) {
+      return queryError;
+    }
+
+    const me = userData?.getMe;
+
+    if (loggedIn && me?.success === false) {
+      return new Error(me.message || "Failed to load the current user.");
+    }
+
+    return null;
+  }, [loggedIn, queryError, userData]);
+
+  const value = useMemo(
+    () => ({
+      user,
+      provider,
+      loggedIn,
+      refetchUser,
+      userLoading: loggedIn ? queryLoading : false,
+      userError,
+    }),
+    [loggedIn, provider, queryLoading, refetchUser, user, userError]
+  );
+
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
