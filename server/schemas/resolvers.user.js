@@ -3,13 +3,12 @@ require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 const { EMAILService } = require("../utils/mailer");
 // const userEmailService = new EMAILService();
 // const { User, Admin, Provider, Customer, Product } = require("../models");
-const { loginUser } = require("../services/auth.service");
 const {
-  getUser,
-  addUser,
+  loginUser,
   resetUserPassword,
-  udpateUserPassword,
-} = require("../services/user.service");
+  updateUserPassword,
+} = require("../services/auth.service");
+const { getUser, addUser } = require("../services/user.service");
 
 const { GraphQLError } = require("graphql");
 
@@ -99,7 +98,7 @@ module.exports = {
   },
   updatePassword: async (_parent, { update }, context) => {
     const { authCode, newPassword } = update;
-    const updatedUserPassword = await udpateUserPassword({
+    const updatedUserPassword = await updateUserPassword({
       actor: null,
       payload: { authCode, newPassword },
     });

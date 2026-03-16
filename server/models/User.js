@@ -126,7 +126,7 @@ const userSchema = new Schema(
     superAdmin: { type: Boolean, required: true, default: false },
     passwordHash: { type: String },
     passwordReset: {
-      requested: { type: Date },
+      expires: { type: Date },
       authCode: { type: String },
       complete: { type: Boolean },
     },
