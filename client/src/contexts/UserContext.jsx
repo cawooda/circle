@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useMemo } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_ME } from "../utils/queries";
-import { LOGIN } from "../utils/mutations";
+
 import AuthService from "../utils/auth";
 
 export const UserContext = createContext(null);
@@ -18,7 +18,7 @@ export const useUser = () => {
 
 export const UserProvider = ({ children }) => {
   const token = AuthService.getToken();
-  const loggedIn = Boolean(token) && AuthService.loggedIn();
+  const loggedIn = token && AuthService.loggedIn();
 
   const {
     loading: queryLoading,

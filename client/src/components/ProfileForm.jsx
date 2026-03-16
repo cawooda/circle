@@ -4,7 +4,6 @@ import {
   Flex,
   Input,
   FormLabel,
-  InputRightElement,
   Modal,
   ModalOverlay,
   Heading,
@@ -47,9 +46,9 @@ const ProfileForm = () => {
     },
   ] = useMutation(UPDATE_USER_PROFILE, {
     onError: (error) => {
-      console.error("GraphQL Error updating user Profile", err.graphQLErrors);
-      console.error("Network Error updating user Profile", err.networkError);
-      console.error("Message updating user Profile", err.message);
+      console.error("GraphQL Error updating user Profile", error.graphQLErrors);
+      console.error("Network Error updating user Profile", error.networkError);
+      console.error("Message updating user Profile", error.message);
     },
   });
 
@@ -61,10 +60,11 @@ const ProfileForm = () => {
   useEffect(() => {
     if (user) {
       setFormData({
-        first: user.first || "",
-        last: user.last || "",
-        mobile: user.mobile || "",
-        email: user.email || "",
+        first: user?.first || "",
+        last: user?.last || "",
+        mobile: user.contact?.mobile || "",
+        email: user.contact?.email || "",
+        dateOfBirth: user?.dateOfBirth || "",
       });
     }
   }, []);
@@ -79,8 +79,9 @@ const ProfileForm = () => {
     try {
       await updateUserProfile({
         variables: {
-          userId: user._id,
-          ...formData,
+          input: {
+            ...formData,
+          },
         },
       });
       onClose(); // Close the modal after successful submission
@@ -146,7 +147,7 @@ const ProfileForm = () => {
                   placeholder="Email..."
                   name="email"
                   onChange={handleInputChange}
-                  value={formData.email}
+                  value={formData.contact?.email}
                   required
                 />
 
@@ -157,7 +158,7 @@ const ProfileForm = () => {
                   placeholder="Mobile..."
                   name="mobile"
                   onChange={handleInputChange}
-                  value={formData.mobile}
+                  value={formData.contact?.mobile}
                   required
                 />
 

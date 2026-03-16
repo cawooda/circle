@@ -12,14 +12,11 @@ async function getUser({ actor, payload }) {
 }
 
 async function addUser({ actor, payload }) {
-  const { first, last, mobile, email, dateOfBirth } = payload;
+  const { mobile, email } = payload;
   const newUser = new User({
-    first,
-    last,
     contact: { mobile, email },
-    dateOfBirth,
   });
-  console.log("newUser", newUser);
+
   if (!newUser)
     throw new Error(
       "FAILED:We couldnt create the user in addUser in user.service.js",
@@ -33,6 +30,39 @@ async function addUser({ actor, payload }) {
   if (!passwordReset) throw new Error("we counldnt reset password");
 
   return newUser;
+}
+
+async function updateUserProfile({ actor, payload }) {
+  const userToUpdate = await User.findById(sub);
+  if (!userToUpdate) {
+    throw new Error("User not found");
+  } else {
+    await userToUpdate.updateOne({
+      first: first,
+      last: last,
+      contact: { mobile: mobile, email: email },
+    });
+    await userToUpdate.save();
+    return userToUpdate;
+
+    await userEmailService.sendMail(
+      updatedUser.email,
+      "Profile updated",
+      `Hi ${first}, we have updated your profile. Have a great day :)
+            `,
+      `Hi ${first}, we have updated your profile`,
+      `<p>Hi ${first}, we have updated your profile</p>
+            <h3>firstName:</h3>
+            <h4>${first}</h4>
+            <h3>Last Name:</h3>
+            <h4> ${last}</h4>
+            <h3>mobile:</h3>
+            <h4> ${mobile}</h4>
+            <h3>email:</h3>
+            <h4> ${email}</h4>
+            `,
+    );
+  }
 }
 
 module.exports = {

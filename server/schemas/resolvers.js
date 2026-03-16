@@ -12,6 +12,8 @@ const {
   passwordReset,
   updatePassword,
   login,
+  updateUserProfile,
+  logout,
 } = require("./resolvers.user");
 
 const resolvers = {
@@ -21,8 +23,10 @@ const resolvers = {
   Mutation: {
     addUser,
     login,
+    updateUserProfile,
     passwordReset,
     updatePassword,
+    logout,
   },
 };
 

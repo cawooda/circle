@@ -179,7 +179,6 @@ input AddUserInput {
 }
 
 input UpdateUserProfileInput {
-    userId: ID!
     first: String
     last: String
     mobile: String
@@ -263,7 +262,7 @@ input TermsAndConditionsInput {
 type AddUserResponse {
     success: Boolean!
     message: String!
-    user: User!
+    user:User!
 }
 
 type UpdateUserProfileResponse {
@@ -330,6 +329,11 @@ type LoginResponse {
   token: Token
 }
 
+type LogoutResponse {
+  success: Boolean!
+  message: String!
+}
+
 type GetMeResponse {
   success: Boolean!
   message: String!
@@ -354,11 +358,13 @@ type Mutation {
     passwordReset(contact:ContactInput): PasswordResetResponse!    
     updatePassword(update:UpdatePassword):UpdatePasswordResponse!
     login(contact:ContactInput,password:String): LoginResponse!
-    
+    logout:LogoutResponse!
+    updateUserProfile(input: UpdateUserProfileInput!):UpdateUserProfileResponse 
+
     addServiceAgreement(input: ServiceAgreementInput!): ServiceAgreement
     signServiceAgreement(input: SignServiceAgreementInput):SignServiceAgreementResponse    
     toggleUserRole(userId: ID!,role: String!): User!  
-    updateUserProfile(input: UpdateUserProfileInput!):UpdateUserProfileResponse  
+     
     updateUserPassword(password:String):UpdateUserPasswordResponse
     updateProviderProfile(input: UpdateProviderProfileInput!): UpdateProviderProfileResponse
     addNewCustomerToProvider(input: AddNewCustomerToProviderInput!):AddNewCustomerToProviderResponse

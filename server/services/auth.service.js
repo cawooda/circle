@@ -18,8 +18,10 @@ async function loginUser({ actor, payload }) {
         { "contact.mobile": mobile || null },
       ],
     });
+
     if (!foundUser.passwordHash)
       throw new Error("password must be set before login");
+
     if (await !checkPassword(password, foundUser.passwordHash))
       throw new Error("we couldnt log in with that password");
 
@@ -33,9 +35,10 @@ async function loginUser({ actor, payload }) {
         ? "CUSTOMER"
         : "NONE",
     });
+    console.log(token);
     return token;
   } catch (error) {
-    console.log("error iin loginUser in auth.service.js");
+    console.log("error iin loginUser in auth.service.js", error);
     return null;
   }
 }
@@ -113,9 +116,22 @@ async function updateUserPassword({ actor, payload }) {
 }
 async function checkAuthCode({ actor, payload }) {}
 
+async function logout({ actor, payload }) {
+  try {
+    const { sub } = payload;
+    const user = User.findById(sub);
+    user.loggedOut = true;
+    user.save();
+    return true;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 module.exports = {
   loginUser,
   checkAuthCode,
   resetUserPassword,
   updateUserPassword,
+  logout,
 };

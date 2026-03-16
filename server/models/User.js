@@ -130,6 +130,7 @@ const userSchema = new Schema(
       authCode: { type: String },
       complete: { type: Boolean },
     },
+    loggedOut: { type: Boolean, default: true },
     sendEmails: { type: Boolean, default: true },
     sendTexts: { type: Boolean, default: true },
   },

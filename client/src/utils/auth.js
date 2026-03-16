@@ -1,83 +1,67 @@
 import { jwtDecode } from "jwt-decode";
+import { print } from "@apollo/client/utilities";
 
-async function AuthService() {
-  async function setToken(token) {
-    localStorage.setItem("id_token", JSON.stringify(userToken));
+import { LOGIN_USER, ADD_USER, LOGOUT_USER } from "./mutations";
+
+const URL = "/graphql";
+
+const AuthService = {
+  setToken: async (token) => {
+    localStorage.setItem("id_token", token);
     return true;
-  }
+  },
+  getToken: () => {
+    try {
+      const token = localStorage.getItem("id_token");
+      if (!token) throw new Error("No token present");
+      return token;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  },
+  addUser: async (userData) => {
+    const { mobile, email } = contact;
+    if (!mobile && !email) throw new Error("addUser needs an email or mobile");
+    const reqBody = JSON.stringify({
+      query: print(ADD_USER),
+      operationName: "AddUser",
+      variables: { input: userData },
+    });
+    const response = await fetch(URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(reqBody),
+    });
 
-  async function getToken() {
-    const token = localStorage.getItem("id_token");
-    if (!token) throw new error("No token present");
-  }
-
-  async function addUser(userData) {
-    const URL = "/graphql";
-    const ADD_USER = require("./mutations");
-    const { first, last, mobile, email, dateOfBirth } = userData;
+    const res = await response.json();
+    return res;
+  },
+  loginUser: async (contact, password) => {
+    if (!password)
+      throw new Error("loginUser in client auth needs a password to proceed");
+    const { mobile, email } = contact;
     if (!mobile && !email) throw new Error("addUser needs an email or mobile");
     const reqBody = {
-      query: ADD_USER,
-      operationName: "addUser",
+      query: print(LOGIN_USER),
       variables: {
-        first,
-        last,
-        mobile,
-        email,
-        dateOfBirth,
+        contact: { mobile, email },
+        password: password,
       },
     };
-    try {
-      const response = await fetch(URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: reqBody,
-      });
-      let res;
-      res = await response.json();
-      console.log(res);
-    } catch (error) {
-      console.log("error in addUser in auth.js:", error.message);
-    }
-  }
-
-  async function loginUser(userData) {
-    const URL = "/api/users";
-    try {
-      const response = await fetch(URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...userData }),
-      });
-      let res;
-      if (response.headers.get("content-type").match(/json/)) {
-        res = await response.json();
-        if (res?.token) {
-          localStorage.setItem("id_token", JSON.stringify(res.token));
-          localStorage.setItem("user_signed_up", "true");
-          return res;
-        } else {
-          if (res.notFound) return { ...res, message: "We couldnt find you" };
-          if (res.message.match(/^PASSWORD: Seems that password didnt work/))
-            return { ...res, message: res.message };
-        }
-      } else {
-        throw new Error(
-          `Response could not be parsed to json : url${URL} status:${res?.status}`
-        );
-      }
-    } catch (error) {
-      console.log("error in client side auth", error);
-      return { error: true, message: error.message };
-    }
-  }
-
-  async function verifySmsCode(code) {
-    const URL = "/api/users";
+    const response = await fetch(URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(reqBody),
+    });
+    const res = await response.json();
+    return res;
+  },
+  verifySmsCode: async (code) => {
     let response = { statusCode: 500, message: "" };
     try {
       const response = await fetch(URL, {
@@ -87,15 +71,15 @@ async function AuthService() {
         },
         body: JSON.stringify({ authLinkNumber: code }),
       });
-      let res;
+
       if (!response)
         throw new Error(
           `NO_RESPONSE: We coulndt get a response from the server`
         );
       if (response.headers.get("content-type").match(/json/)) {
-        res = await response.json();
+        const res = await response.json();
         if (res?.token) {
-          localStorage.setItem("id_token", JSON.stringify(res.token));
+          localStorage.setItem("id_token", res.token);
           localStorage.setItem("user_signed_up", "true");
           return res;
         } else {
@@ -140,18 +124,31 @@ async function AuthService() {
 
       return { message: error.message };
     }
-  }
-
-  function logout() {
+  },
+  logout: async () => {
     localStorage.removeItem("id_token");
-  }
 
-  function loggedIn() {
-    const token = this.getToken();
-    return Boolean(token) && !this.isTokenExpired(token);
-  }
+    const reqBody = {
+      query: print(LOGOUT_USER),
+      operationName: "logoutUser",
+    };
+    const response = await fetch(URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(reqBody),
+    });
+    const res = await response.json();
+    console.log(res.logoutUser);
+  },
+  loggedIn: () => {
+    const token = localStorage.getItem("id_token");
+    console.log(token);
+    return token ? true : false;
+  },
 
-  function getProfile() {
+  getProfile: () => {
     try {
       const token = this.getToken();
       if (!token) return null;
@@ -161,31 +158,30 @@ async function AuthService() {
       console.log("Error in getProfile:", error);
       return null;
     }
-  }
+  },
+  smsLinkLogin: async (userData) => {
+    const APIURL = "/api/users";
+    try {
+      if (userData.mobile) {
+        const response = await fetch(APIURL, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ ...userData, linkRequest: true }),
+        });
 
-  module.exports = {};
+        if (response.headers.get("content-type").match(/json/)) {
+          const res = await response.json();
+        } else {
+          throw new Error(
+            `Response could not be parsed to json : url${APIURL} status:${res?.status}`
+          );
+        }
+        if (res.linkSent) return true;
+      }
+    } catch (error) {}
+  },
+};
 
-  // async function smsLinkLogin(userData) {
-  //   const URL = "/api/users";
-  //   try {
-  //     if (userData.mobile) {
-  //       const response = await fetch(URL, {
-  //         method: "PUT",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({ ...userData, linkRequest: true }),
-  //       });
-  //       let res;
-  //       if (response.headers.get("content-type").match(/json/)) {
-  //         res = await response.json();
-  //       } else {
-  //         throw new Error(
-  //           `Response could not be parsed to json : url${URL} status:${res?.status}`
-  //         );
-  //       }
-  //       if (res.linkSent) return true;
-  //     }
-  //   } catch (error) {}
-  // }
-}
+export default AuthService;

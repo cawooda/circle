@@ -8,7 +8,11 @@ const {
   resetUserPassword,
   updateUserPassword,
 } = require("../services/auth.service");
-const { getUser, addUser } = require("../services/user.service");
+const {
+  getUser,
+  addUser,
+  updateUserProfile,
+} = require("../services/user.service");
 
 const { GraphQLError } = require("graphql");
 
@@ -41,7 +45,6 @@ module.exports = {
     };
     return response;
   },
-  //progessed to here. continue here:
   // getAllUsers: async (_parent, {}, context) => {
   //   const { token } = context.user;
   //   const user = await User.findById(context.user._id);
@@ -62,22 +65,16 @@ module.exports = {
   // getServiceAgreement: async (_parent, { agreementNumber }) => {},
   //mutations
   addUser: async (_parent, { input }, context) => {
-    const { first, last, mobile, email, dateOfBirth } = input;
+    const { mobile, email } = input;
     if (!mobile && !email)
       throw new GraphQLError(
         "BAD_INPUT: we need the right contact details to add user",
       );
     const user = await addUser({
       actor: context.user,
-      payload: {
-        first,
-        last,
-        mobile,
-        email,
-        dateOfBirth,
-      },
+      payload: input,
     });
-    if (!user) throw new Error("FAILED: couldnt addUser in resolvers.user.js");
+
     return {
       success: user && true,
       message: "SUCCESS: we created a user",
@@ -111,6 +108,10 @@ module.exports = {
   },
   login: async (_parent, { contact, password }, context) => {
     //contact information is used as the actor in a login scenario
+    console.log("contact", contact);
+    console.log("password", password);
+    if (!password) throw new Error("we need a password for that");
+    if (!contact) throw new Error("we need a contact for that");
     const token = loginUser({ actor: { contact }, payload: { password } });
     const response = {
       success: token ? true : false,
@@ -118,6 +119,22 @@ module.exports = {
       token,
     };
     return response;
+  },
+  logout: async (_parent, _data, context) => {
+    const { sub } = context;
+    const result = await logoutUser({ actor: sub, payload: sub });
+    const response = {
+      success: result,
+      message: result
+        ? "we successfully logged you out"
+        : "sorry we couldnt log you out",
+    };
+    return response;
+  },
+  updateUserProfile: async (_parent, data, context) => {
+    const { sub } = context;
+    const updateUser = updateUserProfile({ actor: sub, payload: data });
+    if (!updatedUser) return updatedUser;
   },
   // addServiceAgreement: async (_parent, { input }) => {},
   // signServiceAgreement: async (_parent, { input }) => {},
@@ -179,47 +196,6 @@ module.exports = {
   //   } catch (error) {
   //     console.error("Error in toggleUserRole:", error);
   //     throw new Error("Failed to toggle user role");
-  //   }
-  // },
-  // updateUserProfile: async (
-  //   _parent,
-  //   { userId, first, last, mobile, email },
-  // ) => {
-  //   try {
-  //     const updatedUser = await User.findById(userId);
-  //     if (!updatedUser) {
-  //       throw new Error("User not found");
-  //     } else {
-  //       await updatedUser.updateOne({
-  //         first: first,
-  //         last: last,
-  //         mobile: mobile,
-  //         email: email,
-  //       });
-  //       await updatedUser.save();
-
-  //       await userEmailService.sendMail(
-  //         updatedUser.email,
-  //         "Profile updated",
-  //         `Hi ${first}, we have updated your profile. Have a great day :)
-  //           `,
-  //         `Hi ${first}, we have updated your profile`,
-  //         `<p>Hi ${first}, we have updated your profile</p>
-  //           <h3>firstName:</h3>
-  //           <h4>${first}</h4>
-  //           <h3>Last Name:</h3>
-  //           <h4> ${last}</h4>
-  //           <h3>mobile:</h3>
-  //           <h4> ${mobile}</h4>
-  //           <h3>email:</h3>
-  //           <h4> ${email}</h4>
-  //           `,
-  //       );
-  //     }
-
-  //     return updatedUser;
-  //   } catch (error) {
-  //     throw new Error(error.message);
   //   }
   // },
 

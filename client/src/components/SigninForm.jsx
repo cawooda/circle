@@ -149,7 +149,7 @@ const SigninForm = ({ forceOpen }) => {
         }));
         return;
       }
-      setToken({ token: response.token }); // Save token
+      setToken(response.token); // Save token
 
       refetchUser(); // Fetch user data
       setFormState((prev) => ({ ...prev, loading: false }));
@@ -189,8 +189,9 @@ const SigninForm = ({ forceOpen }) => {
     try {
       let response;
       if (signup) {
-        response = await AuthService.signUpUser(userFormData);
-        if (!response?.token) {
+        response = await AuthService.addUser(userFormData);
+
+        if (!response?.data.login.token) {
           setFormState((prev) => ({
             ...prev,
             loading: false,
@@ -200,8 +201,16 @@ const SigninForm = ({ forceOpen }) => {
         }
       } else {
         // Handle Login
-        response = await AuthService.loginUser(userFormData);
-        if (!response?.token) {
+
+        const contact = {
+          mobile: userFormData?.mobile,
+          email: userFormData?.email,
+        };
+        const password = userFormData?.password;
+
+        response = await AuthService.loginUser(contact, password);
+
+        if (!response?.data?.login?.token) {
           setFormState((prev) => ({
             ...prev,
             loading: false,
@@ -212,7 +221,7 @@ const SigninForm = ({ forceOpen }) => {
       }
 
       // If signup or login succeeds
-      setToken({ token: response.token }); // Save token
+      setToken(response?.data?.login?.token); // Save token
       // refetchUser(); // Fetch user data
       setFormState((prev) => ({ ...prev, loading: false }));
       setUserFormData({ mobile: "", password: "" });

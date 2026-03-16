@@ -40,7 +40,7 @@ import AuthReset from "./pages/AuthReset";
 
 import "./index.css";
 
-import { createBrowserRouter, Route, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import SigninForm from "./components/SigninForm";
 
 // Router configuration
@@ -128,7 +128,6 @@ const router = createBrowserRouter([
           },
         ],
       },
-
       {
         path: "customer",
         element: <CustomerLayout />,

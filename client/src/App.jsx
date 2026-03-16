@@ -12,11 +12,10 @@ import { ChakraProvider } from "@chakra-ui/react";
 import RootLayout from "./layouts/RootLayout";
 import { UserProvider } from "./contexts/UserContext";
 
-import { jwtDecode } from "jwt-decode";
 import AuthService from "./utils/auth";
 
 const authLink = setContext((_, { headers }) => {
-  const token = AuthService.getToken();
+  const token = AuthService.getToken() || null;
 
   return {
     headers: {

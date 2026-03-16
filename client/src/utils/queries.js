@@ -53,30 +53,16 @@ export const QUERY_ALL_USERS = gql`
 export const GET_ME = gql`
   query GetMe {
     getMe {
-      success
       message
+      success
       user {
         _id
-        admin {
-          createdAt
-        }
         contact {
           mobile
           email
         }
         customer {
-          active
-          address {
-            city
-            postalCode
-            state
-            street
-          }
           dateOfBirth
-          invoiceEmail
-          referenceName
-          referenceNumber
-          serviceAgreementEmail
         }
       }
     }

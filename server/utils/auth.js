@@ -32,7 +32,9 @@ async function authMiddleware({ req, res }) {
     const { sub, role } = decoded;
     if (sub && role) {
       const user = await User.findOne({ _id: sub });
-      return { user, role };
+      if (user) {
+        return { user, role };
+      } else return { user: null, role: "LOGIN" };
     } else {
       //could not decode sub and role from token so proceed to login
       (user = null), (role = "LOGIN");

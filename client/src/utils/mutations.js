@@ -1,31 +1,36 @@
 import { gql } from "@apollo/client";
 
-export const LOGIN = gql`
+export const LOGIN_USER = gql`
   mutation Login($contact: ContactInput, $password: String) {
     login(contact: $contact, password: $password) {
-      success
       message
+      success
       token
     }
   }
 `;
 
+export const LOGOUT_USER = gql`
+  mutation Logout {
+    logout {
+      message
+      success
+    }
+  }
+`;
+
 export const ADD_USER = gql`
-  mutation addUser(
-    $first: String!
-    $last: String
-    $email: String!
-    $password: String!
-  ) {
-    createUser(first: $first, last: $last, email: $email, password: $password) {
-      _id
-      token
-      first
-      last
-      mobile
-      email
-      date_of_birth
-      fullName
+  mutation AddUser($input: AddUserInput!) {
+    addUser(input: $input) {
+      message
+      success
+      user {
+        _id
+        contact {
+          email
+          mobile
+        }
+      }
     }
   }
 `;
@@ -111,63 +116,20 @@ export const UPDATE_USER_PASSWORD = gql`
 `;
 
 export const UPDATE_USER_PROFILE = gql`
-  mutation UpdateProfile(
-    $userId: ID!
-    $first: String
-    $last: String
-    $mobile: String
-    $email: String
-  ) {
-    updateProfile(
-      userId: $userId
-      first: $first
-      last: $last
-      mobile: $mobile
-      email: $email
-    ) {
-      _id
-      first
-      last
-      mobile
-      email
-      date_of_birth
-      fullName
-      roleAdmin {
+  mutation UpdateUserProfile($input: UpdateUserProfileInput!) {
+    updateUserProfile(input: $input) {
+      message
+      success
+      user {
         _id
-        createdAt
-        updatedAt
-      }
-      roleProvider {
-        _id
-        abn
-        address {
-          street
-          city
-          state
-          postalCode
-        }
-        providerName
-        termsAndConditions {
-          heading
-          paragraph
-        }
-        createdAt
-        updatedAt
-      }
-      roleCustomer {
-        _id
-        referenceNumber
-        referenceName
-        address {
-          street
-          city
-          state
-          postalCode
+        contact {
+          email
+          mobile
         }
         dateOfBirth
-        customerSpecificField
+        first
+        last
       }
-      roleSuperAdmin
     }
   }
 `;

@@ -33,11 +33,7 @@ const signToken = (
 };
 
 //extracts the payload from a token ensuring the audience and issuer are consistent with Auth
-const verifyToken = async (
-  token,
-  AUDIENCE = "CIRCLE_AUTH",
-  ISSUER = "CIRCLE_AUTH",
-) => {
+const verifyToken = async (token, AUDIENCE, ISSUER) => {
   if (!token) return { error: "NO_TOKEN:No Token Provided" };
 
   const payload = jwt.verify(token, secret, {

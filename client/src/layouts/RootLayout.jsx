@@ -12,7 +12,7 @@ import Splash from "../components/Splash";
 import { NavLink } from "react-router-dom";
 const logoStyle = { paddingBottom: "15px" };
 import { ButtonStyles } from "../components/styles/ButtonStyle";
-import AuthService from "../utils/auth";
+
 import ProviderLogo from "../components/ProviderLogo";
 import SigninForm from "../components/SigninForm";
 
@@ -53,7 +53,6 @@ export default function RootLayout() {
         <Box bg="gray.200" p={4} maxWidth={{ base: "100vw", md: "100vw" }}>
           <Flex gap={3} flexDirection={{ base: "column", md: "column" }}>
             {/* Check roles and serve up what they should see */}
-            {console.log(user)}
             {user?.roleProvider ? (
               <Box>
                 <NavLink to="/provider">
@@ -63,7 +62,7 @@ export default function RootLayout() {
                 </NavLink>
               </Box>
             ) : (
-              <>Not Provider</>
+              <></>
             )}
             <Box
               display="flex"
