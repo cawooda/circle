@@ -2,6 +2,7 @@ import { jwtDecode } from "jwt-decode";
 import { print } from "@apollo/client/utilities";
 
 import { LOGIN_USER, ADD_USER, LOGOUT_USER } from "./mutations";
+import { GET_ME } from "./queries";
 
 const URL = "/graphql";
 
@@ -21,13 +22,13 @@ const AuthService = {
     }
   },
   addUser: async (userData) => {
-    const { mobile, email } = contact;
+    const { mobile, email } = userData;
     if (!mobile && !email) throw new Error("addUser needs an email or mobile");
-    const reqBody = JSON.stringify({
+    const reqBody = {
       query: print(ADD_USER),
       operationName: "AddUser",
       variables: { input: userData },
-    });
+    };
     const response = await fetch(URL, {
       method: "POST",
       headers: {
@@ -58,6 +59,22 @@ const AuthService = {
       },
       body: JSON.stringify(reqBody),
     });
+    const res = await response.json();
+    return res;
+  },
+  getUser: async () => {
+    const reqBody = {
+      query: print(GET_ME),
+      operationName: "getMe",
+    };
+    const response = await fetch(URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(reqBody),
+    });
+    console.log(response);
     const res = await response.json();
     return res;
   },

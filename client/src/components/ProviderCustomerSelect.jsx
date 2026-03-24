@@ -19,14 +19,14 @@ import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
 
 import ProductList from "./ProductList";
 import ServiceList from "./ServiceList";
-import { useUser } from "../contexts/UserContext";
+import { useAuth } from "../contexts/UserContext";
 
 const ProviderCustomerSelect = ({
   formData,
   handleInputChange,
   handleFormSubmit,
 }) => {
-  const { user } = useUser();
+  const { user } = useAuth();
   const [products, setProducts] = useState([]);
 
   const { isOpen, onOpen, onClose } = useDisclosure();

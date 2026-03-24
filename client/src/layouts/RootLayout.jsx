@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { Flex, Container, Box, Center } from "@chakra-ui/react";
 import LogoutButton from "../components/LogoutButton";
 import ProfileForm from "../components/ProfileForm";
-import { useUser } from "../contexts/UserContext";
+// import { useAuth } from "../contexts/UserContext";
+import { useAuth } from "../contexts/AuthContext";
 import logo from "/logo.png";
 import Slideshow from "../components/Slideshow";
 import { firstVisitSlideShow } from "../assets/training";
@@ -17,7 +18,7 @@ import ProviderLogo from "../components/ProviderLogo";
 import SigninForm from "../components/SigninForm";
 
 export default function RootLayout() {
-  const { user, userLoading } = useUser();
+  const { user, userLoading } = useAuth();
 
   const [slideShow, setSlideShow] = useState();
   const [returnVisit, setReturnVisit] = useState(

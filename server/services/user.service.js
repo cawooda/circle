@@ -1,5 +1,6 @@
 const { User } = require("../models");
 const serviceActor = { sub: "USER_SERVICE", role: "SERVICE" };
+const { resetUserPassword } = require("../services/auth.service");
 
 async function getUser({ actor, payload }) {
   try {

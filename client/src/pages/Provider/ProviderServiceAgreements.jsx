@@ -1,9 +1,9 @@
 import ServiceAgreementRow from "../../components/ServiceAgreementRow";
-import { useUser } from "../../contexts/UserContext";
+import { useAuth } from "../../contexts/UserContext";
 import NotifyUser from "../../components/NotifyUser";
 
 export default function ProviderServiceAgreements() {
-  const { user, loading, error } = useUser();
+  const { user, loading, error } = useAuth();
 
   if (loading) {
     return <div>Loading...</div>;

@@ -13,7 +13,7 @@ const unauthorized = (message = "Not authorized") =>
 
 //places a payload into a token returning the token
 
-async function authMiddleware({ req, res }) {
+async function authMiddleware({ req }) {
   try {
     let user;
     if (req.body?.operationName == "IntrospectionQuery") {
@@ -23,7 +23,7 @@ async function authMiddleware({ req, res }) {
       return { user: null, role: "PASSWORDRESET" };
     }
     const token = req?.headers?.authorization?.split(" ").pop().trim() || null;
-    if (!token) throw new Error("no token");
+    if (!token) return { user: null, role: "LOGIN" };
     const decoded = await verifyToken(token);
     if (typeof decoded == { sub: String, role: String }) {
       throw new Error("token not decoded");
@@ -43,7 +43,6 @@ async function authMiddleware({ req, res }) {
   } catch (error) {
     console.log(error);
     //could not authourise the user proceed to login stage
-    return { user: null, role: "LOGIN" };
   }
 }
 

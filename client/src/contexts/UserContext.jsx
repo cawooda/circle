@@ -6,11 +6,11 @@ import AuthService from "../utils/auth";
 
 export const UserContext = createContext(null);
 
-export const useUser = () => {
+export const useAuth = () => {
   const context = useContext(UserContext);
 
   if (context === null) {
-    throw new Error("useUser must be used within a UserProvider");
+    throw new Error("useAuth must be used within a UserProvider");
   }
 
   return context;

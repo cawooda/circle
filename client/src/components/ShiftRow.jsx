@@ -11,12 +11,12 @@ import {
 } from "@chakra-ui/react";
 import { DisplayStyles, InputStyles } from "./styles/InputStyles";
 import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
-import { useUser } from "../contexts/UserContext";
+import { useAuth } from "../contexts/UserContext";
 import { CardStyles } from "./styles/CardStyles";
 import CustomerControl from "./CustomerControl";
 
 export default function ShiftRow({ shift, index }) {
-  const { user, loading, error } = useUser();
+  const { user, loading, error } = useAuth();
   const [customerList, setCustomerList] = useState([]);
   if (!user || loading || error) {
     return null; // Don't render anything if user is not available

@@ -10,7 +10,7 @@ import { onError } from "@apollo/client/link/error";
 import { ChakraProvider } from "@chakra-ui/react";
 
 import RootLayout from "./layouts/RootLayout";
-import { UserProvider } from "./contexts/UserContext";
+import { AuthProvider } from "./contexts/AuthContext";
 
 import AuthService from "./utils/auth";
 
@@ -67,9 +67,9 @@ function App() {
     <>
       <ApolloProvider client={client}>
         <ChakraProvider>
-          <UserProvider>
+          <AuthProvider>
             <RootLayout />
-          </UserProvider>
+          </AuthProvider>
         </ChakraProvider>
       </ApolloProvider>
     </>

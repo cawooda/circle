@@ -23,13 +23,13 @@ import SignatureCanvas from "react-signature-canvas";
 import { useState, useEffect, useRef } from "react";
 import ProductControl from "../../components/ProductControl";
 
-import { useUser } from "../../contexts/UserContext";
+import { useAuth } from "../../contexts/UserContext";
 
 import { useQuery, useMutation } from "@apollo/client";
 import { ADD_SERVICE_AGREEMENT } from "../../utils/mutations";
 
 export default function ProviderServiceAgreement() {
-  const { user } = useUser();
+  const { user } = useAuth();
   if (!user) {
     return (
       <Container paddingTop={10}>

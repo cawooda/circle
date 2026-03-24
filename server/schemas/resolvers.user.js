@@ -1,18 +1,17 @@
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 const { EMAILService } = require("../utils/mailer");
+const serviceActor = { sub: "RESOLVER", role: "SERVICE" };
 // const userEmailService = new EMAILService();
 // const { User, Admin, Provider, Customer, Product } = require("../models");
 const {
   loginUser,
   resetUserPassword,
+  addNewUser,
   updateUserPassword,
 } = require("../services/auth.service");
-const {
-  getUser,
-  addUser,
-  updateUserProfile,
-} = require("../services/user.service");
+
+const { getUser, updateUserProfile } = require("../services/user.service");
 
 const { GraphQLError } = require("graphql");
 
@@ -45,33 +44,15 @@ module.exports = {
     };
     return response;
   },
-  // getAllUsers: async (_parent, {}, context) => {
-  //   const { token } = context.user;
-  //   const user = await User.findById(context.user._id);
-  //   const admin = await User.findById(context.user.roleAdmin);
-  //   if (admin || user.roleSuperAdmin) {
-  //     try {
-  //       const users = await User.find({}).populate();
-  //       return users;
-  //     } catch (error) {
-  //       console.log("getAllUsers resolver error", error);
-  //       return error;
-  //     }
-  //   } else return { message: "user needs to be admin to perform this action" };
-  // },
-  // getAllProducts: async () => {},
-  // getAllProviderServices: async (_parent, { providerId }) => {},
-  // getAllProviderServiceAgreements: async (_parent, { providerId }) => {},
-  // getServiceAgreement: async (_parent, { agreementNumber }) => {},
-  //mutations
+
   addUser: async (_parent, { input }, context) => {
     const { mobile, email } = input;
     if (!mobile && !email)
       throw new GraphQLError(
         "BAD_INPUT: we need the right contact details to add user",
       );
-    const user = await addUser({
-      actor: context.user,
+    const user = await addNewUser({
+      actor: serviceActor,
       payload: input,
     });
 
@@ -108,8 +89,6 @@ module.exports = {
   },
   login: async (_parent, { contact, password }, context) => {
     //contact information is used as the actor in a login scenario
-    console.log("contact", contact);
-    console.log("password", password);
     if (!password) throw new Error("we need a password for that");
     if (!contact) throw new Error("we need a contact for that");
     const token = loginUser({ actor: { contact }, payload: { password } });

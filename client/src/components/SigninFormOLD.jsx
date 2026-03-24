@@ -28,7 +28,10 @@ import {
 import { useNavigate } from "react-router-dom";
 //new #useHook
 import AuthService from "../utils/auth";
-import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
+import {
+  ButtonStyles,
+  ButtonHighlightStyle,
+} from "../components/styles/ButtonStyle";
 import SmsCodeModal from "./SmsCodeModal"; // Import the new modal component
 import { InputStyles } from "./styles/InputStyles";
 
@@ -69,10 +72,13 @@ const SigninForm = ({ forceOpen }) => {
 
   useEffect(() => {
     const validMobile = validateMobileInput(userFormData.mobile);
+    const validPassword = validatePasswordInput(userFormData.password);
 
-    const formValid = validMobile;
+    const formValid = validMobile && validPassword;
     const message = !formValid
-      ? `${!validMobile ? "enter your mobile number" : ""} `
+      ? `${!validMobile ? "enter your mobile number" : ""} ${
+          !validPassword ? "enter your password" : ""
+        }`
       : "";
 
     setFormState((prev) => ({ ...prev, formValid, message }));
@@ -164,7 +170,8 @@ const SigninForm = ({ forceOpen }) => {
 
   const isFormValid = () => {
     const validMobile = validateMobileInput(userFormData.mobile);
-    return validMobile;
+    const validPassword = validatePasswordInput(userFormData.password);
+    return validMobile && validPassword;
   };
 
   const handleFormSubmit = async (event) => {
@@ -183,6 +190,7 @@ const SigninForm = ({ forceOpen }) => {
       let response;
       if (signup) {
         response = await AuthService.addUser(userFormData);
+
         if (!response?.data.login.token) {
           setFormState((prev) => ({
             ...prev,
@@ -288,6 +296,23 @@ const SigninForm = ({ forceOpen }) => {
                       value={userFormData.first}
                       required
                     />
+                    <FormLabel htmlFor="last">Last Name</FormLabel>
+                    <Input
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleFormSubmit(e);
+                        }
+                      }}
+                      id="lastInput"
+                      {...InputStyles}
+                      type="text"
+                      placeholder="last name..."
+                      name="last"
+                      autoComplete="family-name"
+                      onChange={handleInputChange}
+                      value={userFormData.last}
+                      required
+                    />
                   </>
                 ) : (
                   <></>
@@ -309,7 +334,35 @@ const SigninForm = ({ forceOpen }) => {
                   value={userFormData.mobile}
                   required
                 />
-
+                <FormLabel htmlFor="password">Password</FormLabel>
+                <InputGroup>
+                  <InputRightElement width="4.5rem">
+                    <Button
+                      isDisabled={signup ? true : false}
+                      h="1.75rem"
+                      size="sm"
+                      onClick={handleSMSlinkLogin}
+                    >
+                      SMS
+                    </Button>
+                  </InputRightElement>
+                  <Input
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleFormSubmit(e);
+                      }
+                    }}
+                    autoComplete="current-password"
+                    id="passwordInput"
+                    {...InputStyles}
+                    type="password"
+                    placeholder="password..."
+                    name="password"
+                    onChange={handleInputChange}
+                    value={userFormData.password}
+                    required
+                  />
+                </InputGroup>
                 {formState.message ? (
                   <Alert status="error">{formState.message}</Alert>
                 ) : (

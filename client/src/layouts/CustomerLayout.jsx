@@ -2,7 +2,7 @@ import React from "react";
 
 import { Outlet } from "react-router-dom";
 import SubMenu from "../components/SubMenu";
-// import { useUser } from "../contexts/UserContext";
+// import { useAuth } from "../contexts/UserContext";
 
 const menu = [
   { label: "Service Agreements", link: "service-agreements" },

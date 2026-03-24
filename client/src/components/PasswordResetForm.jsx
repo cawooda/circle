@@ -8,7 +8,8 @@ import { InputStyles } from "./styles/InputStyles";
 import logo from "/logo.png";
 import { useMutation } from "@apollo/client";
 import { UPDATE_USER_PASSWORD } from "../utils/mutations";
-import { useUser } from "../contexts/UserContext";
+
+import { useAuth } from "../contexts/AuthContext";
 import {
   Button,
   Flex,
@@ -33,7 +34,7 @@ import {
 } from "@chakra-ui/react";
 
 export default function PasswordResetForm() {
-  const { user } = useUser();
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     password: "",
     confirmPassword: "",

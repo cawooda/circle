@@ -11,7 +11,7 @@ import {
 
 import SubMenu from "../components/SubMenu";
 import SigninForm from "../components/SigninForm";
-import { useUser } from "../contexts/UserContext";
+import { useAuth } from "../contexts/UserContext";
 import AuthService from "../utils/auth";
 
 const menu = [
@@ -26,7 +26,7 @@ import Splash from "../components/Splash";
 
 export default function ProviderLayout() {
   const { loggedIn, setLoggedIn } = useState(AuthService.loggedIn());
-  const { user, loading, error } = useUser();
+  const { user, loading, error } = useAuth();
   if (loading) return <Splash />;
   if (error) {
     console.log("error", error);

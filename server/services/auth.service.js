@@ -6,6 +6,11 @@ const dayjs = require("dayjs");
 const AUTHCODE_EXPIRY_MINUTES = 1;
 const { User } = require("../models");
 
+//authentication is this who they say they are - middleware
+//authorisation extracted from the token and passed to function to check whether they are allowed to do?
+//function checks the authorisation doesent bother itself with authentication
+//authentication should be handled by middlware / dedicated auth endpoint eg. /auth/
+
 async function loginUser({ actor, payload }) {
   //contact information is used as the actor in login
   try {
@@ -19,7 +24,7 @@ async function loginUser({ actor, payload }) {
       ],
     });
 
-    if (!foundUser.passwordHash)
+    if (!foundUser?.passwordHash)
       throw new Error("password must be set before login");
 
     if (await !checkPassword(password, foundUser.passwordHash))
@@ -42,11 +47,26 @@ async function loginUser({ actor, payload }) {
     return null;
   }
 }
-
+async function addNewUser({ actor, payload }) {
+  try {
+    if (!actor.sub == "RESOLVER")
+      throw new Error("only the resolver can do that");
+    const { contact } = payload;
+    const { email, mobile } = contact;
+    if (!email || !mobile)
+      throw new Error("we need contact details to add user");
+    const newUser = new User({
+      "contact.email": email,
+      "contact.mobile": mobile,
+    });
+    const { password } = payload;
+  } catch (error) {}
+}
 async function resetUserPassword({ actor, payload }) {
   try {
     const { user } = actor || {};
     const { contact } = payload || {};
+    if (!contact) throw new Error("contact is required");
     if (!contact) throw new Error("contact is required");
     const { email, mobile } = contact;
     const foundUser = await User.findOne({
@@ -130,6 +150,7 @@ async function logout({ actor, payload }) {
 
 module.exports = {
   loginUser,
+  addNewUser,
   checkAuthCode,
   resetUserPassword,
   updateUserPassword,

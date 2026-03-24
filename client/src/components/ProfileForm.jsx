@@ -27,7 +27,7 @@ import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
 import { InputStyles } from "./styles/InputStyles";
 
 import logo from "/logo.png";
-import { useUser } from "../contexts/UserContext";
+import { useAuth } from "../contexts/AuthContext";
 
 import { useMutation } from "@apollo/client";
 import { UPDATE_USER_PROFILE } from "../utils/mutations";
@@ -37,6 +37,7 @@ import ProviderProfileForm from "./ProviderProfileForm";
 import Splash from "./Splash";
 
 const ProfileForm = () => {
+  const { user, userLoading } = useAuth();
   const [
     updateUserProfile,
     {
@@ -53,7 +54,6 @@ const ProfileForm = () => {
   });
 
   const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
-  const { user, loading, error } = useUser();
 
   const [formData, setFormData] = useState({});
 

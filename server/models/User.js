@@ -6,6 +6,7 @@ const { Schema, model, models } = require("mongoose");
 const {
   generateRandomNumber,
   generateRandomPhoneNumber,
+  generateRandomLetters,
 } = require("../utils/helpers");
 const { SMSService } = require("../utils/smsService");
 const userSmsService = new SMSService();
@@ -31,6 +32,9 @@ const userSchema = new Schema(
       email: {
         type: String,
         toLowerCase: true,
+        default: `${generateRandomLetters(5)}@${generateRandomLetters(
+          5,
+        )}.${generateRandomLetters(3)}`,
         unique: true,
       },
     },

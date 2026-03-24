@@ -7,10 +7,11 @@ import {
   NumberInputField,
 } from "@chakra-ui/react";
 import { InputStyles } from "./styles/InputStyles";
-import { useUser } from "../contexts/UserContext";
+
+import { useAuth } from "../contexts/AuthContext";
 
 export default function ProductControl({ handleInputChange, locked }) {
-  const { user } = useUser();
+  const { user } = useAuth();
   if (!user.roleProvider.products) return null;
 
   return (

@@ -10,11 +10,11 @@ import {
 } from "@chakra-ui/react";
 import { DisplayStyles, InputStyles } from "./styles/InputStyles";
 import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
-import { useUser } from "../contexts/UserContext";
+import { useAuth } from "../contexts/UserContext";
 import { CardStyles } from "./styles/CardStyles";
 
 export default function ServiceAgreementRow({ agreement, index }) {
-  const { user, loading, error } = useUser();
+  const { user, loading, error } = useAuth();
   if (!user) {
     return null; // Don't render anything if user is not available
   }

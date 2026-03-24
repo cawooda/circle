@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useUser } from "../../contexts/UserContext";
+import { useAuth } from "../../contexts/UserContext";
 import UserAdminRow from "../../components/AdminComponents/UserAdminRow";
 import Splash from "../../components/Splash";
 
 export default function ProviderAdmin() {
-  const { user } = useUser();
+  const { user } = useAuth();
 
   useEffect(() => {
     setUsers(user?.adminData?.users);
