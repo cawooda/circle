@@ -1,6 +1,5 @@
 import { validateMobileInput, validatePasswordInput } from "../utils/helpers";
 import { useState, useEffect, useCallback } from "react";
-import useToken from "../hooks/UseToken";
 
 import {
   Button,
@@ -8,7 +7,6 @@ import {
   Flex,
   Input,
   FormLabel,
-  InputRightElement,
   Modal,
   ModalOverlay,
   Heading,
@@ -37,7 +35,6 @@ import logo from "/logo.png";
 import Splash from "./Splash";
 
 const SigninForm = ({ forceOpen }) => {
-  const { setToken } = useToken();
   const [formState, setFormState] = useState({
     loading: false,
     formValid: false,
@@ -51,6 +48,7 @@ const SigninForm = ({ forceOpen }) => {
   const userSignedUp = localStorage.getItem("user_signed_up");
   const [signup, setSignup] = useState(!userSignedUp);
   const [userFormData, setUserFormData] = useState({
+    first: "",
     mobile: "",
     password: "",
   });
@@ -126,30 +124,28 @@ const SigninForm = ({ forceOpen }) => {
     }
   };
 
-  const handleCodeSubmit = async (code) => {
+  const handleCodeSubmit = async (code, password) => {
     try {
       setFormState((prev) => {
         return { ...prev, loading: true };
       });
-      //new #useHook
+
       setFormState((prev) => ({ ...prev, loading: true }));
-      let response;
-      response = await AuthService.verifySmsCode(code);
-      if (!response?.token) {
+
+      const { success, message } = await AuthService.updateUserPassword(
+        code,
+        password
+      );
+      if (!success) {
         setFormState((prev) => ({
           ...prev,
           loading: false,
-          message: response?.message || "Login failed. Please try again.",
+          message: message || "Login failed. Please try again.",
         }));
         return;
       }
-      setToken(response.token); // Save token
-
-      refetchUser(); // Fetch user data
       setFormState((prev) => ({ ...prev, loading: false }));
-      setUserFormData({ mobile: "", password: "" });
-      onClose(); // Close modal
-      navigate("/"); // Redirect to home page
+      navigate("/login"); // Redirect to home page
     } catch (error) {
       setFormState((prev) => {
         return {
@@ -168,6 +164,7 @@ const SigninForm = ({ forceOpen }) => {
   };
 
   const handleFormSubmit = async (event) => {
+    event.preventDefault();
     if (!isFormValid()) {
       setFormState((prev) => ({
         ...prev,
@@ -175,45 +172,42 @@ const SigninForm = ({ forceOpen }) => {
       }));
       return;
     }
-
     setFormState((prev) => ({ ...prev, loading: true }));
-    event.preventDefault();
-
     try {
       let response;
+      const contact = {
+        mobile: userFormData?.mobile,
+        email: userFormData?.email,
+      };
+      const first = userFormData?.first;
       if (signup) {
-        response = await AuthService.addUser(userFormData);
-        if (!response?.data.login.token) {
+        response = await AuthService.addUser({ contact, first });
+        if (!response?.success) {
           setFormState((prev) => ({
             ...prev,
             loading: false,
-            message: response?.message || "Signup failed. Please try again.",
+            message: response.message || "Signup failed. Please try again.",
           }));
+          onSmsModalOpen();
           return;
         }
       } else {
-        // Handle Login
-
-        const contact = {
-          mobile: userFormData?.mobile,
-          email: userFormData?.email,
-        };
         const password = userFormData?.password;
-
         response = await AuthService.loginUser(contact, password);
 
-        if (!response?.data?.login?.token) {
+        if (!response.success) {
           setFormState((prev) => ({
             ...prev,
             loading: false,
             message: response?.message || "Login failed. Please try again.",
           }));
+
           return;
         }
       }
 
       // If signup or login succeeds
-      setToken(response?.data?.login?.token); // Save token
+      AuthService.setToken(response.token); // Save token
       // refetchUser(); // Fetch user data
       setFormState((prev) => ({ ...prev, loading: false }));
       setUserFormData({ mobile: "", password: "" });
@@ -269,6 +263,23 @@ const SigninForm = ({ forceOpen }) => {
                     {signup ? "Login" : "Signup"}
                   </Button>
                 </Center>
+                <FormLabel htmlFor="phone">Mobile</FormLabel>
+                <Input
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleFormSubmit(e);
+                    }
+                  }}
+                  id="mobileInput"
+                  {...InputStyles}
+                  type="mobile"
+                  placeholder="mobile..."
+                  name="mobile"
+                  autoComplete={signup ? "mobile" : "username"}
+                  onChange={handleInputChange}
+                  value={userFormData.mobile}
+                  required
+                />
                 {signup ? (
                   <>
                     <FormLabel htmlFor="first">First Name</FormLabel>
@@ -290,25 +301,26 @@ const SigninForm = ({ forceOpen }) => {
                     />
                   </>
                 ) : (
-                  <></>
+                  <>
+                    <FormLabel htmlFor="first">Password</FormLabel>
+                    <Input
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleFormSubmit(e);
+                        }
+                      }}
+                      id="passwordInput"
+                      {...InputStyles}
+                      type="password"
+                      placeholder="password..."
+                      name="password"
+                      autoComplete="password"
+                      onChange={handleInputChange}
+                      value={userFormData.password}
+                      required
+                    />
+                  </>
                 )}
-                <FormLabel htmlFor="phone">Mobile</FormLabel>
-                <Input
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleFormSubmit(e);
-                    }
-                  }}
-                  id="mobileInput"
-                  {...InputStyles}
-                  type="mobile"
-                  placeholder="mobile..."
-                  name="mobile"
-                  autoComplete={signup ? "mobile" : "username"}
-                  onChange={handleInputChange}
-                  value={userFormData.mobile}
-                  required
-                />
 
                 {formState.message ? (
                   <Alert status="error">{formState.message}</Alert>
