@@ -13,9 +13,13 @@ async function getUser({ actor, payload }) {
 }
 
 async function addUser({ actor, payload }) {
-  const { mobile, email } = payload;
+  if (!actor.sub == "API_CONTROLLER" || !actor.role == "CONTROLLER")
+    throw new Error("only the API_CONTROLLER CAN ADD USER");
+  const { mobile, email } = payload.contact;
+  const { first } = payload;
   const newUser = new User({
     contact: { mobile, email },
+    first,
   });
 
   if (!newUser)
@@ -26,7 +30,7 @@ async function addUser({ actor, payload }) {
   //need to send authLink to prove contact details and set token
   const passwordReset = await resetUserPassword({
     actor: serviceActor,
-    payload: { contact: newUser.contact },
+    payload: { user: newUser },
   });
   if (!passwordReset) throw new Error("we counldnt reset password");
 

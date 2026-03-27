@@ -1,14 +1,14 @@
 const path = require("path");
 const dayjs = require("dayjs");
-const { ServiceAgreement } = require("../models");
+const { ServiceAgreement } = require("../../models");
 
 //handling SMS for this resolver
 
-const { generateRandomNumber } = require("../utils/helpers");
+const { generateRandomNumber } = require("../../utils/helpers");
 
 const {
   getMe,
-  addUser,
+  createUser,
   passwordReset,
   updatePassword,
   login,
@@ -21,7 +21,7 @@ const resolvers = {
     getMe,
   },
   Mutation: {
-    addUser,
+    createUser,
     login,
     updateUserProfile,
     passwordReset,

@@ -1,10 +1,5 @@
 const typeDefs = `
 
-scalar DateTime
-  @specifiedBy(url: "https://scalars.graphql.org/andimarek/date-time")
-
-scalar Token
-
 
 input AddUser {
   contact: ContactInput  
@@ -39,18 +34,7 @@ type Contact {
     email: String
 }
 
-type User {
-    _id: ID!
-    first: String
-    last: String
-    contact: Contact
-    dateOfBirth: DateTime
-    admin: Admin
-    provider: Provider
-    customer: Customer
-    superAdmin: Boolean
-    serviceAgreements: [ServiceAgreement]
-}
+
 
 input PaswordReset{
   contact:ContactInput!

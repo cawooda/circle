@@ -5,7 +5,11 @@ const router = require("express").Router();
 const { User, Admin } = require("../../models");
 // const { User } = require("../../models");
 const { SMSService } = require("../../utils/smsService");
-
+const { addUser } = require("../../services/user.service");
+const {
+  loginUser,
+  updateUserPassword,
+} = require("../../services/auth.service");
 const controllerSmsService = new SMSService();
 const emailService = require("../../utils/mailer").EMAILService;
 
@@ -28,7 +32,9 @@ async function handleSetupUserLink(mobile) {
 }
 
 async function handleAuthLinkNumber(authLinkNumber, res) {
-  const user = await User.findOne({ authLinkNumber: authLinkNumber });
+  const user = await User.findOne({
+    resetPassword: { authCode: authLinkNumber },
+  });
   if (!user?._id) throw new Error("AUTH: that code didnt match");
   const token = await user.token;
   return {
@@ -38,76 +44,8 @@ async function handleAuthLinkNumber(authLinkNumber, res) {
   };
 }
 
-async function handleLogin(body) {
-  const { mobile, password, first, last } = body;
-  let user = {};
-  try {
-    // If first and last name are provided, create a new user
-    if (first && last) {
-      user = await User.create({ first, last, mobile, password });
-      if (user) {
-        const token = await user.token;
-        return {
-          token,
-          userExists: false,
-          userCreated: true,
-          message: "User created. Here's your token",
-        };
-      } else throw new Error("NOT_CREATED: could not create the user");
-    }
-
-    // If no first and last names, look for an existing user
-    user = await User.findOne({ mobile: mobile });
-    console.log("user found in login", user);
-    let token;
-    if (user) {
-      let correctPassword = await user.isCorrectPassword(password);
-
-      if (correctPassword) {
-        token = await user.token;
-        return {
-          token,
-          userExists: true,
-          userCreated: false,
-          message: "User found and password correct. Here's your token",
-        };
-      } else throw new Error("PASSWORD: not correct");
-    } else {
-      throw new Error("NOT_FOUND: user does not exist");
-    }
-  } catch (error) {
-    // Instead of returning undefined, return a structured error object
-    if (error.message.match(/^NOT_FOUND:/))
-      return {
-        notFound: true,
-        error: true,
-        message: "NOT_FOUND:We didn't you. Have you signed up?",
-      };
-    return {
-      error: true,
-      message: error.message,
-    };
-  }
-}
-
-async function handleUserCreate(user) {
-  if (user.mobile.length != 10)
-    throw new Error("MOBILE:mobile not required length");
-  if (user.password.length != 10)
-    throw new Error("PASSWORD:password not required length");
-  const userExists = await User.findOne({ mobile: req.body.mobile });
-  if (!userExists) throw new Error("NOT_FOUND: User not found");
-
-  const token = await userExists.token;
-  return {
-    userExists: true,
-    userCreated: false,
-    token,
-  };
-}
-
 router.put("/users", async (req, res) => {
-  const { mobile, linkRequest, authLinkNumber } = req.body;
+  const { mobile, linkRequest } = req.body;
   //refactor to its own controller
   try {
     if (authLinkNumber) {
@@ -130,49 +68,98 @@ router.put("/users", async (req, res) => {
   }
 });
 
-router.post("/users", async (req, res) => {
-  req.body.mobile = req.body.mobile.replace(/[^\d]/g, "");
+router.post("/login", async (req, res) => {
+  req.body.contact.mobile = req.body.contact.mobile.replace(/[^\d]/g, "");
   try {
-    const obj = await handleLogin(req.body);
-    console.log("login obj", obj);
-    // Check if handleLogin returned an error
-    if (obj.error) {
-      let statusCode = 500;
-      if (obj.message.match(/^PASSWORD:/)) statusCode = 401;
-      if (obj.message.match(/^NOT_CREATED:/)) statusCode = 404;
-      if (obj.message.match(/^NOT_FOUND:/)) statusCode = 404;
-
-      return res.status(statusCode).json(obj);
-    }
-
-    // If no error, return the successful response object
-    return res.json(obj);
+    const { token, message } = await loginUser({
+      actor: "API_CONTROLLER",
+      payload: req.body,
+    });
+    if (!token)
+      throw new Error(
+        `loginUser in /login controller failed with message: ${message}`,
+      );
+    return res.json({
+      success: true,
+      message: "login successful",
+      token: token,
+    });
   } catch (error) {
-    // Handle any unexpected errors
     console.log("user api in index.js error", error);
     return res.status(500).json({
+      success: false,
       message: "An unexpected error occurred",
+      user: null,
+      token: null,
     });
   }
 });
 
 router.post("/signup", async (req, res) => {
-  const { email } = req.body;
-  if (!email) return res.status(400).json({ message: "Email is required" });
+  try {
+    const contact = req.body?.contact;
+    const first = req.body?.first;
+    const mobile = contact?.mobile || null;
+    const email = contact?.email || null;
 
-  // Simulate saving to the database
-  emailService.sendMail(
-    "cawooda@gmail.com",
-    "A New Subscriber!",
-    "A new user has subscribed to the yoga newsletter with the email: " + email,
-    "A new user has subscribed to the yoga newsletter with the email: " + email,
-  );
+    if (!email && !mobile)
+      throw new Error(
+        "CONTACT_NOT_PRESENT:email or mobile must be present in contact",
+      );
 
-  // In a real application, you would save newYogaPose to the database here
+    const newUser = await addUser({
+      actor: { sub: "API_CONTROLLER", role: "CONTROLLER" },
+      payload: {
+        contact: { mobile: mobile || null, email: email || null },
+        first: first,
+      },
+    });
 
-  return res.status(201).json({
-    message: "Subscribed successfully",
-  });
+    return res
+      .status(201)
+      .json({ succes: true, message: "user created", user: newUser });
+  } catch (error) {
+    console.log(error);
+    if (error.message.includes("E1100"))
+      return res.status(400).json({
+        succes: false,
+        message: "That user might already exist. try login",
+        user: null,
+      });
+    if (error.message.includes("CONTACT_NOT_PRESENT"))
+      return res.status(400).json({
+        succes: false,
+        message: "contact details required for signing new user",
+        user: null,
+      });
+  }
+});
+
+router.post("/updateuserpassword", async (req, res) => {
+  try {
+    console.log(req.body);
+    const { password, authCode } = req.body;
+
+    if (!authCode)
+      throw new Error("NO_AUTHCODE:an authcode is required for that");
+    if (!password)
+      throw new Error("NO_PASSWORD:a password is required for that");
+    const { success, message } = updateUserPassword({
+      actor: "CONTROLLER",
+      payload: { authCode, password },
+    });
+    return res.status(201).json({ success, message });
+  } catch (error) {
+    console.log(error);
+    if (error.message.includes("E1100"))
+      return res.status(400).json({
+        message: "We failed to create a user. Are they aleady registered?",
+      });
+    if (error.message.includes("UNIDENTIFIED_CONTACT"))
+      return res.status(400).json({
+        message: "UNIDENTIFIED_CONTACT: Email or Mobile is required",
+      });
+  }
 });
 
 router.use("/users/:id", async (req, res) => {

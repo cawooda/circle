@@ -19,28 +19,32 @@ import {
 
 const SmsCodeModal = ({ isOpen, onClose, onSubmit }) => {
   const [code, setCode] = useState("");
+  const [password, setPassword] = useState("");
   const [codeIsValid, setCodeIsValid] = useState(false);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    if (isNumber(code) && isWithinRange(code, 4, 4)) {
+    if (isWithinRange(code, 4, 4)) {
       setMessage(false);
       setCodeIsValid(true);
     } else {
       setMessage("Please enter a valid 4-digit code.");
       setCodeIsValid(false);
     }
-  }, [code]);
+  }, [code, password]);
 
   const handleCodeChange = (event) => {
     setCode(event.target.value);
+  };
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
-      await onSubmit(code);
+      await onSubmit(code, password);
 
       onClose();
     } catch (error) {
@@ -72,6 +76,20 @@ const SmsCodeModal = ({ isOpen, onClose, onSubmit }) => {
                 }}
                 placeholder="Enter 4-digit code we sent to you"
                 maxLength={6}
+              />
+              <FormLabel htmlFor="password">Password</FormLabel>
+              <Input
+                id="password"
+                type="text"
+                value={password}
+                onChange={handlePasswordChange}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSubmit(e);
+                  }
+                }}
+                placeholder="password"
+                minLength={10}
               />
             </FormControl>
             {message ? <Alert status="error">{message}</Alert> : <></>}

@@ -39,7 +39,7 @@
                 style="padding: 16px 24px; font-size: 12px; color: #777777"
               >
                 <a
-                  href="<%= browserUrl %>"
+                  href="{{ browser_url }}"
                   style="color: #777777; text-decoration: underline"
                   >View this email in your browser</a
                 >
@@ -49,17 +49,17 @@
             <!-- Logo -->
             <tr>
               <td align="center" style="padding: 10px 24px 0">
-                <% if (logoUrl) { %>
+                {{#if logo_url}}
                 <img
-                  src="<%= logoUrl %>"
-                  alt="<%= companyName %> Logo"
+                  src="{{ logo_url }}"
+                  alt="{{ company_name }} Logo"
                   style="max-width: 160px; height: auto; display: block"
                 />
-                <% } else { %>
+                {{else}}
                 <div style="font-size: 24px; font-weight: bold; color: #222222">
                   Logo
                 </div>
-                <% } %>
+                {{/if}}
               </td>
             </tr>
 
@@ -89,7 +89,7 @@
                   color: #333333;
                 "
               >
-                <p style="margin: 0 0 20px">Hi <%= firstName %>,</p>
+                <p style="margin: 0 0 20px">Hi {{ first_name }},</p>
 
                 <p style="margin: 0 0 20px">Welcome to Circle.</p>
 
@@ -162,9 +162,9 @@
                   If at any point you would like to know more about Circle’s
                   supports, you can visit us at
                   <a
-                    href="<%= websiteUrl %>"
+                    href="{{ website_url }}"
                     style="color: #333333; text-decoration: underline"
-                    ><%= websiteText %></a
+                    >{{ website_text }}</a
                   >
                   or get in touch with us directly.
                 </p>
@@ -173,8 +173,8 @@
 
                 <p style="margin: 0 0 0">
                   Warmly,<br />
-                  <%= senderName %><br />
-                  <%= companyName %>
+                  Andrew<br />
+                  Circle Supports
                 </p>
               </td>
             </tr>
@@ -192,7 +192,7 @@
                 <p style="margin: 0">
                   If you ever feel that these emails are not for you, you can
                   <a
-                    href="<%= unsubscribeUrl %>"
+                    href="{{ unsubscribe_url }}"
                     style="color: #666666; text-decoration: underline"
                     >unsubscribe</a
                   >
@@ -215,29 +215,30 @@
                     margin-bottom: 12px;
                   "
                 >
-                  <%= companyName %>
+                  {{ company_name }}
                 </div>
 
                 <div style="margin-bottom: 16px">
-                  <% if (instagramUrl) { %>
+                  {{#if instagram_url}}
                   <a
-                    href="<%= instagramUrl %>"
+                    href="{{ instagram_url }}"
                     style="margin: 0 8px; text-decoration: none"
                     >Instagram</a
                   >
-                  <% } %> <% if (twitterUrl) { %>
+                  {{/if}}
+                  {{#if twitter_url}}
                   <a
-                    href="<%= twitterUrl %>"
+                    href="{{ twitter_url }}"
                     style="margin: 0 8px; text-decoration: none"
                     >Twitter</a
                   >
-                  <% } %>
+                  {{/if}}
                 </div>
 
-                <% if (footerLogoUrl) { %>
+                {{#if footer_logo_url}}
                 <img
-                  src="<%= footerLogoUrl %>"
-                  alt="<%= companyName %> Logo"
+                  src="{{ footer_logo_url }}"
+                  alt="{{ company_name }} Logo"
                   style="
                     max-width: 100px;
                     height: auto;
@@ -245,7 +246,7 @@
                     margin: 0 auto 16px;
                   "
                 />
-                <% } %>
+                {{/if}}
 
                 <p
                   style="
@@ -255,7 +256,7 @@
                     color: #777777;
                   "
                 >
-                  Copyright (C) <%= year %> <%= companyName %>. All rights
+                  Copyright (C) {{ year }} {{ company_name }}. All rights
                   reserved.
                 </p>
 
@@ -280,8 +281,8 @@
                   "
                 >
                   Our mailing address is:<br />
-                  <%= companyName %> <%= mailingAddressLine1 %><br />
-                  <%= mailingAddressLine2 %>
+                  {{ company_name }} {{ mailing_address_line_1 }}<br />
+                  {{ mailing_address_line_2 }}
                 </p>
 
                 <p
@@ -295,13 +296,13 @@
                   Want to change how you receive these emails?<br />
                   You can
                   <a
-                    href="<%= preferencesUrl %>"
+                    href="{{ preferences_url }}"
                     style="color: #777777; text-decoration: underline"
                     >update your preferences</a
                   >
                   or
                   <a
-                    href="<%= unsubscribeUrl %>"
+                    href="{{ unsubscribe_url }}"
                     style="color: #777777; text-decoration: underline"
                     >unsubscribe</a
                   >

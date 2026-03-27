@@ -19,30 +19,35 @@ async function authMiddleware({ req }) {
     if (req.body?.operationName == "IntrospectionQuery") {
       return { user: null, role: "INTROSPECTION" };
     }
-    if (req.body?.operationName == "PasswordReset") {
-      return { user: null, role: "PASSWORDRESET" };
-    }
     const token = req?.headers?.authorization?.split(" ").pop().trim() || null;
-    if (!token) return { user: null, role: "LOGIN" };
-    const decoded = await verifyToken(token);
-    if (typeof decoded == { sub: String, role: String }) {
-      throw new Error("token not decoded");
-    }
-
+    if (!token)
+      throw new Error(
+        "no token was available to complete the request to this endpoint",
+      );
+    const decoded = await verifyToken(token, "CIRCLE_AUTH", "CIRCLE_AUTH");
     const { sub, role } = decoded;
+
     if (sub && role) {
       const user = await User.findOne({ _id: sub });
-      if (user) {
-        return { user, role };
-      } else return { user: null, role: "LOGIN" };
-    } else {
-      //could not decode sub and role from token so proceed to login
-      (user = null), (role = "LOGIN");
       return { user, role };
+    } else {
+      throw new Error("we couldnt get the right info from the token", {
+        cause: "sub or role not present",
+      });
     }
   } catch (error) {
-    console.log(error);
-    //could not authourise the user proceed to login stage
+    if (error?.name === "TokenExpiredError") {
+      throw unauthenticated("Session expired. Please sign in again.");
+    }
+    if (error?.name === "NotBeforeError") {
+      throw unauthenticated("Token not active yet.");
+    }
+    if (error?.name === "JsonWebTokenError") {
+      throw unauthenticated("Invalid authentication token.");
+    }
+
+    // Unknown/unexpected auth failure
+    throw unauthenticated("Authentication failed.");
   }
 }
 

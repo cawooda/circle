@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const loadUser = async () => {
-      const currentUser = await AuthService.getUser(); // if getUser is a function
+      const currentUser = await AuthService.getMe();
       setUser(currentUser);
       setUserLoading(false);
     };

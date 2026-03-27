@@ -3,20 +3,27 @@ const serviceActor = { sub: "AUTH_SERVICE", role: "SERVICE" };
 const { generateAuthCode } = require("../utils/auth");
 const { CommService } = require("./comms.service");
 const dayjs = require("dayjs");
-const AUTHCODE_EXPIRY_MINUTES = 1;
+const AUTHCODE_EXPIRY_MINUTES = 2;
 const { User } = require("../models");
 
 //authentication is this who they say they are - middleware
 //authorisation extracted from the token and passed to function to check whether they are allowed to do?
 //function checks the authorisation doesent bother itself with authentication
 //authentication should be handled by middlware / dedicated auth endpoint eg. /auth/
+//RULES:
+// auth should return a object with {success,message,token} for all successful logins
+// auth should return {success,message} for all other requests
+// all other information should come from other services.
 
 async function loginUser({ actor, payload }) {
   //contact information is used as the actor in login
   try {
-    const { contact } = actor;
+    if (!actor == "API_CONTROLLER")
+      throw new Error(
+        "we need the api controller to request login with credentials",
+      );
+    const { contact, password } = payload;
     const { email, mobile } = contact;
-    const { password } = payload;
     const foundUser = await User.findOne({
       $or: [
         { "contact.email": email?.toLowerCase() || null },
@@ -41,72 +48,48 @@ async function loginUser({ actor, payload }) {
         : "NONE",
     });
     console.log(token);
-    return token;
+    return {
+      success: true,
+      message: "user logged in successfully by auth.service",
+      token,
+    };
   } catch (error) {
     console.log("error iin loginUser in auth.service.js", error);
-    return null;
+    return {
+      success: false,
+      message: "user not logged in",
+      token: null,
+    };
   }
-}
-async function addNewUser({ actor, payload }) {
-  try {
-    if (!actor.sub == "RESOLVER")
-      throw new Error("only the resolver can do that");
-    const { contact } = payload;
-    const { email, mobile } = contact;
-    if (!email || !mobile)
-      throw new Error("we need contact details to add user");
-    const newUser = new User({
-      "contact.email": email,
-      "contact.mobile": mobile,
-    });
-    const { password } = payload;
-  } catch (error) {}
 }
 async function resetUserPassword({ actor, payload }) {
   try {
-    const { user } = actor || {};
-    const { contact } = payload || {};
-    if (!contact) throw new Error("contact is required");
-    if (!contact) throw new Error("contact is required");
-    const { email, mobile } = contact;
-    const foundUser = await User.findOne({
-      $or: [
-        { "contact.email": email?.toLowerCase() || null },
-        { "contact.mobile": mobile || null },
-      ],
-    });
-    if (!foundUser)
-      throw new Error(
-        "we couldnt find a user in resetUserPassword in user.service.js",
-      );
-    const isOwner = user && foundUser._id.toString() === user._id.toString();
-    const isAdmin = Boolean(user?.admin);
-    if (user && !isOwner && !isAdmin)
-      throw new Error(
-        "user must request password reset or be admin. either was not true in resetPassword in user.service.js",
-      );
-    const authCode = generateAuthCode().toString();
-    foundUser.passwordReset.authCode = authCode;
-    foundUser.passwordReset.expires = dayjs().add(
-      AUTHCODE_EXPIRY_MINUTES,
-      "minute",
-    );
+    const { user } = payload;
 
-    await foundUser.save();
-    const notificationSent = await CommService.resetPasswordNotification({
-      actor: serviceActor,
-      payload: { authCode },
-    });
-    await foundUser.save();
-    return true;
+    const authCode = generateAuthCode().toString();
+    user.passwordReset.authCode = authCode;
+    user.passwordReset.expires = dayjs().add(AUTHCODE_EXPIRY_MINUTES, "minute");
+
+    await user.save();
+
+    return {
+      success: true,
+      message: "user password reset successfully by auth.service",
+    };
   } catch (error) {
     console.log(error);
-    return false;
+    return {
+      success: false,
+      message: "user password reset failed in auth.service",
+    };
   }
 }
 async function updateUserPassword({ actor, payload }) {
   try {
-    const { authCode, newPassword } = payload;
+    const { authCode, password } = payload;
+    if (!authCode || !password)
+      throw new Error("REJECTED: we need an authcode and password for that");
+    const passwordHash = await hashPassword(password);
     const foundUser = await User.findOne({
       "passwordReset.authCode": authCode,
     });
@@ -125,33 +108,44 @@ async function updateUserPassword({ actor, payload }) {
     if (expirationDate.isBefore(dayjs()))
       throw new Error("authCode is expired");
 
-    foundUser.passwordHash = await hashPassword(newPassword);
+    foundUser.passwordHash = passwordHash;
     foundUser.passwordReset = null;
     await foundUser.save();
-    return true;
+    return {
+      success: true,
+      message: "user password updated successfully in auth.service",
+    };
   } catch (error) {
     console.log(error);
-    return false;
+    return {
+      success: false,
+      message: "user password update failed in auth.service",
+    };
   }
 }
-async function checkAuthCode({ actor, payload }) {}
-
+// async function checkAuthCode({ actor, payload }) {}
 async function logout({ actor, payload }) {
   try {
     const { sub } = payload;
     const user = User.findById(sub);
     user.loggedOut = true;
     user.save();
-    return true;
+    return {
+      success: true,
+      message: "user logged out successfully in auth.service",
+    };
   } catch (error) {
     console.log(error);
+    return {
+      success: false,
+      message: `user log out failed in auth.service giving error message: ${error.message}`,
+    };
   }
 }
 
 module.exports = {
   loginUser,
-  addNewUser,
-  checkAuthCode,
+  // checkAuthCode,
   resetUserPassword,
   updateUserPassword,
   logout,

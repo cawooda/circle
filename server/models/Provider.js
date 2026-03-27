@@ -40,13 +40,6 @@ const providerSchema = new Schema(
         required: true,
       },
     ],
-    products: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "product",
-        required: true,
-      },
-    ],
     serviceAgreements: [{ type: Schema.Types.ObjectId, ref: "agreement" }],
     shifts: [{ type: Schema.Types.ObjectId, ref: "shift" }],
     logoUrl: String,

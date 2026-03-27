@@ -1,6 +1,6 @@
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
-const { EMAILService } = require("../utils/mailer");
+const { EMAILService } = require("../../utils/mailer");
 const serviceActor = { sub: "RESOLVER", role: "SERVICE" };
 // const userEmailService = new EMAILService();
 // const { User, Admin, Provider, Customer, Product } = require("../models");
@@ -9,9 +9,9 @@ const {
   resetUserPassword,
   addNewUser,
   updateUserPassword,
-} = require("../services/auth.service");
+} = require("../../services/auth.service");
 
-const { getUser, updateUserProfile } = require("../services/user.service");
+const { getUser, updateUserProfile } = require("../../services/user.service");
 
 const { GraphQLError } = require("graphql");
 
@@ -44,7 +44,6 @@ module.exports = {
     };
     return response;
   },
-
   addUser: async (_parent, { input }, context) => {
     const { mobile, email } = input;
     if (!mobile && !email)
@@ -91,7 +90,14 @@ module.exports = {
     //contact information is used as the actor in a login scenario
     if (!password) throw new Error("we need a password for that");
     if (!contact) throw new Error("we need a contact for that");
-    const token = loginUser({ actor: { contact }, payload: { password } });
+    const { token, success, message } = loginUser({
+      actor: { contact },
+      payload: { password },
+    });
+    if (!success || !token)
+      throw new Error(
+        `Auth service failed to provide a token and gave a message of ${message}`,
+      );
     const response = {
       success: token ? true : false,
       message: "user successfully logged in, heres your token",
