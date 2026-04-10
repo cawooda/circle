@@ -5,9 +5,6 @@ const userTypeDefs = `
     last: String
     contact: Contact
     dateOfBirth: DateTime
-    admin: Admin
-    provider: Provider
-    customer: Customer
     superAdmin: Boolean
 }
 
@@ -21,8 +18,6 @@ extend type Mutation {
 }
 
 type MeResponse {
-    success: Boolean!
-    message: String!
     user: User
 }
 

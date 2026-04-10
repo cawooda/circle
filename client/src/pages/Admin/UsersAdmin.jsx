@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../../contexts/UserContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 import UserAdminRow from "../../components/AdminComponents/UserAdminRow";
 

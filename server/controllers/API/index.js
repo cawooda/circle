@@ -137,7 +137,6 @@ router.post("/signup", async (req, res) => {
 
 router.post("/updateuserpassword", async (req, res) => {
   try {
-    console.log(req.body);
     const { password, authCode } = req.body;
 
     if (!authCode)

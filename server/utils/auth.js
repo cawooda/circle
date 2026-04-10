@@ -15,20 +15,28 @@ const unauthorized = (message = "Not authorized") =>
 
 async function authMiddleware({ req }) {
   try {
-    let user;
     if (req.body?.operationName == "IntrospectionQuery") {
       return { user: null, role: "INTROSPECTION" };
     }
-    const token = req?.headers?.authorization?.split(" ").pop().trim() || null;
-    if (!token)
-      throw new Error(
-        "no token was available to complete the request to this endpoint",
-      );
+    const authHeader = req?.headers?.authorization || "";
+    const token = authHeader.startsWith("Bearer ")
+      ? authHeader.slice(7).trim()
+      : null;
+
+    if (!token) {
+      return { user: null, role: null };
+    }
+
     const decoded = await verifyToken(token, "CIRCLE_AUTH", "CIRCLE_AUTH");
+    if (decoded?.error) {
+      return { user: null, role: null };
+    }
+
     const { sub, role } = decoded;
 
     if (sub && role) {
       const user = await User.findOne({ _id: sub });
+
       return { user, role };
     } else {
       throw new Error("we couldnt get the right info from the token", {
@@ -36,6 +44,7 @@ async function authMiddleware({ req }) {
       });
     }
   } catch (error) {
+    console.log(error);
     if (error?.name === "TokenExpiredError") {
       throw unauthenticated("Session expired. Please sign in again.");
     }

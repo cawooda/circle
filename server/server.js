@@ -18,8 +18,8 @@ const { ApolloServer } = require("@apollo/server");
 const { expressMiddleware } = require("@apollo/server/express4");
 
 //import schemas and typeDefs
-const typeDefs = require("./graphql/schema");
-const resolvers = require("./graphql/resolvers");
+const { typeDefs, resolvers } = require("./graphql/index");
+
 const server = new ApolloServer({
   typeDefs,
   resolvers,

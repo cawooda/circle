@@ -1,5 +1,5 @@
 import ServiceAgreementRow from "../../components/ServiceAgreementRow";
-import { useAuth } from "../../contexts/UserContext";
+import { useAuth } from "../../contexts/AuthContext";
 import NotifyUser from "../../components/NotifyUser";
 
 export default function ProviderServiceAgreements() {

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Flex, Container, Box, Center } from "@chakra-ui/react";
 import LogoutButton from "../components/LogoutButton";
 import ProfileForm from "../components/ProfileForm";
-// import { useAuth } from "../contexts/UserContext";
+import SigninForm from "../components/SigninForm";
 import { useAuth } from "../contexts/AuthContext";
 import logo from "/logo.png";
 import Slideshow from "../components/Slideshow";
@@ -15,7 +15,6 @@ const logoStyle = { paddingBottom: "15px" };
 import { ButtonStyles } from "../components/styles/ButtonStyle";
 
 import ProviderLogo from "../components/ProviderLogo";
-import SigninForm from "../components/SigninForm";
 
 export default function RootLayout() {
   const { user, userLoading } = useAuth();
@@ -35,7 +34,8 @@ export default function RootLayout() {
   }, [returnVisit]);
 
   if (userLoading) return <Splash />;
-
+  // if (!user) return <SigninForm />;
+  console.log(user);
   if (slideShow)
     return <Slideshow data={firstVisitSlideShow} setSlideShow={setSlideShow} />;
 

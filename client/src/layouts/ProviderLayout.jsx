@@ -11,7 +11,7 @@ import {
 
 import SubMenu from "../components/SubMenu";
 import SigninForm from "../components/SigninForm";
-import { useAuth } from "../contexts/UserContext";
+import { useAuth } from "../contexts/AuthContext";
 import AuthService from "../utils/auth";
 
 const menu = [
@@ -25,7 +25,7 @@ const menu = [
 import Splash from "../components/Splash";
 
 export default function ProviderLayout() {
-  const { loggedIn, setLoggedIn } = useState(AuthService.loggedIn());
+  const [loggedIn, setLoggedIn] = useState(AuthService.loggedIn());
   const { user, loading, error } = useAuth();
   if (loading) return <Splash />;
   if (error) {
@@ -54,4 +54,13 @@ export default function ProviderLayout() {
         )}
       </>
     );
+
+  return (
+    <Container paddingTop={10}>
+      <Alert status="error">
+        <AlertIcon />
+        <AlertTitle>You Need to Be logged in for this</AlertTitle>
+      </Alert>
+    </Container>
+  );
 }

@@ -1,69 +1,18 @@
 import { gql } from "@apollo/client";
 
-export const QUERY_ALL_USERS = gql`
-  query getAllUsers($id: ID!) {
-    getAllUsers(id: $id) {
-      _id
-      first
-      last
-      mobile
-      email
-      date_of_birth
-      fullName
-      roleAdmin {
-        _id
-        createdAt
-        updatedAt
-      }
-      roleProvider {
-        _id
-        abn
-        address {
-          street
-          city
-          state
-          postalCode
-        }
-        providerName
-        termsAndConditions {
-          heading
-          paragraph
-        }
-        createdAt
-        updatedAt
-      }
-      roleCustomer {
-        _id
-        referenceNumber
-        referenceName
-        address {
-          street
-          city
-          state
-          postalCode
-        }
-        dateOfBirth
-        customerSpecificField
-      }
-      roleSuperAdmin
-    }
-  }
-`;
-
-export const GET_ME = gql`
-  query GetMe {
-    getMe {
-      message
-      success
+export const ME = gql`
+  query Me {
+    me {
       user {
         _id
         contact {
-          mobile
           email
+          mobile
         }
-        customer {
-          dateOfBirth
-        }
+        first
+        last
+        dateOfBirth
+        superAdmin
       }
     }
   }

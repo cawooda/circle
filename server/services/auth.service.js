@@ -47,7 +47,7 @@ async function loginUser({ actor, payload }) {
         ? "CUSTOMER"
         : "NONE",
     });
-    console.log(token);
+
     return {
       success: true,
       message: "user logged in successfully by auth.service",

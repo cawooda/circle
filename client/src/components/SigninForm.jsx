@@ -31,7 +31,7 @@ import SmsCodeModal from "./SmsCodeModal"; // Import the new modal component
 import { InputStyles } from "./styles/InputStyles";
 
 import logo from "/logo.png";
-// import { useAuth } from "../contexts/UserContext";
+import { useAuth } from "../contexts/AuthContext";
 import Splash from "./Splash";
 
 const SigninForm = ({ forceOpen }) => {
@@ -43,7 +43,7 @@ const SigninForm = ({ forceOpen }) => {
 
   const navigate = useNavigate();
 
-  // const { user, refetchUser } = useAuth() || {};
+  const { user } = useAuth() || {};
 
   const userSignedUp = localStorage.getItem("user_signed_up");
   const [signup, setSignup] = useState(!userSignedUp);
@@ -226,7 +226,7 @@ const SigninForm = ({ forceOpen }) => {
   if (formState.loading) return <Splash />;
 
   return (
-    <>
+    <Center minHeight={"100vh"} verticalAlign={"middle"}>
       <Button
         {...ButtonStyles}
         onClick={() => {
@@ -275,7 +275,7 @@ const SigninForm = ({ forceOpen }) => {
                   type="mobile"
                   placeholder="mobile..."
                   name="mobile"
-                  autoComplete={signup ? "mobile" : "username"}
+                  autoComplete="mobile"
                   onChange={handleInputChange}
                   value={userFormData.mobile}
                   required
@@ -350,7 +350,7 @@ const SigninForm = ({ forceOpen }) => {
         onClose={onSmsModalClose}
         onSubmit={handleCodeSubmit}
       />
-    </>
+    </Center>
   );
 };
 

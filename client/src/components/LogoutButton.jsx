@@ -1,9 +1,6 @@
 import React from "react";
 import { Button } from "@chakra-ui/react";
-import {
-  ButtonStyles,
-  ButtonHighlightStyle,
-} from "../components/styles/ButtonStyle";
+import { ButtonStyles } from "../components/styles/ButtonStyle";
 import { useNavigate } from "react-router-dom";
 import AuthService from "../utils/auth";
 

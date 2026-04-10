@@ -1,5 +1,5 @@
 import ShiftRow from "../../components/ShiftRow";
-import { useAuth } from "../../contexts/UserContext";
+import { useAuth } from "../../contexts/AuthContext";
 import NotifyUser from "../../components/NotifyUser";
 
 export default function ProviderShifts() {

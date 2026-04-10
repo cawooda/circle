@@ -7,7 +7,7 @@ import {
   NumberInputField,
 } from "@chakra-ui/react";
 import { InputStyles } from "./styles/InputStyles";
-import { useAuth } from "../contexts/UserContext";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function ServiceControl({ handleInputChange, locked }) {
   const { user } = useAuth();

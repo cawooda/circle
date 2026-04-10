@@ -23,38 +23,13 @@ import SignatureCanvas from "react-signature-canvas";
 import { useState, useEffect, useRef } from "react";
 import ProductControl from "../../components/ProductControl";
 
-import { useAuth } from "../../contexts/UserContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 import { useQuery, useMutation } from "@apollo/client";
 import { ADD_SERVICE_AGREEMENT } from "../../utils/mutations";
 
 export default function ProviderServiceAgreement() {
   const { user } = useAuth();
-  if (!user) {
-    return (
-      <Container paddingTop={10}>
-        <Alert status="info">
-          <AlertIcon />
-          <AlertTitle>Loading Info about Your Service</AlertTitle>
-          <AlertDescription>No user, have you logged in?</AlertDescription>
-        </Alert>
-      </Container>
-    );
-  }
-
-  if (!user.roleProvider)
-    return (
-      <Container paddingTop={10}>
-        <Alert status="error">
-          <AlertIcon />
-          <AlertTitle>
-            Your current role is not provider. You will need to gain provider
-            access.
-          </AlertTitle>
-        </Alert>
-      </Container>
-    );
-
   const [returnServiceAgreementVisitor, setReturnServiceAgreementVisitor] =
     useState(
       localStorage.getItem(
@@ -73,6 +48,7 @@ export default function ProviderServiceAgreement() {
   }, [returnServiceAgreementVisitor]);
 
   const navigate = useNavigate();
+  const providerId = user?.roleProvider?._id ?? "";
   //use States
 
   //setup use State for customers
@@ -101,10 +77,15 @@ export default function ProviderServiceAgreement() {
   );
 
   useEffect(() => {
-    setAgreementFormData({
-      provider: user.roleProvider._id,
-    });
-  }, []);
+    if (!providerId) {
+      return;
+    }
+
+    setAgreementFormData((prevState) => ({
+      ...prevState,
+      provider: providerId,
+    }));
+  }, [providerId]);
 
   useEffect(() => {
     if (user) {
@@ -164,6 +145,32 @@ export default function ProviderServiceAgreement() {
         throw error;
       }
   }
+
+  if (!user) {
+    return (
+      <Container paddingTop={10}>
+        <Alert status="info">
+          <AlertIcon />
+          <AlertTitle>Loading Info about Your Service</AlertTitle>
+          <AlertDescription>No user, have you logged in?</AlertDescription>
+        </Alert>
+      </Container>
+    );
+  }
+
+  if (!user.roleProvider)
+    return (
+      <Container paddingTop={10}>
+        <Alert status="error">
+          <AlertIcon />
+          <AlertTitle>
+            Your current role is not provider. You will need to gain provider
+            access.
+          </AlertTitle>
+        </Alert>
+      </Container>
+    );
+
   if (loading) return <Splash />;
   return (
     <Container>
@@ -176,7 +183,7 @@ export default function ProviderServiceAgreement() {
         <Input
           name="provider"
           {...InputStyles}
-          defaultValue={user.roleProvider?._id}
+          defaultValue={providerId}
           onChange={handleInputChange}
         />
       </FormControl>

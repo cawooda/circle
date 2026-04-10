@@ -10,7 +10,7 @@ import { onError } from "@apollo/client/link/error";
 import { ChakraProvider } from "@chakra-ui/react";
 import { Outlet } from "react-router-dom";
 import RootLayout from "./layouts/RootLayout";
-import { UserProvider } from "./contexts/UserContext";
+import { AuthProvider } from "./contexts/AuthContext";
 import { jwtDecode } from "jwt-decode";
 
 // Create an HTTP link to connect to the GraphQL server
@@ -45,9 +45,9 @@ function AuthLink() {
     <>
       <ApolloProvider client={unauthenticatedClient}>
         <ChakraProvider>
-          <UserProvider>
+          <AuthProvider>
             <Outlet />
-          </UserProvider>
+          </AuthProvider>
         </ChakraProvider>
       </ApolloProvider>
     </>

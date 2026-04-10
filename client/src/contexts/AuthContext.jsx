@@ -5,7 +5,6 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { useQuery } from "@apollo/client";
 
 import AuthService from "../utils/auth";
 
@@ -23,13 +22,14 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const loadUser = async () => {
       const currentUser = await AuthService.getMe();
+      console.log("current user", currentUser);
       setUser(currentUser);
       setUserLoading(false);
     };
     loadUser();
   }, []);
 
-  const value = useMemo(() => ({ user, setUser, userLoading }), [user]);
+  const value = useMemo(() => ({ user, userLoading }), [user]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

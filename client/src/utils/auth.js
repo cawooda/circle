@@ -2,7 +2,7 @@ import { jwtDecode } from "jwt-decode";
 import { print } from "@apollo/client/utilities";
 
 import { LOGIN_USER, ADD_USER, LOGOUT_USER } from "./mutations";
-import { GET_ME } from "./queries";
+import { ME } from "./queries";
 const GRAPHQLENDPOINT = "/graphql";
 
 const AuthService = {
@@ -51,20 +51,29 @@ const AuthService = {
     return res;
   },
   getMe: async () => {
-    const reqBody = {
-      query: print(GET_ME),
-      operationName: "getMe",
-    };
-    const response = await fetch(GRAPHQLENDPOINT, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(reqBody),
-    });
-    console.log(response);
-    const res = await response.json();
-    return res;
+    try {
+      const token = AuthService.getToken();
+      const reqBody = {
+        query: print(ME),
+        operationName: "Me",
+      };
+      const response = await fetch(GRAPHQLENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token ? `Bearer ${token}` : "",
+        },
+        body: JSON.stringify(reqBody),
+      });
+
+      const res = await response.json();
+      console.log("res.data?.me?.user", res.data?.me?.user);
+      if (!res.data?.me?.user) throw new Error("we couldnt get the user");
+      return { user: res.data.me.user, message: "here is your user" };
+    } catch (error) {
+      console.log("error in auth.js getMe", error);
+      return { currentUser: null, messsage: error };
+    }
   },
   updateUserPassword: async (code, password) => {
     const URL = "/api/updateuserpassword";
@@ -118,7 +127,7 @@ const AuthService = {
   },
   loggedIn: () => {
     const token = localStorage.getItem("id_token");
-    console.log(token);
+
     return token ? true : false;
   },
   getProfile: () => {
@@ -146,7 +155,6 @@ const AuthService = {
 
         if (response.headers.get("content-type").match(/json/)) {
           const res = await response.json();
-          console.log(res);
         } else {
           throw new Error(
             `Response could not be parsed to json : url${APIURL} status:${res?.status}`

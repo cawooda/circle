@@ -19,7 +19,7 @@ import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
 
 import ProductList from "./ProductList";
 import ServiceList from "./ServiceList";
-import { useAuth } from "../contexts/UserContext";
+import { useAuth } from "../contexts/AuthContext";
 
 const ProviderServiceSelect = ({
   formData, // Accept formData prop for consistency

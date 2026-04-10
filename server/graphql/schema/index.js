@@ -2,9 +2,9 @@
 
 const authTypeDefs = require("./auth.typeDefs");
 const userTypeDefs = require("./user.typeDefs");
-const adminTypeDefs = require("./admin.typeDefs");
-const providerTypeDefs = require("./provider.typeDefs");
-const customerTypeDefs = require("./customer.typeDefs");
+// const adminTypeDefs = require("./admin.typeDefs");
+// const providerTypeDefs = require("./provider.typeDefs");
+// const customerTypeDefs = require("./customer.typeDefs");
 const scalarTypeDefs = require("./scalars");
 const commonTypeDefs = require("./common.typeDefs");
 
@@ -18,8 +18,8 @@ module.exports = [
   scalarTypeDefs,
   authTypeDefs,
   userTypeDefs,
-  adminTypeDefs,
-  customerTypeDefs,
-  providerTypeDefs,
+  // adminTypeDefs,
+  // customerTypeDefs,
+  // providerTypeDefs,
   commonTypeDefs,
 ];

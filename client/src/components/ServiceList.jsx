@@ -22,7 +22,7 @@ import {
   ButtonHighlightStyle,
   DeleteButtonStyle,
 } from "./styles/ButtonStyle";
-import { useAuth } from "../contexts/UserContext";
+import { useAuth } from "../contexts/AuthContext";
 import Splash from "./Splash";
 
 // Reducer actions
