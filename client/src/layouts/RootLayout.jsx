@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { Flex, Container, Box, Center } from "@chakra-ui/react";
 import LogoutButton from "../components/LogoutButton";
 import ProfileForm from "../components/ProfileForm";
-import { useUser } from "../contexts/UserContext";
+import SigninForm from "../components/SigninForm";
+import { useAuth } from "../contexts/AuthContext";
 import logo from "/logo.png";
 import Slideshow from "../components/Slideshow";
 import { firstVisitSlideShow } from "../assets/training";
@@ -12,12 +13,11 @@ import Splash from "../components/Splash";
 import { NavLink } from "react-router-dom";
 const logoStyle = { paddingBottom: "15px" };
 import { ButtonStyles } from "../components/styles/ButtonStyle";
-import AuthService from "../utils/auth";
+
 import ProviderLogo from "../components/ProviderLogo";
-import SigninForm from "../components/SigninForm";
 
 export default function RootLayout() {
-  const { user, userLoading } = useUser();
+  const { user, userLoading } = useAuth();
 
   const [slideShow, setSlideShow] = useState();
   const [returnVisit, setReturnVisit] = useState(
@@ -34,7 +34,8 @@ export default function RootLayout() {
   }, [returnVisit]);
 
   if (userLoading) return <Splash />;
-
+  // if (!user) return <SigninForm />;
+  console.log(user);
   if (slideShow)
     return <Slideshow data={firstVisitSlideShow} setSlideShow={setSlideShow} />;
 
@@ -53,7 +54,6 @@ export default function RootLayout() {
         <Box bg="gray.200" p={4} maxWidth={{ base: "100vw", md: "100vw" }}>
           <Flex gap={3} flexDirection={{ base: "column", md: "column" }}>
             {/* Check roles and serve up what they should see */}
-            {console.log(user)}
             {user?.roleProvider ? (
               <Box>
                 <NavLink to="/provider">
@@ -63,7 +63,7 @@ export default function RootLayout() {
                 </NavLink>
               </Box>
             ) : (
-              <>Not Provider</>
+              <></>
             )}
             <Box
               display="flex"

@@ -15,10 +15,10 @@ import {
 import { DisplayStyles, SmallInputStyle } from "./styles/InputStyles";
 import { ButtonHighlightStyle, ButtonStyles } from "./styles/ButtonStyle";
 import { ModalHeadingStyle } from "./styles/modalStyles";
-import { useUser } from "../contexts/UserContext";
+import { useAuth } from "../contexts/AuthContext";
 import Splash from "./Splash";
 const ProductList = () => {
-  const { user } = useUser();
+  const { user } = useAuth();
   const [products, setProducts] = useState([]);
   const [splash, setSplash] = useState(true);
   const { loading, data, error } = useQuery(QUERY_PRODUCTS, {

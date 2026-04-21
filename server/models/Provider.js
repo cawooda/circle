@@ -1,8 +1,6 @@
 const { Schema, model, Types } = require("mongoose");
 const { defaultTermsAndConditions } = require("../seeders/seedData");
 
-const User = require("./User");
-
 const { generateRandomNumber } = require("../utils/helpers");
 
 const providerSchema = new Schema(
@@ -39,13 +37,6 @@ const providerSchema = new Schema(
       {
         type: Schema.Types.ObjectId,
         ref: "service",
-        required: true,
-      },
-    ],
-    products: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "product",
         required: true,
       },
     ],

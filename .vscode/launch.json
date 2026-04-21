@@ -8,16 +8,27 @@
       "name": "Debug UI",
       "url": "http://localhost:3000",
       "request": "launch",
-      "type": "chrome",
+      "type": "pwa-chrome",
       "webRoot": "${workspaceFolder}/client"
     },
     {
-      "type": "node",
+      "type": "pwa-node",
       "request": "launch",
       "name": "Debug Server",
       "skipFiles": ["<node_internals>/**"],
       "cwd": "${workspaceFolder}/server/",
       "program": "${workspaceFolder}/server/server.js"
+    },
+    {
+      "name": "Debug Jest",
+      "type": "pwa-node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/jest/bin/jest.js",
+      "args": ["--runInBand", "--runTestsByPath", "${file}"],
+      "cwd": "${workspaceFolder}/server",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"],
+      "disableOptimisticBPs": true
     }
   ]
 }

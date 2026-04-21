@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { useUser } from "../../contexts/UserContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 import UserAdminRow from "../../components/AdminComponents/UserAdminRow";
 
 import Splash from "../../components/Splash";
 
 export default function UsersAdmin() {
-  const { user, userLoading, userError } = useUser();
+  const { user, userLoading, userError } = useAuth();
   const [users, setUsers] = useState([]);
 
   useEffect(() => {

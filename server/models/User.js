@@ -1,37 +1,19 @@
-require("dotenv").config();
-const bcrypt = require("bcrypt");
+const path = require("path");
+require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+
 //import the Schema and model from mongoose.
-const { Schema, model } = require("mongoose");
-const { generateRandomNumber } = require("../utils/helpers");
+const { Schema, model, models } = require("mongoose");
+const {
+  generateRandomNumber,
+  generateRandomPhoneNumber,
+  generateRandomLetters,
+} = require("../utils/helpers");
 const { SMSService } = require("../utils/smsService");
 const userSmsService = new SMSService();
 const { EMAILService } = require("../utils/mailer");
 const userEmailService = new EMAILService();
 
-const validator = require("validator");
-
-const Customer = require("./Customer");
-const Provider = require("./Provider");
-const parsedSaltRounds = Number.parseInt(
-  process.env.SALT_WORK_FACTOR ?? "10",
-  10,
-);
-const SALT_WORK_FACTOR = Number.isInteger(parsedSaltRounds)
-  ? parsedSaltRounds
-  : 10;
-
-const secret = process.env.SECRET_KEY;
-const jwt = require("jsonwebtoken");
-
-const signToken = (payload, expiresIn) => {
-  if (!expiresIn) expiresIn = process.env.TOKEN_EXPIRES_IN;
-
-  const token = jwt.sign(payload, secret, {
-    expiresIn,
-  });
-
-  return token;
-};
+// const validator = require("validator");
 
 //defind the user model schema
 const userSchema = new Schema(
@@ -39,35 +21,120 @@ const userSchema = new Schema(
   {
     first: String,
     last: String,
-    mobile: {
-      type: String,
-      minLength: 10,
-      maxLength: 10,
-      required: true,
-      unique: true,
+    contact: {
+      mobile: {
+        type: String,
+        minLength: 10,
+        maxLength: 10,
+        default: generateRandomPhoneNumber,
+        unique: true,
+      },
+      email: {
+        type: String,
+        toLowerCase: true,
+        default: `${generateRandomLetters(5)}@${generateRandomLetters(
+          5,
+        )}.${generateRandomLetters(3)}`,
+        unique: true,
+      },
     },
-    email: {
-      type: String,
-      toLowerCase: true,
+    customer: {
+      active: { type: Boolean, default: true },
+      invoiceEmail: {
+        type: String,
+        required: true,
+        default: "default@default.com",
+      },
+      serviceAgreementEmail: {
+        type: String,
+        required: true,
+        default: "service@serviceagreementemail.com",
+      },
+      referenceNumber: {
+        type: String,
+        required: true,
+        default: generateRandomNumber(1000000000, 9999999999),
+      },
+      referenceName: {
+        type: String,
+        required: true,
+        default: "Reference Number",
+      },
+      address: {
+        street: { type: String, required: true, default: "123 Default St" },
+        city: { type: String, required: true, default: "Default City" },
+        state: { type: String, required: true, default: "Default State" },
+        postalCode: { type: String, required: true, default: "00000" },
+      },
+      dateOfBirth: { type: Date, required: true, default: "1999-07-07" },
+      customerSpecificField: { type: String },
+      shifts: [{ type: Schema.Types.ObjectId, ref: "shift" }],
+      serviceAgreements: [{ type: Schema.Types.ObjectId, ref: "agreement" }],
     },
-    roleCustomer: {
-      type: Schema.Types.ObjectId,
-      ref: "customer",
-      default: null,
+    provider: {
+      active: { type: Boolean, default: false },
+      abn: {
+        type: String,
+      },
+      address: {
+        street: { type: String },
+        city: { type: String },
+        state: { type: String },
+        postalCode: { type: String },
+      },
+      providerName: { type: String },
+      termsAndConditions: {
+        type: [
+          {
+            heading: {
+              type: String,
+            },
+            paragraph: { type: String },
+          },
+        ],
+      },
+      notes: { type: String },
+      linkedCustomers: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "customer",
+        },
+      ],
+      services: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "service",
+          required: true,
+        },
+      ],
+      products: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "product",
+          required: true,
+        },
+      ],
+      serviceAgreements: [{ type: Schema.Types.ObjectId, ref: "agreement" }],
+      shifts: [{ type: Schema.Types.ObjectId, ref: "shift" }],
+      logoUrl: String,
     },
-    roleProvider: {
-      type: Schema.Types.ObjectId,
-      ref: "provider",
-      default: null,
+    admin: {
+      users: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "user",
+          default: [],
+        },
+      ],
     },
-    roleAdmin: {
-      type: Schema.Types.ObjectId,
-      ref: "admin",
-      default: null,
-    },
-    roleSuperAdmin: { type: Boolean, required: true, default: false },
+    superAdmin: { type: Boolean, required: true, default: false },
     passwordHash: { type: String },
-    authLinkNumber: { type: String },
+    passwordReset: {
+      expires: { type: Date },
+      authCode: { type: String },
+      complete: { type: Boolean },
+    },
+    loggedOut: { type: Boolean, default: true },
     sendEmails: { type: Boolean, default: true },
     sendTexts: { type: Boolean, default: true },
   },
@@ -93,44 +160,6 @@ userSchema
     const last = splitName[1];
     this.set({ first, last });
   });
-
-userSchema.virtual("password").set(function (plain) {
-  this._plainPassword = plain; // temporary, not persisted
-});
-
-userSchema.pre("save", async function () {
-  // Basic length check (you can add stronger rules elsewhere)
-  if (this._plainPassword?.length < 10) {
-    throw new Error("Password must be at least 10 characters.");
-  }
-  if (this._plainPassword) {
-    this.passwordHash = await bcrypt.hash(
-      this._plainPassword,
-      SALT_WORK_FACTOR,
-    );
-    this.passwordChangedAt = new Date();
-    this._plainPassword = undefined;
-  }
-  if (!this.roleCustomer) {
-    const newCustomer = new Customer({
-      user: this._id,
-    });
-    await newCustomer.save();
-    this.roleCustomer = newCustomer._id;
-  }
-  //asign a new default provider role if the user doesn't have one. this ensures that every user has a provider and customer role, which simplifies the logic in other parts of the app. we can check if a user has an active provider or customer profile by checking if these fields are populated, rather than having to handle null values.
-  if (!this.roleProvider) {
-    const newProvider = new Provider({});
-    newProvider.user = this._id;
-    this.roleProvider = newProvider._id;
-    await newProvider.save();
-  }
-
-  // Generate token after the user is saved
-  if (this.isNew) {
-    this.generateAuthToken();
-  }
-});
 
 userSchema.methods.sendAuthLink = async function () {
   let simpleNumber = generateRandomNumber(1000, 9999).toString();
@@ -209,37 +238,7 @@ userSchema.methods.sendEmail = async function (
   }
 };
 
-userSchema.methods.isCorrectPassword = async function (password) {
-  if (await bcrypt.compare(password, this.passwordHash)) {
-    return true;
-  } else return false;
-};
-
-// Method to generate JWT token
-userSchema.methods.generateAuthToken = function (
-  expiresIn = process.env.TOKEN_EXPIRES_IN,
-) {
-  const user = {
-    authenticatedPerson: {
-      _id: this._id,
-      mobile: this.mobile,
-      first: this.first,
-      admin: this.roleAdmin ? true : false,
-      provider: this.roleProvider ? true : false,
-      customer: this.roleCustomer ? true : false,
-      createdAt: new Date(),
-    },
-  };
-
-  const token = signToken(user, expiresIn);
-  const verifiedToken = jwt.verify(token, secret, {
-    maxAge: process.env.TOKEN_EXPIRES_IN,
-  });
-
-  return token;
-};
-
 //initialise User Model. creates a collection called user based on the defined user schema
-const User = model("user", userSchema);
+const User = models.user || model("user", userSchema);
 
 module.exports = User;

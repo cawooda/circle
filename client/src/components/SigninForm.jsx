@@ -1,6 +1,5 @@
 import { validateMobileInput, validatePasswordInput } from "../utils/helpers";
 import { useState, useEffect, useCallback } from "react";
-import useToken from "../hooks/UseToken";
 
 import {
   Button,
@@ -8,7 +7,6 @@ import {
   Flex,
   Input,
   FormLabel,
-  InputRightElement,
   Modal,
   ModalOverlay,
   Heading,
@@ -28,19 +26,15 @@ import {
 import { useNavigate } from "react-router-dom";
 //new #useHook
 import AuthService from "../utils/auth";
-import {
-  ButtonStyles,
-  ButtonHighlightStyle,
-} from "../components/styles/ButtonStyle";
+import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
 import SmsCodeModal from "./SmsCodeModal"; // Import the new modal component
 import { InputStyles } from "./styles/InputStyles";
 
 import logo from "/logo.png";
-import { useUser } from "../contexts/UserContext";
+import { useAuth } from "../contexts/AuthContext";
 import Splash from "./Splash";
 
 const SigninForm = ({ forceOpen }) => {
-  const { setToken } = useToken();
   const [formState, setFormState] = useState({
     loading: false,
     formValid: false,
@@ -49,11 +43,12 @@ const SigninForm = ({ forceOpen }) => {
 
   const navigate = useNavigate();
 
-  const { user, refetchUser } = useUser() || {};
+  const { user } = useAuth() || {};
 
   const userSignedUp = localStorage.getItem("user_signed_up");
   const [signup, setSignup] = useState(!userSignedUp);
   const [userFormData, setUserFormData] = useState({
+    first: "",
     mobile: "",
     password: "",
   });
@@ -72,13 +67,10 @@ const SigninForm = ({ forceOpen }) => {
 
   useEffect(() => {
     const validMobile = validateMobileInput(userFormData.mobile);
-    const validPassword = validatePasswordInput(userFormData.password);
 
-    const formValid = validMobile && validPassword;
+    const formValid = validMobile;
     const message = !formValid
-      ? `${!validMobile ? "enter your mobile number" : ""} ${
-          !validPassword ? "enter your password" : ""
-        }`
+      ? `${!validMobile ? "enter your mobile number" : ""} `
       : "";
 
     setFormState((prev) => ({ ...prev, formValid, message }));
@@ -132,30 +124,28 @@ const SigninForm = ({ forceOpen }) => {
     }
   };
 
-  const handleCodeSubmit = async (code) => {
+  const handleCodeSubmit = async (code, password) => {
     try {
       setFormState((prev) => {
         return { ...prev, loading: true };
       });
-      //new #useHook
+
       setFormState((prev) => ({ ...prev, loading: true }));
-      let response;
-      response = await AuthService.verifySmsCode(code);
-      if (!response?.token) {
+
+      const { success, message } = await AuthService.updateUserPassword(
+        code,
+        password
+      );
+      if (!success) {
         setFormState((prev) => ({
           ...prev,
           loading: false,
-          message: response?.message || "Login failed. Please try again.",
+          message: message || "Login failed. Please try again.",
         }));
         return;
       }
-      setToken({ token: response.token }); // Save token
-
-      refetchUser(); // Fetch user data
       setFormState((prev) => ({ ...prev, loading: false }));
-      setUserFormData({ mobile: "", password: "" });
-      onClose(); // Close modal
-      navigate("/"); // Redirect to home page
+      navigate("/login"); // Redirect to home page
     } catch (error) {
       setFormState((prev) => {
         return {
@@ -170,11 +160,11 @@ const SigninForm = ({ forceOpen }) => {
 
   const isFormValid = () => {
     const validMobile = validateMobileInput(userFormData.mobile);
-    const validPassword = validatePasswordInput(userFormData.password);
-    return validMobile && validPassword;
+    return validMobile;
   };
 
   const handleFormSubmit = async (event) => {
+    event.preventDefault();
     if (!isFormValid()) {
       setFormState((prev) => ({
         ...prev,
@@ -182,38 +172,43 @@ const SigninForm = ({ forceOpen }) => {
       }));
       return;
     }
-
     setFormState((prev) => ({ ...prev, loading: true }));
-    event.preventDefault();
-
     try {
       let response;
+      const contact = {
+        mobile: userFormData?.mobile,
+        email: userFormData?.email,
+      };
+      const first = userFormData?.first;
       if (signup) {
-        response = await AuthService.signUpUser(userFormData);
-        if (!response?.token) {
+        response = await AuthService.addUser({ contact, first });
+        if (!response?.success) {
           setFormState((prev) => ({
             ...prev,
             loading: false,
-            message: response?.message || "Signup failed. Please try again.",
+            message: response.message || "Signup failed. Please try again.",
           }));
+          onSmsModalOpen();
           return;
         }
       } else {
-        // Handle Login
-        response = await AuthService.loginUser(userFormData);
-        if (!response?.token) {
+        const password = userFormData?.password;
+        response = await AuthService.loginUser(contact, password);
+
+        if (!response.success) {
           setFormState((prev) => ({
             ...prev,
             loading: false,
             message: response?.message || "Login failed. Please try again.",
           }));
+
           return;
         }
       }
 
       // If signup or login succeeds
-      setToken({ token: response.token }); // Save token
-      refetchUser(); // Fetch user data
+      AuthService.setToken(response.token); // Save token
+      // refetchUser(); // Fetch user data
       setFormState((prev) => ({ ...prev, loading: false }));
       setUserFormData({ mobile: "", password: "" });
       onClose(); // Close modal
@@ -231,7 +226,7 @@ const SigninForm = ({ forceOpen }) => {
   if (formState.loading) return <Splash />;
 
   return (
-    <>
+    <Center minHeight={"100vh"} verticalAlign={"middle"}>
       <Button
         {...ButtonStyles}
         onClick={() => {
@@ -268,6 +263,23 @@ const SigninForm = ({ forceOpen }) => {
                     {signup ? "Login" : "Signup"}
                   </Button>
                 </Center>
+                <FormLabel htmlFor="phone">Mobile</FormLabel>
+                <Input
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleFormSubmit(e);
+                    }
+                  }}
+                  id="mobileInput"
+                  {...InputStyles}
+                  type="mobile"
+                  placeholder="mobile..."
+                  name="mobile"
+                  autoComplete="mobile"
+                  onChange={handleInputChange}
+                  value={userFormData.mobile}
+                  required
+                />
                 {signup ? (
                   <>
                     <FormLabel htmlFor="first">First Name</FormLabel>
@@ -287,73 +299,29 @@ const SigninForm = ({ forceOpen }) => {
                       value={userFormData.first}
                       required
                     />
-                    <FormLabel htmlFor="last">Last Name</FormLabel>
+                  </>
+                ) : (
+                  <>
+                    <FormLabel htmlFor="first">Password</FormLabel>
                     <Input
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
                           handleFormSubmit(e);
                         }
                       }}
-                      id="lastInput"
+                      id="passwordInput"
                       {...InputStyles}
-                      type="text"
-                      placeholder="last name..."
-                      name="last"
-                      autoComplete="family-name"
+                      type="password"
+                      placeholder="password..."
+                      name="password"
+                      autoComplete="password"
                       onChange={handleInputChange}
-                      value={userFormData.last}
+                      value={userFormData.password}
                       required
                     />
                   </>
-                ) : (
-                  <></>
                 )}
-                <FormLabel htmlFor="phone">Mobile</FormLabel>
-                <Input
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleFormSubmit(e);
-                    }
-                  }}
-                  id="mobileInput"
-                  {...InputStyles}
-                  type="mobile"
-                  placeholder="mobile..."
-                  name="mobile"
-                  autoComplete={signup ? "mobile" : "username"}
-                  onChange={handleInputChange}
-                  value={userFormData.mobile}
-                  required
-                />
-                <FormLabel htmlFor="password">Password</FormLabel>
-                <InputGroup>
-                  <InputRightElement width="4.5rem">
-                    <Button
-                      isDisabled={signup ? true : false}
-                      h="1.75rem"
-                      size="sm"
-                      onClick={handleSMSlinkLogin}
-                    >
-                      SMS
-                    </Button>
-                  </InputRightElement>
-                  <Input
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleFormSubmit(e);
-                      }
-                    }}
-                    autoComplete="current-password"
-                    id="passwordInput"
-                    {...InputStyles}
-                    type="password"
-                    placeholder="password..."
-                    name="password"
-                    onChange={handleInputChange}
-                    value={userFormData.password}
-                    required
-                  />
-                </InputGroup>
+
                 {formState.message ? (
                   <Alert status="error">{formState.message}</Alert>
                 ) : (
@@ -382,7 +350,7 @@ const SigninForm = ({ forceOpen }) => {
         onClose={onSmsModalClose}
         onSubmit={handleCodeSubmit}
       />
-    </>
+    </Center>
   );
 };
 

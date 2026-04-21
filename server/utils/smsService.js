@@ -1,16 +1,29 @@
-require("dotenv").config();
+const path = require("path");
+require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+
+console.log("CLICKTOKEN:", process.env.CLICKTOKEN ? "present" : "missing");
+console.log(
+  "CLICK_SEND_URL_SEND_ENDPOINT:",
+  process.env.CLICK_SEND_URL_SEND_ENDPOINT,
+);
 
 class SMSService {
   constructor() {
-    this.apiUrl = process.env.CLICK_SEND_URL_SEND_ENDPOINT;
-    this.headers = new Headers();
-
-    const clickToken =
-      Buffer.from(process.env.CLICKTOKEN).toString("base64") || "";
-    if (clickToken) {
-      this.tokenPresent = true;
-      this.headers.append("Content-Type", "application/json");
-      this.headers.append("Authorization", `Basic ${clickToken}`);
+    try {
+      this.apiUrl = process.env.CLICK_SEND_URL_SEND_ENDPOINT;
+      console.log(this.apiUrl);
+      this.headers = new Headers();
+      const token = process.env.CLICKTOKEN;
+      const clickToken = process.env.CLICKTOKEN
+        ? Buffer.from(token).toString("base64")
+        : "";
+      if (clickToken) {
+        this.tokenPresent = true;
+        this.headers.append("Content-Type", "application/json");
+        this.headers.append("Authorization", `Basic ${clickToken}`);
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 

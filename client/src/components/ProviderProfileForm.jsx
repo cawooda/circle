@@ -31,13 +31,13 @@ import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
 import { ModalHeadingStyle } from "./styles/modalStyles";
 import { CardStyles } from "./styles/CardStyles";
 import logo from "/logo.png";
-import { useUser } from "../contexts/UserContext";
+import { useAuth } from "../contexts/AuthContext";
 
 import { useMutation } from "@apollo/client";
 import { UPDATE_PROVIDER_PROFILE } from "../utils/mutations";
 
 const ProviderProfileForm = () => {
-  const { user } = useUser();
+  const { user } = useAuth();
 
   const [
     updateProviderProfile,

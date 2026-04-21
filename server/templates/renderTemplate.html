@@ -1,144 +1,327 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Service Agreement</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-      crossorigin="anonymous"
-    />
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f9f9f9;
-        color: #333;
-        margin: 0;
-        padding: 0;
-      }
-
-      .container {
-        width: 100%;
-        max-width: 600px; /* Ensure it's not too wide */
-        margin: 20px auto;
-        padding: 20px;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-      }
-
-      header {
-        text-align: center;
-        margin-bottom: 30px;
-      }
-
-      h1,
-      h2 {
-        color: #000000;
-        margin-bottom: 20px;
-      }
-
-      .details,
-      .terms,
-      .footer {
-        text-align: center;
-        margin-top: 30px;
-        font-size: 1rem;
-        color: #999;
-      }
-
-      /* Button Styles */
-      .custom-button {
-        min-width: 150px;
-        display: block;
-        margin: 0 auto;
-        font-weight: bold;
-        color: black;
-        background-color: #fbce44; /* colorScheme equivalent */
-        border: 2px solid black;
-        border-radius: 30px;
-        padding: 5px;
-        text-align: center;
-        text-decoration: none;
-      }
-
-      .call {
-        margin-left: auto;
-        margin-right: auto;
-
-        width: 20%;
-      }
-
-      .custom-button:hover {
-        background-color: #f5b642; /* Hover state */
-      }
-
-      .header-logo {
-        width: 20%;
-      }
-    </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to Circle</title>
   </head>
-  <body>
-    <div class="container">
-      <header class="header-container">
-        <img
-          class="header-logo"
-          src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=400,fit=crop,q=95/Yanzgg1xJeiNVanE/loading...-mjE911qvjLs7gkNX.png"
-          alt="Company Logo"
-        />
-        <h3><%= subject %></h3>
-      </header>
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      background-color: #f7f7f7;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #333333;
+    "
+  >
+    <table
+      role="presentation"
+      width="100%"
+      cellspacing="0"
+      cellpadding="0"
+      border="0"
+      style="background-color: #f7f7f7; margin: 0; padding: 0"
+    >
+      <tr>
+        <td align="center" style="padding: 20px 10px">
+          <table
+            role="presentation"
+            width="600"
+            cellspacing="0"
+            cellpadding="0"
+            border="0"
+            style="width: 100%; max-width: 600px; background-color: #ffffff"
+          >
+            <!-- View in browser -->
+            <tr>
+              <td
+                align="center"
+                style="padding: 16px 24px; font-size: 12px; color: #777777"
+              >
+                <a
+                  href="<%= browserUrl %>"
+                  style="color: #777777; text-decoration: underline"
+                  >View this email in your browser</a
+                >
+              </td>
+            </tr>
 
-      <div class="row">
-        <h5>Hi <%= first %></h5>
-        <p>
-          you just signed a new service agreement with <%+ providerName %> for
-          <%= product.name %>. We've attached a copy for your records and
-          included those who need to know about the agreement.
-        </p>
-        <p><%+ providerName %> has also been sent a copy.</p>
-        <h4>Service Agreements</h4>
-        <p>
-          Service agreements help you know the price and conditions of the
-          service you get. They keep you and your providers on the same page and
-          help you both out when things get muddled.
-        </p>
-        <h4>With Circle</h4>
-        <p>
-          Getting free service agreements from any of your providers is quick
-          and easy. Head to the website to get started.
-        </p>
+            <!-- Logo -->
+            <tr>
+              <td align="center" style="padding: 10px 24px 0">
+                <% if (logoUrl) { %>
+                <img
+                  src="<%= logoUrl %>"
+                  alt="<%= companyName %> Logo"
+                  style="max-width: 160px; height: auto; display: block"
+                />
+                <% } else { %>
+                <div style="font-size: 24px; font-weight: bold; color: #222222">
+                  Logo
+                </div>
+                <% } %>
+              </td>
+            </tr>
 
-        <div class="call">
-          <a href="http://circleindependent.com/start" class="custom-button">
-            Start
-          </a>
-        </div>
-        <p>Have a great day.</p>
-        <br />
-        <h5>Circle Team</h5>
-        <br />
-      </div>
+            <!-- Heading -->
+            <tr>
+              <td align="center" style="padding: 20px 24px 10px">
+                <h1
+                  style="
+                    margin: 0;
+                    font-size: 30px;
+                    line-height: 1.2;
+                    color: #222222;
+                  "
+                >
+                  Welcome
+                </h1>
+              </td>
+            </tr>
 
-      <section class="details service"></section>
+            <!-- Body -->
+            <tr>
+              <td
+                style="
+                  padding: 20px 40px 10px;
+                  font-size: 16px;
+                  line-height: 1.7;
+                  color: #333333;
+                "
+              >
+                <p style="margin: 0 0 20px">Hi <%= firstName %>,</p>
 
-      <div class="row"></div>
+                <p style="margin: 0 0 20px">Welcome to Circle.</p>
 
-      <div class="footer">
-        <img
-          class="footer-logo"
-          width="5%"
-          src="../../client/public/logo.png"
-        />
-        &copy; 2024 Circle Independent. All rights reserved.
-      </div>
-    </div>
-    <script
-      src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=400,fit=crop,q=95/Yanzgg1xJeiNVanE/loading...-mjE911qvjLs7gkNX.png"
-      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-      crossorigin="anonymous"
-    ></script>
+                <p style="margin: 0 0 20px">
+                  Each week, we’ll send something useful.
+                </p>
+
+                <p style="margin: 0 0 20px">
+                  Sometimes a short piece about getting through difficult
+                  periods. Sometimes about rebuilding routines, protecting
+                  wellbeing, or finding steadiness when life feels uncertain.
+                </p>
+
+                <p style="margin: 0 0 20px">
+                  Sometimes about recovery, hope, and what it can look like to
+                  keep moving forward.
+                </p>
+
+                <p style="margin: 0 0 20px">
+                  Our focus is not on pressure or perfection but on real life.
+                </p>
+
+                <p style="margin: 0 0 20px">
+                  We know that wellbeing is not always neat or linear. People go
+                  through crisis, disruption, setbacks, and times of stuckness.
+                  They also rebuild. They reconnect. They regain footing. They
+                  find ways forward. Good support can make a difference in that
+                  process, and so can good information, encouragement, and a
+                  sense that change is still possible.
+                </p>
+
+                <p style="margin: 0 0 20px">
+                  That is what we hope these emails will offer.
+                </p>
+
+                <p style="margin: 0 0 16px">
+                  Over time, we’ll share things like:
+                </p>
+
+                <ul style="margin: 0 0 24px 20px; padding: 0; line-height: 1.7">
+                  <li style="margin-bottom: 10px">
+                    practical ideas for protecting mental health and wellbeing
+                  </li>
+                  <li style="margin-bottom: 10px">
+                    reflections on recovery, hope, and rebuilding after hard
+                    times
+                  </li>
+                  <li style="margin-bottom: 10px">
+                    guidance around crisis, support, and what can help when
+                    things feel unsteady
+                  </li>
+                  <li style="margin-bottom: 10px">
+                    encouragement for people working toward greater stability,
+                    confidence, and direction
+                  </li>
+                </ul>
+
+                <p style="margin: 0 0 20px">
+                  Some readers will be looking for support for themselves. Some
+                  will be supporting a family member, friend, or client. Some
+                  may simply want thoughtful, grounded information they can
+                  return to when it is needed.
+                </p>
+
+                <p style="margin: 0 0 20px">
+                  Wherever you are coming from, you’re welcome here.
+                </p>
+
+                <p style="margin: 0 0 20px">
+                  If at any point you would like to know more about Circle’s
+                  supports, you can visit us at
+                  <a
+                    href="<%= websiteUrl %>"
+                    style="color: #333333; text-decoration: underline"
+                    ><%= websiteText %></a
+                  >
+                  or get in touch with us directly.
+                </p>
+
+                <p style="margin: 0 0 20px">We’re glad you’re here.</p>
+
+                <p style="margin: 0 0 0">
+                  Warmly,<br />
+                  <%= senderName %><br />
+                  <%= companyName %>
+                </p>
+              </td>
+            </tr>
+
+            <!-- Unsubscribe notice -->
+            <tr>
+              <td
+                style="
+                  padding: 20px 40px 30px;
+                  font-size: 14px;
+                  line-height: 1.6;
+                  color: #666666;
+                "
+              >
+                <p style="margin: 0">
+                  If you ever feel that these emails are not for you, you can
+                  <a
+                    href="<%= unsubscribeUrl %>"
+                    style="color: #666666; text-decoration: underline"
+                    >unsubscribe</a
+                  >
+                  at any time.
+                </p>
+              </td>
+            </tr>
+
+            <!-- Footer branding -->
+            <tr>
+              <td
+                align="center"
+                style="padding: 20px 24px 10px; border-top: 1px solid #e5e5e5"
+              >
+                <div
+                  style="
+                    font-size: 18px;
+                    font-weight: bold;
+                    color: #222222;
+                    margin-bottom: 12px;
+                  "
+                >
+                  <%= companyName %>
+                </div>
+
+                <div style="margin-bottom: 16px">
+                  <% if (instagramUrl) { %>
+                  <a
+                    href="<%= instagramUrl %>"
+                    style="margin: 0 8px; text-decoration: none"
+                    >Instagram</a
+                  >
+                  <% } %> <% if (twitterUrl) { %>
+                  <a
+                    href="<%= twitterUrl %>"
+                    style="margin: 0 8px; text-decoration: none"
+                    >Twitter</a
+                  >
+                  <% } %>
+                </div>
+
+                <% if (footerLogoUrl) { %>
+                <img
+                  src="<%= footerLogoUrl %>"
+                  alt="<%= companyName %> Logo"
+                  style="
+                    max-width: 100px;
+                    height: auto;
+                    display: block;
+                    margin: 0 auto 16px;
+                  "
+                />
+                <% } %>
+
+                <p
+                  style="
+                    margin: 0 0 10px;
+                    font-size: 12px;
+                    line-height: 1.6;
+                    color: #777777;
+                  "
+                >
+                  Copyright (C) <%= year %> <%= companyName %>. All rights
+                  reserved.
+                </p>
+
+                <p
+                  style="
+                    margin: 0 0 10px;
+                    font-size: 12px;
+                    line-height: 1.6;
+                    color: #777777;
+                  "
+                >
+                  You are receiving this email because you opted in via our
+                  website.
+                </p>
+
+                <p
+                  style="
+                    margin: 0 0 10px;
+                    font-size: 12px;
+                    line-height: 1.6;
+                    color: #777777;
+                  "
+                >
+                  Our mailing address is:<br />
+                  <%= companyName %> <%= mailingAddressLine1 %><br />
+                  <%= mailingAddressLine2 %>
+                </p>
+
+                <p
+                  style="
+                    margin: 0 0 10px;
+                    font-size: 12px;
+                    line-height: 1.6;
+                    color: #777777;
+                  "
+                >
+                  Want to change how you receive these emails?<br />
+                  You can
+                  <a
+                    href="<%= preferencesUrl %>"
+                    style="color: #777777; text-decoration: underline"
+                    >update your preferences</a
+                  >
+                  or
+                  <a
+                    href="<%= unsubscribeUrl %>"
+                    style="color: #777777; text-decoration: underline"
+                    >unsubscribe</a
+                  >
+                </p>
+
+                <p
+                  style="
+                    margin: 0;
+                    font-size: 12px;
+                    line-height: 1.6;
+                    color: #777777;
+                  "
+                >
+                  Email Marketing Powered by Mailchimp
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
   </body>
 </html>

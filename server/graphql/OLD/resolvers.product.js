@@ -1,4 +1,4 @@
-const { Provider, Product, Service } = require("../models");
+const { Provider, Product, Service } = require("../../models");
 
 module.exports = {
   getProducts: async (_parent, {}, context) => {

@@ -1,0 +1,9 @@
+const scalarTypeDefs = `
+
+scalar DateTime
+  @specifiedBy(url: "https://scalars.graphql.org/andimarek/date-time")
+
+scalar Token
+`;
+
+module.exports = scalarTypeDefs;

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to Circle</title>
+  </head>
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      background-color: #f7f7f7;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #333333;
+    "
+  >
+    <table
+      role="presentation"
+      width="100%"
+      cellspacing="0"
+      cellpadding="0"
+      border="0"
+      style="background-color: #f7f7f7; margin: 0; padding: 0"
+    >
+      <tr>
+        <td align="center" style="padding: 20px 10px">
+          <table
+            role="presentation"
+            width="600"
+            cellspacing="0"
+            cellpadding="0"
+            border="0"
+            style="width: 100%; max-width: 600px; background-color: #ffffff"
+          >
+            <!-- View in browser -->
+            <tr>
+              <td
+                align="center"
+                style="padding: 16px 24px; font-size: 12px; color: #777777"
+              >
+                <a
+                  href="{{ browser_url }}"
+                  style="color: #777777; text-decoration: underline"
+                  >View this email in your browser</a
+                >
+              </td>
+            </tr>
+
+            <!-- Logo -->
+            <tr>
+              <td align="center" style="padding: 10px 24px 0">
+                {{#if logo_url}}
+                <img
+                  src="{{ logo_url }}"
+                  alt="{{ company_name }} Logo"
+                  style="max-width: 160px; height: auto; display: block"
+                />
+                {{else}}
+                <div style="font-size: 24px; font-weight: bold; color: #222222">
+                  Logo
+                </div>
+                {{/if}}
+              </td>
+            </tr>
+
+            <!-- Heading -->
+            <tr>
+              <td align="center" style="padding: 20px 24px 10px">
+                <h1
+                  style="
+                    margin: 0;
+                    font-size: 30px;
+                    line-height: 1.2;
+                    color: #222222;
+                  "
+                >
+                  Welcome
+                </h1>
+              </td>
+            </tr>
+
+            <!-- Body -->
+            <tr>
+              <td
+                style="
+                  padding: 20px 40px 10px;
+                  font-size: 16px;
+                  line-height: 1.7;
+                  color: #333333;
+                "
+              >
+                <p style="margin: 0 0 20px">Hi {{ first_name }},</p>
+
+                <p style="margin: 0 0 20px">Welcome to Circle.</p>
+
+                <p style="margin: 0 0 20px">
+                  Each week, we’ll send something useful.
+                </p>
+
+                <p style="margin: 0 0 20px">
+                  Sometimes a short piece about getting through difficult
+                  periods. Sometimes about rebuilding routines, protecting
+                  wellbeing, or finding steadiness when life feels uncertain.
+                </p>
+
+                <p style="margin: 0 0 20px">
+                  Sometimes about recovery, hope, and what it can look like to
+                  keep moving forward.
+                </p>
+
+                <p style="margin: 0 0 20px">
+                  Our focus is not on pressure or perfection but on real life.
+                </p>
+
+                <p style="margin: 0 0 20px">
+                  We know that wellbeing is not always neat or linear. People go
+                  through crisis, disruption, setbacks, and times of stuckness.
+                  They also rebuild. They reconnect. They regain footing. They
+                  find ways forward. Good support can make a difference in that
+                  process, and so can good information, encouragement, and a
+                  sense that change is still possible.
+                </p>
+
+                <p style="margin: 0 0 20px">
+                  That is what we hope these emails will offer.
+                </p>
+
+                <p style="margin: 0 0 16px">
+                  Over time, we’ll share things like:
+                </p>
+
+                <ul style="margin: 0 0 24px 20px; padding: 0; line-height: 1.7">
+                  <li style="margin-bottom: 10px">
+                    practical ideas for protecting mental health and wellbeing
+                  </li>
+                  <li style="margin-bottom: 10px">
+                    reflections on recovery, hope, and rebuilding after hard
+                    times
+                  </li>
+                  <li style="margin-bottom: 10px">
+                    guidance around crisis, support, and what can help when
+                    things feel unsteady
+                  </li>
+                  <li style="margin-bottom: 10px">
+                    encouragement for people working toward greater stability,
+                    confidence, and direction
+                  </li>
+                </ul>
+
+                <p style="margin: 0 0 20px">
+                  Some readers will be looking for support for themselves. Some
+                  will be supporting a family member, friend, or client. Some
+                  may simply want thoughtful, grounded information they can
+                  return to when it is needed.
+                </p>
+
+                <p style="margin: 0 0 20px">
+                  Wherever you are coming from, you’re welcome here.
+                </p>
+
+                <p style="margin: 0 0 20px">
+                  If at any point you would like to know more about Circle’s
+                  supports, you can visit us at
+                  <a
+                    href="{{ website_url }}"
+                    style="color: #333333; text-decoration: underline"
+                    >{{ website_text }}</a
+                  >
+                  or get in touch with us directly.
+                </p>
+
+                <p style="margin: 0 0 20px">We’re glad you’re here.</p>
+
+                <p style="margin: 0 0 0">
+                  Warmly,<br />
+                  Andrew<br />
+                  Circle Supports
+                </p>
+              </td>
+            </tr>
+
+            <!-- Unsubscribe notice -->
+            <tr>
+              <td
+                style="
+                  padding: 20px 40px 30px;
+                  font-size: 14px;
+                  line-height: 1.6;
+                  color: #666666;
+                "
+              >
+                <p style="margin: 0">
+                  If you ever feel that these emails are not for you, you can
+                  <a
+                    href="{{ unsubscribe_url }}"
+                    style="color: #666666; text-decoration: underline"
+                    >unsubscribe</a
+                  >
+                  at any time.
+                </p>
+              </td>
+            </tr>
+
+            <!-- Footer branding -->
+            <tr>
+              <td
+                align="center"
+                style="padding: 20px 24px 10px; border-top: 1px solid #e5e5e5"
+              >
+                <div
+                  style="
+                    font-size: 18px;
+                    font-weight: bold;
+                    color: #222222;
+                    margin-bottom: 12px;
+                  "
+                >
+                  {{ company_name }}
+                </div>
+
+                <div style="margin-bottom: 16px">
+                  {{#if instagram_url}}
+                  <a
+                    href="{{ instagram_url }}"
+                    style="margin: 0 8px; text-decoration: none"
+                    >Instagram</a
+                  >
+                  {{/if}}
+                  {{#if twitter_url}}
+                  <a
+                    href="{{ twitter_url }}"
+                    style="margin: 0 8px; text-decoration: none"
+                    >Twitter</a
+                  >
+                  {{/if}}
+                </div>
+
+                {{#if footer_logo_url}}
+                <img
+                  src="{{ footer_logo_url }}"
+                  alt="{{ company_name }} Logo"
+                  style="
+                    max-width: 100px;
+                    height: auto;
+                    display: block;
+                    margin: 0 auto 16px;
+                  "
+                />
+                {{/if}}
+
+                <p
+                  style="
+                    margin: 0 0 10px;
+                    font-size: 12px;
+                    line-height: 1.6;
+                    color: #777777;
+                  "
+                >
+                  Copyright (C) {{ year }} {{ company_name }}. All rights
+                  reserved.
+                </p>
+
+                <p
+                  style="
+                    margin: 0 0 10px;
+                    font-size: 12px;
+                    line-height: 1.6;
+                    color: #777777;
+                  "
+                >
+                  You are receiving this email because you opted in via our
+                  website.
+                </p>
+
+                <p
+                  style="
+                    margin: 0 0 10px;
+                    font-size: 12px;
+                    line-height: 1.6;
+                    color: #777777;
+                  "
+                >
+                  Our mailing address is:<br />
+                  {{ company_name }} {{ mailing_address_line_1 }}<br />
+                  {{ mailing_address_line_2 }}
+                </p>
+
+                <p
+                  style="
+                    margin: 0 0 10px;
+                    font-size: 12px;
+                    line-height: 1.6;
+                    color: #777777;
+                  "
+                >
+                  Want to change how you receive these emails?<br />
+                  You can
+                  <a
+                    href="{{ preferences_url }}"
+                    style="color: #777777; text-decoration: underline"
+                    >update your preferences</a
+                  >
+                  or
+                  <a
+                    href="{{ unsubscribe_url }}"
+                    style="color: #777777; text-decoration: underline"
+                    >unsubscribe</a
+                  >
+                </p>
+
+                <p
+                  style="
+                    margin: 0;
+                    font-size: 12px;
+                    line-height: 1.6;
+                    color: #777777;
+                  "
+                >
+                  Email Marketing Powered by Mailchimp
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

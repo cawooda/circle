@@ -31,13 +31,14 @@ import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
 import { ModalHeadingStyle } from "./styles/modalStyles";
 import { CardStyles } from "./styles/CardStyles";
 import logo from "/logo.png";
-import { useUser } from "../contexts/UserContext";
+
+import { useAuth } from "../contexts/AuthContext";
 
 import { useMutation } from "@apollo/client";
 import { ADD_CUSTOMER } from "../utils/mutations";
 
 const AddCustomerForm = () => {
-  const { provider, refetchProvider } = useUser();
+  const { provider, refetchProvider } = useAuth();
   const [mobileMessage, setMobileMessage] = useState();
   const [invoiceEmailMessage, setInvoiceEmailMessage] = useState();
   const [emailMessage, setEmailMessage] = useState();

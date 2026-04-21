@@ -28,7 +28,6 @@ const customerSchema = new Schema(
       state: { type: String, required: true, default: "Default State" },
       postalCode: { type: String, required: true, default: "00000" },
     },
-    dateOfBirth: { type: Date, required: true, default: "1999-07-07" },
     customerSpecificField: { type: String },
     serviceAgreements: [{ type: Schema.Types.ObjectId, ref: "agreement" }],
   },

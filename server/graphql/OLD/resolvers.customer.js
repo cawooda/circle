@@ -1,5 +1,5 @@
-const { Customer, User, Provider } = require("../models");
-const { verifyToken } = require("../utils/helpers");
+const { Customer, User, Provider } = require("../../models");
+const { verifyToken } = require("../../utils/helpers");
 
 module.exports = {
   addCustomer: async (

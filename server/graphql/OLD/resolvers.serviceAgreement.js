@@ -2,15 +2,15 @@ require("dotenv").config();
 const path = require("path");
 const fs = require("fs");
 const dayjs = require("dayjs");
-const { generateRandomNumber } = require("../utils/helpers");
-const { convertToPdf } = require("../utils/pdfUtility");
-const { EMAILService } = require("../utils/mailer");
+const { generateRandomNumber } = require("../../utils/helpers");
+const { convertToPdf } = require("../../utils/pdfUtility");
+const { EMAILService } = require("../../utils/mailer");
 const userEmailService = new EMAILService();
-const { addProviderDirectory } = require("../setup.config");
+const { addProviderDirectory } = require("../../setup.config");
 
-const { User, ServiceAgreement, Service } = require("../models");
+const { User, ServiceAgreement, Service } = require("../../models");
 
-const { renderTemplate } = require("../templates/renderTemplate");
+const { renderTemplate } = require("../../templates/renderTemplate");
 
 module.exports = {
   getServiceAgreements: async (_parent, { userId }, context) => {

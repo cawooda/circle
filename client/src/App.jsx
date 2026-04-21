@@ -10,14 +10,12 @@ import { onError } from "@apollo/client/link/error";
 import { ChakraProvider } from "@chakra-ui/react";
 
 import RootLayout from "./layouts/RootLayout";
-import { UserProvider } from "./contexts/UserContext";
+import { AuthProvider } from "./contexts/AuthContext";
 
-import { jwtDecode } from "jwt-decode";
 import AuthService from "./utils/auth";
 
 const authLink = setContext((_, { headers }) => {
-  const token = AuthService.getToken();
-
+  const token = AuthService.getToken() || null;
   return {
     headers: {
       ...headers,
@@ -33,6 +31,13 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
         case "UNAUTHENTICATED":
           // Handle token expiration error
           if (err.message === "Token expired") {
+            AuthService.logout(); // Optionally log out the user
+            // Or handle token refresh if applicable
+          }
+          break;
+        case "UNAUTHOURISED":
+          // Handle token expiration error
+          if (err.message === "Unauthorised for that graphql operation") {
             AuthService.logout(); // Optionally log out the user
             // Or handle token refresh if applicable
           }
@@ -61,9 +66,9 @@ function App() {
     <>
       <ApolloProvider client={client}>
         <ChakraProvider>
-          <UserProvider>
+          <AuthProvider>
             <RootLayout />
-          </UserProvider>
+          </AuthProvider>
         </ChakraProvider>
       </ApolloProvider>
     </>

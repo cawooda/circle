@@ -4,7 +4,6 @@ import {
   Flex,
   Input,
   FormLabel,
-  InputRightElement,
   Modal,
   ModalOverlay,
   Heading,
@@ -28,7 +27,7 @@ import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
 import { InputStyles } from "./styles/InputStyles";
 
 import logo from "/logo.png";
-import { useUser } from "../contexts/UserContext";
+import { useAuth } from "../contexts/AuthContext";
 
 import { useMutation } from "@apollo/client";
 import { UPDATE_USER_PROFILE } from "../utils/mutations";
@@ -38,6 +37,7 @@ import ProviderProfileForm from "./ProviderProfileForm";
 import Splash from "./Splash";
 
 const ProfileForm = () => {
+  const { user, userLoading } = useAuth();
   const [
     updateUserProfile,
     {
@@ -47,24 +47,24 @@ const ProfileForm = () => {
     },
   ] = useMutation(UPDATE_USER_PROFILE, {
     onError: (error) => {
-      console.error("GraphQL Error updating user Profile", err.graphQLErrors);
-      console.error("Network Error updating user Profile", err.networkError);
-      console.error("Message updating user Profile", err.message);
+      console.error("GraphQL Error updating user Profile", error.graphQLErrors);
+      console.error("Network Error updating user Profile", error.networkError);
+      console.error("Message updating user Profile", error.message);
     },
   });
 
   const { isOpen, onOpen, onClose } = useDisclosure(); //this is used for the Chakra modal
-  const { user, loading, error } = useUser();
 
   const [formData, setFormData] = useState({});
 
   useEffect(() => {
     if (user) {
       setFormData({
-        first: user.first || "",
-        last: user.last || "",
-        mobile: user.mobile || "",
-        email: user.email || "",
+        first: user?.first || "",
+        last: user?.last || "",
+        mobile: user.contact?.mobile || "",
+        email: user.contact?.email || "",
+        dateOfBirth: user?.dateOfBirth || "",
       });
     }
   }, []);
@@ -79,8 +79,9 @@ const ProfileForm = () => {
     try {
       await updateUserProfile({
         variables: {
-          userId: user._id,
-          ...formData,
+          input: {
+            ...formData,
+          },
         },
       });
       onClose(); // Close the modal after successful submission
@@ -146,7 +147,7 @@ const ProfileForm = () => {
                   placeholder="Email..."
                   name="email"
                   onChange={handleInputChange}
-                  value={formData.email}
+                  value={formData.contact?.email}
                   required
                 />
 
@@ -157,7 +158,7 @@ const ProfileForm = () => {
                   placeholder="Mobile..."
                   name="mobile"
                   onChange={handleInputChange}
-                  value={formData.mobile}
+                  value={formData.contact?.mobile}
                   required
                 />
 

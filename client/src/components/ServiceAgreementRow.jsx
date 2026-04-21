@@ -10,15 +10,11 @@ import {
 } from "@chakra-ui/react";
 import { DisplayStyles, InputStyles } from "./styles/InputStyles";
 import { ButtonStyles, ButtonHighlightStyle } from "./styles/ButtonStyle";
-import { useUser } from "../contexts/UserContext";
+import { useAuth } from "../contexts/AuthContext";
 import { CardStyles } from "./styles/CardStyles";
 
 export default function ServiceAgreementRow({ agreement, index }) {
-  const { user, loading, error } = useUser();
-  if (!user) {
-    return null; // Don't render anything if user is not available
-  }
-
+  const { user, loading, error } = useAuth();
   const provider = agreement.provider || {};
   const customer = agreement.customer || {};
   const customerUser = customer.user || {};
@@ -32,7 +28,7 @@ export default function ServiceAgreementRow({ agreement, index }) {
   const serviceName = service ? service.name : "No service name";
 
   const [formData, setFormData] = useState({
-    _id: user._id || "", // Ensure a safe fallback
+    _id: user?._id || "", // Ensure a safe fallback
     provider: provider.providerName || "",
     customer: fullName || "",
     startDate: agreement.startDate || "",
@@ -44,6 +40,10 @@ export default function ServiceAgreementRow({ agreement, index }) {
     agreementNumber: agreement.agreementNumber || "",
     approvedByCustomer: agreement.approvedByCustomer || false,
   });
+
+  if (!user || loading || error) {
+    return null;
+  }
 
   //Change handler
   const handleChange = (e) => {

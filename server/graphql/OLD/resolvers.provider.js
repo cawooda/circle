@@ -1,4 +1,4 @@
-const { Provider, User } = require("../models");
+const { Provider, User } = require("../../models");
 const { GraphQLError } = require("graphql");
 module.exports = {
   getMyProvider: async (_parent, {}, context) => {

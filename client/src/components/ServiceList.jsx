@@ -22,7 +22,7 @@ import {
   ButtonHighlightStyle,
   DeleteButtonStyle,
 } from "./styles/ButtonStyle";
-import { useUser } from "../contexts/UserContext";
+import { useAuth } from "../contexts/AuthContext";
 import Splash from "./Splash";
 
 // Reducer actions
@@ -52,7 +52,7 @@ const serviceReducer = (state, action) => {
 };
 
 const ServiceList = () => {
-  const { user } = useUser();
+  const { user } = useAuth();
   const initialState = { services: [] };
   const [state, dispatch] = useReducer(serviceReducer, initialState);
 
